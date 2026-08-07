@@ -1,0 +1,8 @@
+# Compilados
+*.o
+c/curso-c
+
+# Editores
+.vscode/
+.idea/
+*.swp
