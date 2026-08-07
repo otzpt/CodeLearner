@@ -167,6 +167,7 @@ int question(const char *text, const char *correct, const char *why)
 }
 
 void challenge(const char *task[], int task_lines,
+               const char *expected[], int expected_lines,
                const char *solution[], int solution_lines)
 {
     printf("\n  >> WRITE THIS YOURSELF, in a real file\n");
@@ -176,10 +177,19 @@ void challenge(const char *task[], int task_lines,
         printf("  %s\n", task[i]);
     }
 
+    if (expected_lines > 0) {
+        printf("\n  It must print:\n\n");
+        for (int i = 0; i < expected_lines; i++) {
+            printf("      %s\n", expected[i]);
+        }
+        printf("\n  That output is the whole specification. Any code that\n");
+        printf("  produces it is correct.\n");
+    }
+
     printf("\n  Try it first. Compile with:\n");
     printf("    gcc -Wall -Wextra test.c -o test && ./test\n");
 
-    if (!ask_yes("Want to see one solution?")) {
+    if (!ask_yes("Want to see example code?")) {
         return;
     }
 
@@ -189,6 +199,7 @@ void challenge(const char *task[], int task_lines,
         printf("  %s\n", solution[i]);
     }
     rule();
-    printf("  This is *a* solution, not *the* solution. If yours compiles\n");
-    printf("  and does what the task asked, it is right.\n");
+    printf("  This is EXAMPLE CODE, not the answer. It is one way to get\n");
+    printf("  that output; yours may look nothing like it and still be\n");
+    printf("  right -- or better. Compare the output, not the code.\n");
 }

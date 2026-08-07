@@ -46,7 +46,31 @@ Show the diagnostic instead:
 free(): double free detected in tcache 2
 ```
 
-### 4. Teach the trap, not the syntax
+### 4. An exercise may only need what the course has already taught
+
+A task requiring `if` before module 4 has taught `if` is a broken task, not a
+hard one. It reads as "you should have known this" to somebody who could not
+have.
+
+This has slipped through twice, both times caught by a student rather than by
+the author, so it is checked automatically now:
+
+```bash
+python3 tools/check-teaching-order.py
+```
+
+It maps every construct to the module that first teaches it and flags any
+exercise reaching ahead. Run it before committing a new module. Adding a
+construct to a lesson means adding it to that map too.
+
+### 5. The output is the specification, not your code
+
+Every `challenge` states the output the program must produce. That is what the
+student checks against. The code shown afterwards is labelled example code and
+described as one way of getting there — a different solution that produces the
+same output is correct, and may well be better.
+
+### 6. Teach the trap, not the syntax
 
 Syntax is in every reference. What is worth a module is the thing that makes
 people lose an afternoon:
@@ -59,7 +83,7 @@ people lose an afternoon:
 
 If a module has no trap in it, it probably does not need to be a module.
 
-### 5. Warnings are teaching material
+### 7. Warnings are teaching material
 
 Build with `-Wall -Wextra`. When the compiler catches something the module is
 about, quote it. `if (x = 5)` is a better lesson with the warning next to it.
@@ -87,8 +111,9 @@ void lesson_11_files(void)
 
     {
         const char *task[] = { "...", };
+        const char *expected[] = { "what it must print", };
         const char *solution[] = { "...", };
-        challenge(task, 1, solution, 1);
+        challenge(task, 1, expected, 1, solution, 1);
     }
 
     wait_enter();
@@ -121,7 +146,7 @@ From `ui.h`. They exist so a lesson contains teaching and nothing else.
 | `rule()` | a plain horizontal line |
 | `exercise(n)` | the exercise header |
 | `question(text, correct, why)` | short answer, checked immediately |
-| `challenge(task, n, solution, m)` | write-it-yourself task, solution on request |
+| `challenge(task, n, expected, e, solution, m)` | task, the output it must produce, and example code on request |
 | `read_line(buf, sizeof buf)` | read input safely |
 | `ask_yes("...")` | yes/no |
 

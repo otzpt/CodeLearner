@@ -44,6 +44,9 @@ void lesson_01_compiling(void)
     printf("   #include <stdio.h>   brings in printf. Without it the\n");
     printf("                        compiler does not know what printf is.\n");
     printf("   int main(void)       where the program starts. Required.\n");
+    printf("                        You will also see int main(). Both are\n");
+    printf("                        legal here; module 7 shows why (void)\n");
+    printf("                        is the better habit everywhere else.\n");
     printf("   printf(...)          writes to the screen.\n");
     printf("   \\n                   newline. Without it everything runs on.\n");
     printf("   return 0             0 means it went fine.\n");
@@ -82,6 +85,10 @@ void lesson_01_compiling(void)
             "Write a program that prints your name and the year,",
             "each on its own line.",
         };
+        const char *expected[] = {
+            "Jose",
+            "2026",
+        };
         const char *solution[] = {
             "#include <stdio.h>",
             "",
@@ -92,7 +99,7 @@ void lesson_01_compiling(void)
             "    return 0;",
             "}",
         };
-        challenge(task, 2, solution, 8);
+        challenge(task, 2, expected, 2, solution, 8);
     }
 
     wait_enter();
@@ -216,6 +223,9 @@ void lesson_02_variables(void)
             "Declare two ints, 7 and 2, and print their division",
             "with one decimal place (it should show 3.5).",
         };
+        const char *expected[] = {
+            "3.5",
+        };
         const char *solution[] = {
             "#include <stdio.h>",
             "",
@@ -228,7 +238,7 @@ void lesson_02_variables(void)
             "",
             "The (float) must come BEFORE the division, on one side.",
         };
-        challenge(task, 2, solution, 10);
+        challenge(task, 2, expected, 1, solution, 10);
     }
 
     wait_enter();
@@ -331,31 +341,30 @@ void lesson_03_input(void)
 
     {
         const char *task[] = {
-            "Ask the user for their age and print how many years",
-            "are left until they turn 100.",
+            "Ask the user for their name and greet them.",
+        };
+        const char *expected[] = {
+            "What is your name? Jose",
+            "Hello, Jose",
         };
         const char *solution[] = {
             "#include <stdio.h>",
             "",
             "int main(void)",
             "{",
-            "    int age;",
-            "    printf(\"Age: \");",
+            "    char name[50];",
             "",
-            "    if (scanf(\"%d\", &age) != 1) {",
-            "        printf(\"That is not a number.\\n\");",
-            "        return 1;",
-            "    }",
+            "    printf(\"What is your name? \");",
+            "    fgets(name, sizeof name, stdin);",
             "",
-            "    printf(\"%d years to go.\\n\", 100 - age);",
+            "    printf(\"Hello, %s\", name);",
             "    return 0;",
             "}",
             "",
-            "scanf returns how many values it managed to read. Checking",
-            "that is the difference between a program that warns and one",
-            "that quietly uses garbage.",
+            "No \\n on the last printf: fgets keeps the newline you typed,",
+            "so it is already at the end of name.",
         };
-        challenge(task, 2, solution, 19);
+        challenge(task, 1, expected, 2, solution, 15);
     }
 
     wait_enter();
@@ -449,6 +458,10 @@ void lesson_04_conditions(void)
             "Read a number and say whether it is positive,",
             "negative or zero.",
         };
+        const char *expected[] = {
+            "Number: -5",
+            "negative",
+        };
         const char *solution[] = {
             "#include <stdio.h>",
             "",
@@ -471,7 +484,7 @@ void lesson_04_conditions(void)
             "    return 0;",
             "}",
         };
-        challenge(task, 2, solution, 21);
+        challenge(task, 2, expected, 2, solution, 21);
     }
 
     wait_enter();
@@ -568,6 +581,12 @@ void lesson_05_loops(void)
             "Print the 7 times table, from 7x1 to 7x10,",
             "one per line: '7 x 1 = 7'.",
         };
+        const char *expected[] = {
+            "7 x 1 = 7",
+            "7 x 2 = 14",
+            "...",
+            "7 x 10 = 70",
+        };
         const char *solution[] = {
             "#include <stdio.h>",
             "",
@@ -582,7 +601,7 @@ void lesson_05_loops(void)
             "Here <= is correct: a times table starts at 1, not 0.",
             "The < rule is for array indices.",
         };
-        challenge(task, 2, solution, 12);
+        challenge(task, 2, expected, 4, solution, 12);
     }
 
     wait_enter();

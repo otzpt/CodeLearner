@@ -46,9 +46,17 @@ Every module follows the same shape:
 ```
 PART 1, 2, 3 ...   explanation, one screen at a time
 EXERCISE           short questions, answered and checked here
-                   then a task to write in a real file, with a solution
+                   then a task to write in a real file, stating the
+                   output it must produce
 SUMMARY            four or five lines worth remembering
 ```
+
+The output stated by a task is the whole specification. Example code is shown
+afterwards if you ask for it, but a solution that produces the same output by
+different means is correct.
+
+An exercise never needs anything the course has not taught yet. That is
+enforced by `tools/check-teaching-order.py`, not by memory.
 
 The short questions are checked as you answer them. Getting one wrong is not
 a failure and does not block anything — the point is to show the right answer

@@ -57,9 +57,19 @@ void exercise(int number);
  */
 int question(const char *text, const char *correct, const char *why);
 
-/* A task to write in a real file, followed by a solution. The solution only
- * appears after a confirmation, so there is a chance to try first. */
+/* A task to write in a real file.
+ *
+ * `expected` is what the program must print. That is the actual specification
+ * -- the student's code is right when the output matches, no matter how it is
+ * written. `solution` is one way of getting there and appears only after a
+ * confirmation, so there is a chance to try first.
+ *
+ * Rule for whoever writes a challenge: the solution may only use what the
+ * course has already taught by this module. A task needing `if` before module
+ * 4 has taught `if` is a broken task, not a hard one.
+ */
 void challenge(const char *task[], int task_lines,
+               const char *expected[], int expected_lines,
                const char *solution[], int solution_lines);
 
 #endif

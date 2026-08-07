@@ -102,6 +102,10 @@ void lesson_06_arrays_strings(void)
             "Read a word and print it backwards.",
             "Use strlen to know where to start.",
         };
+        const char *expected[] = {
+            "Word: hello",
+            "olleh",
+        };
         const char *solution[] = {
             "#include <stdio.h>",
             "#include <string.h>",
@@ -110,22 +114,20 @@ void lesson_06_arrays_strings(void)
             "{",
             "    char word[100];",
             "",
-            "    if (fgets(word, sizeof word, stdin) == NULL) {",
-            "        return 1;",
-            "    }",
-            "    word[strcspn(word, \"\\n\")] = '\\0';",
+            "    printf(\"Word: \");",
+            "    scanf(\"%99s\", word);",
             "",
             "    for (int i = (int) strlen(word) - 1; i >= 0; i--) {",
-            "        putchar(word[i]);",
+            "        printf(\"%c\", word[i]);",
             "    }",
-            "    putchar('\\n');",
+            "    printf(\"\\n\");",
             "    return 0;",
             "}",
             "",
             "The -1 at the start is the same rule as always: the last index",
             "is the length minus one.",
         };
-        challenge(task, 2, solution, 21);
+        challenge(task, 2, expected, 2, solution, 19);
     }
 
     wait_enter();
@@ -166,8 +168,28 @@ void lesson_07_functions(void)
     printf("     |    name\n");
     printf("     type of what it gives back\n\n");
 
-    printf("  A function returning nothing is declared void.\n");
-    printf("  A function taking nothing is declared (void), not ().\n");
+    printf("  A function returning nothing is declared void.\n\n");
+
+    printf("  A function taking nothing is declared (void), not (). They\n");
+    printf("  are not the same thing, and this surprises everybody:\n\n");
+
+    printf("    int total()      'I am not saying what it takes'\n");
+    printf("    int total(void)  'it takes nothing'\n\n");
+
+    printf("  With the empty (), the compiler is not allowed to check the\n");
+    printf("  call. This compiles and runs, printing 42:\n\n");
+    printf("    int total() { return 42; }\n");
+    printf("    total(1, 2, 3);        <- three arguments. Nobody complains.\n\n");
+
+    printf("  With (void) the same call is an error, which is what you\n");
+    printf("  wanted. Verified on gcc with -std=c11.\n\n");
+
+    printf("  C23 changed this: there, () finally means the same as\n");
+    printf("  (void). Until every compiler you use is C23, write (void)\n");
+    printf("  and the question never comes up.\n\n");
+
+    printf("  For main itself both are allowed - it is the only function\n");
+    printf("  where it makes no difference.\n");
 
     wait_enter();
     clear_screen();
@@ -237,6 +259,9 @@ void lesson_07_functions(void)
             "Write a function swap(int *a, int *b) that swaps two",
             "variables. Test it from main.",
         };
+        const char *expected[] = {
+            "2 1",
+        };
         const char *solution[] = {
             "#include <stdio.h>",
             "",
@@ -258,7 +283,7 @@ void lesson_07_functions(void)
             "The held variable is necessary: without it, *a = *b would wipe",
             "a's value before you could copy it into b.",
         };
-        challenge(task, 2, solution, 19);
+        challenge(task, 2, expected, 1, solution, 19);
     }
 
     wait_enter();
@@ -354,6 +379,9 @@ void lesson_08_pointers(void)
             "Write a function that takes a pointer to int and",
             "doubles the value it points at. Show it worked.",
         };
+        const char *expected[] = {
+            "42",
+        };
         const char *solution[] = {
             "#include <stdio.h>",
             "",
@@ -376,7 +404,7 @@ void lesson_08_pointers(void)
             "The NULL check costs three lines and turns a crash into",
             "doing nothing.",
         };
-        challenge(task, 2, solution, 20);
+        challenge(task, 2, expected, 1, solution, 20);
     }
 
     wait_enter();
@@ -555,6 +583,10 @@ void lesson_09_memory(void)
             "Then compile it with -fsanitize=address and check it",
             "reports no leaks.",
         };
+        const char *expected[] = {
+            "How many? 5",
+            "1 2 3 4 5",
+        };
         const char *solution[] = {
             "#include <stdio.h>",
             "#include <stdlib.h>",
@@ -587,7 +619,7 @@ void lesson_09_memory(void)
             "malloc did not return NULL, and n <= 0 being rejected before",
             "it reaches malloc.",
         };
-        challenge(task, 6, solution, 30);
+        challenge(task, 6, expected, 2, solution, 30);
     }
 
     wait_enter();
@@ -700,6 +732,10 @@ void lesson_10_structs(void)
             "Fill in two books, put them in an array, and print",
             "them with a loop.",
         };
+        const char *expected[] = {
+            "The C Programming Language (1978)",
+            "Modern C (2019)",
+        };
         const char *solution[] = {
             "#include <stdio.h>",
             "#include <string.h>",
@@ -728,7 +764,7 @@ void lesson_10_structs(void)
             "shelf[i].title uses the dot, not the arrow: shelf[i] is a",
             "struct, not a pointer to one.",
         };
-        challenge(task, 3, solution, 24);
+        challenge(task, 3, expected, 2, solution, 24);
     }
 
     wait_enter();
