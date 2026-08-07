@@ -12,7 +12,7 @@ worked example code the student can open and read.
 | --- | --- | --- |
 | C | 12 — first program through linked lists | [`c/`](c/) |
 | C++ | 9 — cout through classes and RAII | [`cpp/`](cpp/) |
-| Python | not started | |
+| Python | 10 — print() through classes and exceptions | [`python/`](python/) |
 | JavaScript | not started | |
 | Launcher | done — pick a language, open its course | [`launcher/`](launcher/) |
 
@@ -40,7 +40,14 @@ make
 ./c-course
 ```
 
-You need a C compiler and `make`. On Arch:
+```bash
+cd python/src
+python3 main.py
+```
+
+Python needs no build step — nothing to compile, nothing to link.
+
+You need a C compiler and `make` for the C and C++ courses. On Arch:
 
 ```bash
 sudo pacman -S base-devel
@@ -136,6 +143,35 @@ Module 8 makes a point of the gap between *documented* and *observed*:
 guarantee at all — and on this specific compiler it happens to abort with an
 assertion. Both facts are stated, and kept separate.
 
+## The Python course
+
+| # | Module | The thing it exists for |
+| --- | --- | --- |
+| 1 | Running Python and `print()` | no compile step; `sep=`/`end=` |
+| 2 | Variables and types | rebinding, not redeclaring; `/` vs `//`, floor rounds toward `-inf` |
+| 3 | Reading input | `input()` always returns `str`; the forgot-to-convert `TypeError` |
+| 4 | Conditions | indentation *is* the block; truthiness |
+| 5 | Loops | `range()`'s end is exclusive; `enumerate()` |
+| 6 | Lists | **`b = a` does not copy** |
+| 7 | Functions and default arguments | **the mutable default argument trap** |
+| 8 | Dictionaries | `[]` raises, `.get()` doesn't; insertion order since 3.7 |
+| 9 | Classes | `self` is explicit; no enforced privacy; no destructor timing guarantee |
+| 10 | Exceptions | `try`/`except`/`finally`; catch a type, not everything |
+
+No memory-management thread here — Python collects its own garbage, so what
+module 9 in the C course spent five sections on does not exist as a topic.
+What replaces it, module for module, is a different class of bug: `b = a`
+aliasing a list instead of copying it (module 6), and a default argument list
+built once, at definition time, then silently shared by every call that
+relies on it (module 7) — confirmed by running `add_bad("a")` then
+`add_bad("b")` and watching the second call's result still contain `"a"`.
+
+Module 9 states plainly what Python does not promise: unlike a C++ destructor
+firing at a predictable, specific point, CPython's garbage collection timing
+is an implementation detail, not a language guarantee. For anything that must
+close at a known moment, the module points at `with`/context managers instead
+of pretending Python has RAII.
+
 ## Design rules
 
 **Nothing is claimed without being shown.** Where an example can run, it runs.
@@ -166,9 +202,10 @@ Tested on Linux. The Windows path is written but has not been run yet.
 
 ## Verification
 
-Both courses compile with `-Wall -Wextra` without a single warning, and run
-clean under AddressSanitizer and UndefinedBehaviorSanitizer — no leaks, no
-undefined behaviour. A course that teaches `free` (or `delete`) cannot leak.
+The C and C++ courses compile with `-Wall -Wextra` without a single warning,
+and run clean under AddressSanitizer and UndefinedBehaviorSanitizer — no
+leaks, no undefined behaviour. A course that teaches `free` (or `delete`)
+cannot leak.
 
 ```bash
 cd c
@@ -182,10 +219,12 @@ g++ -std=c++20 -Wall -Wextra -g -fsanitize=address,undefined -o /tmp/course src/
 /tmp/course
 ```
 
-Every solution shown in a challenge has been compiled and run under the same
-sanitizers.
+Every solution shown in a challenge, in any course, has been run and checked
+against the output its task promises — the Python course's own solutions
+included, verified by intercepting `input()` and driving every module through
+directly rather than by compiling anything.
 
-`python3 tools/check-teaching-order.py` covers both courses in one run.
+`python3 tools/check-teaching-order.py` covers all three courses in one run.
 
 ## Layout
 
@@ -211,9 +250,15 @@ cpp/
     ├── lessons.h            one prototype per module
     ├── lessons_basics.cpp   modules 1-5
     └── lessons_modern.cpp   modules 6-9
+python/
+└── src/
+    ├── main.py              menu: a list of modules and a loop
+    ├── ui.py                screen, input, questions, challenges
+    ├── lessons_basics.py    modules 1-5
+    └── lessons_more.py      modules 6-10
 tools/
 └── check-teaching-order.py  fails if an exercise needs something not yet
-                              taught, in either course
+                              taught, in any course
 docs/
 └── writing-a-course.md     how to add a module or a new language
 ```

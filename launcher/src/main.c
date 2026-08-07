@@ -29,15 +29,22 @@ struct Language {
 };
 
 static const struct Language LANGUAGES[] = {
+    /* Python is a script, not a compiled binary: `binary` here is checked by
+     * file_exists() the same as the others, then handed to system() as-is.
+     * On Linux this relies on main.py's own shebang and its execute bit
+     * (chmod +x); on Windows it relies on .py being associated with the
+     * Python launcher, which the standard python.org installer sets up.
+     * Neither has a fallback if that association is missing -- untested on
+     * Windows, same as the rest of this file. */
 #ifdef _WIN32
     { "C",          "..\\c\\c-course.exe" },
     { "C++",        "..\\cpp\\cpp-course.exe" },
-    { "Python",     NULL },
+    { "Python",     "..\\python\\src\\main.py" },
     { "JavaScript", NULL },
 #else
     { "C",          "../c/c-course" },
     { "C++",        "../cpp/cpp-course" },
-    { "Python",     NULL },
+    { "Python",     "../python/src/main.py" },
     { "JavaScript", NULL },
 #endif
 };

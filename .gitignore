@@ -3,6 +3,8 @@
 c/c-course
 cpp/cpp-course
 launcher/launcher
+__pycache__/
+*.pyc
 
 # Editors
 .vscode/

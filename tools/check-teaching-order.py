@@ -143,6 +143,61 @@ COURSES = {
         # shown to the reader either way; std::move is not something an
         # exercise ever requires the student to write.
     },
+    "python": {
+        "dir": "python/src",
+        "glob": "lessons_*.py",
+        "exercise_marker": r"ui\.exercise\((\d+)\)",
+        "summary_marker": r'\n    ui\.wait_enter\(\)\n    ui\.clear_screen\(\)\n    ui\.heading\("SUMMARY',
+        "first_taught": [
+            (1, r"\bprint\s*\("),
+            (2, r"\btype\s*\("),
+            (2, r'f"'),
+            (2, r"//"),
+            (3, r"\binput\s*\("),
+            (3, r"\bint\s*\(\s*input"),
+            (4, r"\bif\b"),
+            (4, r"\belif\b"),
+            (4, r"\belse\b"),
+            (5, r"\bfor\s+[a-z_]+\s+in\b"),
+            (5, r"\bwhile\b"),
+            (5, r"\brange\s*\("),
+            (5, r"\benumerate\s*\("),
+            # A real slice: an identifier directly against [, then only
+            # digits/word-chars/:/-/* inside -- no spaces, no quotes. A bare
+            # "\[.*:.*\]" also matches a list of strings where one string's
+            # TEXT happens to contain a colon, e.g. ["Number: -5", ...].
+            (6, r"[a-zA-Z_]\w*\[[\w:+*-]*:[\w:+*-]*\]"),
+            (6, r"\.sort\s*\("),
+            (6, r"\bsorted\s*\("),
+            (6, r"\.append\s*\("),
+            (7, r"\bdef\s+[a-z_]+\s*\("),
+            (7, r"\blambda\b"),
+            (7, r"\*args\b"),
+            (7, r"\*\*kwargs\b"),
+            (8, r"\.get\s*\("),
+            (8, r"\.items\s*\("),
+            (8, r"\.setdefault\s*\("),
+            (9, r"\bclass\s+[A-Z]"),
+            (9, r"\bself\b"),
+            (9, r"\bsuper\s*\("),
+            (10, r"\btry\s*:"),
+            (10, r"\bexcept\b"),
+            (10, r"\braise\b"),
+            (10, r"\bfinally\s*:"),
+            # Never introduced by any module.
+            (99, r"\bwith\b.*\bas\b"),
+            (99, r"\byield\b"),
+            (99, r"\basync\b"),
+            (99, r"\bawait\b"),
+            (99, r"\bmatch\b.*:"),
+            (99, r"@\w+\n"),  # a decorator
+            (99, r":=\b"),  # walrus operator
+        ],
+        # A dict literal ({"a": 1}) has no regex here distinct enough from
+        # an ordinary set/block of code to be worth writing -- module 8 is
+        # the only place one is ever needed in a solution, so there is
+        # nothing earlier for a missing rule to fail to catch.
+    },
 }
 
 

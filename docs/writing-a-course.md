@@ -178,20 +178,25 @@ Do not share code between courses. They are separate programs on purpose: a
 Python course importing a helper written in C would be worse in every way that
 matters, and the duplication is a menu loop.
 
-Once the course builds, register it in `launcher/src/main.c`: change its
-`LANGUAGES` entry from `NULL` to the relative path of the compiled binary
-(`"../python/python-course"`, matching the `_WIN32` branch with the `.exe`
-extension). Nothing else changes — the launcher finds it, checks it exists,
-and runs it with `system()`. It does not need to know the course's module
-count, its language, or anything else about it. The C++ course is the
-existing example of this: `cpp/` is a full second course, registered with
-a two-line change.
+Once the course builds -- or, for an interpreted language, once its entry
+script exists and is runnable -- register it in `launcher/src/main.c`: change
+its `LANGUAGES` entry from `NULL` to the relative path
+(`"../javascript/src/main.js"`, matching the `_WIN32` branch). Nothing else
+changes — the launcher checks the path exists and runs it with `system()`. It
+does not need to know the course's module count, its language, or whether
+that path is a compiled binary or a script. Python's entry is
+`"../python/src/main.py"`: no build step, but the same file_exists() check
+and the same system() call as C and C++. On Linux this relies on the script's
+own shebang line and its execute bit (`chmod +x`); on Windows, on `.py` being
+associated with the Python launcher, which the standard python.org installer
+sets up. Both C++ and Python are working examples of registering a language
+with a two-line change.
 
 Also add the course to `COURSES` in `tools/check-teaching-order.py` — its
-own `first_taught` table, in that language's own vocabulary. The C and C++
-entries are two working examples of the shape: a construct's regex mapped to
-the module that first shows it *anywhere in that module*, including the
-module's own explanation, not just its formally-named topic. `std::vector`'s
+own `first_taught` table, in that language's own vocabulary. The C, C++ and
+Python entries are three working examples of the shape: a construct's regex
+mapped to the module that first shows it *anywhere in that module*, including
+the module's own explanation, not just its formally-named topic. `std::vector`'s
 declaration syntax is credited to the C++ course's module 5, where it first
 appears on screen as something to loop over, even though its method
 vocabulary (`push_back`, `sort`) is not taught until module 8 -- the check
@@ -209,4 +214,26 @@ cc -std=c11 -Wall -Wextra -g -fsanitize=address,undefined -o /tmp/course src/*.c
 ```
 
 And compile every solution you added to a `challenge`. A solution shown to a
-student that does not compile is worse than no solution.
+student that does not compile is worse than no solution. Same idea for C++,
+with `g++ -std=c++20` in place of `cc -std=c11`.
+
+For an interpreted language with no compiler to catch mistakes, a syntax
+check plus running every module without crashing is the minimum, not
+optional:
+
+```bash
+cd python/src
+python3 -c "import ast; ast.parse(open('lessons_basics.py').read())"
+python3 main.py
+```
+
+For coverage without hand-counting how many prompts each module has,
+intercept `input()` and call each module's function directly rather than
+driving the menu through a pipe -- a real terminal, or a FIFO with delays
+between lines, is the only thing that behaves like actual typing; a plain
+`printf ... | prog` pre-fills the whole pipe at once and lets one process's
+buffered reads consume input meant for another, which looks like a hang or a
+skipped module and is not one. See the Python course's own verification
+history for the working pattern: mock `input()` with an iterator, redirect
+`stdout` to a buffer, call the lesson function, assert no exception and that
+`"SUMMARY"` appears in the captured output.
