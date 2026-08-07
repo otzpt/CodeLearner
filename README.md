@@ -1,4 +1,4 @@
-# aprender-programar
+# CodeLearner
 
 Command-line programming courses, one per language. No browser, no account,
 no internet. Open a terminal, run the program, learn.
@@ -286,6 +286,11 @@ rather than by compiling anything.
 ## Layout
 
 ```
+README.md                   this file
+LICENSE                     MIT
+CONTRIBUTING.md             how to add a module, a course, or a fix
+CODE_OF_CONDUCT.md          Contributor Covenant 2.1
+SECURITY.md                 what counts as a vulnerability here
 launcher/
 ├── Makefile
 └── src/
@@ -325,3 +330,21 @@ tools/
 docs/
 └── writing-a-course.md     how to add a module or a new language
 ```
+
+## Contributing
+
+Fixes to a lesson are the easiest contribution: point at the claim, show what
+you ran and what it actually printed, fix the text. Larger changes — a new
+module, a new language — start with an issue.
+
+One rule matters more than the rest: **every claim in a lesson must be
+something you actually ran.** This project has already caught three claims
+that "everyone knows" and that were wrong when tested. See
+[`CONTRIBUTING.md`](CONTRIBUTING.md) for the process and the per-language
+verification commands, and [`docs/writing-a-course.md`](docs/writing-a-course.md)
+for the design rules.
+
+## License
+
+[MIT](LICENSE). The courses depend on nothing beyond each language's own
+toolchain — no packages to install, in any of the four.
