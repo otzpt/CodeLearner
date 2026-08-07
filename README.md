@@ -64,9 +64,10 @@ EXERCISE           short questions, answered and checked here
 SUMMARY            four or five lines worth remembering
 ```
 
-The output stated by a task is the whole specification. Example code is shown
-afterwards if you ask for it, but a solution that produces the same output by
-different means is correct.
+Every task states two things: the input to type, if any, and the output it
+must produce. Together they are the whole specification. Example code is
+shown afterwards if you ask for it, but a solution that produces the same
+output from the same input, by different means, is correct.
 
 An exercise never needs anything the course has not taught yet. That is
 enforced by `tools/check-teaching-order.py`, not by memory.

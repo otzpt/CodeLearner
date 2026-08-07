@@ -108,6 +108,7 @@ void lesson06Strings() {
         {"Read a word and print it reversed, using only string",
          "operations -- no manual indexing loop needed if you look",
          "for a way to build the reverse directly."},
+        {"hello"},
         {"Word: hello", "olleh"},
         {"#include <iostream>", "#include <string>", "", "int main()", "{",
          "    std::string word;", "    std::cout << \"Word: \";",
@@ -228,6 +229,7 @@ void lesson07Functions() {
     challenge(
         {"Write swap(int &a, int &b) that swaps two ints using",
          "references, no pointers. Test it."},
+        {},
         {"2 1"},
         {"#include <iostream>", "", "void swap(int &a, int &b)", "{",
          "    int held = a;", "    a = b;", "    b = held;", "}", "",
@@ -328,6 +330,7 @@ void lesson08Vectors() {
     challenge(
         {"Read integers until -1 is entered, storing each in a", "vector.",
          "Print them sorted, then print how many there were."},
+        {"1", "2", "5", "-1"},
         {"Enter numbers, -1 to stop:", "1 2 5", "3"},
         {"#include <algorithm>", "#include <iostream>", "#include <vector>", "",
          "int main()", "{", "    std::vector<int> nums;", "    int n;",
@@ -474,6 +477,7 @@ void lesson09Classes() {
          "method increment() that adds 1, and a method value() that",
          "returns the current count. Create one, call increment()",
          "three times, and print value()."},
+        {},
         {"3"},
         {"#include <iostream>", "", "class Counter {", "public:",
          "    void increment() { count_++; }", "    int value() const { return count_; }",

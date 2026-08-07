@@ -167,6 +167,7 @@ int question(const char *text, const char *correct, const char *why)
 }
 
 void challenge(const char *task[], int task_lines,
+               const char *input[], int input_lines,
                const char *expected[], int expected_lines,
                const char *solution[], int solution_lines)
 {
@@ -175,6 +176,13 @@ void challenge(const char *task[], int task_lines,
 
     for (int i = 0; i < task_lines; i++) {
         printf("  %s\n", task[i]);
+    }
+
+    if (input_lines > 0) {
+        printf("\n  Try it with this input:\n\n");
+        for (int i = 0; i < input_lines; i++) {
+            printf("      %s\n", input[i]);
+        }
     }
 
     if (expected_lines > 0) {

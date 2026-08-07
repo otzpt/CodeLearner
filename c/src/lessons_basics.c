@@ -99,7 +99,7 @@ void lesson_01_compiling(void)
             "    return 0;",
             "}",
         };
-        challenge(task, 2, expected, 2, solution, 8);
+        challenge(task, 2, 0, 0, expected, 2, solution, 8);
     }
 
     wait_enter();
@@ -238,7 +238,7 @@ void lesson_02_variables(void)
             "",
             "The (float) must come BEFORE the division, on one side.",
         };
-        challenge(task, 2, expected, 1, solution, 10);
+        challenge(task, 2, 0, 0, expected, 1, solution, 10);
     }
 
     wait_enter();
@@ -364,7 +364,8 @@ void lesson_03_input(void)
             "No \\n on the last printf: fgets keeps the newline you typed,",
             "so it is already at the end of name.",
         };
-        challenge(task, 1, expected, 2, solution, 15);
+        const char *input[] = {"Jose"};
+        challenge(task, 1, input, 1, expected, 2, solution, 15);
     }
 
     wait_enter();
@@ -484,7 +485,8 @@ void lesson_04_conditions(void)
             "    return 0;",
             "}",
         };
-        challenge(task, 2, expected, 2, solution, 21);
+        const char *input[] = {"-5"};
+        challenge(task, 2, input, 1, expected, 2, solution, 21);
     }
 
     wait_enter();
@@ -601,7 +603,7 @@ void lesson_05_loops(void)
             "Here <= is correct: a times table starts at 1, not 0.",
             "The < rule is for array indices.",
         };
-        challenge(task, 2, expected, 4, solution, 12);
+        challenge(task, 2, 0, 0, expected, 4, solution, 12);
     }
 
     wait_enter();

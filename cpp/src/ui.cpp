@@ -118,6 +118,7 @@ bool question(const std::string &text, const std::string &correct, const std::st
 }
 
 void challenge(const std::vector<std::string> &task,
+               const std::vector<std::string> &input,
                const std::vector<std::string> &expected,
                const std::vector<std::string> &solution) {
     std::cout << "\n  >> WRITE THIS YOURSELF, in a real file\n";
@@ -125,6 +126,13 @@ void challenge(const std::vector<std::string> &task,
 
     for (const auto &line : task) {
         std::cout << "  " << line << "\n";
+    }
+
+    if (!input.empty()) {
+        std::cout << "\n  Try it with this input:\n\n";
+        for (const auto &line : input) {
+            std::cout << "      " << line << "\n";
+        }
     }
 
     if (!expected.empty()) {

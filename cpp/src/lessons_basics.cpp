@@ -80,6 +80,7 @@ void lesson01Compiling() {
 
     challenge(
         {"Print your name and the current year, each on its own line."},
+        {},
         {"Jose", "2026"},
         {"#include <iostream>", "", "int main()", "{",
          "    std::cout << \"Jose\" << \"\\n\";", "    std::cout << \"2026\" << \"\\n\";",
@@ -171,6 +172,7 @@ void lesson02Variables() {
     challenge(
         {"Declare two ints, 7 and 2, and print their division with one",
          "decimal place using static_cast (it should show 3.5)."},
+        {},
         {"3.5"},
         {"#include <iostream>", "", "int main()", "{", "    int a = 7, b = 2;",
          "    std::cout << static_cast<double>(a) / b << \"\\n\";",
@@ -271,6 +273,7 @@ void lesson03Input() {
 
     challenge(
         {"Ask for the user's name and greet them."},
+        {"Jose"},
         {"What is your name? Jose", "Hello, Jose"},
         {"#include <iostream>", "#include <string>", "", "int main()", "{",
          "    std::string name;", "", "    std::cout << \"What is your name? \";",
@@ -363,6 +366,7 @@ void lesson04Conditions() {
 
     challenge(
         {"Read a number and say whether it is positive, negative or zero."},
+        {"-5"},
         {"Number: -5", "negative"},
         {"#include <iostream>", "", "int main()", "{", "    int n;",
          "    std::cout << \"Number: \";", "    std::cin >> n;", "",
@@ -462,6 +466,7 @@ void lesson05Loops() {
         {"Print 1 through 5, one per line. Then print each of",
          "\"apple\", \"banana\", \"cherry\" prefixed with \"- \", using a",
          "range-based for loop."},
+        {},
         {"1", "2", "3", "4", "5", "- apple", "- banana", "- cherry"},
         {"#include <iostream>", "#include <string>", "#include <vector>", "",
          "int main()", "{", "    for (int i = 1; i <= 5; i++) {",

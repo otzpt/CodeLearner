@@ -44,9 +44,15 @@ void exercise(int number);
 // continuing.
 bool question(const std::string &text, const std::string &correct, const std::string &why);
 
-// A task to write in a real file, stating the output it must produce.
-// Example code is shown afterwards only if asked for.
+// A task to write in a real file.
+//
+// `input` is every line the program will read while producing `expected` --
+// empty for a task that reads nothing. Together they are the actual
+// specification: run the solution, type `input`, get `expected`, however the
+// code that does it is written. Example code is shown afterwards only if
+// asked for.
 void challenge(const std::vector<std::string> &task,
+               const std::vector<std::string> &input,
                const std::vector<std::string> &expected,
                const std::vector<std::string> &solution);
 

@@ -63,12 +63,19 @@ It maps every construct to the module that first teaches it and flags any
 exercise reaching ahead. Run it before committing a new module. Adding a
 construct to a lesson means adding it to that map too.
 
-### 5. The output is the specification, not your code
+### 5. The input and the output are the specification, not your code
 
-Every `challenge` states the output the program must produce. That is what the
-student checks against. The code shown afterwards is labelled example code and
-described as one way of getting there — a different solution that produces the
-same output is correct, and may well be better.
+Every `challenge` states two things: the input the program will read, if any,
+and the output it must produce from that input. That pair is what the student
+checks against — not the code shown afterwards, which is labelled example code
+and described as one way of getting there. A different solution that reads the
+same input and produces the same output is correct, and may well be better.
+
+State input explicitly even when it already appears inside the expected
+transcript (a prompt like `What is your name? ` followed by the typed `Jose`
+on the same line is realistic, but does not by itself tell a reader that
+`Jose` was theirs to type rather than the program's to print). Leave it empty
+for a task that reads nothing — most of the early ones do.
 
 ### 6. Teach the trap, not the syntax
 

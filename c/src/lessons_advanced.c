@@ -500,7 +500,8 @@ void lesson_12_deeper_memory(void)
             "Input 1 2 3 -1 gives 3 2 1: each number is pushed onto the",
             "front, so the list ends up reversed from input order.",
         };
-        challenge(task, 3, expected, 2, solution, 33);
+        const char *input[] = {"1", "2", "3", "-1"};
+        challenge(task, 3, input, 4, expected, 2, solution, 33);
     }
 
     wait_enter();

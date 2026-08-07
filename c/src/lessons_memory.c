@@ -127,7 +127,8 @@ void lesson_06_arrays_strings(void)
             "The -1 at the start is the same rule as always: the last index",
             "is the length minus one.",
         };
-        challenge(task, 2, expected, 2, solution, 19);
+        const char *input[] = {"hello"};
+        challenge(task, 2, input, 1, expected, 2, solution, 19);
     }
 
     wait_enter();
@@ -283,7 +284,7 @@ void lesson_07_functions(void)
             "The held variable is necessary: without it, *a = *b would wipe",
             "a's value before you could copy it into b.",
         };
-        challenge(task, 2, expected, 1, solution, 19);
+        challenge(task, 2, 0, 0, expected, 1, solution, 19);
     }
 
     wait_enter();
@@ -404,7 +405,7 @@ void lesson_08_pointers(void)
             "The NULL check costs three lines and turns a crash into",
             "doing nothing.",
         };
-        challenge(task, 2, expected, 1, solution, 20);
+        challenge(task, 2, 0, 0, expected, 1, solution, 20);
     }
 
     wait_enter();
@@ -619,7 +620,8 @@ void lesson_09_memory(void)
             "malloc did not return NULL, and n <= 0 being rejected before",
             "it reaches malloc.",
         };
-        challenge(task, 6, expected, 2, solution, 30);
+        const char *input[] = {"5"};
+        challenge(task, 6, input, 1, expected, 2, solution, 30);
     }
 
     wait_enter();
@@ -764,7 +766,7 @@ void lesson_10_structs(void)
             "shelf[i].title uses the dot, not the arrow: shelf[i] is a",
             "struct, not a pointer to one.",
         };
-        challenge(task, 3, expected, 2, solution, 24);
+        challenge(task, 3, 0, 0, expected, 2, solution, 24);
     }
 
     wait_enter();
