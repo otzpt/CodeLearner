@@ -4,108 +4,191 @@
 
 #include "ui.h"
 
-/* Largura interior da moldura. Mudar aqui muda todas as caixas do curso. */
-#define LARGURA 54
+/* Inside width of the frame. Changing this changes every box in the course. */
+#define WIDTH 54
 
-void limpar_ecra(void)
+void clear_screen(void)
 {
 #ifdef _WIN32
-    /* O cmd.exe antigo nao percebe codigos ANSI, e o cls trata disso. */
+    /* The old cmd.exe does not understand ANSI codes; cls handles it. */
     system("cls");
 #else
-    /* Codigos ANSI em vez de system("clear"): nao lanca outro processo e
-     * nao depende da variavel TERM, que falta quando o programa corre fora
-     * de um terminal normal. Sem isto aparece "TERM environment variable
-     * not set" a cada ecra.
+    /* ANSI codes rather than system("clear"): no second process per screen,
+     * and no dependency on the TERM variable, which is missing when the
+     * program runs outside a normal terminal. Without this, every screen
+     * printed "TERM environment variable not set".
      *
-     *   [H   poe o cursor no canto superior esquerdo
-     *   [2J  limpa o ecra visivel
-     *   [3J  limpa tambem o historico que ficou acima
+     *   [H   cursor to the top left
+     *   [2J  clear the visible screen
+     *   [3J  clear the scrollback above it too
      */
     fputs("\033[H\033[2J\033[3J", stdout);
     fflush(stdout);
 #endif
 }
 
-void pausa(void)
+void wait_enter(void)
 {
-    printf("\n  Carrega em ENTER para continuar...");
+    printf("\n  Press ENTER to continue...");
     fflush(stdout);
 
-    /* Consome ate ao fim da linha. Sem isto, um ENTER deixado para tras por
-     * uma leitura anterior faria a pausa passar sozinha. */
+    /* Consume to the end of the line. Without this, a newline left behind by
+     * an earlier read would make the pause skip itself. */
     int c;
     while ((c = getchar()) != '\n' && c != EOF) {
-        /* descartar */
+        /* discard */
     }
 }
 
-void separador(void)
+void rule(void)
 {
     printf("  ");
-    for (int i = 0; i < LARGURA; i++) {
+    for (int i = 0; i < WIDTH; i++) {
         putchar('-');
     }
     putchar('\n');
 }
 
-/* Escreve `texto` seguido de espacos ate encher a largura da moldura. */
-static void linha_preenchida(const char *texto, char borda)
+/* Print `text` padded with spaces out to the frame width. */
+static void padded_line(const char *text, char border)
 {
-    int escritos = (int) strlen(texto);
-    printf("  %c %s", borda, texto);
+    int written = (int) strlen(text);
+    printf("  %c %s", border, text);
 
-    for (int i = escritos; i < LARGURA - 3; i++) {
+    for (int i = written; i < WIDTH - 3; i++) {
         putchar(' ');
     }
-    printf("%c\n", borda);
+    printf("%c\n", border);
 }
 
-static void moldura(char canto)
+static void frame(char fill)
 {
     printf("  +");
-    for (int i = 0; i < LARGURA - 2; i++) {
-        putchar(canto);
+    for (int i = 0; i < WIDTH - 2; i++) {
+        putchar(fill);
     }
     printf("+\n");
 }
 
-void titulo(const char *texto)
+void title(const char *text)
 {
     putchar('\n');
-    moldura('=');
-    linha_preenchida(texto, '|');
-    moldura('=');
+    frame('=');
+    padded_line(text, '|');
+    frame('=');
     putchar('\n');
 }
 
-void seccao(const char *texto)
+void heading(const char *text)
 {
-    printf("\n  %s\n", texto);
-    separador();
+    printf("\n  %s\n", text);
+    rule();
 }
 
-int ler_linha(char *destino, int tamanho)
+int read_line(char *dest, int size)
 {
-    if (fgets(destino, tamanho, stdin) == NULL) {
-        destino[0] = '\0';
+    if (fgets(dest, size, stdin) == NULL) {
+        dest[0] = '\0';
         return 0;
     }
 
-    /* fgets guarda o '\n' final; o resto do programa nao o quer. */
-    destino[strcspn(destino, "\n")] = '\0';
+    /* fgets keeps the trailing newline; nothing else here wants it. */
+    dest[strcspn(dest, "\n")] = '\0';
     return 1;
 }
 
-int perguntar_sim(const char *pergunta)
+int ask_yes(const char *question_text)
 {
-    char resposta[8];
+    char answer[8];
 
-    printf("\n  %s (s/N): ", pergunta);
+    printf("\n  %s (y/N): ", question_text);
     fflush(stdout);
 
-    if (!ler_linha(resposta, sizeof resposta)) {
+    if (!read_line(answer, sizeof answer)) {
         return 0;
     }
-    return resposta[0] == 's' || resposta[0] == 'S';
+    return answer[0] == 'y' || answer[0] == 'Y';
+}
+
+void exercise(int number)
+{
+    printf("\n  >> EXERCISE - MODULE %d\n", number);
+    rule();
+}
+
+/* Copy `src` into `dest` without surrounding blanks and in lower case. Used
+ * only to compare answers, so "  Two " and "two" count as the same. */
+static void normalise(char *dest, int size, const char *src)
+{
+    int end = (int) strlen(src);
+    int start = 0;
+
+    while (src[start] == ' ' || src[start] == '\t') {
+        start++;
+    }
+    while (end > start && (src[end - 1] == ' ' || src[end - 1] == '\t')) {
+        end--;
+    }
+
+    int n = 0;
+    for (int i = start; i < end && n < size - 1; i++) {
+        char c = src[i];
+        dest[n++] = (c >= 'A' && c <= 'Z') ? (char) (c + 32) : c;
+    }
+    dest[n] = '\0';
+}
+
+int question(const char *text, const char *correct, const char *why)
+{
+    char answer[64];
+    char cleaned[64];
+    char expected[64];
+
+    printf("\n  %s\n", text);
+    printf("  Your answer: ");
+    fflush(stdout);
+
+    if (!read_line(answer, sizeof answer)) {
+        answer[0] = '\0';
+    }
+
+    normalise(cleaned, sizeof cleaned, answer);
+    normalise(expected, sizeof expected, correct);
+
+    int right = strcmp(cleaned, expected) == 0;
+
+    if (right) {
+        printf("\n  CORRECT.  %s\n", why);
+    } else {
+        printf("\n  NOT QUITE. The answer is: %s\n", correct);
+        printf("             %s\n", why);
+    }
+    return right;
+}
+
+void challenge(const char *task[], int task_lines,
+               const char *solution[], int solution_lines)
+{
+    printf("\n  >> WRITE THIS YOURSELF, in a real file\n");
+    rule();
+
+    for (int i = 0; i < task_lines; i++) {
+        printf("  %s\n", task[i]);
+    }
+
+    printf("\n  Try it first. Compile with:\n");
+    printf("    gcc -Wall -Wextra test.c -o test && ./test\n");
+
+    if (!ask_yes("Want to see one solution?")) {
+        return;
+    }
+
+    printf("\n");
+    rule();
+    for (int i = 0; i < solution_lines; i++) {
+        printf("  %s\n", solution[i]);
+    }
+    rule();
+    printf("  This is *a* solution, not *the* solution. If yours compiles\n");
+    printf("  and does what the task asked, it is right.\n");
 }

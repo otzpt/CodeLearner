@@ -1,44 +1,65 @@
 /*
- * ui.h - as pecas que todos os modulos usam para desenhar o ecra.
+ * ui.h - the pieces every lesson uses to draw the screen.
  *
- * Esta separado do resto porque limpar o ecra e ler uma tecla sao as duas
- * unicas coisas neste programa que mudam entre Windows e Linux. Ficando
- * aqui, o resto do curso nao precisa de saber em que sistema esta a correr.
+ * Kept separate because clearing the screen is the only thing in this whole
+ * program that differs between Windows and Linux. With it here, no lesson
+ * needs to know which system it is running on.
  */
 
 #ifndef UI_H
 #define UI_H
 
-/* Limpa o ecra. `cls` no Windows, `clear` no resto. */
-void limpar_ecra(void);
+/* Clear the screen. */
+void clear_screen(void);
 
-/* Espera que o aluno carregue em ENTER. Usa-se entre partes de uma licao,
- * para ninguem ter de ler tres ecras de uma vez. */
-void pausa(void);
+/* Wait for ENTER. Used between parts of a lesson, so nobody has to read
+ * three screens at once. */
+void wait_enter(void);
 
-/* Uma linha inteira de tracos, a toda a largura da caixa. */
-void separador(void);
+/* A full-width rule. */
+void rule(void);
 
-/* Titulo dentro de uma moldura:
+/* A framed title:
  *
  *   +======================================================+
- *   |  MODULO 1 - COMPILAR E IMPRIMIR                      |
+ *   |  MODULE 1 - COMPILING AND PRINTING                   |
  *   +======================================================+
  */
-void titulo(const char *texto);
+void title(const char *text);
 
-/* Cabecalho de acao dentro de uma licao (PARTE 1, EXERCICIO, ...). */
-void seccao(const char *texto);
+/* A heading inside a lesson (PART 1, SUMMARY, ...). */
+void heading(const char *text);
 
-/* Le uma linha do teclado para `destino`, sem nunca escrever mais do que
- * `tamanho` bytes. Devolve 1 se leu alguma coisa, 0 se o input acabou.
+/* Read one line into `dest`, never writing more than `size` bytes. Returns 1
+ * if something was read, 0 at end of input.
  *
- * Existe porque `scanf("%s")` nao sabe o tamanho do destino e `gets()` foi
- * removido da linguagem por causa disso. O modulo 3 explica porque.
+ * Exists because scanf("%s") does not know the size of its destination and
+ * gets() was removed from the language for the same reason. Module 3
+ * explains why.
  */
-int ler_linha(char *destino, int tamanho);
+int read_line(char *dest, int size);
 
-/* Faz a pergunta e devolve 1 para sim. Aceita s/S/n/N e ENTER como nao. */
-int perguntar_sim(const char *pergunta);
+/* Ask a yes/no question. Returns 1 for yes. ENTER means no. */
+int ask_yes(const char *question);
+
+/* Header for a module's exercise section. */
+void exercise(int number);
+
+/* A short-answer question.
+ *
+ * Prints `text`, reads the answer, compares it with `correct` (ignoring
+ * surrounding spaces and letter case) and says whether it was right. `why`
+ * is shown either way -- somebody who guessed correctly still needs the
+ * reason.
+ *
+ * Returns 1 if correct. Nobody is blocked from continuing: the point is to
+ * show the right answer, not to fail people.
+ */
+int question(const char *text, const char *correct, const char *why);
+
+/* A task to write in a real file, followed by a solution. The solution only
+ * appears after a confirmation, so there is a chance to try first. */
+void challenge(const char *task[], int task_lines,
+               const char *solution[], int solution_lines);
 
 #endif

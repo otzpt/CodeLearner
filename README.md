@@ -1,66 +1,128 @@
-# Aprender a programar
+# aprender-programar
 
-Cursos de linha de comandos, um por linguagem. Sem browser, sem conta, sem
-ligacao a internet — abres o terminal, corres o programa, aprendes.
+Command-line programming courses, one per language. No browser, no account,
+no internet. Open a terminal, run the program, learn.
 
-## Estado
+Each course is written **in the language it teaches**, so the source is itself
+worked example code the student can open and read.
 
-| Linguagem | Estado | Onde |
+## Status
+
+| Language | Modules | Where |
 | --- | --- | --- |
-| C | 10 modulos, do primeiro programa ate malloc/free | [`c/`](c/) |
-| C++ | por fazer | |
-| Python | por fazer | |
-| JavaScript | por fazer | |
-| Menu universal | por fazer — escolhe a linguagem e abre o curso | |
+| C | 10 — first program through `malloc`/`free` | [`c/`](c/) |
+| C++ | not started | |
+| Python | not started | |
+| JavaScript | not started | |
+| Launcher | not started — pick a language, open its course | |
 
-Cada curso e um programa independente. O menu universal sera apenas um
-lancador: nada do que os cursos fazem depende dele.
+The courses are independent programs. The launcher will only launch: nothing
+a course does will depend on it.
 
-## Correr o curso de C
+## Running the C course
 
 ```bash
 cd c
 make
-./curso-c
+./c-course
 ```
 
-Precisas do `gcc` (ou `clang`) e do `make`. No Arch:
+You need a C compiler and `make`. On Arch:
 
 ```bash
 sudo pacman -S base-devel
 ```
 
-## Como os cursos sao escritos
+On Debian or Ubuntu:
 
-**Escritos na propria linguagem que ensinam.** O curso de C esta escrito em C.
-Quem esta a aprender pode abrir `c/src/` e ler codigo real que faz o que o
-curso acabou de explicar — o menu usa arrays, structs e ponteiros para funcao,
-todos ensinados la dentro.
+```bash
+sudo apt install build-essential
+```
 
-**Nada e afirmado sem se mostrar.** Onde da para correr o exemplo, ele corre
-mesmo. O modulo das variaveis imprime o `sizeof` calculado pelo teu
-compilador, o dos ponteiros mostra moradas reais da tua maquina, e o da
-memoria faz um `malloc` a serio e mostra o que recebeu.
+## What a module looks like
 
-**Erros de memoria sao explicados, nao demonstrados.** Um `double free` ou um
-`use-after-free` sao comportamento indefinido: ou rebentavam o curso, ou —
-pior — pareciam funcionar e ensinavam a coisa errada.
+Every module follows the same shape:
 
-## Linux e Windows
+```
+PART 1, 2, 3 ...   explanation, one screen at a time
+EXERCISE           short questions, answered and checked here
+                   then a task to write in a real file, with a solution
+SUMMARY            four or five lines worth remembering
+```
 
-O curso de C compila e corre nos dois. A unica diferenca no codigo sao tres
-linhas em `c/src/ui.c`, a limpar o ecra.
+The short questions are checked as you answer them. Getting one wrong is not
+a failure and does not block anything — the point is to show the right answer
+and the reason, which appears either way.
 
-Testado em Linux. O caminho Windows esta escrito mas ainda nao foi corrido.
+## The C course
 
-## Verificacao
+| # | Module | The thing it exists for |
+| --- | --- | --- |
+| 1 | Compiling and printing | C compiles before it runs |
+| 2 | Variables and types | `5 / 2` is `2`, and casting afterwards is too late |
+| 3 | Reading input | why `scanf` needs `&`, and why arrays do not |
+| 4 | Conditions | `=` is not `==`, and missing braces |
+| 5 | Loops | the off-by-one, and that C does not check bounds |
+| 6 | Arrays and strings | `\0`, `strlen` vs `sizeof`, `==` does not compare text |
+| 7 | Functions | arguments are copies — this is what explains `&` |
+| 8 | Pointers | `&` and `*`, `NULL`, the segfault |
+| 9 | **Memory: malloc and free** | stack vs heap, and the four ways to get it wrong |
+| 10 | Structs | dot vs arrow, and why `sizeof` exceeds the sum of the fields |
 
-O curso de C compila com `-Wall -Wextra` sem um unico aviso, e foi corrido com
-o AddressSanitizer e o UndefinedBehaviorSanitizer sem fugas nem erros. Um
-curso que ensina `free` nao pode ter fugas.
+Module 9 is the longest on purpose: leaks, use-after-free, double free, and
+returning the address of a local array — each with what you actually see when
+it happens.
+
+## Design rules
+
+**Nothing is claimed without being shown.** Where an example can run, it runs.
+Module 2 prints `sizeof` as computed by *your* compiler; module 6 prints the
+real addresses of an array going up 4 bytes at a time; module 8 changes a
+variable through a pointer; module 9 calls `malloc` for real and shows the
+address it got back. Module 3 reads your actual keyboard.
+
+**Memory bugs are explained, never demonstrated.** A double free or a
+use-after-free is undefined behaviour: running one would either take the
+course down or — worse — appear to work and teach the wrong lesson.
+
+**Warnings are teaching material.** Everything builds with `-Wall -Wextra`
+and the course itself has none.
+
+More detail in [`docs/writing-a-course.md`](docs/writing-a-course.md).
+
+## Linux and Windows
+
+The C course builds and runs on both. The only platform-specific code is
+three lines in `c/src/ui.c` that clear the screen.
+
+Tested on Linux. The Windows path is written but has not been run yet.
+
+## Verification
+
+The course compiles with `-Wall -Wextra` without a single warning, and runs
+clean under AddressSanitizer and UndefinedBehaviorSanitizer — no leaks, no
+undefined behaviour. A course that teaches `free` cannot leak.
 
 ```bash
 cd c
-cc -std=c11 -Wall -Wextra -g -fsanitize=address,undefined -o /tmp/curso src/*.c
-/tmp/curso
+cc -std=c11 -Wall -Wextra -g -fsanitize=address,undefined -o /tmp/course src/*.c
+/tmp/course
+```
+
+Every solution shown in a challenge has been compiled and run under the same
+sanitizers.
+
+## Layout
+
+```
+c/
+├── Makefile
+└── src/
+    ├── main.c              menu: a table of modules and a loop
+    ├── ui.h  ui.c          screen, input, questions, challenges
+    ├── lessons.h           one prototype per module
+    ├── lessons_basics.c    modules 1-5
+    └── lessons_memory.c    modules 6-10
+docs/
+└── writing-a-course.md     how to add a module or a new language
 ```

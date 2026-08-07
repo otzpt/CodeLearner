@@ -1,8 +1,8 @@
-# Compilados
+# Build output
 *.o
-c/curso-c
+c/c-course
 
-# Editores
+# Editors
 .vscode/
 .idea/
 *.swp

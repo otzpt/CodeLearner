@@ -1,30 +1,30 @@
-# Curso de C
+# C course
 #
-#   make          compila para ./curso-c
-#   make correr   compila e corre
-#   make limpar   apaga o que foi compilado
+#   make          builds ./c-course
+#   make run      builds and runs
+#   make clean    removes build output
 #
-# -Wall -Wextra ficam sempre ligados. Num curso de C, um aviso do compilador
-# e material de aula: quase todos apanham um erro real antes de ele acontecer.
+# -Wall -Wextra stay on always. In a C course a compiler warning is
+# teaching material: nearly all of them catch a real bug before it happens.
 
 CC      = cc
 CFLAGS  = -std=c11 -Wall -Wextra -g
-ALVO    = curso-c
-FONTES  = src/main.c src/ui.c src/licoes_base.c src/licoes_memoria.c
-OBJETOS = $(FONTES:.c=.o)
+TARGET  = c-course
+SOURCES = src/main.c src/ui.c src/lessons_basics.c src/lessons_memory.c
+OBJECTS = $(SOURCES:.c=.o)
 
-$(ALVO): $(OBJETOS)
-	$(CC) $(CFLAGS) -o $@ $(OBJETOS)
+$(TARGET): $(OBJECTS)
+	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
 
-# Recompila um .o se o .c ou qualquer header mudar. Sem a dependencia dos
-# headers, mudar ui.h nao recompilava nada e o programa ficava inconsistente.
-%.o: %.c src/ui.h src/licoes.h
+# Rebuild a .o when its .c or any header changes. Without the header
+# dependency, editing ui.h would rebuild nothing and leave a stale binary.
+%.o: %.c src/ui.h src/lessons.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
-correr: $(ALVO)
-	./$(ALVO)
+run: $(TARGET)
+	./$(TARGET)
 
-limpar:
-	rm -f $(OBJETOS) $(ALVO)
+clean:
+	rm -f $(OBJECTS) $(TARGET)
 
-.PHONY: correr limpar
+.PHONY: run clean

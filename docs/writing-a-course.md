@@ -1,0 +1,161 @@
+# Writing a course
+
+How the courses are built, and how to add a module or a whole new language.
+Read this before writing lessons — most of it is about what *not* to do.
+
+## The rules
+
+### 1. Write the course in the language it teaches
+
+The C course is written in C. The Python course will be written in Python.
+
+This is not a gimmick. A student who has just been shown function pointers can
+open `c/src/main.c` and see one holding the module table. The course stops
+being a description of the language and becomes a program written in it.
+
+It also keeps the author honest: you cannot teach something the course itself
+does badly.
+
+### 2. Nothing is claimed without being shown
+
+If an example can run, run it and print the real result.
+
+```c
+printf("    sizeof(int)    = %zu bytes\n", sizeof(int));
+```
+
+Not "an int is usually 4 bytes" — the number the student's own compiler just
+produced. The same goes for addresses, for `5 / 2`, for what `malloc`
+returned. A course that asserts is a worse book; a course that demonstrates is
+something a book cannot be.
+
+Where the language runs elsewhere, verify before writing it down. Every output
+in the C course was produced by running the code first. Two claims changed as
+a result.
+
+### 3. Never demonstrate undefined behaviour
+
+A double free, a use-after-free, reading past an array. Explain them, show the
+error message they produce, and do not run them. Undefined behaviour either
+crashes the course or — much worse — appears to work, teaching exactly the
+wrong lesson.
+
+Show the diagnostic instead:
+
+```
+free(): double free detected in tcache 2
+```
+
+### 4. Teach the trap, not the syntax
+
+Syntax is in every reference. What is worth a module is the thing that makes
+people lose an afternoon:
+
+- `5 / 2` giving `2`, and casting the result being too late
+- `scanf` needing `&`, and arrays not
+- `==` on strings comparing addresses
+- an array of 5 having no index 5
+- one `free` per `malloc`, and who owes it
+
+If a module has no trap in it, it probably does not need to be a module.
+
+### 5. Warnings are teaching material
+
+Build with `-Wall -Wextra`. When the compiler catches something the module is
+about, quote it. `if (x = 5)` is a better lesson with the warning next to it.
+
+## Adding a module to an existing course
+
+Three steps.
+
+**1. Write the function.** In `c/src/lessons_basics.c` or
+`c/src/lessons_memory.c`, following the shape every other module uses:
+
+```c
+void lesson_11_files(void)
+{
+    title("MODULE 11 - FILES");
+
+    heading("PART 1: ...");
+    /* explanation, and run whatever can be run */
+
+    wait_enter();
+    clear_screen();
+    exercise(11);
+
+    question("...", "answer", "why");
+
+    {
+        const char *task[] = { "...", };
+        const char *solution[] = { "...", };
+        challenge(task, 1, solution, 1);
+    }
+
+    wait_enter();
+    clear_screen();
+    heading("SUMMARY");
+    /* four or five lines */
+    wait_enter();
+}
+```
+
+**2. Declare it** in `c/src/lessons.h`.
+
+**3. Add one line** to the `MODULES` table in `c/src/main.c`. The menu
+numbers itself and `MODULE_COUNT` counts itself, so there is nothing else to
+update.
+
+If the file is getting long, split it the way `lessons_basics.c` and
+`lessons_memory.c` are split — by theme, not by line count.
+
+## The helpers
+
+From `ui.h`. They exist so a lesson contains teaching and nothing else.
+
+| Function | Use |
+| --- | --- |
+| `title("MODULE 1 - ...")` | framed heading, once per module |
+| `heading("PART 1: ...")` | section heading inside a module |
+| `wait_enter()` | between screens |
+| `clear_screen()` | after `wait_enter()`, before the next part |
+| `rule()` | a plain horizontal line |
+| `exercise(n)` | the exercise header |
+| `question(text, correct, why)` | short answer, checked immediately |
+| `challenge(task, n, solution, m)` | write-it-yourself task, solution on request |
+| `read_line(buf, sizeof buf)` | read input safely |
+| `ask_yes("...")` | yes/no |
+
+`question` compares answers ignoring case and surrounding spaces. Keep the
+expected answer short and unambiguous — `"3"`, `"-o"`, `"yes"`. If a question
+has two reasonable phrasings, rewrite the question.
+
+## Adding a new language
+
+Create a directory next to `c/`, build it the same way, and add it to the
+table in the README.
+
+The course must:
+
+- be written in the language it teaches
+- be a single self-contained CLI program with no runtime dependencies beyond
+  that language's own toolchain
+- follow the module shape above
+- state in its own README how to run it and how it was verified
+
+Do not share code between courses. They are separate programs on purpose: a
+Python course importing a helper written in C would be worse in every way that
+matters, and the duplication is a menu loop.
+
+## Verifying before committing
+
+For the C course:
+
+```bash
+cd c
+make clean && make                     # must be warning-free
+cc -std=c11 -Wall -Wextra -g -fsanitize=address,undefined -o /tmp/course src/*.c
+/tmp/course                            # walk the modules you changed
+```
+
+And compile every solution you added to a `challenge`. A solution shown to a
+student that does not compile is worse than no solution.
