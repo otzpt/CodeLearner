@@ -171,6 +171,13 @@ Do not share code between courses. They are separate programs on purpose: a
 Python course importing a helper written in C would be worse in every way that
 matters, and the duplication is a menu loop.
 
+Once the course builds, register it in `launcher/src/main.c`: change its
+`LANGUAGES` entry from `NULL` to the relative path of the compiled binary
+(`"../cpp/cpp-course"`, matching the `_WIN32` branch with the `.exe`
+extension). Nothing else changes — the launcher finds it, checks it exists,
+and runs it with `system()`. It does not need to know the course's module
+count, its language, or anything else about it.
+
 ## Verifying before committing
 
 For the C course:

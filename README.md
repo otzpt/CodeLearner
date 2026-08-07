@@ -10,16 +10,29 @@ worked example code the student can open and read.
 
 | Language | Modules | Where |
 | --- | --- | --- |
-| C | 10 — first program through `malloc`/`free` | [`c/`](c/) |
+| C | 12 — first program through linked lists | [`c/`](c/) |
 | C++ | not started | |
 | Python | not started | |
 | JavaScript | not started | |
-| Launcher | not started — pick a language, open its course | |
+| Launcher | done — pick a language, open its course | [`launcher/`](launcher/) |
 
-The courses are independent programs. The launcher will only launch: nothing
-a course does will depend on it.
+The courses are independent programs. The launcher only launches them: it
+does not know anything about what happens inside one.
 
-## Running the C course
+## Running
+
+```bash
+cd launcher
+make
+./launcher
+```
+
+Pick a language and its course runs in place. Quitting a course (its own
+`[0] Quit`) returns to this menu — that is a subprocess exiting, not
+anything the launcher had to build. A language with no course yet shows as
+"coming soon" instead of being selectable.
+
+To run a course directly, without the launcher:
 
 ```bash
 cd c
@@ -114,8 +127,12 @@ More detail in [`docs/writing-a-course.md`](docs/writing-a-course.md).
 
 ## Linux and Windows
 
-The C course builds and runs on both. The only platform-specific code is
-three lines in `c/src/ui.c` that clear the screen.
+The C course and the launcher build and run on both. The only
+platform-specific code is the three lines that clear the screen (in
+`c/src/ui.c` and duplicated in `launcher/src/main.c` — kept separate rather
+than shared, since the launcher and the courses are meant to stay
+independent programs) and, in the launcher, which relative path and file
+extension a course binary uses.
 
 Tested on Linux. The Windows path is written but has not been run yet.
 
@@ -137,6 +154,10 @@ sanitizers.
 ## Layout
 
 ```
+launcher/
+├── Makefile
+└── src/
+    └── main.c              pick a language, system() its binary, loop
 c/
 ├── Makefile
 └── src/

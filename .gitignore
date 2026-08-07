@@ -1,6 +1,7 @@
 # Build output
 *.o
 c/c-course
+launcher/launcher
 
 # Editors
 .vscode/
