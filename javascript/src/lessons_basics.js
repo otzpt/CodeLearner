@@ -162,14 +162,14 @@ async function lesson02Variables() {
   await ui.question("NaN === NaN   Equal?", "no", "NaN never equals anything, including itself. Use Number.isNaN().");
 
   await ui.challenge(
-    ["Declare texto = \"5\" and numero = 5. Print typeof texto,", "typeof numero, then texto == numero, then texto === numero."],
+    ["Declare text = \"5\" and number = 5. Print typeof text,", "typeof number, then text == number, then text === number."],
     [],
     ["string number", "true false"],
     [
-      'const texto = "5";',
-      "const numero = 5;",
-      "console.log(typeof texto, typeof numero);",
-      "console.log(texto == numero, texto === numero);",
+      'const text = "5";',
+      "const number = 5;",
+      "console.log(typeof text, typeof number);",
+      "console.log(text == number, text === number);",
     ]
   );
 

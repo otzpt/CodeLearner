@@ -228,18 +228,18 @@ async function lesson08Objects() {
 
   ui.heading("PART 1: property access, and JSON");
 
-  const aluno = { nome: "Ana", nota: 15 };
-  console.log('    const aluno = { nome: "Ana", nota: 15 };');
-  console.log(`    aluno.nome    -> ${aluno.nome}`);
-  console.log(`    aluno["nota"] -> ${aluno["nota"]}`);
+  const student = { name: "Ana", grade: 15 };
+  console.log('    const student = { name: "Ana", grade: 15 };');
+  console.log(`    student.name      -> ${student.name}`);
+  console.log(`    student["grade"]  -> ${student["grade"]}`);
   console.log();
-  aluno.curso = "Info";
-  console.log('    aluno.curso = "Info";');
-  console.log(`    Object.keys(aluno) -> [${Object.keys(aluno)}]`);
+  student.course = "Info";
+  console.log('    student.course = "Info";');
+  console.log(`    Object.keys(student) -> [${Object.keys(student)}]`);
   console.log();
-  console.log("    JSON.stringify(aluno)");
-  console.log(`  Running: ${JSON.stringify(aluno)}`);
-  console.log(`           JSON.parse(...).nota -> ${JSON.parse(JSON.stringify(aluno)).nota}`);
+  console.log("    JSON.stringify(student)");
+  console.log(`  Running: ${JSON.stringify(student)}`);
+  console.log(`           JSON.parse(...).grade -> ${JSON.parse(JSON.stringify(student)).grade}`);
 
   await ui.waitEnter();
   ui.clearScreen();
@@ -266,11 +266,11 @@ async function lesson08Objects() {
   ui.clearScreen();
   ui.heading("PART 3: optional chaining");
 
-  console.log("    aluno.morada?.rua");
-  console.log(`  Running: ${aluno.morada?.rua}`);
+  console.log("    student.address?.street");
+  console.log(`  Running: ${student.address?.street}`);
   console.log();
-  console.log("  aluno has no morada property. Without ?., aluno.morada.rua");
-  console.log("  would throw -- reading .rua off undefined is a TypeError,");
+  console.log("  student has no address property. Without ?., student.address.street");
+  console.log("  would throw -- reading .street off undefined is a TypeError,");
   console.log("  module 10 shows exactly that message. ?. stops at the first");
   console.log("  missing link and gives undefined instead of throwing.");
 
@@ -287,14 +287,14 @@ async function lesson08Objects() {
   await ui.question("What does JSON.stringify turn an object into?", "a string", "A text representation, suitable for comparing contents or sending over a network.");
 
   await ui.challenge(
-    ['Given aluno = { nome: "Ana", notas: [15, 18] }, print it as', "JSON, then print the second grade after parsing it back."],
+    ['Given student = { name: "Ana", grades: [15, 18] }, print it as', "JSON, then print the second grade after parsing it back."],
     [],
-    ['{"nome":"Ana","notas":[15,18]}', "18"],
+    ['{"name":"Ana","grades":[15,18]}', "18"],
     [
-      'const aluno = { nome: "Ana", notas: [15, 18] };',
-      "const texto = JSON.stringify(aluno);",
-      "console.log(texto);",
-      "console.log(JSON.parse(texto).notas[1]);",
+      'const student = { name: "Ana", grades: [15, 18] };',
+      "const text = JSON.stringify(student);",
+      "console.log(text);",
+      "console.log(JSON.parse(text).grades[1]);",
     ]
   );
 
@@ -521,7 +521,7 @@ async function lesson10Errors() {
   }
 
   try {
-    throw new ValidationError("idade invalida");
+    throw new ValidationError("invalid age");
   } catch (e) {
     console.log(`  Running: ${e.name}: ${e.message}, instanceof Error -> ${e instanceof Error}`);
   }

@@ -261,19 +261,19 @@ def lesson_08_dicts():
 
     ui.heading("PART 1: [] raises, .get() does not")
 
-    notas = {"ana": 15, "bea": 18}
-    print('    notas = {"ana": 15, "bea": 18}')
+    grades = {"ana": 15, "bea": 18}
+    print('    grades = {"ana": 15, "bea": 18}')
     print()
-    print(f'    notas["ana"]          -> {notas["ana"]}')
-    print(f'    notas.get("caro")     -> {notas.get("caro")}')
-    print(f'    notas.get("caro", 0)  -> {notas.get("caro", 0)}')
+    print(f'    grades["ana"]          -> {grades["ana"]}')
+    print(f'    grades.get("cal")      -> {grades.get("cal")}')
+    print(f'    grades.get("cal", 0)   -> {grades.get("cal", 0)}')
     print()
     print("  [] raises KeyError for a missing key; .get() returns None, or")
     print("  a default you choose. Running the raise for real:")
     print()
 
     try:
-        notas["caro"]
+        grades["cal"]
     except KeyError as e:
         print(f"    KeyError: {e}")
 
@@ -285,23 +285,23 @@ def lesson_08_dicts():
     ui.clear_screen()
     ui.heading("PART 2: order, looping, and building one up")
 
-    notas["caro"] = 9
-    print('    notas["caro"] = 9')
-    print(f'    "caro" in notas    -> {"caro" in notas}')
+    grades["cal"] = 9
+    print('    grades["cal"] = 9')
+    print(f'    "cal" in grades    -> {"cal" in grades}')
     print()
-    print("    for nome, nota in notas.items():")
-    print("        print(nome, nota)")
+    print("    for name, grade in grades.items():")
+    print("        print(name, grade)")
     print()
-    for nome, nota in notas.items():
-        print(f"    {nome} {nota}")
+    for name, grade in grades.items():
+        print(f"    {name} {grade}")
     print()
     print("  Insertion order is kept -- a language guarantee since Python")
     print("  3.7, not an implementation accident. It is still not sorted;")
     print("  for that:")
     print()
-    print("    sorted(notas.items(), key=lambda kv: kv[1], reverse=True)")
+    print("    sorted(grades.items(), key=lambda kv: kv[1], reverse=True)")
     print()
-    print(f"  Running: {sorted(notas.items(), key=lambda kv: kv[1], reverse=True)}")
+    print(f"  Running: {sorted(grades.items(), key=lambda kv: kv[1], reverse=True)}")
 
     ui.wait_enter()
     ui.clear_screen()
@@ -321,8 +321,8 @@ def lesson_08_dicts():
     print("  then returns whatever is now there -- so append always lands")
     print("  on a real list, first call or not.")
     print()
-    print("    {k: v * 2 for k, v in notas.items()}")
-    print(f"  Running: {({k: v * 2 for k, v in notas.items()})}")
+    print("    {k: v * 2 for k, v in grades.items()}")
+    print(f"  Running: {({k: v * 2 for k, v in grades.items()})}")
 
     ui.wait_enter()
     ui.clear_screen()
@@ -345,14 +345,14 @@ def lesson_08_dicts():
 
     ui.challenge(
         [
-            'Given notas = {"ana": 15, "bea": 18}, print the items',
+            'Given grades = {"ana": 15, "bea": 18}, print the items',
             "sorted by value, highest first.",
         ],
         [],
         ["[('bea', 18), ('ana', 15)]"],
         [
-            'notas = {"ana": 15, "bea": 18}',
-            "print(sorted(notas.items(), key=lambda kv: kv[1], reverse=True))",
+            'grades = {"ana": 15, "bea": 18}',
+            "print(sorted(grades.items(), key=lambda kv: kv[1], reverse=True))",
         ],
     )
 

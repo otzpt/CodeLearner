@@ -341,15 +341,15 @@ def lesson_04_conditions():
     name = ""
     print('    name = ""')
     print("    if name:")
-    print('        print("tem nome")')
+    print('        print("has name")')
     print("    else:")
-    print('        print("sem nome")')
+    print('        print("no name")')
     print()
     print("  Running:  ", end="")
     if name:
-        print("tem nome")
+        print("has name")
     else:
-        print("sem nome")
+        print("no name")
 
     print()
     print("  An empty string is falsy, so testing `if name:` directly is")
