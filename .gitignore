@@ -1,6 +1,7 @@
 # Build output
 *.o
 c/c-course
+cpp/cpp-course
 launcher/launcher
 
 # Editors

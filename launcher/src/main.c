@@ -31,12 +31,12 @@ struct Language {
 static const struct Language LANGUAGES[] = {
 #ifdef _WIN32
     { "C",          "..\\c\\c-course.exe" },
-    { "C++",        NULL },
+    { "C++",        "..\\cpp\\cpp-course.exe" },
     { "Python",     NULL },
     { "JavaScript", NULL },
 #else
     { "C",          "../c/c-course" },
-    { "C++",        NULL },
+    { "C++",        "../cpp/cpp-course" },
     { "Python",     NULL },
     { "JavaScript", NULL },
 #endif

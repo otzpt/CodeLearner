@@ -173,10 +173,22 @@ matters, and the duplication is a menu loop.
 
 Once the course builds, register it in `launcher/src/main.c`: change its
 `LANGUAGES` entry from `NULL` to the relative path of the compiled binary
-(`"../cpp/cpp-course"`, matching the `_WIN32` branch with the `.exe`
+(`"../python/python-course"`, matching the `_WIN32` branch with the `.exe`
 extension). Nothing else changes — the launcher finds it, checks it exists,
 and runs it with `system()`. It does not need to know the course's module
-count, its language, or anything else about it.
+count, its language, or anything else about it. The C++ course is the
+existing example of this: `cpp/` is a full second course, registered with
+a two-line change.
+
+Also add the course to `COURSES` in `tools/check-teaching-order.py` — its
+own `first_taught` table, in that language's own vocabulary. The C and C++
+entries are two working examples of the shape: a construct's regex mapped to
+the module that first shows it *anywhere in that module*, including the
+module's own explanation, not just its formally-named topic. `std::vector`'s
+declaration syntax is credited to the C++ course's module 5, where it first
+appears on screen as something to loop over, even though its method
+vocabulary (`push_back`, `sort`) is not taught until module 8 -- the check
+follows what a reader has actually seen, not which module "owns" a topic.
 
 ## Verifying before committing
 
