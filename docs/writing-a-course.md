@@ -180,26 +180,29 @@ matters, and the duplication is a menu loop.
 
 Once the course builds -- or, for an interpreted language, once its entry
 script exists and is runnable -- register it in `launcher/src/main.c`: change
-its `LANGUAGES` entry from `NULL` to the relative path
-(`"../javascript/src/main.js"`, matching the `_WIN32` branch). Nothing else
-changes — the launcher checks the path exists and runs it with `system()`. It
-does not need to know the course's module count, its language, or whether
-that path is a compiled binary or a script. Python's entry is
-`"../python/src/main.py"`: no build step, but the same file_exists() check
-and the same system() call as C and C++. On Linux this relies on the script's
-own shebang line and its execute bit (`chmod +x`); on Windows, on `.py` being
-associated with the Python launcher, which the standard python.org installer
-sets up. Both C++ and Python are working examples of registering a language
+its `LANGUAGES` entry from `NULL` to the relative path. Nothing else changes
+— the launcher checks the path exists and runs it with `system()`. It does
+not need to know the course's module count, its language, or whether that
+path is a compiled binary or a script. Python's and JavaScript's entries are
+scripts, `"../python/src/main.py"` and `"../javascript/src/main.js"`: no
+build step, but the same file_exists() check and the same system() call as C
+and C++. On Linux this relies on the script's own shebang line and its
+execute bit (`chmod +x`); on Windows, on the extension being associated with
+the right interpreter, which the standard installers set up. All three of
+C++, Python and JavaScript are working examples of registering a language
 with a two-line change.
 
 Also add the course to `COURSES` in `tools/check-teaching-order.py` — its
-own `first_taught` table, in that language's own vocabulary. The C, C++ and
-Python entries are three working examples of the shape: a construct's regex
+own `first_taught` table, in that language's own vocabulary. The four
+existing entries are working examples of the shape: a construct's regex
 mapped to the module that first shows it *anywhere in that module*, including
 the module's own explanation, not just its formally-named topic. `std::vector`'s
 declaration syntax is credited to the C++ course's module 5, where it first
 appears on screen as something to loop over, even though its method
-vocabulary (`push_back`, `sort`) is not taught until module 8 -- the check
+vocabulary (`push_back`, `sort`) is not taught until module 8; JavaScript's
+arrow-function syntax `=>` is credited to module 6 for the identical reason
+-- it appears as a `map`/`filter`/`sort` argument before module 7 makes
+arrow functions a named topic -- the check
 follows what a reader has actually seen, not which module "owns" a topic.
 
 ## Verifying before committing

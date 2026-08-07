@@ -198,6 +198,57 @@ COURSES = {
         # the only place one is ever needed in a solution, so there is
         # nothing earlier for a missing rule to fail to catch.
     },
+    "javascript": {
+        "dir": "javascript/src",
+        "glob": "lessons_*.js",
+        "exercise_marker": r"ui\.exercise\((\d+)\)",
+        "summary_marker": r'\n  await ui\.waitEnter\(\);\n  ui\.clearScreen\(\);\n  ui\.heading\("SUMMARY',
+        "first_taught": [
+            (1, r"\bconsole\.log\s*\("),
+            (2, r"===|!=="),
+            (2, r"\btypeof\b"),
+            (2, r"`[^`]*\$\{"),  # a template literal with interpolation
+            (3, r"\bawait\s+ui\.ask\s*\("),
+            (3, r"\basync\s+function\b"),
+            (4, r"\bif\s*\("),
+            (4, r"\belse\b"),
+            (5, r"\bfor\s*\("),
+            (5, r"\bwhile\s*\("),
+            (5, r"\bfor\s*\(\s*const\s+\w+\s+of\b"),
+            (5, r"\bfor\s*\(\s*const\s+\w+\s+in\b"),
+            (6, r"\.\.\."),  # spread
+            (6, r"\.sort\s*\("),
+            (6, r"\.push\s*\("),
+            (6, r"\.map\s*\("),
+            (6, r"\.filter\s*\("),
+            (6, r"\.reduce\s*\("),
+            # Arrow syntax appears in module 6's own demo as a map/filter/
+            # sort argument before module 7 makes it a named topic -- same
+            # situation as the C++ course's std::vector, credited to the
+            # module where a reader has actually seen it on screen.
+            (6, r"=>"),
+            # \bthis\b alone also matches the English word, as in "does
+            # THIS compare equal?" -- this.field is unambiguous.
+            (7, r"\bthis\.\w+"),
+            (8, r"\bJSON\.(stringify|parse)\s*\("),
+            (8, r"\?\."),
+            (9, r"\bclass\s+[A-Z]"),
+            (9, r"\bextends\b"),
+            (9, r"\bsuper\s*\("),
+            (9, r"#\w+"),  # a private field
+            (10, r"\btry\s*\{"),
+            (10, r"\bcatch\s*\("),
+            (10, r"\bthrow\b"),
+            (10, r"\bfinally\s*\{"),
+            # Never introduced by any module.
+            (99, r"\byield\b"),
+            (99, r"\bgenerator\b"),
+            (99, r"\bPromise\.(all|race|any)\s*\("),
+            (99, r"\bnew Map\s*\("),
+            (99, r"\bnew Set\s*\("),
+            (99, r"\bSymbol\s*\("),
+        ],
+    },
 }
 
 

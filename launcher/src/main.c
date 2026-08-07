@@ -40,12 +40,12 @@ static const struct Language LANGUAGES[] = {
     { "C",          "..\\c\\c-course.exe" },
     { "C++",        "..\\cpp\\cpp-course.exe" },
     { "Python",     "..\\python\\src\\main.py" },
-    { "JavaScript", NULL },
+    { "JavaScript", "..\\javascript\\src\\main.js" },
 #else
     { "C",          "../c/c-course" },
     { "C++",        "../cpp/cpp-course" },
     { "Python",     "../python/src/main.py" },
-    { "JavaScript", NULL },
+    { "JavaScript", "../javascript/src/main.js" },
 #endif
 };
 

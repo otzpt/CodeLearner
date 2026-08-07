@@ -13,8 +13,12 @@ worked example code the student can open and read.
 | C | 12 — first program through linked lists | [`c/`](c/) |
 | C++ | 9 — cout through classes and RAII | [`cpp/`](cpp/) |
 | Python | 10 — print() through classes and exceptions | [`python/`](python/) |
-| JavaScript | not started | |
+| JavaScript | 10 — console.log() through classes and errors | [`javascript/`](javascript/) |
 | Launcher | done — pick a language, open its course | [`launcher/`](launcher/) |
+
+All four languages are covered. The launcher and `tools/check-teaching-order.py`
+both work over any number of courses without modification, so a fifth language
+is a matter of writing it, not extending anything else.
 
 The courses are independent programs. The launcher only launches them: it
 does not know anything about what happens inside one.
@@ -45,7 +49,13 @@ cd python/src
 python3 main.py
 ```
 
-Python needs no build step — nothing to compile, nothing to link.
+```bash
+cd javascript/src
+node main.js
+```
+
+Python and JavaScript need no build step — nothing to compile, nothing to
+link.
 
 You need a C compiler and `make` for the C and C++ courses. On Arch:
 
@@ -172,6 +182,52 @@ is an implementation detail, not a language guarantee. For anything that must
 close at a known moment, the module points at `with`/context managers instead
 of pretending Python has RAII.
 
+## The JavaScript course
+
+| # | Module | The thing it exists for |
+| --- | --- | --- |
+| 1 | Running Node and `console.log()` | no compile step; template literals |
+| 2 | Variables and types | always `===`, never `==`; `NaN !== NaN` |
+| 3 | Reading input | **reading a line is asynchronous**; `async`/`await` all the way up |
+| 4 | Conditions | `[]` and `{}` are **truthy** — the opposite of Python |
+| 5 | Loops | `for...of` gives values, `for...in` gives keys as strings |
+| 6 | Arrays | `const` doesn't stop `b = a` aliasing; default `.sort()` sorts as text |
+| 7 | Functions and `this` | a regular function's `this` depends on the call site; an arrow's does not |
+| 8 | Objects | `==` and `===` are *both* wrong for comparing objects — both compare by reference |
+| 9 | Classes | `#field` is **real** private, enforced by a `SyntaxError` |
+| 10 | Errors | `try`/`catch`/`finally`; `extends Error` for your own catchable type |
+
+No memory-management thread here either — same as Python, garbage collected.
+Module 3 exists because of a genuine difference from every other course in
+this repo: Node has no built-in blocking read the way `scanf`, `input()` and
+even `cin` are. Reading a line is asynchronous, so `async`/`await` is not
+optional syntax to learn eventually — it is required from the first `input()`
+equivalent onward, and it propagates upward through every function that
+calls one.
+
+That module also states a real, verified gotcha about *testing* a script
+non-interactively rather than about the language itself: piping input with
+`printf "a\nb\n" | node script.js` closes stdin the instant it finishes
+writing, and a second pending `readline`-promises `question()` call after
+that point silently never resolves — no error, just a hang. A real terminal
+never closes stdin mid-session, so this never affects the course; it does
+affect testing a script by piping to it, which is why this course's own
+`ui.js` drives `readline`'s async iterator by hand instead of using
+`question()`, verified against both a closed pipe and realistic typed timing.
+
+Module 4 is the one place this course actively disagrees with the Python
+course sitting next to it: `Boolean([])` and `Boolean({})` are both `true`.
+`if (arr)` is never a length check in JavaScript, unlike Python where an
+empty list is falsy.
+
+Module 9's `#field` syntax is worth reading against the other three courses'
+answers to the same question. C++'s `private` is enforced by the compiler.
+Python's leading underscore is a convention enforced by nobody — confirmed in
+that course by reading `a._grade` from outside the class and watching it
+just work. JavaScript's `#field` sits with C++: trying to reference `s.#grade`
+from outside the class is a `SyntaxError`, caught before the program runs at
+all, verified on Node 26.
+
 ## Design rules
 
 **Nothing is claimed without being shown.** Where an example can run, it runs.
@@ -220,11 +276,12 @@ g++ -std=c++20 -Wall -Wextra -g -fsanitize=address,undefined -o /tmp/course src/
 ```
 
 Every solution shown in a challenge, in any course, has been run and checked
-against the output its task promises — the Python course's own solutions
-included, verified by intercepting `input()` and driving every module through
-directly rather than by compiling anything.
+against the output its task promises. Python's and JavaScript's own solutions
+are included, verified by intercepting `input()` (Python) or the `ui.js`
+prompt functions (JavaScript) and driving every module through directly
+rather than by compiling anything.
 
-`python3 tools/check-teaching-order.py` covers all three courses in one run.
+`python3 tools/check-teaching-order.py` covers all four courses in one run.
 
 ## Layout
 
@@ -256,6 +313,12 @@ python/
     ├── ui.py                screen, input, questions, challenges
     ├── lessons_basics.py    modules 1-5
     └── lessons_more.py      modules 6-10
+javascript/
+└── src/
+    ├── main.js              menu: an array of modules and an async loop
+    ├── ui.js                screen, input, questions, challenges
+    ├── lessons_basics.js    modules 1-5
+    └── lessons_more.js      modules 6-10
 tools/
 └── check-teaching-order.py  fails if an exercise needs something not yet
                               taught, in any course
