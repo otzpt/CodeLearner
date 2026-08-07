@@ -40,6 +40,8 @@ static const struct Module MODULES[] = {
     { "Pointers",                 lesson_08_pointers },
     { "Memory: malloc and free",  lesson_09_memory },
     { "Structs",                  lesson_10_structs },
+    { "Final test: 2 programs",   lesson_11_final_test },
+    { "Going deeper: memory (extra)", lesson_12_deeper_memory },
 };
 
 /* Number of elements in the array: the size of the whole array divided by

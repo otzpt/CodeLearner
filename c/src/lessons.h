@@ -24,4 +24,8 @@ void lesson_08_pointers(void);
 void lesson_09_memory(void);
 void lesson_10_structs(void);
 
+/* Past the core course */
+void lesson_11_final_test(void);
+void lesson_12_deeper_memory(void);
+
 #endif

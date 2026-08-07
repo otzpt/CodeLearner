@@ -76,10 +76,24 @@ and the reason, which appears either way.
 | 8 | Pointers | `&` and `*`, `NULL`, the segfault |
 | 9 | **Memory: malloc and free** | stack vs heap, and the four ways to get it wrong |
 | 10 | Structs | dot vs arrow, and why `sizeof` exceeds the sum of the fields |
+| 11 | **Final test: 2 programs** | a game and a "normal" program, combining modules 1-10 |
+| 12 | Going deeper: memory (extra) | pointer-to-pointer, `realloc`, linked lists |
 
 Module 9 is the longest on purpose: leaks, use-after-free, double free, and
 returning the address of a local array — each with what you actually see when
 it happens.
+
+Module 11 has no new theory beyond `rand()`/`srand()`, needed for its game to
+be a game. Both of its tasks — Guess the Number, and a Student Grade Manager —
+are stated as output the program must produce, but unlike every other exercise
+in this course, that output depends on a random number and on what you type,
+so it is shown as one example run rather than an exact string to match.
+
+Module 12 is the extra requested after the final test: closing the gap between
+"malloc and free work" and trusting your own ownership rules across something
+bigger than a single block — a dynamically sized 2D grid, growing an array
+with `realloc`, and a linked list, each freed correctly and each shown broken
+first so the fix means something.
 
 ## Design rules
 
@@ -130,7 +144,10 @@ c/
     ├── ui.h  ui.c          screen, input, questions, challenges
     ├── lessons.h           one prototype per module
     ├── lessons_basics.c    modules 1-5
-    └── lessons_memory.c    modules 6-10
+    ├── lessons_memory.c    modules 6-10
+    └── lessons_advanced.c  modules 11-12
+tools/
+└── check-teaching-order.py  fails if an exercise needs something not yet taught
 docs/
 └── writing-a-course.md     how to add a module or a new language
 ```

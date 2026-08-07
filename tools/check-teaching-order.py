@@ -47,6 +47,10 @@ FIRST_TAUGHT = [
     (10, r"\bstruct\b"),
     (10, r"\bstrcpy\s*\("),
     (10, r"->"),
+    (11, r"\brand\s*\("),
+    (11, r"\bsrand\s*\("),
+    (12, r"\brealloc\s*\("),
+    (12, r"\bcalloc\s*\("),
     # Never introduced by any module. If an exercise needs one of these,
     # either teach it first or rewrite the exercise.
     (99, r"\bputchar\s*\("),
@@ -67,7 +71,16 @@ FIRST_TAUGHT = [
 
 
 def exercise_blocks(source):
-    """Yield (module_number, text_of_its_exercise) for every module."""
+    """Yield (module_number, text_of_its_exercise) for every module.
+
+    Module 11 (the final test) has no exercise() call: its two tasks are
+    interactive and depend on a random number, so they cannot state a single
+    matching output the way every other challenge() does, and are presented
+    by hand instead. It is therefore not covered by this check -- verified
+    once, by hand, that its example code (guess.c, grades.c) uses nothing
+    past module 10 plus rand()/srand(), which it introduces itself before
+    using.
+    """
     pattern = re.compile(
         r'exercise\((\d+)\);(.*?)(?=\n    wait_enter\(\);\n    clear_screen\(\);'
         r'\n    heading\("SUMMARY|\Z)',
