@@ -501,7 +501,7 @@ void lesson_12_deeper_memory(void)
             "front, so the list ends up reversed from input order.",
         };
         const char *input[] = {"1", "2", "3", "-1"};
-        challenge(task, 3, input, 4, expected, 2, solution, 33);
+        challenge(task, 3, input, 4, expected, 2, solution, 37);
     }
 
     wait_enter();

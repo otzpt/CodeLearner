@@ -766,7 +766,7 @@ void lesson_10_structs(void)
             "shelf[i].title uses the dot, not the arrow: shelf[i] is a",
             "struct, not a pointer to one.",
         };
-        challenge(task, 3, 0, 0, expected, 2, solution, 24);
+        challenge(task, 3, 0, 0, expected, 2, solution, 26);
     }
 
     wait_enter();

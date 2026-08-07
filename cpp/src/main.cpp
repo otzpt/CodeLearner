@@ -65,7 +65,15 @@ int main() {
 
         if (n >= 1 && n <= static_cast<int>(modules.size())) {
             clearScreen();
-            modules[n - 1].run();
+            // A module that lets an exception escape should not end the
+            // session with std::terminate and a raw abort -- every other
+            // exit path here prints something and returns to this menu.
+            try {
+                modules[n - 1].run();
+            } catch (const std::exception &e) {
+                std::cout << "\n  Something went wrong: " << e.what() << "\n";
+                waitEnter();
+            }
         } else {
             std::cout << "\n  Not a valid option.\n";
             waitEnter();

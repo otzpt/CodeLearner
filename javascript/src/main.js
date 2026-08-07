@@ -72,4 +72,13 @@ async function main() {
   ui.closeInput();
 }
 
-main();
+main().catch((err) => {
+  // A bug in a lesson should not leave a raw stack trace where every other
+  // exit path in this course prints "See you next time." -- state what
+  // broke, still close the readline interface so the process actually
+  // exits instead of hanging on an open stdin handle, then fail loudly
+  // enough that it is not mistaken for a normal quit.
+  console.error(`\n  Something went wrong: ${err.message}`);
+  ui.closeInput();
+  process.exitCode = 1;
+});

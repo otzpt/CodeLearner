@@ -69,7 +69,14 @@ def main():
 
         if 1 <= n <= len(MODULES):
             ui.clear_screen()
-            MODULES[n - 1]["run"]()
+            # A module that lets an exception escape should not end the
+            # session with a raw traceback -- every other exit path here
+            # prints something and returns to this menu.
+            try:
+                MODULES[n - 1]["run"]()
+            except Exception as e:
+                print(f"\n  Something went wrong: {e}")
+                ui.wait_enter()
         else:
             print("\n  Not a valid option.")
             ui.wait_enter()

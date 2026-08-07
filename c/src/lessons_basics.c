@@ -486,7 +486,7 @@ void lesson_04_conditions(void)
             "}",
         };
         const char *input[] = {"-5"};
-        challenge(task, 2, input, 1, expected, 2, solution, 21);
+        challenge(task, 2, input, 1, expected, 2, solution, 20);
     }
 
     wait_enter();
