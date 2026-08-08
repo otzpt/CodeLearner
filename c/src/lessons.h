@@ -27,5 +27,6 @@ void lesson_10_structs(void);
 /* Past the core course */
 void lesson_11_final_test(void);
 void lesson_12_deeper_memory(void);
+void lesson_13_stacks_queues(void);
 
 #endif

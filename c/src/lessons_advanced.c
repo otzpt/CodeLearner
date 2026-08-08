@@ -1,5 +1,5 @@
 /*
- * Modules 11 and 12 - past the core course.
+ * Modules 11, 12 and 13 - past the core course.
  *
  * Module 11 is the final test: two full programs, using everything from
  * modules 1-10 together. There is no PART 1/2/3 walkthrough here -- the
@@ -16,6 +16,14 @@
  * Module 12 goes deeper into memory: pointer-to-pointer, realloc, and
  * linked lists -- the extra requested after the final test, for closing the
  * gap between "malloc and free work" and "I trust my own ownership rules".
+ *
+ * Module 13 is the first data-structures module: stacks and queues, both
+ * array-based -- a second underlying representation for "a collection that
+ * grows", after module 12's linked list, with its own tradeoff (fixed
+ * capacity instead of one malloc per item). The trap for each is real and
+ * checked, not simulated: a capacity check that actually runs and actually
+ * refuses the operation, the same way module 12's realloc section never
+ * runs the broken version of anything, only the guarded one.
  */
 
 #include <stdio.h>
@@ -24,6 +32,12 @@
 
 #include "lessons.h"
 #include "ui.h"
+
+/* Module 13's demo capacities. File scope, not inside the function, so
+ * they read like the ordinary top-of-file constant every ".c" outside this
+ * course would use -- a #define does not observe C's block scope anyway. */
+#define STACK_CAP 5
+#define QUEUE_CAP 3
 
 void lesson_11_final_test(void)
 {
@@ -517,8 +531,332 @@ void lesson_12_deeper_memory(void)
     printf("   - save ->next before you free a node, or you cannot get to\n");
     printf("     the rest of the list\n\n");
 
-    printf("  That is as far as this course goes. What you have now is\n");
-    printf("  everything module 9 promised: you know where every byte you\n");
-    printf("  asked for came from, and where it went.\n");
+    printf("  What you have now is everything module 9 promised: you know\n");
+    printf("  where every byte you asked for came from, and where it went.\n\n");
+
+    printf("  Module 13 builds on this: two data structures, stacks and\n");
+    printf("  queues, using a plain array instead of another linked list.\n");
+    wait_enter();
+}
+
+void lesson_13_stacks_queues(void)
+{
+    title("MODULE 13 - STACKS AND QUEUES");
+
+    heading("PART 1: a stack, and what makes it a stack");
+
+    printf("  A stack is last in, first out (LIFO): the most recent item\n");
+    printf("  pushed is the first one popped. An array holds the items;\n");
+    printf("  one index, `top`, tracks how many are in it:\n\n");
+
+    printf("    #define STACK_CAP 5\n\n");
+    printf("    struct Stack {\n");
+    printf("        int items[STACK_CAP];\n");
+    printf("        int top;   // how many items are in it right now\n");
+    printf("    };\n\n");
+
+    printf("    void stack_push(struct Stack *s, int value)\n");
+    printf("    {\n");
+    printf("        if (s->top == STACK_CAP) {\n");
+    printf("            printf(\"Stack is full -- cannot push %%d\\n\", value);\n");
+    printf("            return;\n");
+    printf("        }\n");
+    printf("        s->items[s->top] = value;\n");
+    printf("        s->top++;\n");
+    printf("    }\n\n");
+
+    printf("    int stack_pop(struct Stack *s)\n");
+    printf("    {\n");
+    printf("        s->top--;\n");
+    printf("        return s->items[s->top];\n");
+    printf("    }\n\n");
+
+    printf("  `top` is not an index into a full array -- it is a count.\n");
+    printf("  `s->items[s->top]` after a push is always the next FREE\n");
+    printf("  slot, not the one just written. This is the same pattern as\n");
+    printf("  module 12's linked list count, applied to an index instead\n");
+    printf("  of a pointer.\n\n");
+
+    printf("  Running: five pushes fill a 5-slot stack exactly. A sixth\n");
+    printf("  push has nowhere to go -- this is where the phrase \"stack\n");
+    printf("  overflow\" comes from, and why a real stack checks `top`\n");
+    printf("  against its capacity before writing:\n\n");
+
+    struct Stack {
+        int items[STACK_CAP];
+        int top;
+    };
+    struct Stack demo_stack = { .top = 0 };
+    for (int i = 1; i <= 5; i++) {
+        int value = i * 10;
+        if (demo_stack.top == STACK_CAP) {
+            printf("    Stack is full -- cannot push %d\n", value);
+        } else {
+            demo_stack.items[demo_stack.top] = value;
+            demo_stack.top++;
+        }
+    }
+    {
+        int value = 60;
+        if (demo_stack.top == STACK_CAP) {
+            printf("    Stack is full -- cannot push %d\n", value);
+        }
+    }
+
+    printf("\n  Popping until empty prints them back in reverse -- the\n");
+    printf("  last one pushed (50) is the first one out:\n\n");
+    printf("    ");
+    while (demo_stack.top > 0) {
+        demo_stack.top--;
+        printf("%d ", demo_stack.items[demo_stack.top]);
+    }
+    printf("\n");
+
+    wait_enter();
+    clear_screen();
+    heading("PART 2: a queue, done the way that looks obvious first");
+
+    printf("  A queue is first in, first out (FIFO): oldest item out\n");
+    printf("  first. The obvious array version tracks two indices, `front`\n");
+    printf("  (the oldest item) and `rear` (the next free slot), and just\n");
+    printf("  moves them forward:\n\n");
+
+    printf("    #define QUEUE_CAP 3\n\n");
+    printf("    struct QueueNaive {\n");
+    printf("        int items[QUEUE_CAP];\n");
+    printf("        int front;\n");
+    printf("        int rear;\n");
+    printf("    };\n\n");
+
+    printf("  Enqueue writes at `rear` and moves it forward. Dequeue reads\n");
+    printf("  at `front` and moves IT forward. Neither ever goes back down.\n\n");
+
+    printf("  Running: fill a 3-slot queue, then dequeue two of the three\n");
+    printf("  items. Only one item is left -- there should be room for two\n");
+    printf("  more:\n\n");
+
+    struct QueueNaive {
+        int items[QUEUE_CAP];
+        int front;
+        int rear;
+    };
+    struct QueueNaive naive = { .front = 0, .rear = 0 };
+    for (int i = 1; i <= 3; i++) {
+        naive.items[naive.rear] = i;
+        naive.rear++;
+    }
+    printf("    dequeued: %d\n", naive.items[naive.front++]);
+    printf("    dequeued: %d\n", naive.items[naive.front++]);
+    printf("    1 item left (the %d), 2 free slots logically -- but:\n\n", naive.items[naive.front]);
+
+    if (naive.rear == QUEUE_CAP) {
+        printf("    Queue full -- cannot enqueue 4\n");
+    }
+
+    printf("\n  `rear` reached QUEUE_CAP and never comes back down, so the\n");
+    printf("  queue reports full with only one real item in it. The two\n");
+    printf("  slots dequeue freed up (index 0 and 1) are just sitting\n");
+    printf("  there, unreachable, exactly like the leaked rows in module\n");
+    printf("  12's grid -- nothing is wrong with the memory, the bookkeeping\n");
+    printf("  just never looks back.\n");
+
+    wait_enter();
+    clear_screen();
+    heading("PART 3: the fix -- wrap the indices around");
+
+    printf("  The slots freed by dequeue are real and reusable. `front`\n");
+    printf("  and `rear` just need to wrap back to 0 after the last index\n");
+    printf("  instead of growing forever. That is what %% (modulo) is for:\n\n");
+
+    printf("    struct Queue {\n");
+    printf("        int items[QUEUE_CAP];\n");
+    printf("        int front;\n");
+    printf("        int count;   // how many items, not an index\n");
+    printf("    };\n\n");
+
+    printf("    void queue_enqueue(struct Queue *q, int value)\n");
+    printf("    {\n");
+    printf("        if (q->count == QUEUE_CAP) {\n");
+    printf("            printf(\"Queue full -- cannot enqueue %%d\\n\", value);\n");
+    printf("            return;\n");
+    printf("        }\n");
+    printf("        int rear = (q->front + q->count) %% QUEUE_CAP;\n");
+    printf("        q->items[rear] = value;\n");
+    printf("        q->count++;\n");
+    printf("    }\n\n");
+
+    printf("    int queue_dequeue(struct Queue *q)\n");
+    printf("    {\n");
+    printf("        int value = q->items[q->front];\n");
+    printf("        q->front = (q->front + 1) %% QUEUE_CAP;\n");
+    printf("        q->count--;\n");
+    printf("        return value;\n");
+    printf("    }\n\n");
+
+    printf("  `count` replaced `rear` as a real number of items, and\n");
+    printf("  `rear` is now computed each time instead of stored. Running\n");
+    printf("  the same sequence as PART 2, then enqueuing two more and\n");
+    printf("  draining it completely:\n\n");
+
+    struct Queue {
+        int items[QUEUE_CAP];
+        int front;
+        int count;
+    };
+    struct Queue q = { .front = 0, .count = 0 };
+
+    /* enqueue 1, 2, 3 */
+    for (int i = 1; i <= 3; i++) {
+        int rear = (q.front + q.count) % QUEUE_CAP;
+        q.items[rear] = i;
+        q.count++;
+    }
+    /* dequeue two */
+    for (int i = 0; i < 2; i++) {
+        printf("    dequeued: %d\n", q.items[q.front]);
+        q.front = (q.front + 1) % QUEUE_CAP;
+        q.count--;
+    }
+    /* enqueue 4, 5 -- succeeds now, unlike the naive version */
+    for (int i = 4; i <= 5; i++) {
+        int rear = (q.front + q.count) % QUEUE_CAP;
+        q.items[rear] = i;
+        q.count++;
+    }
+    printf("    dequeued: ");
+    while (q.count > 0) {
+        printf("%d ", q.items[q.front]);
+        q.front = (q.front + 1) % QUEUE_CAP;
+        q.count--;
+    }
+    printf("\n\n");
+
+    printf("  3 4 5 -- the two slots the naive version considered gone\n");
+    printf("  for good got reused, and every item still came out in the\n");
+    printf("  order it went in.\n");
+
+    wait_enter();
+    clear_screen();
+    exercise(13);
+
+    question("Array-based stack, capacity 5, already holds 5 items.\n"
+             "  You push one more without checking capacity first.\n"
+             "  What is this called? (one word)",
+             "overflow",
+             "Writing past items[4] into memory the stack does not own --\n"
+             "             \"stack overflow\" is a description of exactly this,\n"
+             "             not a separate phenomenon.");
+
+    question("Naive array queue: enqueue 3 items (fills capacity 3),\n"
+             "  dequeue 2. One item remains. Can you enqueue a new one\n"
+             "  without changing how `rear` works? (yes or no)",
+             "no",
+             "`rear` already reached QUEUE_CAP and only ever moves\n"
+             "             forward, so the queue reports full with two\n"
+             "             genuinely free slots sitting behind `front`.");
+
+    question("What operator turns an index that would run off the end\n"
+             "  of the array back into a valid one? (symbol)",
+             "%",
+             "index = (index + 1) % QUEUE_CAP wraps CAP back to 0 --\n"
+             "             the same modulo used for `rand() % 100` in module\n"
+             "             11, applied to an index instead of a random range.");
+
+    {
+        const char *task[] = {
+            "Read one line: a string of ( ) [ ] { } characters.",
+            "Using a stack, check whether every bracket is closed",
+            "by the same type, in the right order. Print Balanced",
+            "or Not balanced.",
+        };
+        const char *input[] = { "([{}])" };
+        const char *expected[] = { "Line: ([{}])", "Balanced" };
+        const char *solution[] = {
+            "#include <stdio.h>",
+            "",
+            "#define CAP 100",
+            "",
+            "struct Stack {",
+            "    char items[CAP];",
+            "    int top;",
+            "};",
+            "",
+            "void push(struct Stack *s, char c)",
+            "{",
+            "    s->items[s->top] = c;",
+            "    s->top++;",
+            "}",
+            "",
+            "char pop(struct Stack *s)",
+            "{",
+            "    s->top--;",
+            "    return s->items[s->top];",
+            "}",
+            "",
+            "int matches(char open, char close)",
+            "{",
+            "    return (open == '(' && close == ')') ||",
+            "           (open == '[' && close == ']') ||",
+            "           (open == '{' && close == '}');",
+            "}",
+            "",
+            "int main(void)",
+            "{",
+            "    char line[200];",
+            "    printf(\"Line: \");",
+            "    if (!fgets(line, sizeof line, stdin)) {",
+            "        return 1;",
+            "    }",
+            "",
+            "    struct Stack s = { .top = 0 };",
+            "    int ok = 1;",
+            "",
+            "    for (int i = 0; line[i] != '\\0' && line[i] != '\\n'; i++) {",
+            "        char c = line[i];",
+            "        if (c == '(' || c == '[' || c == '{') {",
+            "            push(&s, c);",
+            "        } else if (c == ')' || c == ']' || c == '}') {",
+            "            if (s.top == 0 || !matches(pop(&s), c)) {",
+            "                ok = 0;",
+            "                break;",
+            "            }",
+            "        }",
+            "    }",
+            "    if (s.top != 0) {",
+            "        ok = 0;",
+            "    }",
+            "",
+            "    printf(\"%s\\n\", ok ? \"Balanced\" : \"Not balanced\");",
+            "    return 0;",
+            "}",
+            "",
+            "An opening bracket is pushed. A closing one pops and must",
+            "match what comes back -- a ']' popping a '(' is wrong even",
+            "though both are \"open\" brackets. s.top != 0 at the end",
+            "means something opened was never closed.",
+        };
+        challenge(task, 4, input, 1, expected, 2, solution, 60);
+    }
+
+    wait_enter();
+    clear_screen();
+    heading("SUMMARY");
+
+    printf("   - a stack is LIFO: push and pop both happen at `top`\n");
+    printf("   - a queue is FIFO: enqueue at the back, dequeue from the\n");
+    printf("     front\n");
+    printf("   - an array-based stack or queue needs a real capacity\n");
+    printf("     check before writing -- \"stack overflow\" is that check\n");
+    printf("     missing, not a metaphor\n");
+    printf("   - a naive array queue reports full long before it actually\n");
+    printf("     is, because `front` and `rear` only ever move forward\n");
+    printf("   - %% (modulo) wraps an index back to 0, which is what turns\n");
+    printf("     a naive queue into a correct, reusable one\n\n");
+
+    printf("  Both used a fixed-size array on purpose. A linked list (like\n");
+    printf("  module 12's) removes the capacity limit entirely, at the\n");
+    printf("  cost of one malloc per item instead of one for the whole\n");
+    printf("  block -- the same tradeoff module 9 first raised between\n");
+    printf("  an array and a linked structure.\n");
     wait_enter();
 }

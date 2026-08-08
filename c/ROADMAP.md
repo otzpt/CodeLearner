@@ -1,9 +1,10 @@
 # Roadmap: past the course
 
-CodeLearner's C course (modules 1-12) covers the first three stages of this.
-This file is the rest of the path — what comes after module 12, and where
-each stage of it actually lives. Nothing here is new course content; it's a
-map, kept in the repo so the next stage isn't a mystery once module 12 ends.
+CodeLearner's C course (modules 1-13) covers stages 1-3 and has started
+stage 4. This file is the rest of the path — what comes after module 13,
+and where each stage of it actually lives. Nothing here is new course
+content; it's a map, kept in the repo so the next stage isn't a mystery
+once the course ends.
 
 ## 1. Core syntax — covered
 
@@ -33,14 +34,20 @@ something.
 
 Milestone: pointers and memory make intuitive sense, not memorized rules.
 
-## 4. Data structures and algorithms — beyond this course
+## 4. Data structures and algorithms — started
 
-Not in CodeLearner. Implement, in order: dynamic array, then your own
-string type, then a linked list (module 12 gets you started on the first
-and third) — then stacks, queues, hash tables, trees, heaps, graphs. Then
-sorting, binary search, recursion, BFS, DFS, greedy, dynamic programming.
-Competitive-programming judges (Codeforces, beecrowd) in C are the practice
-loop here, not a course module.
+Module 12 covers a dynamic array and a linked list. Module 13 adds a stack
+and a queue, both array-based — a second underlying representation for
+"a collection that grows," with its own tradeoff (fixed capacity instead
+of one `malloc` per item) instead of just another linked structure.
+
+Still beyond the course: your own string type, hash tables, trees, heaps,
+graphs. Then algorithms: sorting, binary search, recursion, BFS, DFS,
+greedy, dynamic programming. Competitive-programming judges (Codeforces,
+beecrowd) in C are the practice loop here, not a course module — issues
+[#1](https://github.com/otzpt/CodeLearner/issues/1) and
+[#2](https://github.com/otzpt/CodeLearner/issues/2) track building the rest
+of this as real modules.
 
 Milestone: you can implement common data structures yourself.
 

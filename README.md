@@ -10,7 +10,7 @@ worked example code the student can open and read.
 
 | Language | Modules | Where |
 | --- | --- | --- |
-| C | 12 — first program through linked lists | [`c/`](c/) |
+| C | 13 — first program through stacks and queues | [`c/`](c/) |
 | C++ | 9 — cout through classes and RAII | [`cpp/`](cpp/) |
 | Python | 10 — print() through classes and exceptions | [`python/`](python/) |
 | JavaScript | 10 — console.log() through classes and errors | [`javascript/`](javascript/) |
@@ -142,6 +142,7 @@ and the reason, which appears either way.
 | 10 | Structs | dot vs arrow, and why `sizeof` exceeds the sum of the fields |
 | 11 | **Final test: 2 programs** | a game and a "normal" program, combining modules 1-10 |
 | 12 | Going deeper: memory (extra) | pointer-to-pointer, `realloc`, linked lists |
+| 13 | Stacks and queues | array-based, not another linked list — capacity checks that actually run |
 
 Module 9 is the longest on purpose: leaks, use-after-free, double free, and
 returning the address of a local array — each with what you actually see when
@@ -159,9 +160,17 @@ bigger than a single block — a dynamically sized 2D grid, growing an array
 with `realloc`, and a linked list, each freed correctly and each shown broken
 first so the fix means something.
 
-Modules 1-12 are stages 1-3 of a longer path — data structures, real
-projects, POSIX, debugging tools, assembly, reading other people's C.
-[`c/ROADMAP.md`](c/ROADMAP.md) maps the rest of it and where each stage
+Module 13 is the first data-structures module: a stack and a queue, both
+array-based rather than another linked list, so the same idea — "a
+collection that grows" — is shown with a different tradeoff (fixed
+capacity instead of one `malloc` per item). "Stack overflow" and a naive
+queue reporting full with free slots behind `front` are both real, checked
+conditions that actually run, not just described.
+
+Modules 1-13 are stages 1-4 (started) of a longer path — more data
+structures and algorithms, real projects, POSIX, debugging tools, assembly,
+reading other people's C. [`c/ROADMAP.md`](c/ROADMAP.md) maps the rest of it
+and where each stage
 picks up.
 
 ## The C++ course
