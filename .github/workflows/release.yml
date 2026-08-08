@@ -92,7 +92,15 @@ jobs:
         shell: pwsh
         run: |
           cd launcher
-          $out = "0`n" | & .\launcher.exe
+          # PowerShell splits a native command's stdout into one array element
+          # per line. -match/-notmatch against an array does an element-wise
+          # test and returns the matching/non-matching MEMBERS, not a bool
+          # (verified: Microsoft's own about_comparison_operators docs) -- a
+          # non-empty array is truthy in if(), so -notmatch against $out would
+          # throw here on every run, even a correct one, since most lines
+          # (all but one) legitimately don't contain the sentinel. Joining to
+          # one string first is what makes this an actual boolean check.
+          $out = ("0`n" | & .\launcher.exe) -join "`n"
           if ($LASTEXITCODE -ne 0) { throw "launcher exited $LASTEXITCODE" }
           if ($out -notmatch "See you next time") { throw "launcher did not exit cleanly: $out" }
 
