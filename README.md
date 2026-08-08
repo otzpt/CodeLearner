@@ -158,6 +158,11 @@ bigger than a single block — a dynamically sized 2D grid, growing an array
 with `realloc`, and a linked list, each freed correctly and each shown broken
 first so the fix means something.
 
+Modules 1-12 are stages 1-3 of a longer path — data structures, real
+projects, POSIX, debugging tools, assembly, reading other people's C.
+[`c/ROADMAP.md`](c/ROADMAP.md) maps the rest of it and where each stage
+picks up.
+
 ## The C++ course
 
 | # | Module | The thing it exists for |
