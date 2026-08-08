@@ -10,7 +10,7 @@ worked example code the student can open and read.
 
 | Language | Modules | Where |
 | --- | --- | --- |
-| C | 13 — first program through stacks and queues | [`c/`](c/) |
+| C | 14 — first program through a first GTK window | [`c/`](c/) |
 | C++ | 9 — cout through classes and RAII | [`cpp/`](cpp/) |
 | Python | 10 — print() through classes and exceptions | [`python/`](python/) |
 | JavaScript | 10 — console.log() through classes and errors | [`javascript/`](javascript/) |
@@ -143,6 +143,7 @@ and the reason, which appears either way.
 | 11 | **Final test: 2 programs** | a game and a "normal" program, combining modules 1-10 |
 | 12 | Going deeper: memory (extra) | pointer-to-pointer, `realloc`, linked lists |
 | 13 | Stacks and queues | array-based, not another linked list — capacity checks that actually run |
+| 14 | GTK: your first window (extra) | needs pkg-config in the compile line, and `G_CALLBACK` hides a signature mismatch from the compiler |
 
 Module 9 is the longest on purpose: leaks, use-after-free, double free, and
 returning the address of a local array — each with what you actually see when
@@ -167,7 +168,16 @@ capacity instead of one `malloc` per item). "Stack overflow" and a naive
 queue reporting full with free slots behind `front` are both real, checked
 conditions that actually run, not just described.
 
-Modules 1-13 are stages 1-4 (started) of a longer path — more data
+Module 14 is the first module needing something beyond the C toolchain
+itself — GTK4's development files — so it cannot link into the
+zero-dependency `c-course` binary the way modules 1-13 do. It follows
+module 11's pattern instead: real code, actually compiled and run while
+writing the module (a window titled "VUXIOCODE GTK Test" genuinely opened,
+confirmed via the window manager's own client list, not just "the process
+didn't crash"), with the observed behaviour described rather than diffed
+against captured stdout, since a window is not text.
+
+Modules 1-14 are stages 1-4 (started) of a longer path — more data
 structures and algorithms, real projects, POSIX, debugging tools, assembly,
 reading other people's C. [`c/ROADMAP.md`](c/ROADMAP.md) maps the rest of it
 and where each stage

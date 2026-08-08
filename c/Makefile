@@ -10,7 +10,7 @@
 CC      = cc
 CFLAGS  = -std=c11 -Wall -Wextra -g
 TARGET  = c-course
-SOURCES = src/main.c src/ui.c src/lessons_basics.c src/lessons_memory.c src/lessons_advanced.c
+SOURCES = src/main.c src/ui.c src/lessons_basics.c src/lessons_memory.c src/lessons_advanced.c src/lessons_gtk.c
 OBJECTS = $(SOURCES:.c=.o)
 
 $(TARGET): $(OBJECTS)
