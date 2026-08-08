@@ -188,12 +188,21 @@ scripts, `"../python/src/main.py"` and `"../javascript/src/main.js"`: no
 build step, but the same file_exists() check and the same system() call as C
 and C++. On Linux this relies on the script's own shebang line and its
 execute bit (`chmod +x`); on Windows, on the extension being associated with
-the right interpreter, which the standard installers set up. All three of
-C++, Python and JavaScript are working examples of registering a language
-with a two-line change.
+the right interpreter, which the standard installers set up. C++, Python and
+JavaScript are all working examples of registering a language with a
+two-line change.
+
+Java could not use that same direct-to-entry-file pattern: verified against
+the installed JDK that a `#!` shebang line on a `.java` file does not
+compile, so unlike a `.py`/`.js` script, `java/src/Main.java` cannot be
+marked executable and pointed at directly. `java/run` (`run.bat` on Windows)
+is a small wrapper doing `cd src && java Main.java`, and that wrapper is
+what is registered instead -- worth checking for early if a future
+language's own launch story turns out not to be a single runnable file
+either.
 
 Also add the course to `COURSES` in `tools/check-teaching-order.py` — its
-own `first_taught` table, in that language's own vocabulary. The four
+own `first_taught` table, in that language's own vocabulary. The five
 existing entries are working examples of the shape: a construct's regex
 mapped to the module that first shows it *anywhere in that module*, including
 the module's own explanation, not just its formally-named topic. `std::vector`'s

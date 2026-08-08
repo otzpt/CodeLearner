@@ -14,10 +14,11 @@ worked example code the student can open and read.
 | C++ | 9 — cout through classes and RAII | [`cpp/`](cpp/) |
 | Python | 10 — print() through classes and exceptions | [`python/`](python/) |
 | JavaScript | 10 — console.log() through classes and errors | [`javascript/`](javascript/) |
+| Java | 10 — System.out through checked exceptions | [`java/`](java/) |
 | Launcher | done — pick a language, open its course | [`launcher/`](launcher/) |
 
-All four languages are covered. The launcher and `tools/check-teaching-order.py`
-both work over any number of courses without modification, so a fifth language
+All five languages are covered. The launcher and `tools/check-teaching-order.py`
+both work over any number of courses without modification, so a sixth language
 is a matter of writing it, not extending anything else.
 
 The courses are independent programs. The launcher only launches them: it
@@ -54,8 +55,16 @@ cd javascript/src
 node main.js
 ```
 
+```bash
+cd java
+./run
+```
+
 Python and JavaScript need no build step — nothing to compile, nothing to
-link.
+link. Java's `./run` compiles and runs in one command too (`java Main.java`,
+no separate `javac` step, no `.class` files left behind) — see the Java
+course's own module 1 for why that is not the two-step model most people
+expect from a compiled language.
 
 You need a C compiler and `make` for the C and C++ courses. On Arch:
 
@@ -67,6 +76,18 @@ On Debian or Ubuntu:
 
 ```bash
 sudo apt install build-essential
+```
+
+You need a JDK for the Java course. On Arch:
+
+```bash
+sudo pacman -S jdk-openjdk
+```
+
+On Debian or Ubuntu:
+
+```bash
+sudo apt install default-jdk
 ```
 
 ## What a module looks like
@@ -220,13 +241,74 @@ course sitting next to it: `Boolean([])` and `Boolean({})` are both `true`.
 `if (arr)` is never a length check in JavaScript, unlike Python where an
 empty list is falsy.
 
-Module 9's `#field` syntax is worth reading against the other three courses'
-answers to the same question. C++'s `private` is enforced by the compiler.
-Python's leading underscore is a convention enforced by nobody — confirmed in
-that course by reading `a._grade` from outside the class and watching it
-just work. JavaScript's `#field` sits with C++: trying to reference `s.#grade`
-from outside the class is a `SyntaxError`, caught before the program runs at
-all, verified on Node 26.
+Module 9's `#field` syntax is worth reading against the other courses'
+answers to the same question. C++'s `private` and Java's `private` are both
+enforced by the compiler. Python's leading underscore is a convention
+enforced by nobody — confirmed in that course by reading `a._grade` from
+outside the class and watching it just work. JavaScript's `#field` sits with
+C++ and Java: trying to reference `s.#grade` from outside the class is a
+`SyntaxError`, caught before the program runs at all, verified on Node 26.
+
+## The Java course
+
+| # | Module | The thing it exists for |
+| --- | --- | --- |
+| 1 | Compiling and printing | `javac`/`java`, two steps not one; a public class's name must match its file |
+| 2 | Variables and types | primitives vs objects; **boxed `Integer` caches -128..127, then `==` lies** |
+| 3 | Reading input | `Scanner`; `nextInt()` then `nextLine()` — same bug shape as C++'s `cin >>`/`getline` |
+| 4 | Conditions | a condition must be `boolean` — `if (x = 5)` is a **compile error**, not a C-style warning |
+| 5 | Loops | `for`/`while`; the enhanced `for` gives values, no index |
+| 6 | Arrays and Strings | `arr.length` is a field, `str.length()` is a method; `==` vs `.equals()` |
+| 7 | Methods and overloading | no default arguments — overloading fills the gap, resolved at compile time |
+| 8 | `ArrayList` and boxing | grows, unlike an array; `ArrayList<int>` does not compile — needs `Integer` |
+| 9 | Classes, interfaces, encapsulation | `private` is **enforced**, not a convention; an unimplemented interface method won't compile |
+| 10 | Exceptions: checked vs unchecked | an unhandled **checked** exception is a compile error |
+
+No memory-management thread here either — garbage collected, same as Python
+and JavaScript. What replaces it is Java's two-tier type system: eight
+primitive types that hold a raw value directly, and everything else — String,
+Integer, any class — held by reference. Module 2's boxed-`Integer` trap only
+exists because of that split: `Integer a = 127, b = 127; a == b` is `true`
+(both happen to be the same cached object), but the identical code with `200`
+instead of `127` is `false` — two separate objects with equal values, `==`
+comparing identity, not value, the same rule as C's `==` on a `char*`. Both
+sides of that claim were run against the installed JDK before being written
+down, not assumed from "Java caches small integers."
+
+Module 4 is the sharpest cross-course callback in this collection: `if (x = 5)`
+— typing `=` where `==` was meant — is the exact bug C and C++'s own module 4
+warn about, and in both of those courses it compiles, with at most a warning.
+In Java it is a hard compile error (`incompatible types: int cannot be
+converted to boolean`), because a condition must be `boolean` and an
+assignment evaluates to `int`. Same typo, opposite failure mode — caught
+before the program can run at all rather than caught only if you are reading
+compiler warnings carefully.
+
+Module 10 is the other half of that same idea, working in reverse. A checked
+exception (`throws IOException`) left uncaught anywhere on its call path is
+also a compile error — `unreported exception IOException; must be caught or
+declared to be thrown` — enforced no matter how deeply it is buried, unlike
+every exception in C++, Python, or JavaScript, all of which let any exception
+fly straight past every caller with zero compile-time warning. `RuntimeException`
+and its subclasses are unchecked, behaving exactly like exceptions in the
+other three courses — checked exceptions are the one place this course's
+compiler is stricter than the others, not the whole story.
+
+Module 9 lines up directly against Python's module 9 and C++'s module 9 on
+the same question: is `private` real? Python's leading underscore is a
+naming convention nobody enforces — reading or writing `a._grade` from
+outside the class just works, shown running in that course. Java's `private`
+is a compiler-enforced access modifier: `s.grade = 20` on a private field
+does not compile (`grade has private access in Student`), and neither does a
+class that implements an interface without providing every method it
+declares. For deterministic cleanup, Java's answer is try-with-resources —
+the same opt-in idea as Python's `with`, not the automatic-for-every-object
+guarantee C++'s RAII gives.
+
+The launcher runs this course via `java/run` (`java/run.bat` on Windows),
+not a path straight to a `.java` file — verified against the installed JDK
+that a `#!` shebang line on a `.java` file does not compile here, despite
+some descriptions of JEP 330 suggesting it should.
 
 ## Design rules
 
@@ -240,8 +322,8 @@ address it got back. Module 3 reads your actual keyboard.
 use-after-free is undefined behaviour: running one would either take the
 course down or — worse — appear to work and teach the wrong lesson.
 
-**Warnings are teaching material.** Everything builds with `-Wall -Wextra`
-and the course itself has none.
+**Warnings are teaching material.** C and C++ build with `-Wall -Wextra`,
+Java with `-Xlint:all -Werror`, and the courses themselves have none.
 
 More detail in [`docs/writing-a-course.md`](docs/writing-a-course.md).
 
@@ -252,9 +334,13 @@ platform-specific code is the three lines that clear the screen (in
 `c/src/ui.c` and duplicated in `launcher/src/main.c` — kept separate rather
 than shared, since the launcher and the courses are meant to stay
 independent programs) and, in the launcher, which relative path and file
-extension a course binary uses.
+extension a course binary uses. Java follows the same split: `java/run` on
+Linux, `java/run.bat` on Windows, both doing the same `cd src && java
+Main.java`.
 
-Tested on Linux. The Windows path is written but has not been run yet.
+Tested on Linux. The Windows path is written but has not been run yet --
+`java/run.bat` most of all, since it has had no equivalent of the shebang
+experiment that shaped `java/run`.
 
 ## Verification
 
@@ -275,13 +361,27 @@ g++ -std=c++20 -Wall -Wextra -g -fsanitize=address,undefined -o /tmp/course src/
 /tmp/course
 ```
 
+Java compiles clean with `-Xlint:all -Werror` too, and every module was run
+through a real pty end to end (all 10 modules visited, no crash, no hang).
+
+```bash
+cd java
+javac -Xlint:all -Werror src/*.java
+```
+
 Every solution shown in a challenge, in any course, has been run and checked
 against the output its task promises. Python's and JavaScript's own solutions
 are included, verified by intercepting `input()` (Python) or the `ui.js`
 prompt functions (JavaScript) and driving every module through directly
 rather than by compiling anything.
 
-`python3 tools/check-teaching-order.py` covers all four courses in one run.
+Every compile-error claim across every course — C/C++'s warnings, and every
+one of Java's genuine compile errors (`if (x = 5)`, a private field touched
+from outside its class, an unhandled checked exception, `ArrayList<int>`,
+and the rest) — was produced by actually running `javac` against it, not
+recalled from documentation.
+
+`python3 tools/check-teaching-order.py` covers all five courses in one run.
 
 ## Layout
 
@@ -324,6 +424,14 @@ javascript/
     ├── ui.js                screen, input, questions, challenges
     ├── lessons_basics.js    modules 1-5
     └── lessons_more.js      modules 6-10
+java/
+├── Makefile
+├── run  run.bat             launcher entry point: java Main.java
+└── src/
+    ├── Main.java             menu: an array of a title+Runnable record, a loop
+    ├── Ui.java               screen, input, questions, challenges
+    ├── LessonsBasics.java    modules 1-5
+    └── LessonsMore.java      modules 6-10
 tools/
 └── check-teaching-order.py  fails if an exercise needs something not yet
                               taught, in any course
@@ -347,4 +455,4 @@ for the design rules.
 ## License
 
 [MIT](LICENSE). The courses depend on nothing beyond each language's own
-toolchain — no packages to install, in any of the four.
+toolchain — no packages to install, in any of the five.

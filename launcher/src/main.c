@@ -41,11 +41,13 @@ static const struct Language LANGUAGES[] = {
     { "C++",        "..\\cpp\\cpp-course.exe" },
     { "Python",     "..\\python\\src\\main.py" },
     { "JavaScript", "..\\javascript\\src\\main.js" },
+    { "Java",       "..\\java\\run.bat" },
 #else
     { "C",          "../c/c-course" },
     { "C++",        "../cpp/cpp-course" },
     { "Python",     "../python/src/main.py" },
     { "JavaScript", "../javascript/src/main.js" },
+    { "Java",       "../java/run" },
 #endif
 };
 
@@ -104,7 +106,7 @@ static void show_menu(void)
     clear_screen();
     printf("\n");
     printf("  +======================================================+\n");
-    printf("  |            APRENDER A PROGRAMAR                      |\n");
+    printf("  |                  CODELEARNER                         |\n");
     printf("  +======================================================+\n");
     printf("\n");
 

@@ -105,6 +105,18 @@ delays between lines is required for any interactive testing; a single
 pre-filled pipe does not behave like a real user typing and produces false
 failures.
 
+For Java:
+
+```bash
+cd java
+javac -Xlint:all -Werror src/*.java   # must compile with zero warnings
+./run                                  # walk the module(s) you changed
+```
+
+Java's own `Scanner` reads directly from `System.in`, the same as C's
+`scanf`/C++'s `cin` -- the same FIFO-with-delays or real-terminal rule
+above applies, not a pre-filled pipe.
+
 For everything:
 
 ```bash

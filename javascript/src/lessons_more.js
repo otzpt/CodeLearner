@@ -445,37 +445,37 @@ async function lesson10Errors() {
 
   ui.heading("PART 1: try / catch / finally, and throw");
 
-  console.log("    function dividir(a, b) {");
-  console.log('        if (b === 0) throw new Error("divisao por zero");');
+  console.log("    function divide(a, b) {");
+  console.log('        if (b === 0) throw new Error("division by zero");');
   console.log("        return a / b;");
   console.log("    }");
   console.log();
   console.log("    try {");
-  console.log("        console.log(dividir(10, 2));");
-  console.log("        console.log(dividir(1, 0));");
+  console.log("        console.log(divide(10, 2));");
+  console.log("        console.log(divide(1, 0));");
   console.log("    } catch (e) {");
-  console.log("        console.log(`apanhado: ${e.message}`);");
+  console.log("        console.log(`caught: ${e.message}`);");
   console.log("    } finally {");
-  console.log('        console.log("sempre corre");');
+  console.log('        console.log("always runs");');
   console.log("    }");
   console.log();
 
-  function dividir(a, b) {
-    if (b === 0) throw new Error("divisao por zero");
+  function divide(a, b) {
+    if (b === 0) throw new Error("division by zero");
     return a / b;
   }
 
   console.log("  Running:");
   try {
-    console.log(`    ${dividir(10, 2)}`);
-    console.log(`    ${dividir(1, 0)}`);
+    console.log(`    ${divide(10, 2)}`);
+    console.log(`    ${divide(1, 0)}`);
   } catch (e) {
-    console.log(`    apanhado: ${e.message}`);
+    console.log(`    caught: ${e.message}`);
   } finally {
-    console.log("    sempre corre");
+    console.log("    always runs");
   }
   console.log();
-  console.log("  The second dividir() never returns -- the throw jumps");
+  console.log("  The second divide() never returns -- the throw jumps");
   console.log("  straight to catch. finally runs either way.");
 
   await ui.waitEnter();
@@ -553,25 +553,25 @@ async function lesson10Errors() {
 
   await ui.challenge(
     [
-      "Write dividir(a, b) that throws an Error on b === 0. Call it",
+      "Write divide(a, b) that throws an Error on b === 0. Call it",
       "with (10, 2) then (1, 0) inside one try, catching the error",
       "and printing its message, with a finally that always prints.",
     ],
     [],
-    ["5", "apanhado: divisao por zero", "sempre corre"],
+    ["5", "caught: division by zero", "always runs"],
     [
-      "function dividir(a, b) {",
-      '    if (b === 0) throw new Error("divisao por zero");',
+      "function divide(a, b) {",
+      '    if (b === 0) throw new Error("division by zero");',
       "    return a / b;",
       "}",
       "",
       "try {",
-      "    console.log(dividir(10, 2));",
-      "    console.log(dividir(1, 0));",
+      "    console.log(divide(10, 2));",
+      "    console.log(divide(1, 0));",
       "} catch (e) {",
-      "    console.log(`apanhado: ${e.message}`);",
+      "    console.log(`caught: ${e.message}`);",
       "} finally {",
-      '    console.log("sempre corre");',
+      '    console.log("always runs");',
       "}",
     ]
   );

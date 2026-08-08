@@ -1,0 +1,16 @@
+#!/bin/sh
+# Launches the Java course. Registered directly as this course's entry
+# point in launcher/src/main.c, the same way Python's and JavaScript's
+# main.py/main.js are -- see that file's LANGUAGES table comment for why a
+# wrapper is needed here specifically: unlike a Python or JS script, a
+# .java file cannot be marked executable and run directly (verified against
+# the installed JDK -- a leading #! shebang line does not compile, contrary
+# to some JEP 330 descriptions).
+#
+# `java Main.java` compiles LessonsBasics.java, LessonsMore.java and Ui.java
+# alongside it (same directory, default package) and runs the result in one
+# step -- no separate javac invocation, no .class files left behind. See
+# docs/writing-a-course.md and this course's own module 1 for the two-step
+# javac-then-java model this shortcut sits on top of.
+cd "$(dirname "$0")/src" || exit 1
+exec java Main.java

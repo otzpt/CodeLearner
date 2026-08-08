@@ -249,6 +249,72 @@ COURSES = {
             (99, r"\bSymbol\s*\("),
         ],
     },
+    "java": {
+        "dir": "java/src",
+        "glob": "Lessons*.java",
+        "exercise_marker": r"Ui\.exercise\((\d+)\);",
+        "summary_marker": r'\n        Ui\.waitEnter\(\);\n        Ui\.clearScreen\(\);\n        Ui\.heading\("SUMMARY',
+        "first_taught": [
+            (1, r"System\.out\.println\s*\("),
+            (1, r"\bpublic\s+class\b"),
+            (1, r"\bpublic\s+static\s+void\s+main\b"),
+            (2, r"\bint\s+[a-z_]+\s*[;=,)]"),
+            (2, r"\bdouble\b"),
+            (2, r"\bInteger\b"),
+            (3, r"\bString\s+[a-z_]+\s*[;=,)]"),
+            (3, r"\bScanner\b"),
+            (3, r"\bnextInt\s*\("),
+            (3, r"\bnextLine\s*\("),
+            # `new` first appears in module 3's own exercise (new Scanner(...)),
+            # not with module 9's classes -- this course never uses `new` in
+            # an exercise before that.
+            (3, r"\bnew\s+[A-Z][A-Za-z0-9_]*\s*\("),
+            (4, r"\bif\s*\("),
+            (4, r"\belse\b"),
+            (5, r"\bfor\s*\("),
+            # An array literal (Type[] name = {...}) first appears in module
+            # 5's own exercise, the same way C++'s std::vector and JS's
+            # arrow-function syntax are credited to the module where a
+            # reader has actually seen them, ahead of their own named topic.
+            # Requiring "= {" specifically excludes every module's
+            # `public static void main(String[] args)` boilerplate -- an
+            # empty-bracket parameter type, never an initialised array.
+            (5, r"\b[A-Za-z_]+\[\]\s+[a-z_]+\s*=\s*\{"),
+            (6, r"[a-zA-Z_]\w*\[[^\]]+\]"),  # array indexing, non-empty brackets
+            (6, r"\.length\b(?!\()"),  # array .length -- a field, no parens
+            (6, r"\.length\s*\("),  # String.length() -- a method, parens required
+            (6, r"\.equals\s*\("),
+            (7, r"\breturn\b"),
+            (8, r"\bArrayList\b"),
+            (8, r"\.add\s*\("),
+            # A negative lookbehind excludes "public class Foo" -- module 1's
+            # required entry-point wrapper, present in nearly every exercise's
+            # challenge solution -- from counting as the class-declaration
+            # concept module 9 actually teaches (declaring your OWN class).
+            (9, r"(?<!public\s)\bclass\s+[A-Z]"),
+            (9, r"\bprivate\b"),
+            (10, r"\btry\s*\{"),
+            (10, r"\bcatch\s*\("),
+            (10, r"\bthrows\s+[A-Z]"),
+            (10, r"\bInteger\.parseInt\s*\("),
+            # Never introduced by any module.
+            (99, r"\bswitch\s*\("),
+            (99, r"->"),  # lambda syntax
+            (99, r"\bvar\s+[a-z_]+\s*="),
+            (99, r"\bHashMap\b"),
+            (99, r"\bMap<"),
+            (99, r"\bsynchronized\b"),
+            (99, r"\bThread\b"),
+            (99, r"\benum\s+[A-Z]"),
+            (99, r"\brecord\s+[A-Z]"),
+            (99, r"\bextends\s+[A-Z]"),
+            (99, r"\bimplements\s+[A-Z]"),
+        ],
+        # Module 9's own explanatory text mentions "try-with-resources" by
+        # name -- \btry\s*\{ (requiring the real brace) rather than a bare
+        # \btry\b is what keeps that prose mention from crediting module 9
+        # with try/catch syntax module 10 is the one that actually teaches.
+    },
 }
 
 

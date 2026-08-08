@@ -1,5 +1,6 @@
 # Build output
 *.o
+*.class
 c/c-course
 cpp/cpp-course
 launcher/launcher

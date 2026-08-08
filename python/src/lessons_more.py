@@ -518,36 +518,36 @@ def lesson_10_exceptions():
 
     ui.heading("PART 1: try / except / finally")
 
-    print("    def dividir(a, b):")
+    print("    def divide(a, b):")
     print("        if b == 0:")
-    print('            raise ValueError("divisao por zero")')
+    print('            raise ValueError("division by zero")')
     print("        return a / b")
     print()
     print("    try:")
-    print("        print(dividir(10, 2))")
-    print("        print(dividir(1, 0))")
+    print("        print(divide(10, 2))")
+    print("        print(divide(1, 0))")
     print("    except ValueError as e:")
-    print('        print(f"apanhado: {e}")')
+    print('        print(f"caught: {e}")')
     print("    finally:")
-    print('        print("sempre corre")')
+    print('        print("always runs")')
     print()
 
-    def dividir(a, b):
+    def divide(a, b):
         if b == 0:
-            raise ValueError("divisao por zero")
+            raise ValueError("division by zero")
         return a / b
 
     print("  Running:")
     try:
-        print(f"    {dividir(10, 2)}")
-        print(f"    {dividir(1, 0)}")
+        print(f"    {divide(10, 2)}")
+        print(f"    {divide(1, 0)}")
     except ValueError as e:
-        print(f"    apanhado: {e}")
+        print(f"    caught: {e}")
     finally:
-        print("    sempre corre")
+        print("    always runs")
 
     print()
-    print("  The second dividir() never returns -- the raise jumps straight")
+    print("  The second divide() never returns -- the raise jumps straight")
     print("  to except, so nothing after it in try runs. finally runs")
     print("  either way, including if you return from inside try.")
 
@@ -628,26 +628,26 @@ def lesson_10_exceptions():
 
     ui.challenge(
         [
-            "Write dividir(a, b) that raises ValueError on b == 0.",
+            "Write divide(a, b) that raises ValueError on b == 0.",
             "Call it with (10, 2) then (1, 0) inside one try, catching",
             "the ValueError and printing its message, with a finally",
             "that always prints.",
         ],
         [],
-        ["5.0", "apanhado: divisao por zero", "sempre corre"],
+        ["5.0", "caught: division by zero", "always runs"],
         [
-            "def dividir(a, b):",
+            "def divide(a, b):",
             "    if b == 0:",
-            '        raise ValueError("divisao por zero")',
+            '        raise ValueError("division by zero")',
             "    return a / b",
             "",
             "try:",
-            "    print(dividir(10, 2))",
-            "    print(dividir(1, 0))",
+            "    print(divide(10, 2))",
+            "    print(divide(1, 0))",
             "except ValueError as e:",
-            '    print(f"apanhado: {e}")',
+            '    print(f"caught: {e}")',
             "finally:",
-            '    print("sempre corre")',
+            '    print("always runs")',
         ],
     )
 
