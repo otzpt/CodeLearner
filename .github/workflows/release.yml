@@ -1,0 +1,265 @@
+name: Release
+
+# Builds the universal launcher (bundled with the compiled C/C++ courses and
+# the Python/JavaScript/Java source they don't need compiling) for Windows
+# and Linux, and packages Linux two more ways (.deb, Arch). Triggered by a
+# version tag (v1.0.0) or manually. Tags with a suffix (v1.0.0-ci1) build
+# without publishing, so the workflow can be exercised safely.
+#
+# Deliberately NOT built here: standalone bundled executables per language
+# (a self-contained .exe needing no Python/Node/JDK installed). That needs a
+# different tool per language -- PyInstaller, Node's SEA, jpackage -- each
+# with its own failure modes, and this project's own docs already say a
+# course needs nothing beyond its language's toolchain. See
+# docs/building-a-single-course.md for building one course standalone by hand.
+#
+# Artifacts are UNSIGNED; the OS may warn about an unknown publisher.
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: build (${{ matrix.name }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            name: windows-x86_64
+          - os: ubuntu-22.04
+            name: linux-x86_64
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install MinGW (Windows)
+        if: runner.os == 'Windows'
+        run: choco install mingw make -y
+        shell: bash
+
+      # Java ships no compiled artifact -- java/run(.bat) compiles-and-runs
+      # in one step at launch time (see java/README notes: `java Main.java`).
+      # A JDK is installed here only to prove that actually works before
+      # shipping it, not to bundle one.
+      - name: Install a JDK (for the smoke test only)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Build C, C++, and the launcher
+        shell: bash
+        run: |
+          set -euo pipefail
+          # CC=gcc / CXX=g++ overrides the Makefiles' default `cc`, which is
+          # a POSIX symlink convention MinGW-w64 does not provide -- gcc/g++
+          # are what choco's mingw package actually puts on PATH. Linux's cc
+          # is untouched; this only takes effect on the Windows leg.
+          make -C c CC=gcc
+          make -C cpp CXX=g++
+          make -C launcher CC=gcc
+
+      - name: Compile-check Java (no artifact -- verifies -Xlint:all -Werror passes)
+        shell: bash
+        run: |
+          make -C java
+          make -C java clean
+
+      - name: Smoke-test the launcher (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd launcher
+          # Picks C, quits C's menu, quits the launcher -- proves the launcher
+          # can actually invoke and return from a real course, not just that
+          # it starts. `0` alone is the interactive-course-question guard;
+          # module 1's own exercise reads two throwaway 0/0 answers before its
+          # own quit path, so the same input feeds all of it.
+          output=$(printf '1\n0\n0\n0\n0\n0\n' | timeout 10 ./launcher)
+          echo "$output" | grep -q "C COURSE" || { echo "::error::launcher did not reach the C course"; exit 1; }
+          echo "$output" | grep -q "See you next time" || { echo "::error::launcher did not exit cleanly"; exit 1; }
+
+      - name: Smoke-test the launcher (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          cd launcher
+          $out = "0`n" | & .\launcher.exe
+          if ($LASTEXITCODE -ne 0) { throw "launcher exited $LASTEXITCODE" }
+          if ($out -notmatch "See you next time") { throw "launcher did not exit cleanly: $out" }
+
+      - name: Assemble the bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+          out=codelearner-${{ matrix.name }}
+          mkdir -p "$out"/{launcher,c,cpp,python/src,javascript/src,java/src}
+
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            cp launcher/launcher.exe "$out/launcher/"
+            cp c/c-course.exe "$out/c/"
+            cp cpp/cpp-course.exe "$out/cpp/"
+            cp java/run.bat "$out/java/"
+            # A double-clickable entry point at the bundle root, same
+            # convenience java/run(.bat) already gives its own course --
+            # nobody should have to know to `cd launcher` first.
+            printf '@echo off\r\ncd /d "%%~dp0launcher"\r\nlauncher.exe\r\n' > "$out/codelearner.bat"
+          else
+            cp launcher/launcher "$out/launcher/"
+            cp c/c-course "$out/c/"
+            cp cpp/cpp-course "$out/cpp/"
+            cp java/run "$out/java/"
+            chmod +x "$out/java/run"
+            printf '#!/bin/sh\ncd "$(dirname "$0")/launcher" && exec ./launcher\n' > "$out/codelearner.sh"
+            chmod +x "$out/codelearner.sh" "$out/launcher/launcher"
+          fi
+
+          cp python/src/*.py "$out/python/src/"
+          cp javascript/src/*.js "$out/javascript/src/"
+          cp java/src/*.java "$out/java/src/"
+          cp README.md LICENSE "$out/"
+
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            7z a "$out.zip" "$out" > /dev/null
+          else
+            tar -czf "$out.tar.gz" "$out"
+          fi
+
+      - name: Package Linux (.deb)
+        if: runner.os == 'Linux'
+        run: |
+          set -euo pipefail
+          pkgver="${GITHUB_REF_NAME#v}"
+          [ "${GITHUB_REF_NAME}" = "${GITHUB_REF}" ] && pkgver="0.0.0-dev"
+          pkg=deb/codelearner
+          # /opt, not /usr/bin, because the launcher finds every course by a
+          # path relative to its own directory (../c, ../python, ...) -- see
+          # launcher/src/main.c. That layout has to stay intact somewhere;
+          # /usr/bin has no room for five sibling directories. The wrapper
+          # is the only thing that goes on PATH.
+          mkdir -p "$pkg/DEBIAN" "$pkg/usr/bin" "$pkg/opt/codelearner"
+          cp -r codelearner-linux-x86_64/* "$pkg/opt/codelearner/"
+          rm -f "$pkg/opt/codelearner/codelearner.sh"
+          cat > "$pkg/usr/bin/codelearner" <<'EOF'
+          #!/bin/sh
+          cd /opt/codelearner/launcher && exec ./launcher
+          EOF
+          chmod +x "$pkg/usr/bin/codelearner" "$pkg/opt/codelearner/launcher/launcher" "$pkg/opt/codelearner/java/run"
+          cat > "$pkg/DEBIAN/control" <<EOF
+          Package: codelearner
+          Version: $pkgver
+          Architecture: amd64
+          Maintainer: CodeLearner <noreply@invalid>
+          Suggests: python3, nodejs, default-jdk
+          Description: Command-line programming courses, one per language
+           C and C++ run standalone. The Python, JavaScript and Java courses
+           need that language's own toolchain installed to run -- see Suggests.
+          EOF
+          dpkg-deb --build --root-owner-group "$pkg" "codelearner-amd64.deb"
+
+      - name: Package Linux (Arch .pkg.tar.zst)
+        if: runner.os == 'Linux'
+        run: |
+          set -euo pipefail
+          pkgver="${GITHUB_REF_NAME#v}"
+          [ "${GITHUB_REF_NAME}" = "${GITHUB_REF}" ] && pkgver="0.0.0.dev"
+          mkdir -p archpkg && cd archpkg
+          cp -r ../codelearner-linux-x86_64 payload
+          rm -f payload/codelearner.sh
+          cat > PKGBUILD <<EOF
+          pkgname=codelearner
+          pkgver=$pkgver
+          pkgrel=1
+          pkgdesc="Command-line programming courses, one per language"
+          arch=('x86_64')
+          url="https://github.com/otzpt/CodeLearner"
+          license=('MIT')
+          # C and C++ are bundled compiled; these three need the listed
+          # runtime installed to run their course, same trade-off the .deb
+          # documents with Suggests.
+          optdepends=('python: run the Python course'
+                      'nodejs: run the JavaScript course'
+                      'jdk-openjdk: run the Java course')
+          options=('!strip' '!debug')
+          package() {
+            install -Dm755 "\$startdir/payload/launcher/launcher" "\$pkgdir/opt/codelearner/launcher/launcher"
+            install -Dm755 "\$startdir/payload/c/c-course" "\$pkgdir/opt/codelearner/c/c-course"
+            install -Dm755 "\$startdir/payload/cpp/cpp-course" "\$pkgdir/opt/codelearner/cpp/cpp-course"
+            install -Dm755 "\$startdir/payload/java/run" "\$pkgdir/opt/codelearner/java/run"
+            for f in "\$startdir/payload/python/src"/*.py; do
+              install -Dm644 "\$f" "\$pkgdir/opt/codelearner/python/src/\$(basename "\$f")"
+            done
+            for f in "\$startdir/payload/javascript/src"/*.js; do
+              install -Dm644 "\$f" "\$pkgdir/opt/codelearner/javascript/src/\$(basename "\$f")"
+            done
+            for f in "\$startdir/payload/java/src"/*.java; do
+              install -Dm644 "\$f" "\$pkgdir/opt/codelearner/java/src/\$(basename "\$f")"
+            done
+            install -Dm644 "\$startdir/payload/README.md" "\$pkgdir/opt/codelearner/README.md"
+            install -Dm644 "\$startdir/payload/LICENSE" "\$pkgdir/opt/codelearner/LICENSE"
+            mkdir -p "\$pkgdir/usr/bin"
+            cat > "\$pkgdir/usr/bin/codelearner" <<'WRAPPER'
+          #!/bin/sh
+          cd /opt/codelearner/launcher && exec ./launcher
+          WRAPPER
+            chmod 755 "\$pkgdir/usr/bin/codelearner"
+          }
+          EOF
+          docker run --rm -v "$(pwd)":/pkg -w /pkg archlinux:base-devel bash -c '
+            useradd -m builder && chown -R builder /pkg &&
+            sudo -u builder makepkg -f --noconfirm --nodeps'
+          cp codelearner-*.pkg.tar.zst "$GITHUB_WORKSPACE/codelearner-x86_64.pkg.tar.zst"
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: codelearner-${{ matrix.name }}
+          path: |
+            codelearner-windows-x86_64.zip
+            codelearner-linux-x86_64.tar.gz
+            codelearner-amd64.deb
+            codelearner-x86_64.pkg.tar.zst
+          if-no-files-found: ignore
+
+  release:
+    name: Publish release
+    needs: [build]
+    runs-on: ubuntu-latest
+    if: |
+      always() && needs.build.result == 'success'
+      && startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '-')
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - name: Publish to GitHub Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*
+          generate_release_notes: true
+          fail_on_unmatched_files: false
+          body: |
+            CodeLearner universal launcher — Windows and Linux.
+
+            Bundles the launcher with the compiled C and C++ courses. Python,
+            JavaScript and Java are included as source and run through their
+            own language's toolchain (see the Suggests/optdepends on the
+            .deb/Arch packages) -- nothing is bundled that would need a
+            PyInstaller/Node-SEA/jpackage-style standalone build.
+
+            **Windows:** portable `.zip` -- extract, run `codelearner.bat`.
+            **Linux:** `.deb`, Arch `.pkg.tar.zst`, or the portable `.tar.gz`
+            (run `./codelearner.sh`).
+
+            Want just one language, standalone? See
+            [`docs/building-a-single-course.md`](https://github.com/otzpt/CodeLearner/blob/main/docs/building-a-single-course.md).
+
+            Unsigned: the OS may warn about an unknown publisher on first run.

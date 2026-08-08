@@ -16,39 +16,63 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* One entry per language. `binary` is NULL for a language with no course
- * yet -- shown as "coming soon" instead of being launchable. Paths are
- * relative to this program's own working directory, which is why the
- * course itself has to be run the same way: `cd launcher && ./launcher`,
- * not from an arbitrary directory. Simplest thing that works for a repo
- * where every course is already run the same way.
+/* One entry per language. `run_command` is NULL for a language with no
+ * course yet -- shown as "coming soon" instead of being launchable. `path`
+ * is what file_exists() checks before offering the option; `run_command` is
+ * what system() actually runs, which is not always the same string.
+ *
+ * They diverge on Windows for the interpreted languages. Verified (not
+ * assumed): the standard python.org installer sets .py as the default
+ * handler for a bare path, so Python could stay a plain path -- but
+ * Node.js's installer does not do the equivalent for .js. Windows' own
+ * default handler for .js is Windows Script Host, an entirely different,
+ * incompatible engine (WSH's JScript, not V8), and Node only registers
+ * itself as an "Open With" candidate under
+ * HKEY_CLASSES_ROOT\Applications\node.exe, never as the default. A bare
+ * path to main.js would silently run under the wrong engine and fail. Both
+ * are made explicit (`python ...`, `node ...`) rather than leaving one
+ * correct by installer behavior and the other wrong by it -- relying on
+ * PATH is one guarantee to reason about instead of two different
+ * file-association stories.
+ *
+ * All paths are relative to this program's own working directory, which is
+ * why the course itself has to be run the same way: `cd launcher &&
+ * ./launcher`, not from an arbitrary directory.
  */
 struct Language {
     const char *name;
-    const char *binary;
+    const char *path;
+    const char *run_command;
 };
 
-static const struct Language LANGUAGES[] = {
-    /* Python is a script, not a compiled binary: `binary` here is checked by
-     * file_exists() the same as the others, then handed to system() as-is.
-     * On Linux this relies on main.py's own shebang and its execute bit
-     * (chmod +x); on Windows it relies on .py being associated with the
-     * Python launcher, which the standard python.org installer sets up.
-     * Neither has a fallback if that association is missing -- untested on
-     * Windows, same as the rest of this file. */
 #ifdef _WIN32
-    { "C",          "..\\c\\c-course.exe" },
-    { "C++",        "..\\cpp\\cpp-course.exe" },
-    { "Python",     "..\\python\\src\\main.py" },
-    { "JavaScript", "..\\javascript\\src\\main.js" },
-    { "Java",       "..\\java\\run.bat" },
+#define C_BIN    "..\\c\\c-course.exe"
+#define CPP_BIN  "..\\cpp\\cpp-course.exe"
+#define PY_PATH  "..\\python\\src\\main.py"
+#define JS_PATH  "..\\javascript\\src\\main.js"
+#define JAVA_BIN "..\\java\\run.bat"
 #else
-    { "C",          "../c/c-course" },
-    { "C++",        "../cpp/cpp-course" },
-    { "Python",     "../python/src/main.py" },
-    { "JavaScript", "../javascript/src/main.js" },
-    { "Java",       "../java/run" },
+#define C_BIN    "../c/c-course"
+#define CPP_BIN  "../cpp/cpp-course"
+#define PY_PATH  "../python/src/main.py"
+#define JS_PATH  "../javascript/src/main.js"
+#define JAVA_BIN "../java/run"
 #endif
+
+static const struct Language LANGUAGES[] = {
+    { "C",          C_BIN,    C_BIN },
+    { "C++",        CPP_BIN,  CPP_BIN },
+#ifdef _WIN32
+    /* On Linux these two are unchanged: a shebang line plus the execute bit
+     * (chmod +x) already picks the right interpreter, the same guarantee
+     * PATH gives here, so there is nothing to make explicit. */
+    { "Python",     PY_PATH,  "python " PY_PATH },
+    { "JavaScript", JS_PATH,  "node " JS_PATH },
+#else
+    { "Python",     PY_PATH,  PY_PATH },
+    { "JavaScript", JS_PATH,  JS_PATH },
+#endif
+    { "Java",       JAVA_BIN, JAVA_BIN },
 };
 
 #define LANGUAGE_COUNT (int)(sizeof LANGUAGES / sizeof LANGUAGES[0])
@@ -111,7 +135,7 @@ static void show_menu(void)
     printf("\n");
 
     for (int i = 0; i < LANGUAGE_COUNT; i++) {
-        if (LANGUAGES[i].binary != NULL) {
+        if (LANGUAGES[i].run_command != NULL) {
             printf("   [%d]  %s\n", i + 1, LANGUAGES[i].name);
         } else {
             printf("   [%d]  %s (coming soon)\n", i + 1, LANGUAGES[i].name);
@@ -146,13 +170,13 @@ int main(void)
 
         const struct Language *lang = &LANGUAGES[n - 1];
 
-        if (lang->binary == NULL) {
+        if (lang->run_command == NULL) {
             printf("\n  %s does not have a course yet.\n", lang->name);
             wait_enter();
             continue;
         }
 
-        if (!file_exists(lang->binary)) {
+        if (!file_exists(lang->path)) {
             printf("\n  %s's course has not been built yet.\n", lang->name);
             printf("  Run `make` inside its folder first.\n");
             wait_enter();
@@ -162,7 +186,7 @@ int main(void)
         /* Blocks until the course process exits. Its own menu already has
          * [0] Quit; choosing it ends the process, system() returns, and the
          * loop redraws this menu -- the "go back" option, for free. */
-        system(lang->binary);
+        system(lang->run_command);
     }
 
     printf("\n  See you next time.\n\n");

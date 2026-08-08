@@ -26,6 +26,17 @@ does not know anything about what happens inside one.
 
 ## Running
 
+Prebuilt releases (Windows `.zip`, Linux `.tar.gz`/`.deb`/Arch
+`.pkg.tar.zst`) are on the [Releases page](https://github.com/otzpt/CodeLearner/releases)
+— extract and run `codelearner.bat`/`codelearner.sh`, or `codelearner` on
+your PATH after installing the `.deb`/Arch package. Only the C and C++
+courses are inside; Python, JavaScript and Java need that language's own
+toolchain installed to run (see below). Want just one course, standalone,
+with no launcher and no other four? See
+[`docs/building-a-single-course.md`](docs/building-a-single-course.md).
+
+To build it yourself instead:
+
 ```bash
 cd launcher
 make
@@ -338,9 +349,19 @@ extension a course binary uses. Java follows the same split: `java/run` on
 Linux, `java/run.bat` on Windows, both doing the same `cd src && java
 Main.java`.
 
-Tested on Linux. The Windows path is written but has not been run yet --
-`java/run.bat` most of all, since it has had no equivalent of the shebang
-experiment that shaped `java/run`.
+Tested on Linux. The Windows path compiles and is exercised by CI's release
+build (see `.github/workflows/release.yml`), including a smoke test that
+launches `launcher.exe` and confirms it exits cleanly -- but that only
+proves it starts and stops, not that every menu path behaves correctly
+end to end, which still needs a human on real Windows. One real bug was
+already caught by scrutinizing this path rather than trusting the comment
+that called it untested: Windows' default handler for `.js` is Windows
+Script Host, not Node -- unlike Python's installer, Node's does not set
+itself as the default for a bare path, only as an "Open With" option (see
+`launcher/src/main.c`'s comment on `run_command` for the verified detail).
+The JavaScript and Python entries now invoke `python`/`node` explicitly
+rather than relying on file association for either. `java/run.bat` still
+has had no equivalent scrutiny beyond compiling.
 
 ## Verification
 
@@ -391,6 +412,9 @@ LICENSE                     MIT
 CONTRIBUTING.md             how to add a module, a course, or a fix
 CODE_OF_CONDUCT.md          Contributor Covenant 2.1
 SECURITY.md                 what counts as a vulnerability here
+.github/
+└── workflows/
+    └── release.yml         builds + packages the launcher on a version tag
 launcher/
 ├── Makefile
 └── src/
@@ -436,7 +460,8 @@ tools/
 └── check-teaching-order.py  fails if an exercise needs something not yet
                               taught, in any course
 docs/
-└── writing-a-course.md     how to add a module or a new language
+├── writing-a-course.md     how to add a module or a new language
+└── building-a-single-course.md   just one course, standalone, no launcher
 ```
 
 ## Contributing
