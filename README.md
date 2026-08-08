@@ -19,7 +19,8 @@ worked example code the student can open and read.
 
 All five languages are covered. The launcher and `tools/check-teaching-order.py`
 both work over any number of courses without modification, so a sixth language
-is a matter of writing it, not extending anything else.
+is a matter of writing it, not extending anything else. [`ROADMAP.md`](ROADMAP.md)
+has the target arc for each of these five and the languages not started yet.
 
 The courses are independent programs. The launcher only launches them: it
 does not know anything about what happens inside one.
