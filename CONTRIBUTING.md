@@ -8,6 +8,14 @@ Read [`docs/writing-a-course.md`](docs/writing-a-course.md) first. It covers
 the design rules every course follows and is the fuller reference; this file
 covers the process around a contribution.
 
+## No commit lands without review
+
+No change of any kind -- a typo fix, a new module, a dependency bump, a CI
+change -- is committed directly to `main`. Every change goes through a pull
+request and gets reviewed by the project lead before it merges. This
+applies regardless of how small the change looks or how confident the
+verification steps above made it feel.
+
 ## Before you start
 
 Open an issue for anything beyond a small fix -- a typo, a wrong claim in a
@@ -76,6 +84,28 @@ requirements:
 - Registered in `launcher/src/main.c`'s `LANGUAGES` table (a two-line
   change) and in `tools/check-teaching-order.py`'s `COURSES` table (that
   language's own construct-to-module map).
+
+### Adding a course for something that is not a language
+
+`gui/` (GTK) is the precedent: a real C library, not a language, but
+registered exactly like one -- its own directory, its own entry in the
+launcher next to C/C++/Python/JavaScript/Java, not folded into an existing
+course's module list. Two things make this different from "adding a new
+language" above, not exceptions to the no-dependency rule but a distinction
+worth being precise about:
+
+- The lesson *program itself* still has zero runtime dependency beyond its
+  host language's toolchain -- `gui-course` is plain C, no `#include
+  <gtk/gtk.h>` anywhere in it, same as every language course.
+- What the lesson *teaches* is allowed to need something extra installed
+  (GTK4's development files here), since that is the whole subject matter,
+  not incidental. State this plainly in the README and the course's own
+  source header, the way `gui/src/lessons_gtk.c` does, so nobody installs
+  the extra dependency thinking it is needed just to browse the course.
+- Every claim about that external code is still held to the same "you
+  actually ran it" standard as everything else in this file -- installing
+  GTK4 to verify a module before writing it down is not optional just
+  because the course binary itself does not need it.
 
 ### Fixing a bug in the launcher or the shared tooling
 

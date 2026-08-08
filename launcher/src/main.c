@@ -51,12 +51,14 @@ struct Language {
 #define PY_PATH  "..\\python\\src\\main.py"
 #define JS_PATH  "..\\javascript\\src\\main.js"
 #define JAVA_BIN "..\\java\\run.bat"
+#define GUI_BIN  "..\\gui\\gui-course.exe"
 #else
 #define C_BIN    "../c/c-course"
 #define CPP_BIN  "../cpp/cpp-course"
 #define PY_PATH  "../python/src/main.py"
 #define JS_PATH  "../javascript/src/main.js"
 #define JAVA_BIN "../java/run"
+#define GUI_BIN  "../gui/gui-course"
 #endif
 
 static const struct Language LANGUAGES[] = {
@@ -73,6 +75,10 @@ static const struct Language LANGUAGES[] = {
     { "JavaScript", JS_PATH,  JS_PATH },
 #endif
     { "Java",       JAVA_BIN, JAVA_BIN },
+    /* Not a language -- GTK, a C library -- but treated as a peer entry
+     * here on purpose, the same way it gets its own top-level course
+     * directory instead of living inside c/'s module list. */
+    { "GUI (GTK)",  GUI_BIN,  GUI_BIN },
 };
 
 #define LANGUAGE_COUNT (int)(sizeof LANGUAGES / sizeof LANGUAGES[0])

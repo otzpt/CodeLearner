@@ -1,10 +1,10 @@
 # Roadmap: past the course
 
-CodeLearner's C course (modules 1-14) covers stages 1-3 and has started
-stages 4 and 6. This file is the rest of the path — what comes after
-module 14, and where each stage of it actually lives. Nothing here is new
-course content; it's a map, kept in the repo so the next stage isn't a
-mystery once the course ends.
+CodeLearner's C course (modules 1-13) covers stages 1-3 and has started
+stage 4. This file is the rest of the path — what comes after module 13,
+and where each stage of it actually lives. Nothing here is new course
+content; it's a map, kept in the repo so the next stage isn't a mystery
+once the course ends.
 
 ## 1. Core syntax — covered
 
@@ -59,21 +59,19 @@ actually do, not just that they exist — and which string functions are
 unsafe to reach for by default. `<stdint.h>`, `<stdbool.h>`, `<assert.h>`,
 `<errno.h>` round this out.
 
-## 6. Real C projects — started
+## 6. Real C projects — beyond this course
 
-Module 14 covers a first GTK4 window: `pkg-config` in the compile line, the
-`GtkApplication`/`activate` structure, the `G_CALLBACK` signature-mismatch
-trap, and reference-counted widget ownership as a contrast to modules 9 and
-12's malloc/free model. It needs GTK4's development files, which is why it
-cannot link into `c-course` itself — see the README's note on module 14.
-
-Still beyond the course: a file organizer, hex viewer, CLI shell, HTTP
+Stop writing toy programs: a file organizer, hex viewer, CLI shell, HTTP
 client, compression tool, mini database, config parser. "For each file,
 determine category, create folder if needed, move it" is a genuinely good
 one to start with — it forces directories, paths, structs, and errors
 together. Filed as [issue #3](https://github.com/otzpt/CodeLearner/issues/3).
 
 Milestone: a substantial C program, without AI.
+
+Note: GUI programming (GTK) is not filed here — it got its own course,
+[`gui/`](../gui), rather than a C-course module. See the top-level
+README's course table.
 
 ## 7. Linux / POSIX C — beyond this course
 

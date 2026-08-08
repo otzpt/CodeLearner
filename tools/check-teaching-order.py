@@ -315,6 +315,16 @@ COURSES = {
         # \btry\b is what keeps that prose mention from crediting module 9
         # with try/catch syntax module 10 is the one that actually teaches.
     },
+    "gui": {
+        "dir": "gui/src",
+        "glob": "lessons_*.c",
+        "exercise_marker": r'exercise\((\d+)\);',
+        "summary_marker": r'\n    wait_enter\(\);\n    clear_screen\(\);\n    heading\("SUMMARY',
+        # Empty on purpose: a single-module course has no earlier module an
+        # exercise could reach ahead of yet. Grows the same way the other
+        # five courses' lists did, as soon as a second module exists here.
+        "first_taught": [],
+    },
 }
 
 

@@ -1,18 +1,17 @@
 /*
- * Module 14 - GTK: your first window (extra, optional).
+ * Module 1 - GTK: your first window.
  *
- * Everything else in this course links into one zero-dependency binary --
- * see docs/writing-a-course.md's own rule that a course needs nothing beyond
- * its language's toolchain. GTK is a real external library, not part of
- * that, so this module cannot follow the same pattern modules 1-13 do of
- * running its own demo code inline. It follows the OTHER existing pattern
- * instead -- the one module 11 already established for output that cannot
- * be an exact string to match (there, randomness; here, a window on screen)
- * -- shown as real, verified code, with the actual observed behaviour
- * described rather than diffed against captured stdout.
+ * This course, unlike c/, cpp/, python/ and javascript/, is not a
+ * zero-dependency single binary all the way down: the lesson program
+ * itself (this file, compiled into gui-course) needs nothing beyond a C
+ * compiler, but the code it teaches needs GTK4's development files
+ * installed to actually compile and run -- see docs/writing-a-course.md's
+ * rule that a course needs nothing beyond its language's toolchain; GTK is
+ * not part of C's toolchain, it is a library, the same way it would be a
+ * dependency for any other language calling it.
  *
  * Every example in this module was actually compiled and run before being
- * written down, same as everywhere else in the course:
+ * written down, same as every other course:
  *
  *   gcc -Wall -Wextra $(pkg-config --cflags gtk4) main.c -o app $(pkg-config --libs gtk4)
  *
@@ -27,33 +26,40 @@
 #include "lessons.h"
 #include "ui.h"
 
-void lesson_14_gtk(void)
+void lesson_01_gtk(void)
 {
-    title("MODULE 14 - GTK: YOUR FIRST WINDOW (EXTRA)");
+    title("MODULE 1 - GTK: YOUR FIRST WINDOW");
 
-    heading("WHAT THIS IS");
+    heading("GTK IS A C LIBRARY");
 
-    printf("  GTK is the toolkit behind GNOME and a large share of native\n");
-    printf("  Linux desktop apps -- real windows, buttons, and widgets,\n");
-    printf("  from C. Unlike every other module, this one needs something\n");
-    printf("  installed beyond your compiler: GTK4's development files.\n\n");
+    printf("  GTK is a C library for building real, native graphical\n");
+    printf("  applications -- windows, buttons, text fields, the works.\n");
+    printf("  It is the toolkit behind GNOME and a large share of native\n");
+    printf("  Linux desktop apps. \"Written in C\" here does not mean a\n");
+    printf("  C program calling into someone else's black box the way,\n");
+    printf("  say, a Python program calls into NumPy's C internals --\n");
+    printf("  GTK's own public API is C: the functions you call, the\n");
+    printf("  structs you pass around, are C, and everything a C program\n");
+    printf("  already knows about pointers, structs and function calls\n");
+    printf("  carries straight over.\n\n");
+
+    printf("  This course needs something none of CodeLearner's other\n");
+    printf("  courses do: GTK4's development files, installed separately\n");
+    printf("  from your C compiler.\n\n");
 
     printf("    Arch:           sudo pacman -S gtk4\n");
     printf("    Debian/Ubuntu:  sudo apt install libgtk-4-dev\n\n");
 
-    printf("  That is also why this module cannot run its demo the way\n");
-    printf("  modules 1-13 do, live inside this course. The course itself\n");
-    printf("  stays a single binary with no dependency beyond a C\n");
-    printf("  compiler; GTK code here is shown, verified by actually\n");
-    printf("  compiling and running it while writing this module, and left\n");
-    printf("  for you to compile the same way module 11's game was --\n");
-    printf("  save it to a file, build it yourself, run it yourself.\n");
+    printf("  This program itself -- the menu, this text -- needed none of\n");
+    printf("  that to build; it is plain C, same as every other course.\n");
+    printf("  Only the GTK code shown below, which you compile and run\n");
+    printf("  yourself, actually touches GTK.\n");
 
     wait_enter();
     clear_screen();
     heading("PART 1: pkg-config -- the compile line changes");
 
-    printf("  Every compile so far in this course has been:\n\n");
+    printf("  A plain C program compiles with just:\n\n");
     printf("    gcc -Wall -Wextra test.c -o test\n\n");
 
     printf("  Try that on a file that #includes <gtk/gtk.h> and it fails\n");
@@ -78,9 +84,8 @@ void lesson_14_gtk(void)
     heading("PART 2: GtkApplication, not gtk_init");
 
     printf("  Most GTK tutorials you will find online are GTK3, and GTK3's\n");
-    printf("  pattern -- gtk_init() then gtk_main() -- still compiles in\n");
-    printf("  name under GTK4 in places, but is not how a GTK4 app is\n");
-    printf("  actually structured. The current, correct shape is\n");
+    printf("  pattern -- gtk_init() then gtk_main() -- is not how a GTK4\n");
+    printf("  app is actually structured. The current, correct shape is\n");
     printf("  GtkApplication:\n\n");
 
     printf("    static void activate(GtkApplication *app, gpointer user_data)\n");
@@ -131,10 +136,12 @@ void lesson_14_gtk(void)
     printf("  check that on_click's parameters match what the \"clicked\"\n");
     printf("  signal actually passes. Get the signature wrong and this\n");
     printf("  still compiles -- GTK calls your function with arguments it\n");
-    printf("  was never written for, which is undefined behaviour, not a\n");
-    printf("  caught error. The signature module 8 would call a mismatched\n");
-    printf("  function pointer is exactly this, just harder to spot because\n");
-    printf("  G_CALLBACK's cast hides the mismatch from the compiler.\n\n");
+    printf("  was never written for. That is undefined behaviour, not a\n");
+    printf("  caught error: ordinary C already treats calling a function\n");
+    printf("  pointer through the wrong signature as undefined behaviour,\n");
+    printf("  G_CALLBACK's cast just makes it easy to do by accident,\n");
+    printf("  since the compiler no longer has the real signature to check\n");
+    printf("  it against.\n\n");
 
     printf("  Correct signatures for the signals you are most likely to use\n");
     printf("  first are documented per-widget in GTK's own reference\n");
@@ -145,15 +152,16 @@ void lesson_14_gtk(void)
     clear_screen();
     heading("PART 4: who frees the button?");
 
-    printf("  Nowhere above is there a free(button) or free(window).\n");
-    printf("  Modules 9 and 12 built the habit of owning every malloc with\n");
-    printf("  a matching free -- GTK widgets are a different memory model\n");
-    printf("  on purpose. Every GtkWidget is a GObject, reference-counted,\n");
-    printf("  and gtk_window_set_child() makes the window hold a reference\n");
-    printf("  to the button. Destroying the window drops that reference and\n");
-    printf("  frees the button along with it. You free the one thing you\n");
-    printf("  created yourself with a plain reference -- g_object_unref(app)\n");
-    printf("  above -- and let the widget tree own everything under it.\n");
+    printf("  Nowhere above is there a free(button) or free(window). If\n");
+    printf("  you already have the malloc/free habit from plain C -- every\n");
+    printf("  malloc owned by exactly one free -- GTK widgets are a\n");
+    printf("  different memory model on purpose. Every GtkWidget is a\n");
+    printf("  GObject, reference-counted, and gtk_window_set_child() makes\n");
+    printf("  the window hold a reference to the button. Destroying the\n");
+    printf("  window drops that reference and frees the button along with\n");
+    printf("  it. You free the one thing you created yourself with a plain\n");
+    printf("  reference -- g_object_unref(app) above -- and let the widget\n");
+    printf("  tree own everything under it.\n");
 
     wait_enter();
     clear_screen();
@@ -204,7 +212,7 @@ void lesson_14_gtk(void)
 
     wait_enter();
     clear_screen();
-    exercise(14);
+    exercise(1);
 
     question("gcc file.c -o app fails with \"gtk/gtk.h: No such file or\n"
              "  directory\" even though GTK is installed. What is missing\n"

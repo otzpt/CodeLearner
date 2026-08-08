@@ -3,6 +3,7 @@
 *.class
 c/c-course
 cpp/cpp-course
+gui/gui-course
 launcher/launcher
 __pycache__/
 *.pyc

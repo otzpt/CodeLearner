@@ -43,7 +43,6 @@ static const struct Module MODULES[] = {
     { "Final test: 2 programs",   lesson_11_final_test },
     { "Going deeper: memory (extra)", lesson_12_deeper_memory },
     { "Stacks and queues",        lesson_13_stacks_queues },
-    { "GTK: your first window (extra)", lesson_14_gtk },
 };
 
 /* Number of elements in the array: the size of the whole array divided by

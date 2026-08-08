@@ -64,6 +64,7 @@ jobs:
           # is untouched; this only takes effect on the Windows leg.
           make -C c CC=gcc
           make -C cpp CXX=g++
+          make -C gui CC=gcc
           make -C launcher CC=gcc
 
       - name: Compile-check Java (no artifact -- verifies -Xlint:all -Werror passes)
@@ -109,12 +110,13 @@ jobs:
         run: |
           set -euo pipefail
           out=codelearner-${{ matrix.name }}
-          mkdir -p "$out"/{launcher,c,cpp,python/src,javascript/src,java/src}
+          mkdir -p "$out"/{launcher,c,cpp,gui,python/src,javascript/src,java/src}
 
           if [ "${{ runner.os }}" = "Windows" ]; then
             cp launcher/launcher.exe "$out/launcher/"
             cp c/c-course.exe "$out/c/"
             cp cpp/cpp-course.exe "$out/cpp/"
+            cp gui/gui-course.exe "$out/gui/"
             cp java/run.bat "$out/java/"
             # A double-clickable entry point at the bundle root, same
             # convenience java/run(.bat) already gives its own course --
@@ -124,6 +126,7 @@ jobs:
             cp launcher/launcher "$out/launcher/"
             cp c/c-course "$out/c/"
             cp cpp/cpp-course "$out/cpp/"
+            cp gui/gui-course "$out/gui/"
             cp java/run "$out/java/"
             chmod +x "$out/java/run"
             printf '#!/bin/sh\ncd "$(dirname "$0")/launcher" && exec ./launcher\n' > "$out/codelearner.sh"
@@ -151,7 +154,7 @@ jobs:
           # /opt, not /usr/bin, because the launcher finds every course by a
           # path relative to its own directory (../c, ../python, ...) -- see
           # launcher/src/main.c. That layout has to stay intact somewhere;
-          # /usr/bin has no room for five sibling directories. The wrapper
+          # /usr/bin has no room for six sibling directories. The wrapper
           # is the only thing that goes on PATH.
           mkdir -p "$pkg/DEBIAN" "$pkg/usr/bin" "$pkg/opt/codelearner"
           cp -r codelearner-linux-x86_64/* "$pkg/opt/codelearner/"
@@ -160,16 +163,18 @@ jobs:
           #!/bin/sh
           cd /opt/codelearner/launcher && exec ./launcher
           EOF
-          chmod +x "$pkg/usr/bin/codelearner" "$pkg/opt/codelearner/launcher/launcher" "$pkg/opt/codelearner/java/run"
+          chmod +x "$pkg/usr/bin/codelearner" "$pkg/opt/codelearner/launcher/launcher" "$pkg/opt/codelearner/gui/gui-course" "$pkg/opt/codelearner/java/run"
           cat > "$pkg/DEBIAN/control" <<EOF
           Package: codelearner
           Version: $pkgver
           Architecture: amd64
           Maintainer: CodeLearner <noreply@invalid>
-          Suggests: python3, nodejs, default-jdk
+          Suggests: python3, nodejs, default-jdk, gtk4
           Description: Command-line programming courses, one per language
-           C and C++ run standalone. The Python, JavaScript and Java courses
-           need that language's own toolchain installed to run -- see Suggests.
+           C, C++ and GUI run standalone. The Python, JavaScript and Java
+           courses need that language's own toolchain installed to run --
+           see Suggests. GTK4 is only needed to compile and run the GUI
+           course's own taught examples, not to browse the course itself.
           EOF
           dpkg-deb --build --root-owner-group "$pkg" "codelearner-amd64.deb"
 
@@ -190,17 +195,20 @@ jobs:
           arch=('x86_64')
           url="https://github.com/otzpt/CodeLearner"
           license=('MIT')
-          # C and C++ are bundled compiled; these three need the listed
+          # C, C++ and GUI are bundled compiled; these three need the listed
           # runtime installed to run their course, same trade-off the .deb
-          # documents with Suggests.
+          # documents with Suggests. GTK4 is only needed to compile and run
+          # the GUI course's own taught examples, not to browse the course.
           optdepends=('python: run the Python course'
                       'nodejs: run the JavaScript course'
-                      'jdk-openjdk: run the Java course')
+                      'jdk-openjdk: run the Java course'
+                      'gtk4: compile and run the GUI course examples')
           options=('!strip' '!debug')
           package() {
             install -Dm755 "\$startdir/payload/launcher/launcher" "\$pkgdir/opt/codelearner/launcher/launcher"
             install -Dm755 "\$startdir/payload/c/c-course" "\$pkgdir/opt/codelearner/c/c-course"
             install -Dm755 "\$startdir/payload/cpp/cpp-course" "\$pkgdir/opt/codelearner/cpp/cpp-course"
+            install -Dm755 "\$startdir/payload/gui/gui-course" "\$pkgdir/opt/codelearner/gui/gui-course"
             install -Dm755 "\$startdir/payload/java/run" "\$pkgdir/opt/codelearner/java/run"
             for f in "\$startdir/payload/python/src"/*.py; do
               install -Dm644 "\$f" "\$pkgdir/opt/codelearner/python/src/\$(basename "\$f")"
@@ -257,11 +265,14 @@ jobs:
           body: |
             CodeLearner universal launcher — Windows and Linux.
 
-            Bundles the launcher with the compiled C and C++ courses. Python,
-            JavaScript and Java are included as source and run through their
-            own language's toolchain (see the Suggests/optdepends on the
-            .deb/Arch packages) -- nothing is bundled that would need a
-            PyInstaller/Node-SEA/jpackage-style standalone build.
+            Bundles the launcher with the compiled C, C++ and GUI courses.
+            Python, JavaScript and Java are included as source and run
+            through their own language's toolchain (see the
+            Suggests/optdepends on the .deb/Arch packages) -- nothing is
+            bundled that would need a PyInstaller/Node-SEA/jpackage-style
+            standalone build. The GUI course itself needs nothing beyond a
+            C compiler to browse; GTK4 is only needed if you compile and
+            run the examples it teaches.
 
             **Windows:** portable `.zip` -- extract, run `codelearner.bat`.
             **Linux:** `.deb`, Arch `.pkg.tar.zst`, or the portable `.tar.gz`
