@@ -16,12 +16,19 @@ worked example code the student can open and read.
 | JavaScript | 10 — console.log() through classes and errors | [`javascript/`](javascript/) |
 | Java | 10 — System.out through checked exceptions | [`java/`](java/) |
 | GUI (GTK) | 1 — your first window | [`gui/`](gui/) |
+| Assembly | 1 — registers, syscalls, your first program | [`assembly/`](assembly/) |
 | Launcher | done — pick a language, open its course | [`launcher/`](launcher/) |
 
-Six courses are covered — GUI is not a language, but a real C library gets
-the same treatment as one: its own directory, its own binary, its own entry
-in the launcher next to the five languages, rather than being folded into
-`c/`'s own module list. The launcher and `tools/check-teaching-order.py`
+Seven courses are covered. GUI and Assembly are not languages in the same
+sense C/C++/Python/JavaScript/Java are, but both get the same treatment as
+one: their own directory, their own binary, their own entry in the launcher,
+rather than being folded into `c/`'s module list. Assembly goes further
+than GUI does, though -- its own delivery program (`assembly/src/ui.s`,
+`main.s`) is genuinely written in x86-64 assembly, the same "written in the
+language it teaches" rule every other course follows literally, just with
+no standard library underneath it (raw `read`/`write`/`exit` syscalls, no
+libc at all). GUI's own delivery stays C, since there is no separate "GTK
+language" to write a menu in. The launcher and `tools/check-teaching-order.py`
 both work over any number of courses without modification, so a new entry
 is a matter of writing it, not extending anything else.
 [`ROADMAP.md`](ROADMAP.md) has the target arc for the five languages and
@@ -369,6 +376,41 @@ describes the real observed behaviour (a button that relabels itself on
 click) instead of diffing against captured stdout — the same accommodation
 module 11 in the C course already makes for output that depends on a
 random number.
+
+## The Assembly course
+
+| # | Module | The thing it exists for |
+| --- | --- | --- |
+| 1 | Registers, syscalls, your first program | AT&T syntax reads backwards from most tutorials; a syscall is a number in `rax` plus arguments in the same registers a call would use |
+
+Linux/x86-64 only — see [`ROADMAP.md`](ROADMAP.md)'s note on why there is
+no Windows path to translate this one to. This is the one course where
+"written in the language it teaches" is taken completely literally: unlike
+the GUI course, there genuinely is a language here to write a menu in, so
+`assembly/src/ui.s` and `main.s` are real x86-64 assembly, not C that talks
+about assembly. No libc, no C runtime — `title`/`heading`/`question`/
+`ask_yes`/`read_line` are all built from nothing but the `read`, `write`
+and `exit` syscalls, called directly.
+
+Every function that needs an argument to survive more than one call saves
+it into a real stack frame (`push %rbp; mov %rsp, %rbp; sub $N, %rsp`)
+rather than juggling `push`/`pop` pairs around each call — the same shape
+`gcc -O0`'s own output uses, which module 1 shows side by side with
+`ui.s`'s hand-written version of the same thing. Two bugs caught during
+verification, not by inspection: an early draft of `question()` tried to
+print an argument through a register that had already been overwritten,
+and a piped `printf | ./asm-course` test appeared to break `ask_yes()`
+because a pipe (unlike a real terminal) can hand `read()` more than one
+line in a single call — both are why every module in this project is
+walked with a real FIFO and delays between lines before being trusted, not
+just assembled and eyeballed.
+
+The exercise's expected answers are one word each (`second`, `rsi`,
+`number`) on purpose: grading is an exact string comparison (`ui.s`'s
+`trim_and_lower` plus `streq` -- case-insensitive and whitespace-trimmed,
+nothing fuzzier), the same "keep it short and unambiguous" rule
+`docs/writing-a-course.md` already states for every other course's
+`question()`.
 
 ## Design rules
 

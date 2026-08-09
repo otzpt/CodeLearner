@@ -325,6 +325,18 @@ COURSES = {
         # five courses' lists did, as soon as a second module exists here.
         "first_taught": [],
     },
+    "assembly": {
+        "dir": "assembly/src",
+        "glob": "lessons_*.s",
+        # Assembly has no exercise()-shaped call the way every other course
+        # does -- the markers here are literal comments in the .s source
+        # (see lessons_asm.s) written specifically for this regex, not code.
+        "exercise_marker": r'# exercise\((\d+)\)',
+        "summary_marker": r'# summary\(\d+\)',
+        # Empty for the same reason gui's is: one module, nothing earlier to
+        # reach ahead of yet.
+        "first_taught": [],
+    },
 }
 
 

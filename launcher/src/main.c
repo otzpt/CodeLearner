@@ -59,6 +59,7 @@ struct Language {
 #define JS_PATH  "../javascript/src/main.js"
 #define JAVA_BIN "../java/run"
 #define GUI_BIN  "../gui/gui-course"
+#define ASM_BIN  "../assembly/asm-course"
 #endif
 
 static const struct Language LANGUAGES[] = {
@@ -79,6 +80,16 @@ static const struct Language LANGUAGES[] = {
      * here on purpose, the same way it gets its own top-level course
      * directory instead of living inside c/'s module list. */
     { "GUI (GTK)",  GUI_BIN,  GUI_BIN },
+#ifdef _WIN32
+    /* Genuinely not "coming soon later" the way an unbuilt language is --
+     * this course makes raw Linux syscalls directly (syscall + Linux
+     * syscall numbers), which have no Windows equivalent to translate to.
+     * A Windows build would need its own real implementation against a
+     * completely different ABI, not a path change. */
+    { "Assembly",   NULL, NULL },
+#else
+    { "Assembly",   ASM_BIN, ASM_BIN },
+#endif
 };
 
 #define LANGUAGE_COUNT (int)(sizeof LANGUAGES / sizeof LANGUAGES[0])

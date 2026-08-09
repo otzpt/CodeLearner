@@ -4,6 +4,7 @@
 c/c-course
 cpp/cpp-course
 gui/gui-course
+assembly/asm-course
 launcher/launcher
 __pycache__/
 *.pyc

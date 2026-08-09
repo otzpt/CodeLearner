@@ -6,6 +6,13 @@ past the existing C course's 12 modules. This file is the whole project:
 new languages, and what "done" looks like for the languages that already
 exist.
 
+Two courses outside the original five languages this file tracks have
+since been started -- see the README's own course tables, not this file,
+for their current state: **GUI (GTK)**, delivered in C since there is no
+separate "GTK language" to write a menu in; and **Assembly**, which is
+started below and whose own entry stays in this file since it was one of
+the "new languages" this roadmap already named.
+
 ## The one rule everything else follows
 
 **Don't make every language follow the same curriculum structure.** Python
@@ -33,6 +40,26 @@ end point beyond its current module count.
   projects.
 - **JavaScript**: fundamentals → DOM → async → APIs → modules → Node.js.
 
+## Assembly — started
+
+[`assembly/`](assembly/), module 1: registers, syscalls, your first
+program. Target arc from here: memory addressing → the stack in more
+depth (currently only what a function's own prologue/epilogue needs) →
+more instructions → calling conventions beyond "arguments in rdi/rsi/...".
+Distinct from `c/ROADMAP.md` section 9, which is "read enough asm to
+understand your own compiled C" for someone taking the C course, not a
+full course in its own right.
+
+Linux/x86-64 only, and not planned to become cross-platform: the whole
+course is built on Linux syscalls made directly (`syscall` plus a Linux
+syscall number in `rax`), which have no Windows equivalent to translate
+to -- a Windows version would need a real second implementation against
+a completely different ABI (different argument registers, no directly
+callable stable syscall interface), not a path or flag change the way
+every other course's Windows support is. The launcher reflects this:
+Assembly shows as unavailable on a Windows build, the same "coming soon"
+treatment as a language with no course yet, not a broken link.
+
 ## New languages — not started, no folders yet
 
 Each entry is a target arc, not a spec. Per the one rule above, each should
@@ -56,10 +83,6 @@ same module skeleton as C.
   transactions.
 - **Lua** — syntax → tables → functions → modules → metatables → scripting
   projects.
-- **Assembly** — registers → memory → instructions → stack → syscalls →
-  calling conventions. (Distinct from `c/ROADMAP.md` section 9, which is
-  "read enough asm to understand your own compiled C" — this would be a
-  full course in its own right.)
 - **Pascal** — fundamentals → procedures → records → pointers → data
   structures.
 - **HolyC** — deliberately empty. No folder, no stub, until there's an
