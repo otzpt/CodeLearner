@@ -46,20 +46,22 @@ struct Language {
 };
 
 #ifdef _WIN32
-#define C_BIN    "..\\c\\c-course.exe"
-#define CPP_BIN  "..\\cpp\\cpp-course.exe"
-#define PY_PATH  "..\\python\\src\\main.py"
-#define JS_PATH  "..\\javascript\\src\\main.js"
-#define JAVA_BIN "..\\java\\run.bat"
-#define GUI_BIN  "..\\gui\\gui-course.exe"
+#define C_BIN      "..\\c\\c-course.exe"
+#define CPP_BIN    "..\\cpp\\cpp-course.exe"
+#define PY_PATH    "..\\python\\src\\main.py"
+#define JS_PATH    "..\\javascript\\src\\main.js"
+#define JAVA_BIN   "..\\java\\run.bat"
+#define GUI_BIN    "..\\gui\\gui-course.exe"
+#define CSHARP_BIN "..\\csharp\\run.bat"
 #else
-#define C_BIN    "../c/c-course"
-#define CPP_BIN  "../cpp/cpp-course"
-#define PY_PATH  "../python/src/main.py"
-#define JS_PATH  "../javascript/src/main.js"
-#define JAVA_BIN "../java/run"
-#define GUI_BIN  "../gui/gui-course"
-#define ASM_BIN  "../assembly/asm-course"
+#define C_BIN      "../c/c-course"
+#define CPP_BIN    "../cpp/cpp-course"
+#define PY_PATH    "../python/src/main.py"
+#define JS_PATH    "../javascript/src/main.js"
+#define JAVA_BIN   "../java/run"
+#define GUI_BIN    "../gui/gui-course"
+#define ASM_BIN    "../assembly/asm-course"
+#define CSHARP_BIN "../csharp/run"
 #endif
 
 static const struct Language LANGUAGES[] = {
@@ -76,6 +78,12 @@ static const struct Language LANGUAGES[] = {
     { "JavaScript", JS_PATH,  JS_PATH },
 #endif
     { "Java",       JAVA_BIN, JAVA_BIN },
+    /* Same wrapper story as Java: `dotnet run` has to run from inside the
+     * project directory, so this cannot point straight at a .cs file the
+     * way Python's/JavaScript's entries do. Cross-platform via `dotnet`
+     * itself, so unlike Python/JavaScript there's no Windows-vs-Linux
+     * split to make explicit here -- the run/run.bat wrapper covers it. */
+    { "C#",         CSHARP_BIN, CSHARP_BIN },
     /* Not a language -- GTK, a C library -- but treated as a peer entry
      * here on purpose, the same way it gets its own top-level course
      * directory instead of living inside c/'s module list. */

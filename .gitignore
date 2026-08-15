@@ -6,6 +6,8 @@ cpp/cpp-course
 gui/gui-course
 assembly/asm-course
 launcher/launcher
+csharp/src/bin/
+csharp/src/obj/
 __pycache__/
 *.pyc
 

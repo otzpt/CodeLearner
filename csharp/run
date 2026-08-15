@@ -1,0 +1,16 @@
+#!/bin/sh
+# Launches the C# course. Registered directly as this course's entry point
+# in launcher/src/main.c, the same way Java's java/run is -- see that
+# file's LANGUAGES table comment for why a wrapper is needed here too:
+# `dotnet run` has to run from inside the project directory (or take an
+# explicit --project path), so the launcher cannot point straight at a
+# .csproj or .cs file the way it points at Python's/JavaScript's main.py
+# and main.js.
+#
+# `dotnet run` builds csharp.csproj and its .cs files and runs the result
+# in one step -- no separate `dotnet build` invocation, same shortcut
+# `java Main.java` is for javac+java. See docs/writing-a-course.md and
+# this course's own module 1 for the two-step build-then-run model this
+# sits on top of.
+cd "$(dirname "$0")/src" || exit 1
+exec dotnet run

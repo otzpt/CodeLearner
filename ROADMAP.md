@@ -25,11 +25,11 @@ structured like the C course would be teaching Rust as if it were C with
 different syntax, which is a worse Rust course than one that starts from
 what actually makes Rust Rust.
 
-## Target arcs for the four languages already in the repo
+## Target arcs for the languages already in the repo
 
 Not commitments to build in this order — a statement of what a *finished*
-version of each course covers, since none of the four currently states an
-end point beyond its current module count.
+version of each course covers, since none of these currently states an end
+point beyond its current module count.
 
 - **Python**: fundamentals → OOP → modules → files → APIs → practical
   projects.
@@ -39,6 +39,12 @@ end point beyond its current module count.
 - **Java**: OOP → collections → exceptions → generics → concurrency →
   projects.
 - **JavaScript**: fundamentals → DOM → async → APIs → modules → Node.js.
+- **C#**: fundamentals → nullable/IDisposable (module 10, where the current
+  course ends) → LINQ → async/await → generics and interfaces in depth →
+  delegates and events → practical projects. Deliberately built to sit next
+  to Java's course rather than duplicate it — see the README's own C#
+  section for where the two genuinely diverge (default parameters, `string
+  ==`, checked exceptions, value vs reference types) and where they don't.
 
 ## Assembly — started
 

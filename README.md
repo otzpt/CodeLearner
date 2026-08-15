@@ -15,24 +15,34 @@ worked example code the student can open and read.
 | Python | 10 — print() through classes and exceptions | [`python/`](python/) |
 | JavaScript | 10 — console.log() through classes and errors | [`javascript/`](javascript/) |
 | Java | 10 — System.out through checked exceptions | [`java/`](java/) |
+| C# | 10 — top-level statements through IDisposable | [`csharp/`](csharp/) |
 | GUI (GTK) | 1 — your first window | [`gui/`](gui/) |
 | Assembly | 1 — registers, syscalls, your first program | [`assembly/`](assembly/) |
 | Launcher | done — pick a language, open its course | [`launcher/`](launcher/) |
 
-Seven courses are covered. GUI and Assembly are not languages in the same
-sense C/C++/Python/JavaScript/Java are, but both get the same treatment as
-one: their own directory, their own binary, their own entry in the launcher,
-rather than being folded into `c/`'s module list. Assembly goes further
-than GUI does, though -- its own delivery program (`assembly/src/ui.s`,
-`main.s`) is genuinely written in x86-64 assembly, the same "written in the
-language it teaches" rule every other course follows literally, just with
-no standard library underneath it (raw `read`/`write`/`exit` syscalls, no
-libc at all). GUI's own delivery stays C, since there is no separate "GTK
-language" to write a menu in. The launcher and `tools/check-teaching-order.py`
-both work over any number of courses without modification, so a new entry
-is a matter of writing it, not extending anything else.
-[`ROADMAP.md`](ROADMAP.md) has the target arc for the five languages and
-the ones not started yet.
+Eight courses are covered. GUI and Assembly are not languages in the same
+sense the other six are, but both get the same treatment as one: their own
+directory, their own binary, their own entry in the launcher, rather than
+being folded into `c/`'s module list. Assembly goes further than GUI does,
+though -- its own delivery program (`assembly/src/ui.s`, `main.s`) is
+genuinely written in x86-64 assembly, the same "written in the language it
+teaches" rule every other course follows literally, just with no standard
+library underneath it (raw `read`/`write`/`exit` syscalls, no libc at all).
+GUI's own delivery stays C, since there is no separate "GTK language" to
+write a menu in. The launcher and `tools/check-teaching-order.py` both work
+over any number of courses without modification, so a new entry is a matter
+of writing it, not extending anything else.
+[`ROADMAP.md`](ROADMAP.md) has the target arc for the languages already
+here and the ones not started yet.
+
+C# runs alongside Java's course on purpose: both are compiled, garbage-
+collected, and OOP, so most of what makes C# worth its own course is what's
+genuinely different from Java, not a restatement of the same ground -- C#
+has default parameter values where Java needs overloading for the same job
+(module 7), `string ==` compares content where Java's compares references
+(module 6), there are no checked exceptions at all (module 10), and
+`struct` vs `class` is a value/reference split C#'s primitives-vs-objects
+split doesn't map onto Java's the same way (module 8).
 
 The courses are independent programs. The launcher only launches them: it
 does not know anything about what happens inside one.
@@ -43,8 +53,8 @@ Prebuilt releases (Windows `.zip`, Linux `.tar.gz`/`.deb`/Arch
 `.pkg.tar.zst`) are on the [Releases page](https://github.com/otzpt/CodeLearner/releases)
 — extract and run `codelearner.bat`/`codelearner.sh`, or `codelearner` on
 your PATH after installing the `.deb`/Arch package. Only the C and C++
-courses are inside; Python, JavaScript and Java need that language's own
-toolchain installed to run (see below). Want just one course, standalone,
+courses are inside; Python, JavaScript, Java, and C# need that language's
+own toolchain installed to run (see below). Want just one course, standalone,
 with no launcher and no other four? See
 [`docs/building-a-single-course.md`](docs/building-a-single-course.md).
 
@@ -84,11 +94,17 @@ cd java
 ./run
 ```
 
+```bash
+cd csharp
+./run
+```
+
 Python and JavaScript need no build step — nothing to compile, nothing to
 link. Java's `./run` compiles and runs in one command too (`java Main.java`,
 no separate `javac` step, no `.class` files left behind) — see the Java
 course's own module 1 for why that is not the two-step model most people
-expect from a compiled language.
+expect from a compiled language. C#'s `./run` does the same job for
+`dotnet run`, which builds and launches in one command the same way.
 
 You need a C compiler and `make` for the C and C++ courses. On Arch:
 
@@ -113,6 +129,14 @@ On Debian or Ubuntu:
 ```bash
 sudo apt install default-jdk
 ```
+
+You need the .NET SDK for the C# course. On Arch:
+
+```bash
+sudo pacman -S dotnet-sdk
+```
+
+On Debian or Ubuntu, follow [Microsoft's install instructions](https://learn.microsoft.com/dotnet/core/install/linux) — the SDK isn't in the default `apt` repositories on most releases.
 
 ## What a module looks like
 
@@ -347,6 +371,58 @@ not a path straight to a `.java` file — verified against the installed JDK
 that a `#!` shebang line on a `.java` file does not compile here, despite
 some descriptions of JEP 330 suggesting it should.
 
+## The C# course
+
+| # | Module | The thing it exists for |
+| --- | --- | --- |
+| 1 | Compiling and printing | top-level statements vs `class Program { static void Main }`; `dotnet run` is build+run, not one step |
+| 2 | Variables and types | `var` infers a real fixed type; value types vs reference types, the split module 8 pays off |
+| 3 | Reading input | `Console.ReadLine()` returns `string?` — a two-warning cascade if you ignore it |
+| 4 | Conditions and pattern matching | `bool` is real; switch expressions and `is` are the fresh idiom here |
+| 5 | Loops | `foreach`'s iteration variable is **read-only** — `1..4` slices, it isn't itself `foreach`-able |
+| 6 | Arrays and `List<T>` | `.Length` is always a property, on arrays and `string` alike; `==` on arrays is reference, on `string` is content |
+| 7 | Methods and default parameters | **C# has default arguments** — the opposite of Java's module 7 |
+| 8 | Classes, structs, and records | `struct` copies the value, `class` copies the reference; `record` gets value equality for free |
+| 9 | Nullable reference types | `string?` vs `string`; `?.`/`??`; `!` silences the warning without checking anything |
+| 10 | Exceptions and IDisposable | **no checked exceptions at all**; `using` guarantees deterministic cleanup, no GC timing involved |
+
+Built specifically to sit next to Java's course, not restate it: both are
+compiled, garbage-collected, and OOP, so the interesting content is where
+they genuinely diverge. Module 7 is the clearest case — Java's own module 7
+says outright that Java has no default parameter values and uses overloading
+to fill the gap; C# has both, and this module shows a call site skipping an
+optional parameter with a named argument, something Java's overloading alone
+cannot do. Module 6 runs the same `==` operator in the opposite direction:
+Java's `==` on `String` compares references (module 6 there), while C#'s
+`==` on `string` is overloaded to compare content — verified side by side
+here, `a == b` on two separately-built equal strings prints `true` in C#,
+where the identical setup is the *wrong* answer in Java's own course.
+
+Module 8 is where module 2's value-type/reference-type split, introduced but
+not yet consequential, becomes real: assigning one struct variable to
+another copies the value, assigning one class variable to another copies
+the reference, run side by side so the difference is something the reader's
+own terminal produced, not an assertion. `record` sits next to plain
+`class` in the same module for the same reason C++'s module 9 shows a leak
+happening — value equality being generated by the compiler only means
+something once you've seen a plain class NOT get it for free.
+
+Module 10 is a direct rebuttal of Java's module 10: C# has exactly one
+exception category, and every exception in it behaves like Java's own
+unchecked `RuntimeException` — nothing is checked at compile time, ever,
+verified by compiling a method that lets a real exception escape with zero
+warnings. `using`/`IDisposable` is this course's answer to Java's
+try-with-resources, Python's `with`, and C++'s RAII destructors: Dispose()
+runs deterministically when a `using` block exits, printed with an "open"/
+"close" pair around the block's own output to show the ordering directly
+rather than describe it.
+
+The launcher runs this course via `csharp/run` (`csharp/run.bat` on
+Windows), the same wrapper shape as Java's `java/run` and for the same
+reason: `dotnet run`, like `java Main.java`, has to run from inside the
+project's own directory, so the launcher cannot point straight at a `.cs`
+file the way it points at Python's and JavaScript's entry scripts.
+
 ## The GUI course
 
 | # | Module | The thing it exists for |
@@ -481,6 +557,25 @@ cd java
 javac -Xlint:all -Werror src/*.java
 ```
 
+C# compiles with zero warnings under the project's own `<Nullable>enable</Nullable>`
+setting (the same setting new .NET projects ship with by default), and every
+module was run directly — `Console.In`/`Console.Out` redirected to a buffer,
+each `Lesson*` method called with no menu in between — asserting no exception
+and that `SUMMARY` appears in the captured output for all 10 modules, the
+same technique the Python and JavaScript verification below uses.
+
+```bash
+cd csharp/src
+dotnet build
+```
+
+Every compiler diagnostic this course's own text quotes — CS8600 and CS8602
+(module 3, 9), CS1579 and CS1656 (module 5), CS0128 (a mistake caught while
+writing module 7: local functions cannot be overloaded by signature the way
+class members can), CS0029 (module 4), CS0122 (module 8) — was produced by
+actually compiling the triggering code with `dotnet build`, not recalled from
+documentation.
+
 Every solution shown in a challenge, in any course, has been run and checked
 against the output its task promises. Python's and JavaScript's own solutions
 are included, verified by intercepting `input()` (Python) or the `ui.js`
@@ -493,7 +588,10 @@ from outside its class, an unhandled checked exception, `ArrayList<int>`,
 and the rest) — was produced by actually running `javac` against it, not
 recalled from documentation.
 
-`python3 tools/check-teaching-order.py` covers all five courses in one run.
+`python3 tools/check-teaching-order.py` covers all six courses with a real
+teaching-order table (C, C++, Python, JavaScript, Java, C#) in one run — GUI
+and Assembly are registered too, with empty tables, since neither has a
+second module yet for an exercise to reach ahead of.
 
 ## Layout
 
@@ -555,6 +653,14 @@ java/
     ├── Ui.java               screen, input, questions, challenges
     ├── LessonsBasics.java    modules 1-5
     └── LessonsMore.java      modules 6-10
+csharp/
+├── run  run.bat             launcher entry point: dotnet run
+└── src/
+    ├── csharp.csproj
+    ├── Program.cs            menu: top-level statements, an array of modules, a loop
+    ├── Ui.cs                 screen, input, questions, challenges
+    ├── LessonsBasics.cs      modules 1-5
+    └── LessonsMore.cs        modules 6-10
 tools/
 └── check-teaching-order.py  fails if an exercise needs something not yet
                               taught, in any course
