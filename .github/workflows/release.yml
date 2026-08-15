@@ -1,17 +1,22 @@
 name: Release
 
-# Builds the universal launcher (bundled with the compiled C/C++ courses and
-# the Python/JavaScript/Java source they don't need compiling) for Windows
-# and Linux, and packages Linux two more ways (.deb, Arch). Triggered by a
-# version tag (v1.0.0) or manually. Tags with a suffix (v1.0.0-ci1) build
-# without publishing, so the workflow can be exercised safely.
+# Builds the universal launcher (bundled with the compiled C/C++/GUI/C#
+# courses and the Python/JavaScript/Java source they don't need compiling)
+# for Windows and Linux, and packages Linux three more ways (.deb, Arch,
+# AppImage). Triggered by a version tag (v1.0.0) or manually. Tags with a
+# suffix (v1.0.0-ci1) build without publishing, so the workflow can be
+# exercised safely.
 #
-# Deliberately NOT built here: standalone bundled executables per language
-# (a self-contained .exe needing no Python/Node/JDK installed). That needs a
+# Standalone per-language builds needing no toolchain installed exist for
+# C, C++, GUI (all compiled ahead of time, same as always) and now C# too
+# (`dotnet publish --self-contained -p:PublishSingleFile=true` -- one
+# `.exe`/binary, no .NET SDK required to run it). Python, JavaScript and
+# Java are deliberately NOT given this treatment: that would need a
 # different tool per language -- PyInstaller, Node's SEA, jpackage -- each
-# with its own failure modes, and this project's own docs already say a
-# course needs nothing beyond its language's toolchain. See
-# docs/building-a-single-course.md for building one course standalone by hand.
+# with its own failure modes, for languages this project's own docs already
+# say need nothing beyond their toolchain to browse. See
+# docs/building-a-single-course.md for building one of those standalone by
+# hand instead.
 #
 # Artifacts are UNSIGNED; the OS may warn about an unknown publisher.
 
@@ -54,6 +59,15 @@ jobs:
           distribution: temurin
           java-version: "21"
 
+      # Unlike Java, C# CAN be published as a genuinely standalone binary
+      # with no SDK required at runtime (`--self-contained
+      # -p:PublishSingleFile=true`) -- this is installed to build one, not
+      # just to smoke-test one.
+      - name: Install .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
       - name: Build C, C++, and the launcher
         shell: bash
         run: |
@@ -80,6 +94,20 @@ jobs:
           make -C java
           make -C java clean
 
+      # Self-contained + single-file: the published binary needs no .NET SDK
+      # or runtime installed to run, unlike Java above. RID picks the target
+      # per OS; InvariantGlobalization (set in csharp.csproj) is what keeps a
+      # self-contained publish from also bundling ICU.
+      - name: Publish C# (self-contained, single-file)
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ runner.os }}" = "Windows" ]; then rid=win-x64; else rid=linux-x64; fi
+          dotnet publish csharp/src/csharp.csproj -c Release -r "$rid" \
+            --self-contained -p:PublishSingleFile=true \
+            -p:IncludeAllContentForSelfExtract=true \
+            -o csharp-publish
+
       - name: Smoke-test the launcher (Linux)
         if: runner.os == 'Linux'
         shell: bash
@@ -94,6 +122,15 @@ jobs:
           output=$(printf '1\n0\n0\n0\n0\n0\n' | timeout 10 ./launcher)
           echo "$output" | grep -q "C COURSE" || { echo "::error::launcher did not reach the C course"; exit 1; }
           echo "$output" | grep -q "See you next time" || { echo "::error::launcher did not exit cleanly"; exit 1; }
+
+          # C# separately: picks module 1, walks every WaitEnter/Question/
+          # Challenge prompt in it (blank/"n" answers, same as the direct-
+          # invocation verification in csharp/src's own history), confirms
+          # the launcher's csharp/run wrapper -> dotnet run path resolves
+          # and the course reaches its own SUMMARY, not just that it starts.
+          cs_output=$(printf '6\n1\n\n\n\n\n\n\n\n\nn\nn\n\n\n0\n0\n' | timeout 20 ./launcher)
+          echo "$cs_output" | grep -q "C# COURSE" || { echo "::error::launcher did not reach the C# course"; exit 1; }
+          echo "$cs_output" | grep -q "See you next time" || { echo "::error::launcher did not exit cleanly after C#"; exit 1; }
 
       - name: Smoke-test the launcher (Windows)
         if: runner.os == 'Windows'
@@ -117,7 +154,7 @@ jobs:
         run: |
           set -euo pipefail
           out=codelearner-${{ matrix.name }}
-          mkdir -p "$out"/{launcher,c,cpp,gui,python/src,javascript/src,java/src}
+          mkdir -p "$out"/{launcher,c,cpp,gui,csharp,python/src,javascript/src,java/src}
 
           if [ "${{ runner.os }}" = "Windows" ]; then
             cp launcher/launcher.exe "$out/launcher/"
@@ -125,6 +162,14 @@ jobs:
             cp cpp/cpp-course.exe "$out/cpp/"
             cp gui/gui-course.exe "$out/gui/"
             cp java/run.bat "$out/java/"
+            # The published binary is standalone (no .NET SDK/runtime
+            # needed) -- unlike java/run.bat above, this wrapper does not
+            # invoke a toolchain, it just execs the bundled exe directly.
+            # csharp/run.bat in the source tree (dotnet run, needs the SDK)
+            # is a different file for local development; this one is
+            # generated fresh for the release bundle specifically.
+            cp csharp-publish/csharp.exe "$out/csharp/"
+            printf '@echo off\r\ncd /d "%%~dp0"\r\ncsharp.exe\r\n' > "$out/csharp/run.bat"
             # A double-clickable entry point at the bundle root, same
             # convenience java/run(.bat) already gives its own course --
             # nobody should have to know to `cd launcher` first.
@@ -136,6 +181,10 @@ jobs:
             cp gui/gui-course "$out/gui/"
             cp java/run "$out/java/"
             chmod +x "$out/java/run"
+            # Same standalone-binary story as the Windows leg above.
+            cp csharp-publish/csharp "$out/csharp/"
+            printf '#!/bin/sh\ncd "$(dirname "$0")" && exec ./csharp\n' > "$out/csharp/run"
+            chmod +x "$out/csharp/csharp" "$out/csharp/run"
             # Assembly is Linux-only -- see ROADMAP.md -- so it is only ever
             # built and bundled here, never on the Windows leg above.
             mkdir -p "$out/assembly"
@@ -154,7 +203,46 @@ jobs:
             7z a "$out.zip" "$out" > /dev/null
           else
             tar -czf "$out.tar.gz" "$out"
+            # A .zip alongside the .tar.gz, same payload -- some Linux users
+            # reach for zip out of habit, and `zip` is preinstalled on the
+            # ubuntu-22.04 runner image (unlike 7z, which is Windows-only
+            # above because that's what the choco/Windows runner actually
+            # has ready).
+            zip -qr "$out.zip" "$out"
           fi
+
+          # The C# course's standalone binary, again, as its own top-level
+          # download -- not just embedded in the bundle above. This is the
+          # one course where "download a single file, run it, no toolchain"
+          # is actually true; C/C++ need the rest of the bundle alongside
+          # them (relative sibling paths, see launcher/src/main.c), so this
+          # is not offered as a whole-launcher single-exe -- that would need
+          # every course's files embedded as resources inside one binary,
+          # a fundamentally different build than what launcher.c does today.
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            cp csharp-publish/csharp.exe codelearner-csharp-standalone-win-x64.exe
+          else
+            cp csharp-publish/csharp codelearner-csharp-standalone-linux-x86_64
+            chmod +x codelearner-csharp-standalone-linux-x86_64
+          fi
+
+      # Runs the exact artifact that ships, not the dev-mode `dotnet run`
+      # path the earlier smoke test exercises -- proves the self-contained
+      # publish genuinely needs nothing else installed to work.
+      - name: Smoke-test the standalone C# binary (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          set -euo pipefail
+          output=$(printf '0\n' | timeout 10 ./codelearner-csharp-standalone-linux-x86_64)
+          echo "$output" | grep -q "See you next time" || { echo "::error::standalone C# binary did not exit cleanly"; exit 1; }
+
+      - name: Smoke-test the standalone C# binary (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $out = ("0`n" | & .\codelearner-csharp-standalone-win-x64.exe) -join "`n"
+          if ($LASTEXITCODE -ne 0) { throw "standalone C# binary exited $LASTEXITCODE" }
+          if ($out -notmatch "See you next time") { throw "standalone C# binary did not exit cleanly: $out" }
 
       - name: Package Linux (.deb)
         if: runner.os == 'Linux'
@@ -175,7 +263,7 @@ jobs:
           #!/bin/sh
           cd /opt/codelearner/launcher && exec ./launcher
           EOF
-          chmod +x "$pkg/usr/bin/codelearner" "$pkg/opt/codelearner/launcher/launcher" "$pkg/opt/codelearner/gui/gui-course" "$pkg/opt/codelearner/assembly/asm-course" "$pkg/opt/codelearner/java/run"
+          chmod +x "$pkg/usr/bin/codelearner" "$pkg/opt/codelearner/launcher/launcher" "$pkg/opt/codelearner/gui/gui-course" "$pkg/opt/codelearner/assembly/asm-course" "$pkg/opt/codelearner/java/run" "$pkg/opt/codelearner/csharp/csharp" "$pkg/opt/codelearner/csharp/run"
           cat > "$pkg/DEBIAN/control" <<EOF
           Package: codelearner
           Version: $pkgver
@@ -183,11 +271,11 @@ jobs:
           Maintainer: CodeLearner <noreply@invalid>
           Suggests: python3, nodejs, default-jdk, gtk4
           Description: Command-line programming courses, one per language
-           C, C++, GUI and Assembly run standalone. The Python, JavaScript
-           and Java courses need that language's own toolchain installed to
-           run -- see Suggests. GTK4 is only needed to compile and run the
-           GUI course's own taught examples, not to browse the course
-           itself. Assembly is Linux/x86-64 only.
+           C, C++, GUI, C# and Assembly run standalone. The Python,
+           JavaScript and Java courses need that language's own toolchain
+           installed to run -- see Suggests. GTK4 is only needed to compile
+           and run the GUI course's own taught examples, not to browse the
+           course itself. Assembly is Linux/x86-64 only.
           EOF
           dpkg-deb --build --root-owner-group "$pkg" "codelearner-amd64.deb"
 
@@ -208,10 +296,11 @@ jobs:
           arch=('x86_64')
           url="https://github.com/otzpt/CodeLearner"
           license=('MIT')
-          # C, C++ and GUI are bundled compiled; these three need the listed
-          # runtime installed to run their course, same trade-off the .deb
-          # documents with Suggests. GTK4 is only needed to compile and run
-          # the GUI course's own taught examples, not to browse the course.
+          # C, C++, GUI and C# are bundled compiled; Python, JavaScript and
+          # Java need the listed runtime installed to run their course, same
+          # trade-off the .deb documents with Suggests. GTK4 is only needed
+          # to compile and run the GUI course's own taught examples, not to
+          # browse the course.
           optdepends=('python: run the Python course'
                       'nodejs: run the JavaScript course'
                       'jdk-openjdk: run the Java course'
@@ -224,6 +313,8 @@ jobs:
             install -Dm755 "\$startdir/payload/gui/gui-course" "\$pkgdir/opt/codelearner/gui/gui-course"
             install -Dm755 "\$startdir/payload/assembly/asm-course" "\$pkgdir/opt/codelearner/assembly/asm-course"
             install -Dm755 "\$startdir/payload/java/run" "\$pkgdir/opt/codelearner/java/run"
+            install -Dm755 "\$startdir/payload/csharp/csharp" "\$pkgdir/opt/codelearner/csharp/csharp"
+            install -Dm755 "\$startdir/payload/csharp/run" "\$pkgdir/opt/codelearner/csharp/run"
             for f in "\$startdir/payload/python/src"/*.py; do
               install -Dm644 "\$f" "\$pkgdir/opt/codelearner/python/src/\$(basename "\$f")"
             done
@@ -248,6 +339,40 @@ jobs:
             sudo -u builder makepkg -f --noconfirm --nodeps'
           cp codelearner-*.pkg.tar.zst "$GITHUB_WORKSPACE/codelearner-x86_64.pkg.tar.zst"
 
+      - name: Package Linux (AppImage)
+        if: runner.os == 'Linux'
+        run: |
+          set -euo pipefail
+          appid=com.otzpt.codelearner
+          APPDIR=CodeLearner.AppDir
+          mkdir -p "$APPDIR/usr/share/icons/hicolor/512x512/apps"
+          cp -r "codelearner-linux-x86_64" "$APPDIR/opt"
+          rm -f "$APPDIR/opt/codelearner.sh"
+          cp assets/icon.png "$APPDIR/$appid.png"
+          cp assets/icon.png "$APPDIR/usr/share/icons/hicolor/512x512/apps/$appid.png"
+          # Terminal=true: this is a CLI program, not a windowed one -- the
+          # desktop entry has to say so, or a launcher that double-clicks it
+          # opens nothing visible while the process runs headless.
+          cat > "$APPDIR/$appid.desktop" <<EOF
+          [Desktop Entry]
+          Name=CodeLearner
+          Comment=Command-line programming courses, one per language
+          Exec=codelearner
+          Icon=$appid
+          Type=Application
+          Categories=Development;Education;
+          Terminal=true
+          EOF
+          cat > "$APPDIR/AppRun" <<'EOF'
+          #!/bin/sh
+          HERE="$(dirname "$(readlink -f "$0")")"
+          cd "$HERE/opt/launcher" && exec ./launcher
+          EOF
+          chmod +x "$APPDIR/AppRun" "$APPDIR/opt/launcher/launcher" "$APPDIR/opt/csharp/csharp" "$APPDIR/opt/csharp/run" "$APPDIR/opt/java/run" "$APPDIR/opt/assembly/asm-course"
+          wget -q https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage -O /tmp/appimagetool
+          chmod +x /tmp/appimagetool
+          ARCH=x86_64 /tmp/appimagetool --appimage-extract-and-run "$APPDIR" "codelearner-x86_64.AppImage"
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -255,8 +380,12 @@ jobs:
           path: |
             codelearner-windows-x86_64.zip
             codelearner-linux-x86_64.tar.gz
+            codelearner-linux-x86_64.zip
             codelearner-amd64.deb
             codelearner-x86_64.pkg.tar.zst
+            codelearner-x86_64.AppImage
+            codelearner-csharp-standalone-win-x64.exe
+            codelearner-csharp-standalone-linux-x86_64
           if-no-files-found: ignore
 
   release:
@@ -279,22 +408,31 @@ jobs:
           body: |
             CodeLearner universal launcher — Windows and Linux.
 
-            Bundles the launcher with the compiled C, C++ and GUI courses.
+            Bundles the launcher with the compiled C, C++, GUI, and (new)
+            C# courses -- all four run standalone, no toolchain needed.
             Python, JavaScript and Java are included as source and run
             through their own language's toolchain (see the
             Suggests/optdepends on the .deb/Arch packages) -- nothing is
-            bundled that would need a PyInstaller/Node-SEA/jpackage-style
-            standalone build. The GUI course itself needs nothing beyond a
-            C compiler to browse; GTK4 is only needed if you compile and
-            run the examples it teaches. Assembly is bundled compiled on
-            Linux only -- it makes raw Linux syscalls directly and has no
-            Windows equivalent to build toward.
+            bundled for those three that would need a PyInstaller/Node-SEA/
+            jpackage-style standalone build. The GUI course itself needs
+            nothing beyond a C compiler to browse; GTK4 is only needed if
+            you compile and run the examples it teaches. Assembly is
+            bundled compiled on Linux only -- it makes raw Linux syscalls
+            directly and has no Windows equivalent to build toward.
 
             **Windows:** portable `.zip` -- extract, run `codelearner.bat`.
-            **Linux:** `.deb`, Arch `.pkg.tar.zst`, or the portable `.tar.gz`
-            (run `./codelearner.sh`).
+            **Linux:** `.deb`, Arch `.pkg.tar.zst`, `.AppImage`, or the
+            portable `.tar.gz`/`.zip` (run `./codelearner.sh`).
 
-            Want just one language, standalone? See
+            **Just the C# course, standalone, no launcher and no other
+            seven** -- a single self-contained executable, nothing else to
+            download: `codelearner-csharp-standalone-win-x64.exe` /
+            `-linux-x86_64`. This is the one course where that's actually a
+            single file; C, C++, GUI and Assembly need the rest of the
+            bundle alongside them (they look up sibling directories by a
+            relative path), so they aren't offered this way.
+
+            Want just one other language, standalone? See
             [`docs/building-a-single-course.md`](https://github.com/otzpt/CodeLearner/blob/main/docs/building-a-single-course.md).
 
             Unsigned: the OS may warn about an unknown publisher on first run.
