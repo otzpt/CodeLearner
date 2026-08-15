@@ -285,6 +285,9 @@ jobs:
           set -euo pipefail
           pkgver="${GITHUB_REF_NAME#v}"
           [ "${GITHUB_REF_NAME}" = "${GITHUB_REF}" ] && pkgver="0.0.0.dev"
+          # makepkg's pkgver forbids colons, slashes, hyphens and whitespace
+          # (e.g. a "-ci1" verification-tag suffix) -- substitute with dots.
+          pkgver="$(printf '%s' "$pkgver" | tr -c 'A-Za-z0-9._' '.')"
           mkdir -p archpkg && cd archpkg
           cp -r ../codelearner-linux-x86_64 payload
           rm -f payload/codelearner.sh
