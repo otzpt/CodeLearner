@@ -18,20 +18,25 @@ worked example code the student can open and read.
 | C# | 10 — top-level statements through IDisposable | [`csharp/`](csharp/) |
 | GUI (GTK) | 1 — your first window | [`gui/`](gui/) |
 | Assembly | 1 — registers, syscalls, your first program | [`assembly/`](assembly/) |
+| Git | 10 — what is git through GitHub Actions | [`git/`](git/) |
 | Launcher | done — pick a language, open its course | [`launcher/`](launcher/) |
 
-Eight courses are covered. GUI and Assembly are not languages in the same
-sense the other six are, but both get the same treatment as one: their own
-directory, their own binary, their own entry in the launcher, rather than
-being folded into `c/`'s module list. Assembly goes further than GUI does,
-though -- its own delivery program (`assembly/src/ui.s`, `main.s`) is
-genuinely written in x86-64 assembly, the same "written in the language it
-teaches" rule every other course follows literally, just with no standard
-library underneath it (raw `read`/`write`/`exit` syscalls, no libc at all).
-GUI's own delivery stays C, since there is no separate "GTK language" to
-write a menu in. The launcher and `tools/check-teaching-order.py` both work
-over any number of courses without modification, so a new entry is a matter
-of writing it, not extending anything else.
+Nine courses are covered. GUI, Assembly, and Git are not languages in the
+same sense the other six are, but all three get the same treatment as one:
+their own directory, their own binary or script, their own entry in the
+launcher, rather than being folded into `c/`'s module list. Assembly goes
+further than GUI does, though -- its own delivery program (`assembly/src/ui.s`,
+`main.s`) is genuinely written in x86-64 assembly, the same "written in the
+language it teaches" rule every other course follows literally, just with
+no standard library underneath it (raw `read`/`write`/`exit` syscalls, no
+libc at all). GUI's own delivery stays C, since there is no separate "GTK
+language" to write a menu in. Git has no compiler or interpreter of its own
+either, so its course is written in Bash -- the shell git is actually run
+from -- and every command it shows is a real invocation against a
+throwaway local repository, not a transcript typed from memory. The
+launcher and `tools/check-teaching-order.py` both work over any number of
+courses without modification, so a new entry is a matter of writing it, not
+extending anything else.
 [`ROADMAP.md`](ROADMAP.md) has the target arc for the languages already
 here and the ones not started yet.
 
@@ -99,8 +104,15 @@ cd csharp
 ./run
 ```
 
-Python and JavaScript need no build step — nothing to compile, nothing to
-link. Java's `./run` compiles and runs in one command too (`java Main.java`,
+```bash
+cd git/src
+./main.sh
+```
+
+Python, JavaScript, and Git need no build step — nothing to compile, nothing
+to link; Git's course only needs bash and git itself, both close to
+universal on Linux and macOS already. Java's `./run` compiles and runs in
+one command too (`java Main.java`,
 no separate `javac` step, no `.class` files left behind) — see the Java
 course's own module 1 for why that is not the two-step model most people
 expect from a compiled language. C#'s `./run` does the same job for

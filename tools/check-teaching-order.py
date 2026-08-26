@@ -372,6 +372,60 @@ COURSES = {
         # reach ahead of yet.
         "first_taught": [],
     },
+    "git": {
+        "dir": "git/src",
+        "glob": "lessons_*.sh",
+        # No dot-call syntax to key off of the way ui.exercise(N) works for
+        # the interpreted courses -- Bash has one flat function namespace,
+        # so every helper here is ui_exercise, ui_wait_enter, and so on.
+        "exercise_marker": r"ui_exercise (\d+)",
+        "summary_marker": r'\n    ui_wait_enter\n    ui_clear_screen\n    ui_heading "SUMMARY',
+        # Constructs here are git subcommands, not language syntax. Credited
+        # to the module where a reader first actually sees them run, live,
+        # in that module's own PART demo -- the same "screen, not name"
+        # rule the C++ and JavaScript tables use for std::vector and =>.
+        # Setup helpers in ui.sh (ui_new_remote, ui_new_repo, ...) run some
+        # of these silently to build a starting state; those are hidden
+        # plumbing, never shown to the reader, so they teach nothing.
+        "first_taught": [
+            (1, r"\bgit init\b"),
+            (1, r"\bgit status\b"),
+            (2, r"\bgit clone\b"),
+            (2, r"\bgit remote\b"),
+            (2, r"\bgit log\b"),
+            # Requiring an actual argument character right after "add"
+            # excludes prose mentioning the command by name in quotes --
+            # module 1's own question ('git add' move a change...) and
+            # git's own real status hint ("git add" to track) both have a
+            # quote mark immediately after "add", never a space -- from
+            # the real invocation this construct is meant to flag.
+            (3, r"\bgit add [.\w/-]"),
+            (4, r"\bgit restore --staged\b"),
+            (5, r"\bgit commit\b\s+[-\w]"),
+            (6, r"\bgit push\b"),
+            (7, r"\bgit pull\b"),
+            (8, r"\bgit switch\b"),
+            (8, r"\bgit merge\b"),
+            (8, r"\bgit branch\b"),
+            (9, r"\bgit tag\b"),
+            (9, r"\bgit cat-file\b"),
+            (10, r"\bgit\s+.*\.ya?ml\b"),
+            # Never introduced by any module's exercise.
+            (99, r"\bgit rebase\b"),
+            (99, r"\bgit reset\b"),
+            (99, r"\bgit revert\b"),
+            (99, r"\bgit stash\b"),
+            (99, r"\bgit cherry-pick\b"),
+            (99, r"\bgit bisect\b"),
+            (99, r"\bgit reflog\b"),
+            (99, r"\bgit submodule\b"),
+        ],
+        # `git commit` requires a trailing flag/token in its own regex so a
+        # question's prose -- "which version does 'git commit' save?" in
+        # module 3, asked before commit is module 5's own topic -- does not
+        # count as the construct itself, the same reasoning the Java table
+        # gives for requiring try's brace over a bare \btry\b.
+    },
 }
 
 

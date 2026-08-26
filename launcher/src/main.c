@@ -62,6 +62,7 @@ struct Language {
 #define GUI_BIN    "../gui/gui-course"
 #define ASM_BIN    "../assembly/asm-course"
 #define CSHARP_BIN "../csharp/run"
+#define GIT_PATH   "../git/src/main.sh"
 #endif
 
 static const struct Language LANGUAGES[] = {
@@ -97,6 +98,17 @@ static const struct Language LANGUAGES[] = {
     { "Assembly",   NULL, NULL },
 #else
     { "Assembly",   ASM_BIN, ASM_BIN },
+#endif
+#ifdef _WIN32
+    /* Same reasoning as Python/JavaScript's own installer story, the
+     * other way around: python.org's and Node's installers are what
+     * make a bare .py/.js path reliable on Windows, verified in the
+     * comment above this struct. Bash has no equivalent guaranteed
+     * install on a stock Windows machine -- Git for Windows and WSL both
+     * ship one, but neither is assumed here the way a JDK is for Java. */
+    { "Git",        NULL, NULL },
+#else
+    { "Git",        GIT_PATH, GIT_PATH },
 #endif
 };
 
