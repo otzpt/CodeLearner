@@ -91,6 +91,19 @@ rather than an `.msi` deliberately: an MSI buys a per-machine install and
 an Add/Remove Programs entry, and costs a WiX toolchain in CI plus a
 signing story, for a PATH entry a script writes in one line.
 
+> **`install.ps1` is untested.** It has never been run, and never been
+> parsed, because it was written on a Linux machine with no PowerShell on
+> it, and CI builds the Windows bundle without ever touching the installer.
+> Treat it as unproven code until someone runs it. Two places to look first
+> if it misbehaves: a parse error on the first line it reaches, and the
+> PATH write, which reads the user PATH already expanded and stores it back
+> as a plain string, so unexpanded entries like `%USERPROFILE%\bin` would
+> be flattened to literal paths. Installing with `-Prefix` into a throwaway
+> directory exercises everything except that PATH write.
+>
+> `install.sh` does not carry this warning: it was run end to end against a
+> real release, including reinstall-over-existing and `--uninstall`.
+
 Piping a script from the internet into a shell is worth reading first
 either way. Both are a single file at the root of this repository:
 [`install.sh`](install.sh), [`install.ps1`](install.ps1).
@@ -671,6 +684,11 @@ rather than relying on file association for either. `java/run.bat` still
 has had no equivalent scrutiny beyond compiling.
 
 ## Verification
+
+One known gap, stated up front: **`install.ps1` has not been verified at
+all**: not run, not parsed, no CI coverage. See the note under
+[Installing](#installing). `install.sh` was run end to end against a real
+release; everything below concerns the courses themselves.
 
 The C and C++ courses compile with `-Wall -Wextra` without a single warning,
 and run clean under AddressSanitizer and UndefinedBehaviorSanitizer — no

@@ -2,6 +2,15 @@
 #
 #   irm https://raw.githubusercontent.com/otzpt/CodeLearner/main/install.ps1 | iex
 #
+# UNTESTED. This script has never been run, and never been parsed: it was
+# written on a Linux machine with no PowerShell installed, and CI builds the
+# Windows bundle without ever invoking this file. Treat it as unproven.
+# Known soft spot, beyond a plain parse error: the PATH write at the bottom
+# reads the user PATH already expanded and stores it back as a plain string,
+# so an entry like %USERPROFILE%\bin would be flattened to a literal path.
+# Installing with -Prefix into a throwaway directory exercises everything
+# except that write.
+#
 # Installs the latest release under %LOCALAPPDATA% and puts a `codelearner`
 # command on your PATH. No administrator rights, because nothing is written
 # outside your own profile.
