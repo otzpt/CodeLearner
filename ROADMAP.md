@@ -179,10 +179,14 @@ why the ecosystem library exists), not silently working around it.
 
 ## Assembly — started
 
-[`assembly/`](assembly/), module 1: registers, syscalls, your first
-program. Target arc from here: memory addressing → the stack in more
-depth (currently only what a function's own prologue/epilogue needs) →
-more instructions → calling conventions beyond "arguments in rdi/rsi/...".
+[`assembly/`](assembly/), modules 1-4: registers and syscalls, comparing
+and branching, loops, then reading input and building a number-guessing
+game out of the three before it. Module 4 is where the course stops being
+read-only: everything up to it prints, and it is the first one whose own
+example program waits for you. Target arc from here: memory addressing →
+the stack in more depth (currently only what a function's own
+prologue/epilogue needs) → more instructions → calling conventions beyond
+"arguments in rdi/rsi/...".
 Distinct from `c/ROADMAP.md` section 9, which is "read enough asm to
 understand your own compiled C" for someone taking the C course, not a
 full course in its own right.

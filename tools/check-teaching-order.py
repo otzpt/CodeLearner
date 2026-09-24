@@ -463,8 +463,15 @@ COURSES = {
         # (see lessons_asm.s) written specifically for this regex, not code.
         "exercise_marker": r'# exercise\((\d+)\)',
         "summary_marker": r'# summary\(\d+\)',
-        # Empty for the same reason gui's is: one module, nothing earlier to
-        # reach ahead of yet.
+        # Empty, and staying empty even now that assembly has four modules:
+        # unlike every other course, the text between these markers is not
+        # the exercise itself. It is the call sequence that runs it, because
+        # an .s file keeps its question text, its challenge, and its example
+        # solution in .rodata at the top of the file -- outside the marked
+        # region entirely. A first_taught entry here would only ever match
+        # the boilerplate (mov/call/cmp/jne) every module's dispatch shares,
+        # so it would report nothing real. Teaching order for this course is
+        # held by hand, in the modules' own PART-5 back-references.
         "first_taught": [],
     },
     "git": {

@@ -10,7 +10,7 @@
 AS      = as
 LD      = ld
 TARGET  = asm-course
-SOURCES = src/ui.s src/lessons_asm.s src/main.s
+SOURCES = src/ui.s src/lessons_asm.s src/lessons_flow.s src/lessons_input.s src/main.s
 OBJECTS = $(SOURCES:.s=.o)
 
 $(TARGET): $(OBJECTS)

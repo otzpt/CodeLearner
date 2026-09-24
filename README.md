@@ -17,7 +17,7 @@ worked example code the student can open and read.
 | Java | 13 — System.out through the Collections Framework, generics, and concurrency | [`java/`](java/) |
 | C# | 14 — top-level statements through LINQ, async/await, and delegates/events | [`csharp/`](csharp/) |
 | GUI (GTK) | 1 — your first window | [`gui/`](gui/) |
-| Assembly | 1 — registers, syscalls, your first program | [`assembly/`](assembly/) |
+| Assembly | 4 — registers and syscalls, branching, loops, and a guessing game | [`assembly/`](assembly/) |
 | Git | 10 — what is git through GitHub Actions | [`git/`](git/) |
 | Launcher | done — pick a language, open its course | [`launcher/`](launcher/) |
 
@@ -26,9 +26,8 @@ INTERMEDIATE, and ADVANCED — a display grouping only, printed as section
 headers above the module numbers. The modules still run in one numbered
 sequence; a tier is one field on a module's row in its course's module
 table (`MODULES` in `main.c`/`main.py`/`main.js`, or the equivalent),
-nothing else changes. GUI and Assembly currently have one module each, filed
-under BASIC, with INTERMEDIATE and ADVANCED shown empty until they have
-enough content to split.
+nothing else changes. GUI still has one module, filed under BASIC, with
+INTERMEDIATE and ADVANCED shown empty until it has enough content to split.
 
 Nine courses are covered. GUI, Assembly, and Git are not languages in the
 same sense the other six are, but all three get the same treatment as one:
@@ -547,6 +546,9 @@ random number.
 | # | Module | The thing it exists for |
 | --- | --- | --- |
 | 1 | Registers, syscalls, your first program | AT&T syntax reads backwards from most tutorials; a syscall is a number in `rax` plus arguments in the same registers a call would use |
+| 2 | Comparing and branching: if/else | `cmp` keeps flags and throws its result away; `jl`/`jg` are signed and `jb`/`ja` are not, and picking wrong is a bug nothing warns about |
+| 3 | Loops | a loop is a label and a jump backwards; the `loop` instruction is slower than `dec`/`jnz` and hardcodes `rcx`, which any `call` may clobber |
+| 4 | Reading input, and a guessing game | `read` writes no terminator and keeps your newline; digits are bytes, and `div` divides `rdx:rax`, so a stale `rdx` kills the process with SIGFPE |
 
 Linux/x86-64 only — see [`ROADMAP.md`](ROADMAP.md)'s note on why there is
 no Windows path to translate this one to. This is the one course where
@@ -679,8 +681,13 @@ recalled from documentation.
 
 `python3 tools/check-teaching-order.py` covers all six courses with a real
 teaching-order table (C, C++, Python, JavaScript, Java, C#) in one run — GUI
-and Assembly are registered too, with empty tables, since neither has a
-second module yet for an exercise to reach ahead of.
+and Assembly are registered too, with empty tables. GUI's is empty because it
+has no second module yet for an exercise to reach ahead of. Assembly's stays
+empty for a structural reason instead: an `.s` file keeps its question text,
+challenge, and example solution in `.rodata` at the top of the file, so the
+region between the exercise and summary markers holds the call sequence that
+runs the exercise rather than the exercise itself, and a pattern there could
+only match dispatch boilerplate.
 
 ## Layout
 

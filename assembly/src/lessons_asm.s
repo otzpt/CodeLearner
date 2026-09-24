@@ -133,33 +133,6 @@ l1_challenge_ask:   .asciz "Want to see example code?"
 
 .section .text
 
-# print_lines(rdi=array_of_ptrs, rsi=count) -> prints each pointer's string
-# followed by a newline. Every module prints a couple dozen fixed lines;
-# looping over a table here beats writing "mov $x, %rdi; call print_cstr;
-# call print_newline" fifty times over.
-print_lines:
-    push %rbp
-    mov %rsp, %rbp
-    push %r12
-    push %r13
-    mov %rdi, %r12       # array base
-    mov %rsi, %r13        # remaining count
-.pl_loop:
-    cmp $0, %r13
-    je .pl_done
-    mov (%r12), %rdi
-    call print_cstr
-    mov $nl_const, %rdi
-    call print_cstr
-    add $8, %r12
-    dec %r13
-    jmp .pl_loop
-.pl_done:
-    pop %r13
-    pop %r12
-    leave
-    ret
-
 .section .rodata
 nl_const: .asciz "\n"
 
