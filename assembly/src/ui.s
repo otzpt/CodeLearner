@@ -18,6 +18,7 @@
 
 .global print
 .global print_cstr
+.global print_lines
 .global print_num
 .global strlen
 .global read_line
@@ -93,6 +94,34 @@ print_cstr:
     call strlen
     mov %rax, %rsi
     call print
+    ret
+
+# print_lines(rdi=array_of_ptrs, rsi=count) -> prints each pointer's string
+# followed by a newline. Every module prints a couple dozen fixed lines;
+# looping over a table beats writing "mov $x, %rdi; call print_cstr; call
+# print_newline" fifty times over. r12/r13 rather than rcx/rsi because
+# print_cstr is free to clobber every caller-saved register it touches.
+print_lines:
+    push %rbp
+    mov %rsp, %rbp
+    push %r12
+    push %r13
+    mov %rdi, %r12        # array base
+    mov %rsi, %r13         # remaining count
+.pl_loop:
+    cmp $0, %r13
+    je .pl_done
+    mov (%r12), %rdi
+    call print_cstr
+    mov $newline_str, %rdi
+    call print_cstr
+    add $8, %r12
+    dec %r13
+    jmp .pl_loop
+.pl_done:
+    pop %r13
+    pop %r12
+    leave
     ret
 
 # print_num(rdi=value) -> writes an unsigned decimal number to stdout.
