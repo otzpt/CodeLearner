@@ -249,6 +249,33 @@ same module skeleton as C.
   introduced in a lesson should be findable and an exercise should exercise
   it, not the other way around.
 
+## Packaging and distribution
+
+**A desktop entry, so the launcher appears in application menus.** Today
+`codelearner` is a terminal command and nothing else: rofi's `drun` mode,
+wofi, and every GNOME/KDE application menu read `.desktop` files, and this
+project installs none. `rofi -show run` finds it, because that mode searches
+PATH, but that is not where anyone looks for an application.
+
+One `.desktop` file already exists, written inline by the AppImage step in
+`.github/workflows/release.yml` and living only inside the AppImage, where
+nothing registers it with the system unless the user integrates the AppImage
+by hand. The work is to lift that file out into the repository as a real
+tracked file next to `assets/icon.png`, and install it from every path that
+installs anything: `install.sh` into `~/.local/share/applications`, the .deb
+and the Arch package into `/usr/share/applications`, with the AppImage step
+then copying the same file instead of printing its own copy. One definition,
+four consumers.
+
+`Terminal=true` is not optional in it. This is a TUI, and a launcher that
+starts it without a terminal runs the process headless with nothing visible
+on screen.
+
+Windows has the same gap for the same reason: `install.ps1` adds a PATH
+entry and no Start Menu shortcut. A `.lnk` in
+`%APPDATA%\Microsoft\Windows\Start Menu\Programs` is the counterpart, and it
+should land in the same change so the two platforms do not drift.
+
 ## C-specific backlog
 
 Filed as tracked issues rather than left in a file, since they're scoped
