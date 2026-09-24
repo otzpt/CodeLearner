@@ -17,7 +17,10 @@
 #include "lessons.h"
 #include "ui.h"
 
-/* One menu entry: what is shown, and the function that runs.
+/* One menu entry: what is shown, the function that runs, and which of the
+ * three menu bands ("BASIC", "INTERMEDIATE", "ADVANCED") it is filed under.
+ * Tiers are a display grouping only -- the module functions don't know it
+ * exists, and adding one to a module is this one field, nothing else.
  *
  * `void (*run)(void)` is a function pointer - a variable holding the address
  * of a function instead of a number. It is what lets the module list be a
@@ -27,22 +30,29 @@
 struct Module {
     const char *title;
     void (*run)(void);
+    const char *tier;
 };
 
 static const struct Module MODULES[] = {
-    { "Compiling and printing",   lesson_01_compiling },
-    { "Variables and types",      lesson_02_variables },
-    { "Reading input",            lesson_03_input },
-    { "Conditions",               lesson_04_conditions },
-    { "Loops",                    lesson_05_loops },
-    { "Arrays and strings",       lesson_06_arrays_strings },
-    { "Functions",                lesson_07_functions },
-    { "Pointers",                 lesson_08_pointers },
-    { "Memory: malloc and free",  lesson_09_memory },
-    { "Structs",                  lesson_10_structs },
-    { "Final test: 2 programs",   lesson_11_final_test },
-    { "Going deeper: memory (extra)", lesson_12_deeper_memory },
-    { "Stacks and queues",        lesson_13_stacks_queues },
+    { "Compiling and printing",   lesson_01_compiling,      "BASIC" },
+    { "Variables and types",      lesson_02_variables,      "BASIC" },
+    { "Reading input",            lesson_03_input,          "BASIC" },
+    { "Conditions",               lesson_04_conditions,     "BASIC" },
+    { "Loops",                    lesson_05_loops,          "BASIC" },
+    { "Arrays and strings",       lesson_06_arrays_strings, "BASIC" },
+    { "Functions",                lesson_07_functions,      "BASIC" },
+    { "Pointers",                 lesson_08_pointers,       "INTERMEDIATE" },
+    { "Memory: malloc and free",  lesson_09_memory,         "INTERMEDIATE" },
+    { "Structs",                  lesson_10_structs,        "INTERMEDIATE" },
+    { "Final test: 2 programs",   lesson_11_final_test,     "INTERMEDIATE" },
+    { "Growing memory: grids and realloc", lesson_12_growing_memory, "ADVANCED" },
+    { "Linked lists",             lesson_13_linked_lists,   "ADVANCED" },
+    { "Stacks and queues",        lesson_14_stacks_queues,  "ADVANCED" },
+    { "Enums, unions, and typedef", lesson_15_enums_unions, "ADVANCED" },
+    { "Compilation and project structure", lesson_16_compilation, "ADVANCED" },
+    { "Debugging",                lesson_17_debugging,      "ADVANCED" },
+    { "Real input/output",        lesson_18_file_io,        "ADVANCED" },
+    { "Function pointers, callbacks, and macros", lesson_19_advanced, "ADVANCED" },
 };
 
 /* Number of elements in the array: the size of the whole array divided by
@@ -56,7 +66,12 @@ static void show_menu(void)
     clear_screen();
     title("C COURSE - FROM ZERO TO MEMORY");
 
+    const char *shown_tier = "";
     for (int i = 0; i < MODULE_COUNT; i++) {
+        if (strcmp(MODULES[i].tier, shown_tier) != 0) {
+            shown_tier = MODULES[i].tier;
+            printf("\n  -- %s --\n", shown_tier);
+        }
         printf("   [%2d]  %s\n", i + 1, MODULES[i].title);
     }
 

@@ -10,7 +10,7 @@
 
 JC      = javac
 JFLAGS  = -Xlint:all -Werror
-SOURCES = src/Ui.java src/LessonsBasics.java src/LessonsMore.java src/Main.java
+SOURCES = src/Ui.java src/LessonsBasics.java src/LessonsMore.java src/LessonsAdvanced.java src/Main.java
 
 all:
 	$(JC) $(JFLAGS) $(SOURCES)

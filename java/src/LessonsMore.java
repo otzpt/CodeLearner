@@ -616,11 +616,14 @@ class LessonsMore {
         System.out.println("   - checked exceptions must be caught or declared -- enforced at compile time");
         System.out.println("   - unchecked (RuntimeException) needs neither -- same as every exception in C++/Python/JS");
         System.out.println();
-        System.out.println("  That is the core course. Garbage collected like Python and");
+        System.out.println("  That covers the core course. Garbage collected like Python and");
         System.out.println("  JavaScript, statically typed and compiled like C and C++, and");
         System.out.println("  the one course here where the compiler itself enforces both");
         System.out.println("  access control and exception handling before the program is");
         System.out.println("  ever allowed to run.");
+        System.out.println();
+        System.out.println("  Module 11 rounds out the Collections Framework module 8's");
+        System.out.println("  ArrayList only touched one part of: Map and Set.");
         Ui.waitEnter();
     }
 

@@ -6,18 +6,27 @@
 # whole dispatch, and a jump table would be solving a problem this course
 # does not have yet. Grows into one the moment a second module does.
 #
+# The three tier headers (BASIC/INTERMEDIATE/ADVANCED) every other course's
+# menu groups its modules under are printed here too, for the same reason
+# they're printed anywhere: to show the arc this course is headed toward.
+# INTERMEDIATE and ADVANCED are empty for now -- fixed strings, not a real
+# grouping structure, because there is nothing yet to group.
+#
 # Build:  make
 # Run:    ./asm-course
 
 .global _start
 
 .section .rodata
-menu_title:  .asciz "ASSEMBLY COURSE - REGISTERS TO SYSCALLS"
-menu_item1:  .asciz "   [ 1]  Registers, syscalls, your first program"
-menu_quit:   .asciz "\n   [ 0]  Quit"
-prompt:      .asciz "\n  Pick a module: "
-invalid_msg: .asciz "\n  Not a valid option.\n"
-bye_msg:     .asciz "\n  See you next time.\n\n"
+menu_title:      .asciz "ASSEMBLY COURSE - REGISTERS TO SYSCALLS"
+tier_basic:      .asciz "\n  -- BASIC --"
+menu_item1:      .asciz "   [ 1]  Registers, syscalls, your first program"
+tier_intermediate: .asciz "\n  -- INTERMEDIATE -- (coming soon)"
+tier_advanced:   .asciz "\n  -- ADVANCED -- (coming soon)"
+menu_quit:       .asciz "\n   [ 0]  Quit"
+prompt:          .asciz "\n  Pick a module: "
+invalid_msg:     .asciz "\n  Not a valid option.\n"
+bye_msg:         .asciz "\n  See you next time.\n\n"
 
 .section .bss
 .lcomm choice_buf, 16
@@ -29,7 +38,19 @@ _start:
     call clear_screen
     mov $menu_title, %rdi
     call title
+    mov $tier_basic, %rdi
+    call print_cstr
+    mov $nl_for_main, %rdi
+    call print_cstr
     mov $menu_item1, %rdi
+    call print_cstr
+    mov $nl_for_main, %rdi
+    call print_cstr
+    mov $tier_intermediate, %rdi
+    call print_cstr
+    mov $nl_for_main, %rdi
+    call print_cstr
+    mov $tier_advanced, %rdi
     call print_cstr
     mov $nl_for_main, %rdi
     call print_cstr

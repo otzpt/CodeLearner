@@ -437,6 +437,57 @@ void lesson_04_conditions(void)
 
     wait_enter();
     clear_screen();
+    heading("PART 4: switch -- and the trap of a missing break");
+
+    printf("    switch (grade) {\n");
+    printf("        case 'A':\n");
+    printf("            printf(\"Excellent\\n\");\n");
+    printf("            break;\n");
+    printf("        case 'B':\n");
+    printf("            printf(\"Good\\n\");\n");
+    printf("            break;\n");
+    printf("        default:\n");
+    printf("            printf(\"Unknown\\n\");\n");
+    printf("    }\n\n");
+
+    char grade = 'B';
+    printf("  Running with grade = '%c':  ", grade);
+    switch (grade) {
+        case 'A':
+            printf("Excellent\n\n");
+            break;
+        case 'B':
+            printf("Good\n\n");
+            break;
+        default:
+            printf("Unknown\n\n");
+    }
+
+    printf("  switch tests one value against several constant cases --\n");
+    printf("  cleaner than an if/else-if chain that keeps testing the\n");
+    printf("  same variable, but only for an equality test. A range check\n");
+    printf("  like score >= 80 still needs if/else; switch cannot do it.\n\n");
+
+    printf("  The trap: without break, execution falls through into the\n");
+    printf("  NEXT case instead of stopping there, comparison or not:\n\n");
+
+    printf("    switch (grade) {\n");
+    printf("        case 'A':\n");
+    printf("            printf(\"Excellent\\n\");\n");
+    printf("            // no break here\n");
+    printf("        case 'B':\n");
+    printf("            printf(\"Good\\n\");\n");
+    printf("            break;\n");
+    printf("    }\n\n");
+
+    printf("  With grade = 'A' and that break removed, both lines print --\n");
+    printf("  \"Excellent\" from the matched case, then \"Good\" from falling\n");
+    printf("  straight into the next one with no comparison at all. Every\n");
+    printf("  case needs its own break unless falling through on purpose\n");
+    printf("  is exactly what you want.\n");
+
+    wait_enter();
+    clear_screen();
     exercise(4);
 
     question("int x = 3;  if (x = 5) { ... }   Does the block run?\n"
@@ -453,6 +504,13 @@ void lesson_04_conditions(void)
              "  (score >= 90). Which branch runs?",
              "80",
              "The first one that is true. Always test highest to lowest.");
+
+    question("switch (grade) has case 'A' with no break before\n"
+             "  case 'B'. grade is 'A'. Does case 'B's code also run?\n"
+             "  (answer: yes or no)",
+             "yes",
+             "Without break, execution falls straight into the next case --\n"
+             "             no comparison, whatever that case's code is just runs.");
 
     {
         const char *task[] = {
@@ -497,6 +555,7 @@ void lesson_04_conditions(void)
     printf("   - == compares, = assigns\n");
     printf("   - 0 is false, everything else is true\n");
     printf("   - braces always\n");
+    printf("   - switch needs a break in every case, or it falls into the next one\n");
     wait_enter();
 }
 
@@ -561,6 +620,49 @@ void lesson_05_loops(void)
 
     wait_enter();
     clear_screen();
+    heading("PART 4: do-while -- checks after, not before");
+
+    printf("    int n = 10;\n");
+    printf("    while (n < 5) {\n");
+    printf("        printf(\"%%d \", n);\n");
+    printf("    }\n\n");
+
+    printf("  Running: nothing prints. n starts at 10, the condition is\n");
+    printf("  false before the body ever runs, and while checks first.\n\n");
+
+    int n = 10;
+    printf("  Running:  ");
+    while (n < 5) {
+        printf("%d ", n);
+    }
+    printf("(nothing)\n\n");
+
+    printf("  do-while checks AFTER the body instead, so the body always\n");
+    printf("  runs at least once, no matter what the condition already is:\n\n");
+
+    printf("    int m = 10;\n");
+    printf("    do {\n");
+    printf("        printf(\"%%d \", m);\n");
+    printf("    } while (m < 5);\n\n");
+
+    int m = 10;
+    printf("  Running:  ");
+    do {
+        printf("%d ", m);
+    } while (m < 5);
+    printf("\n\n");
+
+    printf("  Same condition, same starting value -- while ran zero times,\n");
+    printf("  do-while ran once. That single guaranteed pass is the whole\n");
+    printf("  reason do-while exists: a prompt or a menu you want to show\n");
+    printf("  at least once even before there is anything to check yet.\n\n");
+
+    printf("  The semicolon after while (m < 5) is required -- do-while is\n");
+    printf("  the one loop that ends in one. Leaving it off is a compile\n");
+    printf("  error, not a silent bug.\n");
+
+    wait_enter();
+    clear_screen();
     exercise(5);
 
     question("int v[5];  What is the last valid index?",
@@ -577,6 +679,12 @@ void lesson_05_loops(void)
              "nothing",
              "C does not check bounds. It writes over whatever is there and\n"
              "             the program carries on, corrupted.");
+
+    question("int x = 100;  do { printf(\"hi\\n\"); } while (x < 0);\n"
+             "  Does \"hi\" print?  (answer: yes or no)",
+             "yes",
+             "do-while checks the condition AFTER the body, so the body runs\n"
+             "             once no matter what -- unlike while, which checks first.");
 
     {
         const char *task[] = {
@@ -613,7 +721,8 @@ void lesson_05_loops(void)
     printf("   - for: start; condition; step\n");
     printf("   - indices run 0 to n-1: use <, not <=\n");
     printf("   - C does not check array bounds\n");
-    printf("   - something inside a while must change the condition\n\n");
+    printf("   - something inside a while must change the condition\n");
+    printf("   - do-while checks after the body, so it always runs at least once\n\n");
 
     printf("  Module 6 starts the part that sets C apart: arrays,\n");
     printf("  memory and pointers.\n");

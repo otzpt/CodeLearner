@@ -26,7 +26,15 @@ void lesson_10_structs(void);
 
 /* Past the core course */
 void lesson_11_final_test(void);
-void lesson_12_deeper_memory(void);
-void lesson_13_stacks_queues(void);
+void lesson_12_growing_memory(void);
+void lesson_13_linked_lists(void);
+void lesson_14_stacks_queues(void);
+void lesson_15_enums_unions(void);
+
+/* The toolchain */
+void lesson_16_compilation(void);
+void lesson_17_debugging(void);
+void lesson_18_file_io(void);
+void lesson_19_advanced(void);
 
 #endif

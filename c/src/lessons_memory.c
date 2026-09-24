@@ -154,6 +154,30 @@ static void really_change(int *address)
     *address = 99;
 }
 
+/* Used by module 7 to show local vs. global and the shadowing trap. */
+static int counter = 0;
+
+static void bump(void)
+{
+    counter++;
+}
+
+static void confusing(void)
+{
+    int counter = 0;
+    counter++;
+    (void) counter; /* only so the compiler does not warn it is unused */
+}
+
+/* Used by module 7 to show recursion with an actually-reachable base case. */
+static int factorial(int n)
+{
+    if (n <= 1) {
+        return 1;
+    }
+    return n * factorial(n - 1);
+}
+
 void lesson_07_functions(void)
 {
     title("MODULE 7 - FUNCTIONS");
@@ -238,6 +262,92 @@ void lesson_07_functions(void)
 
     wait_enter();
     clear_screen();
+    heading("PART 4: local vs global -- and the name that shadows");
+
+    printf("  A variable declared inside a function is LOCAL: it exists\n");
+    printf("  only for that call, and no other function can see it. A\n");
+    printf("  variable declared outside every function is GLOBAL: it\n");
+    printf("  exists for the whole program and every function can see it.\n\n");
+
+    printf("    int counter = 0;              /* global -- outside any function */\n\n");
+    printf("    void bump(void)\n");
+    printf("    {\n");
+    printf("        counter++;                /* the global, no local of that name */\n");
+    printf("    }\n\n");
+
+    bump();
+    bump();
+    printf("  Running: bump() called twice, counter is now %d.\n\n", counter);
+
+    printf("  The trap: a local variable with the SAME name as a global\n");
+    printf("  does not change the global at all -- it shadows it. Inside\n");
+    printf("  that function, the name refers to the local; the global\n");
+    printf("  sits there untouched:\n\n");
+
+    printf("    void confusing(void)\n");
+    printf("    {\n");
+    printf("        int counter = 0;          /* a NEW, local counter */\n");
+    printf("        counter++;                /* changes the local, not the global */\n");
+    printf("    }\n\n");
+
+    int before = counter;
+    confusing();
+    printf("  Running: counter was %d before confusing(), %d after -- the\n",
+           before, counter);
+    printf("  global never moved. confusing()'s own local counter reached 1\n");
+    printf("  and was thrown away the moment the function returned.\n\n");
+
+    printf("  Scope is WHERE a name is visible; lifetime is HOW LONG its\n");
+    printf("  storage exists. A local variable's scope ends at its\n");
+    printf("  function's closing brace, and so does its lifetime -- the\n");
+    printf("  moment the function returns, that storage is gone. A block\n");
+    printf("  narrower than a whole function has the same rule:\n\n");
+
+    printf("    {\n");
+    printf("        int temp = 5;              /* scope starts here */\n");
+    printf("    }                               /* and ends here -- gone */\n");
+    printf("    printf(\"%%d\", temp);            /* error: temp is not in scope */\n\n");
+
+    printf("  A global's scope is the whole file (or every file that\n");
+    printf("  declares it extern); its lifetime is the entire run of the\n");
+    printf("  program, from before main starts to after it returns.\n");
+
+    wait_enter();
+    clear_screen();
+    heading("PART 5: recursion -- a function calling itself");
+
+    printf("    int factorial(int n)\n");
+    printf("    {\n");
+    printf("        if (n <= 1) {\n");
+    printf("            return 1;              /* the base case -- stops it */\n");
+    printf("        }\n");
+    printf("        return n * factorial(n - 1);  /* the recursive case */\n");
+    printf("    }\n\n");
+
+    printf("  Running: factorial(5) is %d.\n\n", factorial(5));
+
+    printf("  Every call to factorial(n) makes its own call to\n");
+    printf("  factorial(n - 1), and waits for it to return before\n");
+    printf("  multiplying by n. factorial(5) waits on factorial(4), which\n");
+    printf("  waits on factorial(3), and so on down to factorial(1), which\n");
+    printf("  is the base case: it returns immediately, and the chain of\n");
+    printf("  waiting calls multiplies its way back up.\n\n");
+
+    printf("  The trap: every recursive function needs a base case that is\n");
+    printf("  actually reachable. Without one -- or with one that never\n");
+    printf("  triggers, say `if (n <= 1)` misspelled as `if (n == 1)` on an\n");
+    printf("  n that starts negative -- the function calls itself forever.\n");
+    printf("  Each call takes a little stack space, and stack space is\n");
+    printf("  finite: real behavior, not run here on purpose, is\n\n");
+
+    printf("    Segmentation fault (core dumped)\n\n");
+
+    printf("  a stack overflow, the same crash module 8 explains for other\n");
+    printf("  reasons -- the call stack ran out of room and hit memory\n");
+    printf("  that was never allocated for it.\n");
+
+    wait_enter();
+    clear_screen();
     exercise(7);
 
     question("void f(int n) { n = 99; }   You call f(x) with x = 5.\n"
@@ -254,6 +364,19 @@ void lesson_07_functions(void)
     question("A function taking nothing is declared f() or f(void)?",
              "f(void)",
              "In C, f() means 'I am not saying what it takes', not 'nothing'.");
+
+    question("int total = 5; is global. A function declares its own\n"
+             "  int total = 0; and changes it. Does the global total\n"
+             "  change too?  (answer: yes or no)",
+             "no",
+             "The local shadows the global by name -- inside that function,\n"
+             "             total means the local one. The global sits untouched.");
+
+    question("A recursive function has no base case that can ever be\n"
+             "  reached. What actually happens when you run it?",
+             "stack overflow",
+             "Each call uses a little stack space; with no base case the calls\n"
+             "             never stop, and the stack runs out -- a real crash, not a hang.");
 
     {
         const char *task[] = {
@@ -295,6 +418,8 @@ void lesson_07_functions(void)
     printf("   - arguments are copies\n");
     printf("   - pass &variable so the function can change yours\n");
     printf("   - declare before use, or write a prototype\n");
+    printf("   - a local variable shadows a global of the same name -- it does not change it\n");
+    printf("   - recursion needs a reachable base case, or the stack runs out\n");
     wait_enter();
 }
 
@@ -360,6 +485,51 @@ void lesson_08_pointers(void)
 
     wait_enter();
     clear_screen();
+    heading("PART 4: const with pointers -- two different promises");
+
+    printf("  const can attach to either side of the *, and each side\n");
+    printf("  makes a different promise:\n\n");
+
+    printf("    const int *view;      view can point elsewhere, but *view\n");
+    printf("                          cannot be assigned through it\n\n");
+    printf("    int *const fixed;     *fixed can be assigned, but fixed\n");
+    printf("                          itself cannot be pointed elsewhere\n\n");
+    printf("    const int *const both;   neither -- both are locked\n\n");
+
+    printf("  Read right to left from the name: 'const int *view' is\n");
+    printf("  'view is a pointer to a const int'. 'int *const fixed' is\n");
+    printf("  'fixed is a const pointer to an int'.\n\n");
+
+    int locked = 10;
+    const int *view = &locked;
+    printf("  Running: const int *view = &locked; *view is %d.\n\n", *view);
+
+    locked = 20;
+    printf("  locked changed to %d through its own name -- view still\n", locked);
+    printf("  sees the new value, because the const promise is only about\n");
+    printf("  writing THROUGH the pointer, not about the value being\n");
+    printf("  unable to change at all:\n\n");
+    printf("    Running: *view is now %d.\n\n", *view);
+
+    printf("  What the const actually blocks is this line, which does not\n");
+    printf("  compile -- not run here, since a real build cannot contain a\n");
+    printf("  line that fails to compile:\n\n");
+    printf("    *view = 99;\n\n");
+    printf("    error: assignment of read-only location '*view'\n\n");
+
+    printf("  int *const, the other order, blocks the opposite thing --\n");
+    printf("  reassigning the pointer itself, not writing through it:\n\n");
+    printf("    int *const fixed = &locked;\n");
+    printf("    *fixed = 99;         <- fine, changes locked\n");
+    printf("    fixed = &view_target;  <- error: assignment of read-only variable\n\n");
+
+    printf("  A function parameter is where this earns its keep: `void\n");
+    printf("  print_it(const int *p)` promises callers you will not modify\n");
+    printf("  what they passed you, and the compiler enforces the promise\n");
+    printf("  instead of trusting a comment.\n");
+
+    wait_enter();
+    clear_screen();
     exercise(8);
 
     question("int n = 7; int *p = &n;   What does *p give?",
@@ -374,6 +544,12 @@ void lesson_08_pointers(void)
     question("What happens when you do *p with p = NULL?",
              "segmentation fault",
              "The system stops the program: that address is not yours.");
+
+    question("const int *p = &n;   Can p itself be made to point at a\n"
+             "  different int later?  (answer: yes or no)",
+             "yes",
+             "const int *p locks *p (writing through p), not p itself --\n"
+             "             int *const p is the other way around.");
 
     {
         const char *task[] = {
@@ -415,7 +591,8 @@ void lesson_08_pointers(void)
     printf("   - a pointer is a variable holding an address\n");
     printf("   - & takes the address, * reads/writes what is there\n");
     printf("   - in a type, * means 'pointer'; in code, * reaches through\n");
-    printf("   - test for NULL before using\n\n");
+    printf("   - test for NULL before using\n");
+    printf("   - const int *p locks writing through p; int *const p locks p itself\n\n");
 
     printf("  Module 9 uses this to ask for memory properly.\n");
     wait_enter();

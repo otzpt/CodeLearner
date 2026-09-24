@@ -45,10 +45,17 @@ COURSES = {
             (3, r"\bfgets\s*\("),
             (4, r"\bif\s*\("),
             (4, r"\belse\b"),
+            (4, r"\bswitch\s*\("),
             (5, r"\bfor\s*\("),
             (5, r"\bwhile\s*\("),
-            (5, r"\bbreak\b"),
-            (5, r"\bcontinue\b"),
+            # Real C break/continue statements always end in ; -- a bare
+            # \bbreak\b also matches English prose like "no break before
+            # case 'B'" in module 4's own switch question.
+            (5, r"\bbreak\s*;"),
+            (5, r"\bcontinue\s*;"),
+            # do { ... -- requiring the brace excludes "do not"/"you do"/
+            # "do this", all over this course's own prose.
+            (5, r"\bdo\s*\{"),
             (6, r"\bstrlen\s*\("),
             (6, r"\bstrcmp\s*\("),
             (8, r"\bNULL\b"),
@@ -61,6 +68,47 @@ COURSES = {
             (11, r"\bsrand\s*\("),
             (12, r"\brealloc\s*\("),
             (12, r"\bcalloc\s*\("),
+            (15, r"\btypedef\b"),
+            (15, r"\bunion\b"),
+            (15, r"\benum\b"),
+            (18, r"\bfopen\s*\("),
+            (18, r"\bfclose\s*\("),
+            (18, r"\bfprintf\s*\("),
+            (18, r"\bargc\b"),
+            (18, r"\bargv\b"),
+            # An object-like #define (a plain value, no parameter list) is
+            # required here, not at module 19, because module 14's own
+            # challenge solution text uses "#define CAP 100" -- inside the
+            # exercise() window this checker scans, unlike module 14's
+            # earlier STACK_CAP prose example, which sits before exercise(14)
+            # and so is never checked at all.
+            (14, r"#\s*define\s+[A-Z_]+\s"),
+            (19, r"\(\*\s*[a-z_]+\s*\)\s*\("),
+            (19, r"\bva_list\b"),
+            (19, r"\bva_start\s*\("),
+            (19, r"\bva_arg\s*\("),
+            (19, r"\bva_end\s*\("),
+            # A function-like #define (a parameter list right after the
+            # name, no space) is module 19's own new part -- distinct from
+            # the object-like entry above, which requires whitespace there
+            # instead of "(".
+            (19, r"#\s*define\s+[A-Z_]+\s*\("),
+            (19, r"<<"),
+            (19, r">>"),
+            (19, r"~"),
+            # A bare | is bitwise OR. (?<!\|)\|(?!\|) excludes || (logical
+            # OR), already used unrestricted in earlier modules' own
+            # exercise blocks with no first_taught entry of its own.
+            (19, r"(?<!\|)\|(?!\|)"),
+            (19, r"\^"),
+            # Bitwise AND, restricted to look like real code and not
+            # English prose that happens to mention the character (module
+            # 3's own "The & is missing" explanation matches a naive
+            # `\w & \w`-shaped pattern otherwise). Requiring the right side
+            # to start with a digit or "(" -- true of every idiomatic
+            # bitwise-AND shown in this course (n & 1, byte & (1 << bit))
+            # and false of every English word -- is what tells them apart.
+            (19, r"[a-zA-Z0-9_)\]]\s*&\s*[0-9(]"),
             # Never introduced by any module.
             (99, r"\bputchar\s*\("),
             (99, r"\bstrcspn\s*\("),
@@ -70,10 +118,7 @@ COURSES = {
             (99, r"\bmemcpy\s*\("),
             (99, r"\bstrcat\s*\("),
             (99, r"\bstrncpy\s*\("),
-            (99, r"\bswitch\s*\("),
             (99, r"\bgoto\b"),
-            (99, r"\btypedef\b"),
-            (99, r"\bunion\b"),
         ],
         # Module 11 (the final test) has no exercise() call: its tasks are
         # interactive and depend on a random number, so they cannot state a
@@ -127,14 +172,16 @@ COURSES = {
             # module 6's own solution text says "building a new string".
             (9, r"\bnew\s+[A-Za-z_][A-Za-z0-9_:<>]*\s*[(\[]"),
             (9, r"\bdelete(?:\[\])?\s+[a-z_]"),
+            (10, r"\bstd::map<"),
+            (10, r"\bstd::set<"),
+            (10, r"\bstd::find\s*\("),
+            (11, r"\btemplate\s*<"),
+            (12, r"\bstd::unique_ptr<"),
+            (12, r"\bstd::shared_ptr<"),
+            (12, r"\bstd::move\s*\("),
             # Never introduced by any module.
-            (99, r"\btemplate\s*<"),
-            (99, r"\bstd::unique_ptr<"),
-            (99, r"\bstd::shared_ptr<"),
-            (99, r"\bstd::map<"),
             (99, r"\boperator\s*[a-zA-Z+\-*/=<>]"),
             (99, r"\bvirtual\b"),
-            (99, r"\bstd::move\s*\("),
         ],
         # Module 9's own lesson body constructs a Student with
         # `name_(std::move(n))` -- inside the lesson code itself, not inside
@@ -184,8 +231,22 @@ COURSES = {
             (10, r"\bexcept\b"),
             (10, r"\braise\b"),
             (10, r"\bfinally\s*:"),
+            (11, r"\bimport\s+\w"),
+            (11, r"\bfrom\s+\w+\s+import\b"),
+            (11, r"\b__name__\b"),
+            (11, r"\b__main__\b"),
+            (12, r"\bwith\b.*\bas\b"),
+            (12, r"\bopen\s*\("),
+            (12, r"\.close\s*\("),
+            (12, r"\.read\s*\("),
+            (12, r"\.readlines\s*\("),
+            (12, r"\.write\s*\("),
+            (12, r"\bjson\.dump\s*\("),
+            (12, r"\bjson\.load\s*\("),
+            (13, r"\burllib\.request\.urlopen\s*\("),
+            (13, r"\burllib\.error\.HTTPError\b"),
+            (13, r"\burllib\.error\.URLError\b"),
             # Never introduced by any module.
-            (99, r"\bwith\b.*\bas\b"),
             (99, r"\byield\b"),
             (99, r"\basync\b"),
             (99, r"\bawait\b"),
@@ -210,6 +271,12 @@ COURSES = {
             (2, r"`[^`]*\$\{"),  # a template literal with interpolation
             (3, r"\bawait\s+ui\.ask\s*\("),
             (3, r"\basync\s+function\b"),
+            # require() first appears in module 3's own challenge solution
+            # (require("node:readline")), not with module 13's CommonJS
+            # topic -- same convention as the `=>` entry below and C++'s
+            # std::vector, credited to the module where a reader has
+            # actually seen it, ahead of its own named topic.
+            (3, r"\brequire\s*\("),
             (4, r"\bif\s*\("),
             (4, r"\belse\b"),
             (5, r"\bfor\s*\("),
@@ -240,10 +307,23 @@ COURSES = {
             (10, r"\bcatch\s*\("),
             (10, r"\bthrow\b"),
             (10, r"\bfinally\s*\{"),
+            (11, r"\bnew Promise\s*\("),
+            (11, r"\.then\s*\("),
+            (11, r"\bPromise\.all\s*\("),
+            (11, r"\bPromise\.(resolve|reject)\s*\("),
+            (12, r"\bfetch\s*\("),
+            (13, r"\bmodule\.exports\b"),
+            (13, r"^\s*import\s"),
+            (13, r"^\s*export\s"),
+            (14, r"\bfs\.readFileSync\s*\("),
+            (14, r"\bfs\.writeFileSync\s*\("),
+            (14, r"\bfs\.promises\.readFile\s*\("),
+            (14, r"\bfs\.promises\.writeFile\s*\("),
+            (14, r"\bprocess\.argv\b"),
             # Never introduced by any module.
             (99, r"\byield\b"),
             (99, r"\bgenerator\b"),
-            (99, r"\bPromise\.(all|race|any)\s*\("),
+            (99, r"\bPromise\.(race|any)\s*\("),
             (99, r"\bnew Map\s*\("),
             (99, r"\bnew Set\s*\("),
             (99, r"\bSymbol\s*\("),
@@ -297,14 +377,23 @@ COURSES = {
             (10, r"\bcatch\s*\("),
             (10, r"\bthrows\s+[A-Z]"),
             (10, r"\bInteger\.parseInt\s*\("),
+            (11, r"\bHashMap\b"),
+            (11, r"\bMap<"),
+            (11, r"\bHashSet\b"),
+            (11, r"\bSet<"),
+            (11, r"\bgetOrDefault\s*\("),
+            # A class name immediately followed by < is a generic class
+            # declaration (class Box<T>). A bare comparison never has a
+            # capitalized identifier directly before < the way this does,
+            # so this does not collide with modules 4/5/7/8's own if (n > 0)
+            # / j < 3 / a > b ? a : b style comparisons.
+            (12, r"\bclass\s+[A-Z]\w*\s*<"),
+            (13, r"\bsynchronized\b"),
+            (13, r"\bThread\b"),
             # Never introduced by any module.
             (99, r"\bswitch\s*\("),
             (99, r"->"),  # lambda syntax
             (99, r"\bvar\s+[a-z_]+\s*="),
-            (99, r"\bHashMap\b"),
-            (99, r"\bMap<"),
-            (99, r"\bsynchronized\b"),
-            (99, r"\bThread\b"),
             (99, r"\benum\s+[A-Z]"),
             (99, r"\brecord\s+[A-Z]"),
             (99, r"\bextends\s+[A-Z]"),
@@ -339,15 +428,21 @@ COURSES = {
             (9, r"\?\?"),
             (10, r"\btry\s*\{"),
             (10, r"\bcatch\s*\("),
+            (11, r"\.Select\s*\("),
+            (11, r"\.Where\s*\("),
+            (11, r"\.OrderBy(Descending)?\s*\("),
+            (11, r"\.Sum\s*\("),
+            (11, r"\.Count\s*\("),
+            (12, r"\basync\b"),
+            (12, r"\bawait\b"),
+            (13, r"\bwhere\s+[A-Z]\w*\s*:"),
+            (14, r"\bdelegate\s+\w+"),
+            (14, r"\bevent\s+[A-Z]"),
             # Never introduced by any module's exercise.
-            (99, r"\basync\b"),
-            (99, r"\bawait\b"),
             (99, r"\binterface\s+[A-Z]"),
             (99, r"\bstruct\s+[A-Z]"),
             (99, r"\bclass\s+[A-Z]"),
             (99, r"\benum\s+[A-Z]"),
-            (99, r"\.Select\s*\("),
-            (99, r"\.Where\s*\("),
         ],
     },
     "gui": {

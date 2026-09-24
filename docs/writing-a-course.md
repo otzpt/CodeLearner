@@ -133,9 +133,14 @@ void lesson_11_files(void)
 
 **2. Declare it** in `c/src/lessons.h`.
 
-**3. Add one line** to the `MODULES` table in `c/src/main.c`. The menu
-numbers itself and `MODULE_COUNT` counts itself, so there is nothing else to
-update.
+**3. Add one line** to the `MODULES` table in `c/src/main.c`, including
+which tier it belongs to (`"BASIC"`, `"INTERMEDIATE"`, or `"ADVANCED"` — see
+"Tiers" below). The menu numbers itself and `MODULE_COUNT` counts itself, so
+there is nothing else to update.
+
+If the new module changes where a tier boundary should fall, move the
+string on the rows around it rather than adding a fourth tier — three bands
+is the whole convention, in every course.
 
 If the file is getting long, split it the way `lessons_basics.c` and
 `lessons_memory.c` are split — by theme, not by line count.
@@ -160,6 +165,34 @@ From `ui.h`. They exist so a lesson contains teaching and nothing else.
 `question` compares answers ignoring case and surrounding spaces. Keep the
 expected answer short and unambiguous — `"3"`, `"-o"`, `"yes"`. If a question
 has two reasonable phrasings, rewrite the question.
+
+## Tiers
+
+Every course's menu groups its modules under three bands — BASIC,
+INTERMEDIATE, and ADVANCED — printed as section headers above the module
+numbers in whatever loop draws the menu. It is a display grouping only:
+the modules still run in one numbered sequence, `check-teaching-order.py`
+checks that sequence exactly as it did before tiers existed, and a lesson
+function has no way to know or care which tier it was filed under.
+
+Each module's row in its course's module table (`MODULES` in
+`main.c`/`main.py`/`main.js`/`Main.java`/`Program.cs`, or the equivalent)
+carries one extra field: the tier name as a plain string. The menu-drawing
+loop prints a `-- TIER --` divider whenever that field changes from the
+previous row, so reordering or splitting modules never requires touching
+anything beyond that one field per row. Assembly and GUI, with a single
+module each, print INTERMEDIATE and ADVANCED anyway, empty, as fixed
+strings — there is nothing to group yet, but the arc the course is headed
+toward stays visible.
+
+The split is by what a module assumes, not by module count: BASIC covers
+syntax fundamentals a student needs before touching pointers or
+references; INTERMEDIATE covers collections and deeper procedural work;
+ADVANCED covers OOP, error handling, and whatever is genuinely
+language-specific and hard (pointers/memory/data structures for C, RAII
+for C++, nullable reference types for C#). Bands don't need to be the same
+size across languages — follow where each language's own difficulty jumps
+actually are, not a fixed module count per band.
 
 ## Adding a new language
 

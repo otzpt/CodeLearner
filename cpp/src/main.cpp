@@ -16,29 +16,41 @@
 #include "lessons.h"
 #include "ui.h"
 
+// `tier` files a module under one of the three menu bands ("BASIC",
+// "INTERMEDIATE", "ADVANCED"). Display grouping only -- the lesson
+// functions never see it.
 struct Module {
     std::string title;
     std::function<void()> run;
+    std::string tier;
 };
 
 int main() {
     const std::vector<Module> modules = {
-        {"Compiling and printing", lesson01Compiling},
-        {"Variables and types", lesson02Variables},
-        {"Reading input", lesson03Input},
-        {"Conditions", lesson04Conditions},
-        {"Loops", lesson05Loops},
-        {"std::string", lesson06Strings},
-        {"Functions and references", lesson07Functions},
-        {"std::vector", lesson08Vectors},
-        {"Classes and RAII", lesson09Classes},
+        {"Compiling and printing", lesson01Compiling, "BASIC"},
+        {"Variables and types", lesson02Variables, "BASIC"},
+        {"Reading input", lesson03Input, "BASIC"},
+        {"Conditions", lesson04Conditions, "BASIC"},
+        {"Loops", lesson05Loops, "BASIC"},
+        {"std::string", lesson06Strings, "INTERMEDIATE"},
+        {"Functions and references", lesson07Functions, "INTERMEDIATE"},
+        {"std::vector", lesson08Vectors, "ADVANCED"},
+        {"Classes and RAII", lesson09Classes, "ADVANCED"},
+        {"Maps and sets", lesson10Containers, "ADVANCED"},
+        {"Templates", lesson11Templates, "ADVANCED"},
+        {"Modern C++ idioms", lesson12Modern, "ADVANCED"},
     };
 
     for (;;) {
         clearScreen();
         title("C++ COURSE - FROM C TO CLASSES");
 
+        std::string shownTier;
         for (size_t i = 0; i < modules.size(); i++) {
+            if (modules[i].tier != shownTier) {
+                shownTier = modules[i].tier;
+                std::cout << "\n  -- " << shownTier << " --\n";
+            }
             std::cout << "   [" << (i + 1 < 10 ? " " : "") << (i + 1) << "]  "
                       << modules[i].title << "\n";
         }

@@ -26,18 +26,25 @@ from lessons_more import (
     lesson_09_classes,
     lesson_10_exceptions,
 )
+from lessons_advanced import lesson_11_modules
+from lessons_io import lesson_12_files, lesson_13_apis
 
+# "tier" files a module under one of the three menu bands. Display
+# grouping only -- the lesson functions never see it.
 MODULES = [
-    {"title": "Running Python and print()", "run": lesson_01_running},
-    {"title": "Variables and types", "run": lesson_02_variables},
-    {"title": "Reading input", "run": lesson_03_input},
-    {"title": "Conditions", "run": lesson_04_conditions},
-    {"title": "Loops", "run": lesson_05_loops},
-    {"title": "Lists", "run": lesson_06_lists},
-    {"title": "Functions and default arguments", "run": lesson_07_functions},
-    {"title": "Dictionaries", "run": lesson_08_dicts},
-    {"title": "Classes", "run": lesson_09_classes},
-    {"title": "Exceptions", "run": lesson_10_exceptions},
+    {"title": "Running Python and print()", "run": lesson_01_running, "tier": "BASIC"},
+    {"title": "Variables and types", "run": lesson_02_variables, "tier": "BASIC"},
+    {"title": "Reading input", "run": lesson_03_input, "tier": "BASIC"},
+    {"title": "Conditions", "run": lesson_04_conditions, "tier": "BASIC"},
+    {"title": "Loops", "run": lesson_05_loops, "tier": "BASIC"},
+    {"title": "Lists", "run": lesson_06_lists, "tier": "INTERMEDIATE"},
+    {"title": "Functions and default arguments", "run": lesson_07_functions, "tier": "INTERMEDIATE"},
+    {"title": "Dictionaries", "run": lesson_08_dicts, "tier": "INTERMEDIATE"},
+    {"title": "Classes", "run": lesson_09_classes, "tier": "ADVANCED"},
+    {"title": "Exceptions", "run": lesson_10_exceptions, "tier": "ADVANCED"},
+    {"title": "Modules and packages", "run": lesson_11_modules, "tier": "ADVANCED"},
+    {"title": "Files and context managers", "run": lesson_12_files, "tier": "ADVANCED"},
+    {"title": "Working with APIs", "run": lesson_13_apis, "tier": "ADVANCED"},
 ]
 
 
@@ -45,7 +52,11 @@ def show_menu():
     ui.clear_screen()
     ui.title("PYTHON COURSE - FROM ZERO TO CLASSES")
 
+    shown_tier = None
     for i, module in enumerate(MODULES, start=1):
+        if module["tier"] != shown_tier:
+            shown_tier = module["tier"]
+            print(f"\n  -- {shown_tier} --")
         print(f"   [{i:2d}]  {module['title']}")
     print("\n   [ 0]  Quit")
     ui.rule()

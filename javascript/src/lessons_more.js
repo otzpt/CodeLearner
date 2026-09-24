@@ -584,8 +584,11 @@ async function lesson10Errors() {
   console.log("   - TypeError, RangeError, SyntaxError -- know what each one means");
   console.log("   - extends Error + super(msg) is how you make your own catchable type");
   console.log();
-  console.log("  That is the core course. Like Python, no manual memory --");
+  console.log("  That covers the core course. Like Python, no manual memory --");
   console.log("  garbage collected, with try/finally standing in for RAII.");
+  console.log();
+  console.log("  Module 11 names the object await has been unwrapping since");
+  console.log("  module 3: a Promise.");
   await ui.waitEnter();
 }
 

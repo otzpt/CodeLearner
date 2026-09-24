@@ -10,27 +10,37 @@ import java.util.Scanner;
 
 public class Main {
 
-    private record Module(String title, Runnable action) {
+    // `tier` files a module under one of the three menu bands. Display
+    // grouping only -- the lesson methods never see it.
+    private record Module(String title, Runnable action, String tier) {
     }
 
     private static final Module[] MODULES = {
-            new Module("Compiling and printing", LessonsBasics::lesson01Running),
-            new Module("Variables and types", LessonsBasics::lesson02Variables),
-            new Module("Reading input", LessonsBasics::lesson03Input),
-            new Module("Conditions", LessonsBasics::lesson04Conditions),
-            new Module("Loops", LessonsBasics::lesson05Loops),
-            new Module("Arrays and Strings", LessonsMore::lesson06ArraysStrings),
-            new Module("Methods and overloading", LessonsMore::lesson07Methods),
-            new Module("ArrayList and boxing", LessonsMore::lesson08ArrayList),
-            new Module("Classes, interfaces, and real encapsulation", LessonsMore::lesson09Classes),
-            new Module("Exceptions: checked vs unchecked", LessonsMore::lesson10Exceptions),
+            new Module("Compiling and printing", LessonsBasics::lesson01Running, "BASIC"),
+            new Module("Variables and types", LessonsBasics::lesson02Variables, "BASIC"),
+            new Module("Reading input", LessonsBasics::lesson03Input, "BASIC"),
+            new Module("Conditions", LessonsBasics::lesson04Conditions, "BASIC"),
+            new Module("Loops", LessonsBasics::lesson05Loops, "BASIC"),
+            new Module("Arrays and Strings", LessonsMore::lesson06ArraysStrings, "INTERMEDIATE"),
+            new Module("Methods and overloading", LessonsMore::lesson07Methods, "INTERMEDIATE"),
+            new Module("ArrayList and boxing", LessonsMore::lesson08ArrayList, "INTERMEDIATE"),
+            new Module("Classes, interfaces, and real encapsulation", LessonsMore::lesson09Classes, "ADVANCED"),
+            new Module("Exceptions: checked vs unchecked", LessonsMore::lesson10Exceptions, "ADVANCED"),
+            new Module("The Collections Framework: Map and Set", LessonsAdvanced::lesson11Collections, "ADVANCED"),
+            new Module("Generics", LessonsAdvanced::lesson12Generics, "ADVANCED"),
+            new Module("Concurrency", LessonsAdvanced::lesson13Concurrency, "ADVANCED"),
     };
 
     private static void showMenu() {
         Ui.clearScreen();
         Ui.title("JAVA COURSE - FROM CLASS Main TO CHECKED EXCEPTIONS");
 
+        String shownTier = "";
         for (int i = 0; i < MODULES.length; i++) {
+            if (!MODULES[i].tier().equals(shownTier)) {
+                shownTier = MODULES[i].tier();
+                System.out.printf("%n  -- %s --%n", shownTier);
+            }
             System.out.printf("   [%2d]  %s%n", i + 1, MODULES[i].title());
         }
         System.out.println("\n   [ 0]  Quit");

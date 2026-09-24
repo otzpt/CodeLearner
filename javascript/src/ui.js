@@ -28,10 +28,26 @@ const WIDTH = 54; // inside width of the frame, matching the other courses
 const rl = readline.createInterface({ input: stdin });
 const lines = rl[Symbol.asyncIterator]();
 
+// Set once stdin is exhausted. ask() itself keeps returning "" for every
+// caller that doesn't care (waitEnter, question, askYes -- an EOF-forced
+// wrong answer there is harmless), but main()'s own loop needs to tell a
+// real end-of-input apart from an empty line typed on purpose, or it never
+// learns input is gone and spins redrawing the menu forever instead of
+// quitting the way every other course's EOF check does.
+let inputClosed = false;
+
 async function ask(prompt) {
   stdout.write(prompt);
   const { value, done } = await lines.next();
-  return done ? "" : value;
+  if (done) {
+    inputClosed = true;
+    return "";
+  }
+  return value;
+}
+
+function isInputClosed() {
+  return inputClosed;
 }
 
 function clearScreen() {
@@ -149,6 +165,7 @@ function closeInput() {
 
 module.exports = {
   ask,
+  isInputClosed,
   clearScreen,
   waitEnter,
   rule,

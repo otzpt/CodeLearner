@@ -573,11 +573,9 @@ static class LessonsMore
         Ui.WaitEnter();
 
         Console.WriteLine();
-        Console.WriteLine("  You've reached the end of the current C# course. There's more");
-        Console.WriteLine("  of the language past here -- LINQ, async/await, generics in");
-        Console.WriteLine("  depth, interfaces beyond IDisposable -- tracked as this");
-        Console.WriteLine("  course's own target arc, the same way every other language");
-        Console.WriteLine("  here states where it's headed next.");
+        Console.WriteLine("  That covers this course's original ten modules. Module 11");
+        Console.WriteLine("  starts on what's past here: LINQ, then async/await, generics");
+        Console.WriteLine("  in depth, and interfaces beyond IDisposable.");
         Ui.WaitEnter();
     }
 

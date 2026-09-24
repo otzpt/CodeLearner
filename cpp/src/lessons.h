@@ -16,5 +16,8 @@ void lesson06Strings();
 void lesson07Functions();
 void lesson08Vectors();
 void lesson09Classes();
+void lesson10Containers();
+void lesson11Templates();
+void lesson12Modern();
 
 #endif

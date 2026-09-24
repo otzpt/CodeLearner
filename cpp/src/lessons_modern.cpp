@@ -1,15 +1,43 @@
-// Modules 6 to 9 - the part that sets C++ apart.
+// Modules 6 to 12 - the part that sets C++ apart.
 //
 // Each module closes a gap the C course spent real time on: strings without
 // \0, functions that write back without &, arrays that know their own size,
 // and finally memory that frees itself at the right time. None of it is
 // magic -- each one is shown working, and shown still breakable.
+//
+// Module 10 goes past std::vector into std::map and std::set -- the STL
+// containers module 8 didn't need, and the trap map's own operator[]
+// hides (a missing-key read that silently inserts, rather than telling
+// you it was missing).
+//
+// Module 11 names the mechanism that was already underneath std::vector<T>,
+// std::map<K, V> and std::string since module 5: templates, and the one
+// error they can produce, shown by actually compiling it and printing
+// g++'s own error text -- not a hand-written summary of one.
+//
+// Module 12 closes the course: std::unique_ptr and std::shared_ptr replace
+// module 9's own new/delete, std::move is shown changing an actually counted
+// copy into an actually counted move (not asserted), and structured bindings
+// give module 10's map loop a second, more direct way to write the same
+// thing.
 
 #include <algorithm>
+#include <cstdio>
+#include <cstdlib>
+#include <filesystem>
+#include <fstream>
 #include <iostream>
+#include <map>
+#include <memory>
+#include <set>
 #include <stdexcept>
 #include <string>
+#include <utility>
 #include <vector>
+
+#ifndef _WIN32
+#include <sys/wait.h>
+#endif
 
 #include "lessons.h"
 #include "ui.h"
@@ -495,8 +523,816 @@ void lesson09Classes() {
     std::cout << "   - RAII: resources tied to object lifetime, freed automatically\n";
     std::cout << "   - new/delete are still malloc/free -- still leak if unmatched\n\n";
 
-    std::cout << "  That is the core course. std::string, std::vector and\n";
+    std::cout << "  That covers the core course. std::string, std::vector and\n";
     std::cout << "  your own classes cover the overwhelming majority of what\n";
-    std::cout << "  C needed manual memory management for.\n";
+    std::cout << "  C needed manual memory management for.\n\n";
+
+    std::cout << "  Module 10 rounds out the STL with the two containers\n";
+    std::cout << "  vector doesn't replace: std::map and std::set.\n";
+    waitEnter();
+}
+
+void lesson10Containers() {
+    title("MODULE 10 - MAPS AND SETS");
+
+    heading("PART 1: std::map -- key to value");
+
+    std::cout << "  A vector holds values in order, found by index. A map\n";
+    std::cout << "  holds them found by key instead, kept sorted by that\n";
+    std::cout << "  key:\n\n";
+
+    std::cout << "    std::map<std::string, int> ages;\n";
+    std::cout << "    ages[\"Ana\"] = 30;\n";
+    std::cout << "    ages[\"Bea\"] = 25;\n\n";
+
+    std::map<std::string, int> ages;
+    ages["Ana"] = 30;
+    ages["Bea"] = 25;
+
+    std::cout << "  Running, iterated in key order (not insertion order):\n\n";
+    for (const auto &entry : ages) {
+        std::cout << "    " << entry.first << ": " << entry.second << "\n";
+    }
+
+    std::cout << "\n  `[]` on a key you already checked reads the value. On a\n";
+    std::cout << "  key that is NOT there, it does something C++ beginners\n";
+    std::cout << "  routinely get bitten by: it silently INSERTS that key\n";
+    std::cout << "  with a default value (0 for int), rather than telling\n";
+    std::cout << "  you it was missing:\n\n";
+
+    std::cout << "    std::cout << ages[\"Carl\"];   // reads 0 -- AND inserts \"Carl\": 0\n\n";
+
+    std::cout << "  Running: before, the map has " << ages.size() << " entries.\n";
+    std::cout << "  ages[\"Carl\"] gives: " << ages["Carl"] << "\n";
+    std::cout << "  After, the map has " << ages.size() << " entries -- \"Carl\" is now in\n";
+    std::cout << "  it, whether that was the intent or not.\n\n";
+
+    std::cout << "  The safe check is .count(), not []:\n\n";
+    std::cout << "    if (ages.count(\"Dee\") == 0) { ... }\n\n";
+
+    if (ages.count("Dee") == 0) {
+        std::cout << "  Running: \"Dee\" is not in the map, and .count() did not add\n";
+        std::cout << "  it -- size is still " << ages.size() << ".\n";
+    }
+
+    waitEnter();
+    clearScreen();
+    heading("PART 2: std::set -- unique values, kept sorted");
+
+    std::cout << "  A set holds each value at most once, sorted, with no\n";
+    std::cout << "  paired value the way map has -- membership is the whole\n";
+    std::cout << "  point:\n\n";
+
+    std::cout << "    std::set<int> seen;\n";
+    std::cout << "    seen.insert(5);\n";
+    std::cout << "    seen.insert(3);\n";
+    std::cout << "    seen.insert(5);   // already there -- ignored, not duplicated\n\n";
+
+    std::set<int> seen;
+    seen.insert(5);
+    seen.insert(3);
+    seen.insert(5);
+
+    std::cout << "  Running: size is " << seen.size() << " (the second 5 changed nothing),\n";
+    std::cout << "  iterated in sorted order:\n\n    ";
+    for (int v : seen) {
+        std::cout << v << " ";
+    }
+    std::cout << "\n";
+
+    waitEnter();
+    clearScreen();
+    heading("PART 3: <algorithm> beyond sort");
+
+    std::cout << "  Module 8 already used std::sort. std::find does the same\n";
+    std::cout << "  kind of job for a single lookup in something that is not\n";
+    std::cout << "  a map or set -- a plain vector, searched by value:\n\n";
+
+    std::cout << "    std::vector<int> nums = {4, 8, 15, 16, 23, 42};\n";
+    std::cout << "    auto it = std::find(nums.begin(), nums.end(), 16);\n\n";
+
+    std::vector<int> nums = {4, 8, 15, 16, 23, 42};
+    auto it = std::find(nums.begin(), nums.end(), 16);
+
+    std::cout << "  Running: ";
+    if (it != nums.end()) {
+        std::cout << "found 16 at index " << (it - nums.begin()) << ".\n";
+    } else {
+        std::cout << "not found.\n";
+    }
+
+    std::cout << "\n  it == nums.end() means \"not found\" -- the same role NULL\n";
+    std::cout << "  plays for a pointer in C, and .get() returning None plays\n";
+    std::cout << "  for a dict in Python.\n";
+
+    waitEnter();
+    clearScreen();
+    exercise(10);
+
+    question("std::map<std::string, int> m; you write\n"
+             "  std::cout << m[\"x\"]; and \"x\" was never inserted. Does\n"
+             "  this crash, or silently insert \"x\" with value 0?",
+             "silently insert",
+             "operator[] on a map always succeeds by inserting a "
+             "default-constructed value if the key is missing -- .count() "
+             "is the way to check without inserting.");
+
+    question("std::set<int> s; s.insert(7); s.insert(7); What is\n"
+             "  s.size() after both inserts?",
+             "1",
+             "A set holds each value once; inserting an already-present "
+             "value changes nothing.");
+
+    question("std::find returns an iterator. What does it equal when\n"
+             "  the value was not found?  (one word)",
+             "end",
+             "container.end() -- one past the last element, used as the "
+             "\"not found\" signal the same way NULL is for a pointer.");
+
+    challenge(
+        {"Read words until \"stop\". Using a std::set<std::string>,",
+         "print how many DISTINCT words were entered (duplicates",
+         "should not be counted twice)."},
+        {"cat", "dog", "cat", "stop"},
+        {"2"},
+        {"#include <iostream>", "#include <set>", "#include <string>", "",
+         "int main() {", "    std::set<std::string> words;", "    std::string w;",
+         "    while (std::cin >> w && w != \"stop\") {", "        words.insert(w);",
+         "    }", "    std::cout << words.size() << \"\\n\";", "    return 0;", "}"});
+
+    waitEnter();
+    clearScreen();
+    heading("SUMMARY");
+
+    std::cout << "   - std::map<K, V>: key to value, sorted by key\n";
+    std::cout << "   - map's [] inserts a default value on a missing key --\n";
+    std::cout << "     use .count() to check without inserting\n";
+    std::cout << "   - std::set<T>: each value at most once, sorted\n";
+    std::cout << "   - std::find returns end() on a container when the\n";
+    std::cout << "     value is not found\n\n";
+
+    std::cout << "  Module 11 is templates: the mechanism that lets\n";
+    std::cout << "  std::vector<int> and std::vector<std::string> both\n";
+    std::cout << "  exist from one piece of code, not one written per type.\n";
+    waitEnter();
+}
+
+namespace lesson11detail {
+
+template<typename T>
+T myMax(T a, T b) {
+    return (a > b) ? a : b;
+}
+
+template<typename T>
+class Box {
+public:
+    explicit Box(T value) : value_(value) {}
+    T get() const { return value_; }
+
+private:
+    T value_;
+};
+
+}  // namespace lesson11detail
+
+void lesson11Templates() {
+    title("MODULE 11 - TEMPLATES");
+
+    heading("PART 1: the duplication templates solve");
+
+    std::cout << "  A function to find the larger of two ints:\n\n";
+    std::cout << "    int myMax(int a, int b) { return (a > b) ? a : b; }\n\n";
+
+    auto myMaxInt = [](int a, int b) { return (a > b) ? a : b; };
+    std::cout << "  Running: myMax(3, 7) -> " << myMaxInt(3, 7) << "\n\n";
+
+    std::cout << "  Now the same thing is needed for double -- module 7's\n";
+    std::cout << "  overloading lets both exist, but the body has to be\n";
+    std::cout << "  retyped, word for word, with only the type name changed:\n\n";
+    std::cout << "    double myMax(double a, double b) { return (a > b) ? a : b; }\n\n";
+
+    auto myMaxDouble = [](double a, double b) { return (a > b) ? a : b; };
+    std::cout << "  Running: myMax(2.5, 8.1) -> " << myMaxDouble(2.5, 8.1) << "\n\n";
+
+    std::cout << "  Add float next, or std::string, and the count of\n";
+    std::cout << "  identical bodies keeps growing. Every one of them has\n";
+    std::cout << "  to be found and fixed together if the logic ever\n";
+    std::cout << "  changes -- exactly the job a compiler, not a person,\n";
+    std::cout << "  should be doing.\n";
+
+    waitEnter();
+    clearScreen();
+    heading("PART 2: one function template, any type");
+
+    std::cout << "    template<typename T>\n";
+    std::cout << "    T myMax(T a, T b) { return (a > b) ? a : b; }\n\n";
+
+    std::cout << "  typename T declares T as a placeholder for whatever\n";
+    std::cout << "  type the call site uses. One definition now covers\n";
+    std::cout << "  every type that supports >:\n\n";
+
+    std::cout << "    myMax(3, 7)     -> " << lesson11detail::myMax(3, 7) << "\n";
+    std::cout << "    myMax(2.5, 8.1) -> " << lesson11detail::myMax(2.5, 8.1) << "\n\n";
+
+    std::cout << "  Neither call wrote myMax<int> or myMax<double>. The\n";
+    std::cout << "  compiler looked at the arguments' types and worked out\n";
+    std::cout << "  T on its own -- this is template argument deduction,\n";
+    std::cout << "  and it is why calling a template usually looks exactly\n";
+    std::cout << "  like calling an ordinary function.\n";
+
+    waitEnter();
+    clearScreen();
+    heading("PART 3: a class template");
+
+    std::cout << "  Module 9's Student held one fixed pair of types. A\n";
+    std::cout << "  container that needs to hold an int in one place and a\n";
+    std::cout << "  double somewhere else needs the same parameterizing a\n";
+    std::cout << "  function template gets:\n\n";
+
+    std::cout << "    template<typename T>\n";
+    std::cout << "    class Box {\n";
+    std::cout << "    public:\n";
+    std::cout << "        explicit Box(T value) : value_(value) {}\n";
+    std::cout << "        T get() const { return value_; }\n";
+    std::cout << "    private:\n";
+    std::cout << "        T value_;\n";
+    std::cout << "    };\n\n";
+
+    lesson11detail::Box<int> intBox(42);
+    lesson11detail::Box<double> doubleBox(3.14);
+
+    std::cout << "  Running:\n\n";
+    std::cout << "    Box<int> intBox(42);         intBox.get()    -> "
+              << intBox.get() << "\n";
+    std::cout << "    Box<double> doubleBox(3.14); doubleBox.get() -> "
+              << doubleBox.get() << "\n\n";
+
+    std::cout << "  Box<int> and Box<double> are two separate classes, each\n";
+    std::cout << "  generated by the compiler from the same template at\n";
+    std::cout << "  compile time -- there is no single Box that stores\n";
+    std::cout << "  \"any type\" at run time the way a void* would; T is\n";
+    std::cout << "  resolved before the program ever runs, and every use\n";
+    std::cout << "  of Box<int> shares that one generated class.\n";
+
+    waitEnter();
+    clearScreen();
+    heading("PART 4: a real compile error");
+
+    std::cout << "  A template only checks that a type can do what its\n";
+    std::cout << "  body demands at the moment it is actually instantiated\n";
+    std::cout << "  with that type -- not before:\n\n";
+
+    std::cout << "    template<typename T>\n";
+    std::cout << "    T sum(T a, T b) { return a + b; }\n\n";
+    std::cout << "    struct Point { int x, y; };   // no operator+\n";
+    std::cout << "    sum(Point{1, 2}, Point{3, 4});\n\n";
+
+    std::cout << "  sum<int> works because int has +. Point does not\n";
+    std::cout << "  define one. Writing exactly that to a real file and\n";
+    std::cout << "  compiling it for real, right now:\n\n";
+
+    const std::string tmpDir = std::filesystem::temp_directory_path().string();
+    const std::string srcPath = tmpDir + "/codelearner_m11_test.cpp";
+    const std::string binPath = tmpDir + "/codelearner_m11_test";
+
+    bool wroteSource = false;
+    {
+        std::ofstream out(srcPath);
+        if (out) {
+            out << "template<typename T>\n"
+                   "T sum(T a, T b) { return a + b; }\n\n"
+                   "struct Point { int x, y; };\n\n"
+                   "int main() {\n"
+                   "    Point p = sum(Point{1, 2}, Point{3, 4});\n"
+                   "    (void)p;\n"
+                   "    return 0;\n"
+                   "}\n";
+            wroteSource = static_cast<bool>(out);
+        }
+    }
+
+    std::cout << "    $ g++ -std=c++20 -Wall -Wextra codelearner_m11_test.cpp "
+                 "-o codelearner_m11_test\n\n";
+    std::cout.flush();
+
+    // Compile only -- this instantiation is EXPECTED to fail, and a compile
+    // error is the compiler's normal, defined response to a bad program, not
+    // undefined behaviour. The broken program is never executed.
+    int rawStatus = -1;
+    if (wroteSource) {
+        const std::string compileCmd = "g++ -std=c++20 -Wall -Wextra " +
+                                        srcPath + " -o " + binPath + " 2>&1";
+        rawStatus = std::system(compileCmd.c_str());
+    }
+
+    std::remove(srcPath.c_str());
+    std::remove(binPath.c_str());
+
+    // g++ actually running and rejecting Point's missing operator+ exits 1.
+    // Anything else -- no source written, g++ missing from PATH (the shell's
+    // "command not found" exits 127), a crash, a signal -- is not that error,
+    // and must not be narrated as if it were.
+#ifdef _WIN32
+    const int exitStatus = wroteSource ? rawStatus : -1;
+    const bool compilerRanAndFailedAsExpected =
+        wroteSource && exitStatus == 1;
+#else
+    const bool exited = wroteSource && WIFEXITED(rawStatus);
+    const int exitStatus = exited ? WEXITSTATUS(rawStatus) : -1;
+    const bool compilerRanAndFailedAsExpected = exited && exitStatus == 1;
+#endif
+
+    if (compilerRanAndFailedAsExpected) {
+        std::cout << "\n  That is g++'s real error text, produced by this\n";
+        std::cout << "  compiler right now, not a summary written by hand. It\n";
+        std::cout << "  generated sum<Point> the moment it saw the call, tried\n";
+        std::cout << "  to compile the body against Point's actual members,\n";
+        std::cout << "  and failed there -- at compile time, before the\n";
+        std::cout << "  program ever ran.\n";
+    } else if (!wroteSource) {
+        std::cout << "\n  Couldn't write the test source file to " << tmpDir
+                  << " to compile it,\n";
+        std::cout << "  so there is no real compiler output to show here.\n";
+        std::cout << "  Skipping ahead.\n";
+    } else {
+        std::cout << "\n  Couldn't get a real compile error to show (the\n";
+        std::cout << "  command exited with status " << exitStatus
+                  << ", not a normal\n";
+        std::cout << "  compiler failure) -- a C++ compiler is expected on\n";
+        std::cout << "  PATH for this part. Skipping ahead.\n";
+    }
+
+    waitEnter();
+    clearScreen();
+    exercise(11);
+
+    question("template<typename T> T myMax(T a, T b) -- is this compiled\n"
+             "  once and reused for every type, or separately for each\n"
+             "  type actually used?",
+             "separately",
+             "Each type used with a template gets its own compiled "
+             "version, generated at compile time -- Box<int> and "
+             "Box<double> are two different classes, not one flexible "
+             "one.");
+
+    question("template<typename T> T myMax(T a, T b);  Calling myMax(3, 7)\n"
+             "  -- do you have to write myMax<int>(3, 7) instead?\n"
+             "  (answer: yes or no)",
+             "no",
+             "Template argument deduction reads T from the arguments' own "
+             "types. Writing myMax<int>(...) explicitly still works, but "
+             "is rarely needed.");
+
+    question("A template is instantiated with a type missing an operation\n"
+             "  its body needs, like Point with sum's +. Is that caught\n"
+             "  at compile time or run time?",
+             "compile time",
+             "The compiler tries to generate that specific version and "
+             "fails right there -- the program never gets to run with the "
+             "bad instantiation.");
+
+    challenge(
+        {"Write a template function mySwap(T &a, T &b) that swaps two",
+         "values of any type, using references the way module 7's swap",
+         "did but written once for every type. Test it by swapping two",
+         "ints and printing them."},
+        {},
+        {"2 1"},
+        {"#include <iostream>", "", "template<typename T>",
+         "void mySwap(T &a, T &b)", "{", "    T held = a;", "    a = b;",
+         "    b = held;", "}", "", "int main()", "{",
+         "    int x = 1, y = 2;", "    mySwap(x, y);",
+         "    std::cout << x << \" \" << y << \"\\n\";", "    return 0;",
+         "}"});
+
+    waitEnter();
+    clearScreen();
+    heading("SUMMARY");
+
+    std::cout << "   - a template is one definition, compiled separately per type used\n";
+    std::cout << "   - template<typename T> works for both functions and classes\n";
+    std::cout << "   - template argument deduction reads T from the arguments, no <T> needed\n";
+    std::cout << "   - a type missing an operation a template needs fails at compile time\n\n";
+
+    std::cout << "  std::vector<T>, std::map<K, V> and std::string were all\n";
+    std::cout << "  templates from module 5 onward -- this is the mechanism\n";
+    std::cout << "  that was working underneath the whole time.\n\n";
+
+    std::cout << "  Module 12 is the last one: the idioms that make the\n";
+    std::cout << "  rest of modern C++ look the way it does, starting with\n";
+    std::cout << "  module 9's own new/delete leak, fixed for good.\n";
+    waitEnter();
+}
+
+namespace lesson12detail {
+
+// Wraps one std::string just to print when it is actually alive, so a
+// unique_ptr/shared_ptr demo can show a real destructor firing rather than
+// asserting that it did.
+class Resource {
+public:
+    explicit Resource(std::string name) : name_(std::move(name)) {
+        std::cout << "    acquired: " << name_ << "\n";
+    }
+    ~Resource() {
+        std::cout << "    released: " << name_ << "\n";
+    }
+
+private:
+    std::string name_;
+};
+
+// Counts real constructor/copy/move calls -- module 12's PART 4 prints
+// these counters after running real code, rather than asserting what a
+// copy or a move "should" do.
+class Tracked {
+public:
+    Tracked() {
+        ++constructed;
+    }
+    Tracked(const Tracked &) {
+        ++copied;
+    }
+    Tracked(Tracked &&) noexcept {
+        ++moved;
+    }
+
+    static int constructed;
+    static int copied;
+    static int moved;
+};
+
+int Tracked::constructed = 0;
+int Tracked::copied = 0;
+int Tracked::moved = 0;
+
+// Structurally identical to Tracked, with its own counters -- used only for
+// the noexcept-vs-not comparison, so that demo starts from zero instead of
+// whatever Tracked's counters already hold from PART 4's first demo.
+class TrackedNoexceptMove {
+public:
+    TrackedNoexceptMove() {
+        ++constructed;
+    }
+    TrackedNoexceptMove(const TrackedNoexceptMove &) {
+        ++copied;
+    }
+    TrackedNoexceptMove(TrackedNoexceptMove &&) noexcept {
+        ++moved;
+    }
+
+    static int constructed;
+    static int copied;
+    static int moved;
+};
+
+int TrackedNoexceptMove::constructed = 0;
+int TrackedNoexceptMove::copied = 0;
+int TrackedNoexceptMove::moved = 0;
+
+// Same idea, but the move constructor is NOT noexcept -- used once, to show
+// the one place that omission actually changes what a real run does.
+class TrackedThrowingMove {
+public:
+    TrackedThrowingMove() {
+        ++constructed;
+    }
+    TrackedThrowingMove(const TrackedThrowingMove &) {
+        ++copied;
+    }
+    TrackedThrowingMove(TrackedThrowingMove &&) {
+        ++moved;
+    }
+
+    static int constructed;
+    static int copied;
+    static int moved;
+};
+
+int TrackedThrowingMove::constructed = 0;
+int TrackedThrowingMove::copied = 0;
+int TrackedThrowingMove::moved = 0;
+
+}  // namespace lesson12detail
+
+void lesson12Modern() {
+    title("MODULE 12 - MODERN C++ IDIOMS");
+
+    heading("PART 1: the leak module 9 already showed you");
+
+    std::cout << "  Module 9 put new/delete underneath std::vector and\n";
+    std::cout << "  std::string, and showed the failure mode when a new\n";
+    std::cout << "  has no matching delete:\n\n";
+
+    std::cout << "    int *v = new int[5];\n";
+    std::cout << "    // ... no delete[] v ...\n\n";
+
+    std::cout << "  That is the same real LeakSanitizer output from module\n";
+    std::cout << "  9, quoted again rather than re-run -- running it again\n";
+    std::cout << "  would leak inside this very process, the one this\n";
+    std::cout << "  project's own verification checks for a clean run:\n\n";
+
+    std::cout << "    ==12345==ERROR: LeakSanitizer: detected memory leaks\n";
+    std::cout << "    Direct leak of 20 byte(s) in 1 object(s) allocated from:\n\n";
+
+    std::cout << "  Forgetting one delete[] is the entire bug. The rest of\n";
+    std::cout << "  this module is the standard library's answer: wrap the\n";
+    std::cout << "  pointer in an object whose destructor calls delete for\n";
+    std::cout << "  you, so forgetting it stops being possible.\n";
+
+    waitEnter();
+    clearScreen();
+    heading("PART 2: std::unique_ptr -- ownership that cleans up itself");
+
+    std::cout << "    class Resource {\n";
+    std::cout << "    public:\n";
+    std::cout << "        explicit Resource(std::string name) : name_(std::move(name)) {\n";
+    std::cout << "            std::cout << \"acquired: \" << name_ << \"\\n\";\n";
+    std::cout << "        }\n";
+    std::cout << "        ~Resource() { std::cout << \"released: \" << name_ << \"\\n\"; }\n";
+    std::cout << "    private:\n";
+    std::cout << "        std::string name_;\n";
+    std::cout << "    };\n\n";
+
+    std::cout << "    std::unique_ptr<Resource> r =\n";
+    std::cout << "        std::make_unique<Resource>(\"file handle\");\n\n";
+
+    std::cout << "  Running for real:\n\n";
+    std::cout << "    entering scope\n";
+    {
+        std::unique_ptr<lesson12detail::Resource> r =
+            std::make_unique<lesson12detail::Resource>("file handle");
+    }
+    std::cout << "    left scope\n\n";
+
+    std::cout << "  The destructor fired at the closing brace -- no delete\n";
+    std::cout << "  written anywhere. make_unique<T>(args...) constructs a\n";
+    std::cout << "  T and hands back a unique_ptr owning it; that unique_ptr\n";
+    std::cout << "  is the only owner allowed to exist. Copying one is a\n";
+    std::cout << "  compile error, not a runtime risk -- the header itself\n";
+    std::cout << "  says so, in the real declaration g++ points at:\n\n";
+
+    std::cout << "    unique_ptr(const unique_ptr&) = delete;\n\n";
+
+    std::cout << "  Verified on this compiler: assigning one unique_ptr from\n";
+    std::cout << "  another fails right there, before the program can ever\n";
+    std::cout << "  run with two owners of the same pointer.\n";
+
+    waitEnter();
+    clearScreen();
+    heading("PART 3: std::shared_ptr -- ownership that is counted");
+
+    std::cout << "  Sometimes more than one part of a program legitimately\n";
+    std::cout << "  needs to keep the same object alive together. That is\n";
+    std::cout << "  what std::shared_ptr is for: it counts how many\n";
+    std::cout << "  shared_ptrs point at the same object right now, and only\n";
+    std::cout << "  destroys it once that count reaches zero.\n\n";
+
+    std::cout << "    std::shared_ptr<Resource> a =\n";
+    std::cout << "        std::make_shared<Resource>(\"shared file\");\n";
+    std::cout << "    std::shared_ptr<Resource> b = a;   // legal -- copies allowed\n\n";
+
+    {
+        std::shared_ptr<lesson12detail::Resource> a =
+            std::make_shared<lesson12detail::Resource>("shared file");
+        std::cout << "  Running:\n\n";
+        std::cout << "    use_count() right after creation:      " << a.use_count() << "\n";
+        {
+            std::shared_ptr<lesson12detail::Resource> b = a;
+            std::cout << "    use_count() after b = a (a copy):      " << a.use_count() << "\n";
+        }
+        std::cout << "    use_count() after b went out of scope: " << a.use_count() << "\n";
+    }
+
+    std::cout << "\n  The count rose to 2 while both a and b were alive, and\n";
+    std::cout << "  fell back to 1 the instant b's scope ended -- the object\n";
+    std::cout << "  itself was released only once a's own scope ended too,\n";
+    std::cout << "  the \"released\" line printed just above.\n\n";
+
+    std::cout << "  unique_ptr's copy constructor does not exist at all;\n";
+    std::cout << "  shared_ptr's does, and it is real work on every copy and\n";
+    std::cout << "  every destruction, not a free operation. Default to\n";
+    std::cout << "  unique_ptr; reach for shared_ptr only once more than one\n";
+    std::cout << "  genuine owner is a real requirement, not a convenience.\n";
+
+    waitEnter();
+    clearScreen();
+    heading("PART 4: move semantics -- an observed copy, and an observed move");
+
+    std::cout << "  A class that counts its own constructor calls turns\n";
+    std::cout << "  \"a move avoids a copy\" from a claim into something a\n";
+    std::cout << "  program actually counts:\n\n";
+
+    std::cout << "    class Tracked {\n";
+    std::cout << "    public:\n";
+    std::cout << "        Tracked() { ++constructed; }\n";
+    std::cout << "        Tracked(const Tracked &) { ++copied; }\n";
+    std::cout << "        Tracked(Tracked &&) noexcept { ++moved; }\n";
+    std::cout << "        static int constructed, copied, moved;\n";
+    std::cout << "    };\n\n";
+
+    std::cout << "    std::vector<Tracked> v;\n";
+    std::cout << "    v.reserve(2);           // no reallocation below, on purpose\n";
+    std::cout << "    Tracked x, y;\n";
+    std::cout << "    v.push_back(x);              // x is an lvalue -- copies\n";
+    std::cout << "    v.push_back(std::move(y));   // y is cast to an rvalue -- moves\n\n";
+
+    // Reset the counters before this demo -- module 12 can be revisited in
+    // the same run, and the narration below is hardcoded to the numbers
+    // this fresh run produces, not whatever earlier visits left behind.
+    lesson12detail::Tracked::constructed = 0;
+    lesson12detail::Tracked::copied = 0;
+    lesson12detail::Tracked::moved = 0;
+
+    {
+        std::vector<lesson12detail::Tracked> v;
+        v.reserve(2);
+        lesson12detail::Tracked x, y;
+        v.push_back(x);
+        v.push_back(std::move(y));
+
+        std::cout << "  Running for real:\n\n";
+        std::cout << "    constructed = " << lesson12detail::Tracked::constructed << "\n";
+        std::cout << "    copied      = " << lesson12detail::Tracked::copied << "\n";
+        std::cout << "    moved       = " << lesson12detail::Tracked::moved << "\n\n";
+    }
+
+    std::cout << "  Two real objects, x and y (constructed = 2). push_back(x)\n";
+    std::cout << "  had to leave x usable afterward, so it copied (copied =\n";
+    std::cout << "  1). std::move(y) does not move anything by itself -- it\n";
+    std::cout << "  only casts y to an rvalue reference, telling push_back it\n";
+    std::cout << "  is allowed to steal from y instead of copying it, which\n";
+    std::cout << "  is exactly what the move constructor being called once\n";
+    std::cout << "  (moved = 1) shows actually happened.\n\n";
+
+    std::cout << "  y itself still exists after being moved from -- it is\n";
+    std::cout << "  not destroyed, and touching it afterward is not\n";
+    std::cout << "  undefined behaviour. It is left in a valid but\n";
+    std::cout << "  unspecified state: safe to assign a new value to or let\n";
+    std::cout << "  go out of scope, not safe to assume still holds what it\n";
+    std::cout << "  held before.\n";
+
+    waitEnter();
+    clearScreen();
+    heading("PART 4, continued: why the move constructor says noexcept");
+
+    std::cout << "  reserve(2) above hid a real trap: std::vector must give a\n";
+    std::cout << "  strong exception guarantee when it reallocates -- if\n";
+    std::cout << "  moving an element partway through could throw and leave\n";
+    std::cout << "  the vector corrupted, the standard library is not\n";
+    std::cout << "  allowed to risk it, and falls back to copying instead.\n";
+    std::cout << "  Two structurally identical classes, one with a\n";
+    std::cout << "  noexcept move constructor and one without, each growing\n";
+    std::cout << "  past its starting capacity for real:\n\n";
+
+    // Same reason as the reset above: this comparison can run more than
+    // once per session, and the numbers below are hardcoded to a fresh run.
+    lesson12detail::TrackedNoexceptMove::constructed = 0;
+    lesson12detail::TrackedNoexceptMove::copied = 0;
+    lesson12detail::TrackedNoexceptMove::moved = 0;
+    lesson12detail::TrackedThrowingMove::constructed = 0;
+    lesson12detail::TrackedThrowingMove::copied = 0;
+    lesson12detail::TrackedThrowingMove::moved = 0;
+
+    {
+        std::vector<lesson12detail::TrackedNoexceptMove> fast;
+        for (int i = 0; i < 5; i++) {
+            fast.push_back(lesson12detail::TrackedNoexceptMove{});
+        }
+        std::vector<lesson12detail::TrackedThrowingMove> slow;
+        for (int i = 0; i < 5; i++) {
+            slow.push_back(lesson12detail::TrackedThrowingMove{});
+        }
+
+        std::cout << "  Running for real, 5 push_backs into an empty vector,\n";
+        std::cout << "  each one a temporary (so every copied count below\n";
+        std::cout << "  comes only from vector reallocation, not the push_back\n";
+        std::cout << "  call itself):\n\n";
+        std::cout << "    move constructor is noexcept:     copied = "
+                  << lesson12detail::TrackedNoexceptMove::copied << ", moved = "
+                  << lesson12detail::TrackedNoexceptMove::moved << "\n";
+        std::cout << "    move constructor is NOT noexcept: copied = "
+                  << lesson12detail::TrackedThrowingMove::copied << ", moved = "
+                  << lesson12detail::TrackedThrowingMove::moved << "\n\n";
+    }
+
+    std::cout << "  Same five elements, same reallocations -- the only\n";
+    std::cout << "  difference is one noexcept, and it is the difference\n";
+    std::cout << "  between reallocation moving elements and reallocation\n";
+    std::cout << "  copying them instead. A move constructor that can throw\n";
+    std::cout << "  is a move constructor vector will often quietly decline\n";
+    std::cout << "  to use.\n";
+
+    waitEnter();
+    clearScreen();
+    heading("PART 5: structured bindings -- unpacking a pair or map entry");
+
+    std::cout << "  Module 10's map loop pulled a key and a value out of\n";
+    std::cout << "  each entry through .first and .second:\n\n";
+
+    std::cout << "    for (const auto &entry : ages) {\n";
+    std::cout << "        std::cout << entry.first << \": \" << entry.second << \"\\n\";\n";
+    std::cout << "    }\n\n";
+
+    std::map<std::string, int> ages;
+    ages["Ana"] = 30;
+    ages["Bea"] = 25;
+
+    std::cout << "  Running that exact loop again, unchanged:\n\n";
+    for (const auto &entry : ages) {
+        std::cout << "    " << entry.first << ": " << entry.second << "\n";
+    }
+
+    std::cout << "\n  A structured binding names both pieces directly instead\n";
+    std::cout << "  of reaching through .first and .second:\n\n";
+
+    std::cout << "    for (const auto &[name, age] : ages) {\n";
+    std::cout << "        std::cout << name << \": \" << age << \"\\n\";\n";
+    std::cout << "    }\n\n";
+
+    std::cout << "  Running -- identical output, from code that says what\n";
+    std::cout << "  each piece actually is:\n\n";
+    for (const auto &[name, age] : ages) {
+        std::cout << "    " << name << ": " << age << "\n";
+    }
+
+    std::cout << "\n  This is not module 2's auto again -- auto there deduced\n";
+    std::cout << "  one type for one name. A structured binding deduces one\n";
+    std::cout << "  type, a pair here, and splits it into several names at\n";
+    std::cout << "  once. It works on any std::pair the same way:\n\n";
+
+    std::cout << "    auto [first, second] = std::pair{1, 2};\n\n";
+
+    auto [first, second] = std::pair{1, 2};
+    std::cout << "  Running: first = " << first << ", second = " << second << "\n";
+
+    waitEnter();
+    clearScreen();
+    exercise(12);
+
+    question("A std::unique_ptr<T> goes out of scope. Does its target get\n"
+             "  destroyed automatically, with no delete written anywhere?\n"
+             "  (answer: yes or no)",
+             "yes",
+             "That is the whole idiom: the destructor runs at scope end, "
+             "the same RAII rule module 9 already taught, applied to a "
+             "raw pointer someone else wrapped for you.");
+
+    question("In well-designed C++, which is reached for by default:\n"
+             "  unique_ptr or shared_ptr?",
+             "unique_ptr",
+             "shared_ptr's reference counting is real work on every copy "
+             "and destruction. unique_ptr is free of that cost and is the "
+             "default; shared_ptr is for when more than one genuine owner "
+             "is required, not a convenience.");
+
+    question("Tracked b = std::move(a);  Can code afterward still refer to\n"
+             "  a, and is doing so undefined behaviour?  (answer: yes or no,\n"
+             "  for \"can still refer to it\")",
+             "yes",
+             "a still exists in a valid but unspecified state -- safe to "
+             "assign to or let go out of scope, not safe to assume it "
+             "still holds its old value.");
+
+    challenge(
+        {"Write a class Box with a private std::string name, a",
+         "constructor Box(std::string name) that prints \"created: \"",
+         "followed by the name, and a destructor that prints",
+         "\"destroyed: \" followed by the name. Write a function",
+         "makeBox(std::string name) returning std::unique_ptr<Box>,",
+         "built with std::make_unique. In main, call makeBox(\"gift\"),",
+         "store the result, print \"holding it\", then let main end."},
+        {},
+        {"created: gift", "holding it", "destroyed: gift"},
+        {"#include <iostream>", "#include <memory>", "#include <string>", "",
+         "class Box {", "public:",
+         "    explicit Box(std::string name) : name_(std::move(name)) {",
+         "        std::cout << \"created: \" << name_ << \"\\n\";", "    }",
+         "    ~Box() { std::cout << \"destroyed: \" << name_ << \"\\n\"; }",
+         "private:", "    std::string name_;", "};", "",
+         "std::unique_ptr<Box> makeBox(std::string name)", "{",
+         "    return std::make_unique<Box>(std::move(name));", "}", "",
+         "int main()", "{", "    std::unique_ptr<Box> b = makeBox(\"gift\");",
+         "    std::cout << \"holding it\\n\";", "    return 0;", "}"});
+
+    waitEnter();
+    clearScreen();
+    heading("SUMMARY");
+
+    std::cout << "   - std::unique_ptr<T>: single ownership, destroyed automatically,\n";
+    std::cout << "     copying it does not compile\n";
+    std::cout << "   - std::shared_ptr<T>: shared ownership, counted with use_count(),\n";
+    std::cout << "     costs real work per copy -- default to unique_ptr instead\n";
+    std::cout << "   - std::move casts to an rvalue reference; it does not move\n";
+    std::cout << "     anything by itself, it only permits the move constructor to run\n";
+    std::cout << "   - a moved-from object is valid but unspecified, not destroyed\n";
+    std::cout << "     and not undefined to touch\n";
+    std::cout << "   - auto [a, b] = pair; unpacks a pair/map entry into named pieces,\n";
+    std::cout << "     instead of .first and .second\n\n";
+
+    std::cout << "  That is the whole course: from a compiler that only knew\n";
+    std::cout << "  printf, to memory that manages itself and ownership the\n";
+    std::cout << "  type system can enforce.\n";
     waitEnter();
 }

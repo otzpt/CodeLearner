@@ -10,16 +10,25 @@ worked example code the student can open and read.
 
 | Language | Modules | Where |
 | --- | --- | --- |
-| C | 13 — first program through stacks and queues | [`c/`](c/) |
-| C++ | 9 — cout through classes and RAII | [`cpp/`](cpp/) |
-| Python | 10 — print() through classes and exceptions | [`python/`](python/) |
-| JavaScript | 10 — console.log() through classes and errors | [`javascript/`](javascript/) |
-| Java | 10 — System.out through checked exceptions | [`java/`](java/) |
-| C# | 10 — top-level statements through IDisposable | [`csharp/`](csharp/) |
+| C | 19 — first program through file I/O, debugging, and function pointers/macros | [`c/`](c/) |
+| C++ | 12 — cout through templates and modern idioms | [`cpp/`](cpp/) |
+| Python | 13 — print() through files/context managers and working with a real API | [`python/`](python/) |
+| JavaScript | 14 — console.log() through modules and Node's own fs/process stdlib | [`javascript/`](javascript/) |
+| Java | 13 — System.out through the Collections Framework, generics, and concurrency | [`java/`](java/) |
+| C# | 14 — top-level statements through LINQ, async/await, and delegates/events | [`csharp/`](csharp/) |
 | GUI (GTK) | 1 — your first window | [`gui/`](gui/) |
 | Assembly | 1 — registers, syscalls, your first program | [`assembly/`](assembly/) |
 | Git | 10 — what is git through GitHub Actions | [`git/`](git/) |
 | Launcher | done — pick a language, open its course | [`launcher/`](launcher/) |
+
+Every course's menu groups its modules under three bands, BASIC,
+INTERMEDIATE, and ADVANCED — a display grouping only, printed as section
+headers above the module numbers. The modules still run in one numbered
+sequence; a tier is one field on a module's row in its course's module
+table (`MODULES` in `main.c`/`main.py`/`main.js`, or the equivalent),
+nothing else changes. GUI and Assembly currently have one module each, filed
+under BASIC, with INTERMEDIATE and ADVANCED shown empty until they have
+enough content to split.
 
 Nine courses are covered. GUI, Assembly, and Git are not languages in the
 same sense the other six are, but all three get the same treatment as one:
@@ -176,21 +185,27 @@ and the reason, which appears either way.
 
 ## The C course
 
-| # | Module | The thing it exists for |
-| --- | --- | --- |
-| 1 | Compiling and printing | C compiles before it runs |
-| 2 | Variables and types | `5 / 2` is `2`, and casting afterwards is too late |
-| 3 | Reading input | why `scanf` needs `&`, and why arrays do not |
-| 4 | Conditions | `=` is not `==`, and missing braces |
-| 5 | Loops | the off-by-one, and that C does not check bounds |
-| 6 | Arrays and strings | `\0`, `strlen` vs `sizeof`, `==` does not compare text |
-| 7 | Functions | arguments are copies — this is what explains `&` |
-| 8 | Pointers | `&` and `*`, `NULL`, the segfault |
-| 9 | **Memory: malloc and free** | stack vs heap, and the four ways to get it wrong |
-| 10 | Structs | dot vs arrow, and why `sizeof` exceeds the sum of the fields |
-| 11 | **Final test: 2 programs** | a game and a "normal" program, combining modules 1-10 |
-| 12 | Going deeper: memory (extra) | pointer-to-pointer, `realloc`, linked lists |
-| 13 | Stacks and queues | array-based, not another linked list — capacity checks that actually run |
+| # | Module | Tier | The thing it exists for |
+| --- | --- | --- | --- |
+| 1 | Compiling and printing | BASIC | C compiles before it runs |
+| 2 | Variables and types | BASIC | `5 / 2` is `2`, and casting afterwards is too late |
+| 3 | Reading input | BASIC | why `scanf` needs `&`, and why arrays do not |
+| 4 | Conditions | BASIC | `=` is not `==`, and missing braces |
+| 5 | Loops | BASIC | the off-by-one, and that C does not check bounds |
+| 6 | Arrays and strings | BASIC | `\0`, `strlen` vs `sizeof`, `==` does not compare text |
+| 7 | Functions | BASIC | arguments are copies — this is what explains `&` |
+| 8 | Pointers | INTERMEDIATE | `&` and `*`, `NULL`, the segfault |
+| 9 | **Memory: malloc and free** | INTERMEDIATE | stack vs heap, and the four ways to get it wrong |
+| 10 | Structs | INTERMEDIATE | dot vs arrow, and why `sizeof` exceeds the sum of the fields |
+| 11 | **Final test: 2 programs** | INTERMEDIATE | a game and a "normal" program, combining modules 1-10 |
+| 12 | Growing memory: grids and realloc | ADVANCED | pointer-to-pointer, and `realloc` |
+| 13 | Linked lists | ADVANCED | a struct pointing at its own type |
+| 14 | Stacks and queues | ADVANCED | array-based, not another linked list — capacity checks that actually run |
+| 15 | Enums, unions, and typedef | ADVANCED | named constants, shared storage, and why `sizeof` can exceed the sum of the fields |
+| 16 | Compilation and project structure | ADVANCED | `.h`/`.c`, header guards, a real linker error, this course's own Makefile |
+| 17 | Debugging | ADVANCED | `gdb` in batch mode, a real NULL-deref backtrace, AddressSanitizer's use-after-free report |
+| 18 | Real input/output | ADVANCED | `fopen` returning `NULL`, checking `errno`, text vs binary compared with `memcmp`, `argc`/`argv` |
+| 19 | Function pointers, callbacks, and macros | ADVANCED | `(*fn)(args)`, a variadic `sum_ints`, the classic unparenthesized-macro trap, bit flags |
 
 Module 9 is the longest on purpose: leaks, use-after-free, double free, and
 returning the address of a local array — each with what you actually see when
@@ -204,18 +219,63 @@ so it is shown as one example run rather than an exact string to match.
 
 Module 12 is the extra requested after the final test: closing the gap between
 "malloc and free work" and trusting your own ownership rules across something
-bigger than a single block — a dynamically sized 2D grid, growing an array
-with `realloc`, and a linked list, each freed correctly and each shown broken
-first so the fix means something.
+bigger than a single block — a dynamically sized 2D grid, and growing an array
+with `realloc`, each freed correctly and each shown broken first so the fix
+means something.
 
-Module 13 is the first data-structures module: a stack and a queue, both
-array-based rather than another linked list, so the same idea — "a
-collection that grows" — is shown with a different tradeoff (fixed
+Module 13 is a second, unrelated way to grow a collection: a linked list,
+one node at a time instead of `realloc`'s doubling blocks — kept out of
+module 12 on purpose, since a self-referential struct is a different idea
+from either of module 12's, not a variation on them.
+
+Module 14 is the first data-structures module built on top of both: a stack
+and a queue, both array-based rather than another linked list, so the same
+idea — "a collection that grows" — is shown with a third tradeoff (fixed
 capacity instead of one `malloc` per item). "Stack overflow" and a naive
 queue reporting full with free slots behind `front` are both real, checked
 conditions that actually run, not just described.
 
-Modules 1-13 are stages 1-4 (started) of a longer path — more data
+Module 15 goes past module 10's `struct` into `enum`, `union`, and
+`typedef`: an enum's members are plain `int`s with a name for the debugger,
+not a distinct, assignment-checked type; a union's `sizeof` equals its
+largest member, not the sum; and struct padding is revisited, explicit that
+it is a property of this compiler and this machine, not a language
+guarantee.
+
+Module 16 is the course's own highest-priority gap, closed: `.h`/`.c`,
+header guards and the real redefinition error without one, separate
+compilation into `.o` files, a real linker "undefined reference," real
+compiler warnings, and this course's own `Makefile`, quoted directly —
+every one of them by actually invoking `cc`/`ld`/`ar` from inside the
+lesson and showing the real output, not a summary of what it would say.
+
+Module 17 puts a debugger on module 16's toolchain: `gdb` in batch mode
+setting a real breakpoint, stepping, and printing a variable, then a real
+NULL-pointer dereference caught live and its backtrace read for what it
+says, then AddressSanitizer built into the binary and a real
+use-after-free's report read the same way. The module states plainly that
+ASan's Linux default reports and exits rather than raising `SIGABRT`, so
+catching it under `gdb` needs `ASAN_OPTIONS=abort_on_error=1`, verified
+against the installed sanitizer, not assumed from older documentation.
+
+Module 18 is the file I/O this course had been avoiding entirely up to
+this point: `fopen` returning `NULL` on failure and `errno` naming why,
+`fprintf`/`fgets` round-tripping real data to disk, text mode vs binary
+mode compared with a real `memcmp` rather than asserted to differ, and
+`argc`/`argv` demonstrated by compiling and running a second, separate
+program with real command-line arguments, not simulated.
+
+Module 19 closes the course's originally planned arc: function pointers,
+declared and read the same way module 8 already taught `*`, connected
+directly to this course's own `main.c` dispatch table, which has used one
+since module 1 without ever naming it; callbacks built on top of that;
+a variadic `sum_ints` using `<stdarg.h>`, stating the real constraint that
+C cannot know an argument count on its own; the classic
+`#define SQUARE(x) x*x` precedence trap, compiled broken and then fixed,
+both real numbers; and bit flags with `&`/`|`/`^`/`~`/`<<`/`>>`, set and
+cleared on a real byte, printed before and after.
+
+Modules 1-19 are stages 1-4 (started) of a longer path — more data
 structures and algorithms, real projects, POSIX, debugging tools, assembly,
 reading other people's C. [`c/ROADMAP.md`](c/ROADMAP.md) maps the rest of it
 and where each stage picks up.
@@ -233,6 +293,9 @@ and where each stage picks up.
 | 7 | Functions and references | `&` removes the need for `&` at the call site |
 | 8 | `std::vector` | grows itself; `[]` is still unchecked, `at()` still throws |
 | 9 | **Classes and RAII** | `private`/`public`; a destructor that fires on its own |
+| 10 | Maps and sets | `map`'s `[]` silently inserts a missing key; `find()` returns `end()`, not a null |
+| 11 | Templates | one function/class works for any type; a bad instantiation is a compile error, shown for real |
+| 12 | Modern C++ idioms | `unique_ptr`/`shared_ptr` replace module 9's `new`/`delete`; `std::move` measured with a copy/move counter, not asserted |
 
 This course assumes nothing about the C course, but is written to be read
 right after it: every module is framed as *what changed, and what did not*.
@@ -261,6 +324,9 @@ assertion. Both facts are stated, and kept separate.
 | 8 | Dictionaries | `[]` raises, `.get()` doesn't; insertion order since 3.7 |
 | 9 | Classes | `self` is explicit; no enforced privacy; no destructor timing guarantee |
 | 10 | Exceptions | `try`/`except`/`finally`; catch a type, not everything |
+| 11 | Modules and packages | `__name__ == "__main__"`, proven against this course's own `main.py` |
+| 12 | Files and context managers | `with open(...) as f` guarantees `.close()` even across an exception — proven, not asserted |
+| 13 | Working with APIs | `urllib.request` against a real endpoint; `HTTPError` and `URLError` are different failures, caught differently |
 
 No memory-management thread here — Python collects its own garbage, so what
 module 9 in the C course spent five sections on does not exist as a topic.
@@ -290,6 +356,10 @@ of pretending Python has RAII.
 | 8 | Objects | `==` and `===` are *both* wrong for comparing objects — both compare by reference |
 | 9 | Classes | `#field` is **real** private, enforced by a `SyntaxError` |
 | 10 | Errors | `try`/`catch`/`finally`; `extends Error` for your own catchable type |
+| 11 | Promises | the object `await` has been unwrapping since module 3; `Promise.all` runs independent awaits concurrently |
+| 12 | Working with APIs | `fetch` does not reject on a 404 — checking `response.ok` is the caller's job |
+| 13 | Modules | `require`/`module.exports` (CommonJS) vs `import`/`export` (ESM) — two systems, and why loading the second needs a fresh process |
+| 14 | Node-specific stdlib | `fs.readFileSync` blocks, `fs.promises.readFile` doesn't; `process.argv` is Node's `argc`/`argv`; none of this exists in a browser |
 
 No memory-management thread here either — same as Python, garbage collected.
 Module 3 exists because of a genuine difference from every other course in
@@ -336,6 +406,9 @@ C++ and Java: trying to reference `s.#grade` from outside the class is a
 | 8 | `ArrayList` and boxing | grows, unlike an array; `ArrayList<int>` does not compile — needs `Integer` |
 | 9 | Classes, interfaces, encapsulation | `private` is **enforced**, not a convention; an unimplemented interface method won't compile |
 | 10 | Exceptions: checked vs unchecked | an unhandled **checked** exception is a compile error |
+| 11 | The Collections Framework: Map and Set | `HashMap.get()` on a missing key returns `null`, not an exception and not an inserted default |
+| 12 | Generics | a mismatch is a compile error instead of a runtime `ClassCastException`; type erasure verified at runtime |
+| 13 | Concurrency | a real, observed data race on a shared counter; `synchronized` fixes it, measured, not asserted |
 
 No memory-management thread here either — garbage collected, same as Python
 and JavaScript. What replaces it is Java's two-tier type system: eight
@@ -397,6 +470,10 @@ some descriptions of JEP 330 suggesting it should.
 | 8 | Classes, structs, and records | `struct` copies the value, `class` copies the reference; `record` gets value equality for free |
 | 9 | Nullable reference types | `string?` vs `string`; `?.`/`??`; `!` silences the warning without checking anything |
 | 10 | Exceptions and IDisposable | **no checked exceptions at all**; `using` guarantees deterministic cleanup, no GC timing involved |
+| 11 | LINQ | a query is lazy — it runs at enumeration time, not creation time |
+| 12 | Async/await | `Task` is C#'s Promise; `Task.WhenAll` runs independent awaits concurrently, measured |
+| 13 | Generics and interfaces in depth | a default interface method dispatches on runtime type, not the compile-time reference type |
+| 14 | Delegates and events | `Action`/`Func` pass behavior as a value; `event` restricts a subscriber to `+=`/`-=`, a real `CS0070` if it tries anything else |
 
 Built specifically to sit next to Java's course, not restate it: both are
 compiled, garbage-collected, and OOP, so the interesting content is where
@@ -562,7 +639,7 @@ g++ -std=c++20 -Wall -Wextra -g -fsanitize=address,undefined -o /tmp/course src/
 ```
 
 Java compiles clean with `-Xlint:all -Werror` too, and every module was run
-through a real pty end to end (all 10 modules visited, no crash, no hang).
+through a real pty end to end (all 13 modules visited, no crash, no hang).
 
 ```bash
 cd java
@@ -573,7 +650,7 @@ C# compiles with zero warnings under the project's own `<Nullable>enable</Nullab
 setting (the same setting new .NET projects ship with by default), and every
 module was run directly — `Console.In`/`Console.Out` redirected to a buffer,
 each `Lesson*` method called with no menu in between — asserting no exception
-and that `SUMMARY` appears in the captured output for all 10 modules, the
+and that `SUMMARY` appears in the captured output for all 14 modules, the
 same technique the Python and JavaScript verification below uses.
 
 ```bash
@@ -628,7 +705,10 @@ c/
     ├── lessons.h           one prototype per module
     ├── lessons_basics.c    modules 1-5
     ├── lessons_memory.c    modules 6-10
-    └── lessons_advanced.c  modules 11-13
+    ├── lessons_advanced.c  modules 11-15
+    ├── lessons_tooling.c   modules 16-17
+    ├── lessons_io.c        module 18
+    └── lessons_lang_features.c  module 19
 gui/
 ├── Makefile
 └── src/
@@ -644,19 +724,22 @@ cpp/
     ├── ui.h  ui.cpp         screen, input, questions, challenges
     ├── lessons.h            one prototype per module
     ├── lessons_basics.cpp   modules 1-5
-    └── lessons_modern.cpp   modules 6-9
+    └── lessons_modern.cpp   modules 6-12
 python/
 └── src/
     ├── main.py              menu: a list of modules and a loop
     ├── ui.py                screen, input, questions, challenges
     ├── lessons_basics.py    modules 1-5
-    └── lessons_more.py      modules 6-10
+    ├── lessons_more.py      modules 6-10
+    ├── lessons_advanced.py  module 11
+    └── lessons_io.py        modules 12-13
 javascript/
 └── src/
     ├── main.js              menu: an array of modules and an async loop
     ├── ui.js                screen, input, questions, challenges
     ├── lessons_basics.js    modules 1-5
-    └── lessons_more.js      modules 6-10
+    ├── lessons_more.js      modules 6-10
+    └── lessons_advanced.js  modules 11-14
 java/
 ├── Makefile
 ├── run  run.bat             launcher entry point: java Main.java
@@ -664,7 +747,8 @@ java/
     ├── Main.java             menu: an array of a title+Runnable record, a loop
     ├── Ui.java               screen, input, questions, challenges
     ├── LessonsBasics.java    modules 1-5
-    └── LessonsMore.java      modules 6-10
+    ├── LessonsMore.java      modules 6-10
+    └── LessonsAdvanced.java  modules 11-13
 csharp/
 ├── run  run.bat             launcher entry point: dotnet run
 └── src/
@@ -672,7 +756,8 @@ csharp/
     ├── Program.cs            menu: top-level statements, an array of modules, a loop
     ├── Ui.cs                 screen, input, questions, challenges
     ├── LessonsBasics.cs      modules 1-5
-    └── LessonsMore.cs        modules 6-10
+    ├── LessonsMore.cs        modules 6-10
+    └── LessonsAdvanced.cs    modules 11-14
 tools/
 └── check-teaching-order.py  fails if an exercise needs something not yet
                               taught, in any course

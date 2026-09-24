@@ -7,18 +7,24 @@
 // title and an Action, C#'s answer to Java's Runnable and C's function
 // pointer table.
 
-var modules = new (string Title, Action Run)[]
+// Tier files a module under one of the three menu bands. Display grouping
+// only -- the lesson methods never see it.
+var modules = new (string Title, Action Run, string Tier)[]
 {
-    ("Compiling and printing",              LessonsBasics.Lesson01Running),
-    ("Variables and types",                 LessonsBasics.Lesson02Variables),
-    ("Reading input",                       LessonsBasics.Lesson03Input),
-    ("Conditions and pattern matching",     LessonsBasics.Lesson04Conditions),
-    ("Loops",                               LessonsBasics.Lesson05Loops),
-    ("Arrays and List<T>",                  LessonsMore.Lesson06Collections),
-    ("Methods and default parameters",      LessonsMore.Lesson07Methods),
-    ("Classes, structs, and records",       LessonsMore.Lesson08ClassesStructs),
-    ("Nullable reference types",            LessonsMore.Lesson09Nullable),
-    ("Exceptions and IDisposable",          LessonsMore.Lesson10Exceptions),
+    ("Compiling and printing",              LessonsBasics.Lesson01Running,      "BASIC"),
+    ("Variables and types",                 LessonsBasics.Lesson02Variables,    "BASIC"),
+    ("Reading input",                       LessonsBasics.Lesson03Input,        "BASIC"),
+    ("Conditions and pattern matching",     LessonsBasics.Lesson04Conditions,   "BASIC"),
+    ("Loops",                               LessonsBasics.Lesson05Loops,        "BASIC"),
+    ("Arrays and List<T>",                  LessonsMore.Lesson06Collections,    "INTERMEDIATE"),
+    ("Methods and default parameters",      LessonsMore.Lesson07Methods,        "INTERMEDIATE"),
+    ("Classes, structs, and records",       LessonsMore.Lesson08ClassesStructs, "ADVANCED"),
+    ("Nullable reference types",            LessonsMore.Lesson09Nullable,       "ADVANCED"),
+    ("Exceptions and IDisposable",          LessonsMore.Lesson10Exceptions,     "ADVANCED"),
+    ("LINQ",                                LessonsAdvanced.Lesson11Linq,       "ADVANCED"),
+    ("Async/await",                         () => LessonsAdvanced.Lesson12Async().GetAwaiter().GetResult(), "ADVANCED"),
+    ("Generics and interfaces in depth",    LessonsAdvanced.Lesson13GenericsInterfaces, "ADVANCED"),
+    ("Delegates and events",                LessonsAdvanced.Lesson14DelegatesEvents,    "ADVANCED"),
 };
 
 ShowMenu();
@@ -65,8 +71,14 @@ void ShowMenu()
     Ui.ClearScreen();
     Ui.Title("C# COURSE - FROM TOP-LEVEL STATEMENTS TO IDISPOSABLE");
 
+    string shownTier = "";
     for (int i = 0; i < modules.Length; i++)
     {
+        if (modules[i].Tier != shownTier)
+        {
+            shownTier = modules[i].Tier;
+            Console.WriteLine($"\n  -- {shownTier} --");
+        }
         Console.WriteLine($"   [{i + 1,2}]  {modules[i].Title}");
     }
     Console.WriteLine("\n   [ 0]  Quit");

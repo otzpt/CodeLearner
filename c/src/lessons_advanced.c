@@ -1,5 +1,5 @@
 /*
- * Modules 11, 12 and 13 - past the core course.
+ * Modules 11 through 15 - past the core course.
  *
  * Module 11 is the final test: two full programs, using everything from
  * modules 1-10 together. There is no PART 1/2/3 walkthrough here -- the
@@ -13,17 +13,37 @@
  * challenge(), with an explicit note that the transcript shown is one
  * possible run, not the specification.
  *
- * Module 12 goes deeper into memory: pointer-to-pointer, realloc, and
- * linked lists -- the extra requested after the final test, for closing the
- * gap between "malloc and free work" and "I trust my own ownership rules".
+ * Module 12 goes deeper into memory: pointer-to-pointer for a 2D grid, and
+ * realloc for a growing array -- the extra requested after the final test,
+ * for closing the gap between "malloc and free work" and "I trust my own
+ * ownership rules".
  *
- * Module 13 is the first data-structures module: stacks and queues, both
- * array-based -- a second underlying representation for "a collection that
- * grows", after module 12's linked list, with its own tradeoff (fixed
- * capacity instead of one malloc per item). The trap for each is real and
- * checked, not simulated: a capacity check that actually runs and actually
- * refuses the operation, the same way module 12's realloc section never
- * runs the broken version of anything, only the guarded one.
+ * Module 13 is a second, unrelated way to grow a collection: a linked
+ * list, one node at a time, instead of realloc's doubling blocks. Kept out
+ * of module 12 on purpose -- a self-referential struct is a different idea
+ * from either of module 12's, not a variation on them.
+ *
+ * Module 14 is the first data-structures module built on top of both:
+ * stacks and queues, array-based -- a third underlying representation for
+ * "a collection that grows", with its own tradeoff (fixed capacity instead
+ * of one malloc per item). The trap for each is real and checked, not
+ * simulated: a capacity check that actually runs and actually refuses the
+ * operation, the same way module 12's realloc section never runs the broken
+ * version of anything, only the guarded one.
+ *
+ * Module 15 steps back from data structures to name three things the
+ * course has used informally since module 10: enum for a named integer
+ * constant instead of a magic number or a #define, union for one block of
+ * storage where only whichever member was written last is meaningfully
+ * valid, and typedef for giving any of those -- or a plain type -- a
+ * shorter name at the point of use. It comes after struct rather than as a
+ * part inside it because none of the three is really about grouping
+ * fields: enum replaces a number, union replaces a struct's assumption
+ * that every field holds something at once, and typedef is a naming
+ * convenience layered on top of all three. Module 10's struct padding
+ * returns here too, extended to an enum field. Module 10 states the
+ * alignment fact flatly; Part 4 here is explicit that it is a property of
+ * this compiler and this machine, not a guarantee the language makes.
  */
 
 #include <stdio.h>
@@ -38,6 +58,11 @@
  * course would use -- a #define does not observe C's block scope anyway. */
 #define STACK_CAP 5
 #define QUEUE_CAP 3
+
+/* Module 15's #define, kept at file scope for the same reason as the two
+ * above: a #define does not observe C's block scope, so writing it inside
+ * a function would be misleading about what it actually is. */
+#define MAX_RETRIES 3
 
 void lesson_11_final_test(void)
 {
@@ -250,14 +275,15 @@ void lesson_11_final_test(void)
     printf("   - pass structs by pointer to a function once they hold more\n");
     printf("     than a couple of fields\n\n");
 
-    printf("  Module 12 goes further into memory, if you want it: pointers\n");
-    printf("  to pointers, realloc, and linked lists.\n");
+    printf("  Modules 12 and 13 go further into memory, if you want it:\n");
+    printf("  pointers to pointers and realloc in one, linked lists in the\n");
+    printf("  other.\n");
     wait_enter();
 }
 
-void lesson_12_deeper_memory(void)
+void lesson_12_growing_memory(void)
 {
-    title("MODULE 12 - GOING DEEPER: MEMORY (EXTRA)");
+    title("MODULE 12 - GROWING MEMORY: GRIDS AND REALLOC");
 
     heading("PART 1: a pointer to a pointer");
 
@@ -368,7 +394,106 @@ void lesson_12_deeper_memory(void)
 
     wait_enter();
     clear_screen();
-    heading("PART 3: linked lists");
+    exercise(12);
+
+    question("int **grid.  What does grid[2][3] mean?\n"
+             "  (answer: a row, a pointer, or a value)",
+             "a value",
+             "grid[2] is a pointer to row 2. Indexing it again with [3]\n"
+             "             reaches through to a single int.");
+
+    question("You allocated 3 rows with malloc. You call free(grid)\n"
+             "  without freeing the rows first. What happens to them?",
+             "leak",
+             "They are still allocated. Only the array holding their\n"
+             "             addresses is gone -- nothing can reach them to free\n"
+             "             them any more.");
+
+    question("int *p = malloc(10); p = realloc(p, 20);\n"
+             "  If realloc fails, what is p now?",
+             "null",
+             "realloc returned NULL, and this line just overwrote p with\n"
+             "             it. The original 10-byte block still exists and is\n"
+             "             now unreachable: a leak, at the worst possible time.");
+
+    {
+        const char *task[] = {
+            "Read integers until -1 is entered, storing each one in an",
+            "array that starts at capacity 2 and doubles (realloc)",
+            "whenever it fills up. Print them all, space separated,",
+            "then free the array.",
+        };
+        const char *input[] = {"1", "2", "3", "4", "-1"};
+        const char *expected[] = {
+            "Enter numbers, -1 to stop:",
+            "1 2 3 4 ",
+        };
+        const char *solution[] = {
+            "#include <stdio.h>",
+            "#include <stdlib.h>",
+            "",
+            "int main(void)",
+            "{",
+            "    int capacity = 2, count = 0;",
+            "    int *v = malloc((size_t) capacity * sizeof(int));",
+            "    int n;",
+            "",
+            "    printf(\"Enter numbers, -1 to stop:\\n\");",
+            "    while (scanf(\"%d\", &n) == 1 && n != -1) {",
+            "        if (count == capacity) {",
+            "            capacity *= 2;",
+            "            int *grown = realloc(v, (size_t) capacity * sizeof(int));",
+            "            if (grown == NULL) {",
+            "                free(v);",
+            "                return 1;",
+            "            }",
+            "            v = grown;",
+            "        }",
+            "        v[count++] = n;",
+            "    }",
+            "",
+            "    for (int i = 0; i < count; i++) {",
+            "        printf(\"%d \", v[i]);",
+            "    }",
+            "    printf(\"\\n\");",
+            "",
+            "    free(v);",
+            "    return 0;",
+            "}",
+            "",
+            "Input 1 2 3 4 -1 gives 1 2 3 4, in the order entered --",
+            "appending to an array keeps insertion order for free, unlike",
+            "module 13's linked list, which reverses it.",
+        };
+        challenge(task, 4, input, 5, expected, 2, solution,
+                  (int) (sizeof solution / sizeof solution[0]));
+    }
+
+    wait_enter();
+    clear_screen();
+    heading("SUMMARY");
+
+    printf("   - int **p is a pointer to a pointer; free it inside out,\n");
+    printf("     every row before the array of rows\n");
+    printf("   - always realloc into a temporary, never back into the\n");
+    printf("     same variable you are resizing\n");
+    printf("   - doubling capacity when full keeps the number of reallocs\n");
+    printf("     small, even for an array that grows a lot\n\n");
+
+    printf("  What you have now is everything module 9 promised: you know\n");
+    printf("  where every byte you asked for came from, and where it went.\n\n");
+
+    printf("  Module 13 is a second way to grow a collection: a linked\n");
+    printf("  list, one node at a time instead of realloc's doubling\n");
+    printf("  blocks.\n");
+    wait_enter();
+}
+
+void lesson_13_linked_lists(void)
+{
+    title("MODULE 13 - LINKED LISTS");
+
+    heading("PART 1: a struct pointing at its own type");
 
     printf("  An array's size is fixed once allocated. A linked list grows\n");
     printf("  one node at a time, each node holding its own next address:\n\n");
@@ -412,10 +537,10 @@ void lesson_12_deeper_memory(void)
     printf("  5 4 3 2 1 -- the reverse of insertion order, because each new\n");
     printf("  node was pushed onto the front.\n\n");
 
-    printf("  Freeing needs the same pattern as the 2D grid: walk the list,\n");
-    printf("  and free() each node has to happen AFTER you have already\n");
-    printf("  saved where `next` points -- freeing a node and then reading\n");
-    printf("  its ->next afterwards is a use-after-free.\n\n");
+    printf("  Freeing needs the same pattern as module 12's 2D grid: walk\n");
+    printf("  the list, and free() each node has to happen AFTER you have\n");
+    printf("  already saved where `next` points -- freeing a node and\n");
+    printf("  then reading its ->next afterwards is a use-after-free.\n\n");
 
     printf("    struct Node *cur = head;\n");
     printf("    while (cur != NULL) {\n");
@@ -435,27 +560,7 @@ void lesson_12_deeper_memory(void)
 
     wait_enter();
     clear_screen();
-    exercise(12);
-
-    question("int **grid.  What does grid[2][3] mean?\n"
-             "  (answer: a row, a pointer, or a value)",
-             "a value",
-             "grid[2] is a pointer to row 2. Indexing it again with [3]\n"
-             "             reaches through to a single int.");
-
-    question("You allocated 3 rows with malloc. You call free(grid)\n"
-             "  without freeing the rows first. What happens to them?",
-             "leak",
-             "They are still allocated. Only the array holding their\n"
-             "             addresses is gone -- nothing can reach them to free\n"
-             "             them any more.");
-
-    question("int *p = malloc(10); p = realloc(p, 20);\n"
-             "  If realloc fails, what is p now?",
-             "null",
-             "realloc returned NULL, and this line just overwrote p with\n"
-             "             it. The original 10-byte block still exists and is\n"
-             "             now unreachable: a leak, at the worst possible time.");
+    exercise(13);
 
     question("struct Node { int value; struct Node *next; };\n"
              "  Is a struct allowed to contain a pointer to its own type?\n"
@@ -522,26 +627,21 @@ void lesson_12_deeper_memory(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - int **p is a pointer to a pointer; free it inside out,\n");
-    printf("     every row before the array of rows\n");
-    printf("   - always realloc into a temporary, never back into the\n");
-    printf("     same variable you are resizing\n");
     printf("   - a struct may point at its own type; that is what a\n");
     printf("     linked list is\n");
+    printf("   - inserting at the head is O(1), but reverses the order\n");
+    printf("     items came in\n");
     printf("   - save ->next before you free a node, or you cannot get to\n");
     printf("     the rest of the list\n\n");
 
-    printf("  What you have now is everything module 9 promised: you know\n");
-    printf("  where every byte you asked for came from, and where it went.\n\n");
-
-    printf("  Module 13 builds on this: two data structures, stacks and\n");
+    printf("  Module 14 builds on this: two data structures, stacks and\n");
     printf("  queues, using a plain array instead of another linked list.\n");
     wait_enter();
 }
 
-void lesson_13_stacks_queues(void)
+void lesson_14_stacks_queues(void)
 {
-    title("MODULE 13 - STACKS AND QUEUES");
+    title("MODULE 14 - STACKS AND QUEUES");
 
     heading("PART 1: a stack, and what makes it a stack");
 
@@ -574,7 +674,7 @@ void lesson_13_stacks_queues(void)
     printf("  `top` is not an index into a full array -- it is a count.\n");
     printf("  `s->items[s->top]` after a push is always the next FREE\n");
     printf("  slot, not the one just written. This is the same pattern as\n");
-    printf("  module 12's linked list count, applied to an index instead\n");
+    printf("  module 13's linked list count, applied to an index instead\n");
     printf("  of a pointer.\n\n");
 
     printf("  Running: five pushes fill a 5-slot stack exactly. A sixth\n");
@@ -737,7 +837,7 @@ void lesson_13_stacks_queues(void)
 
     wait_enter();
     clear_screen();
-    exercise(13);
+    exercise(14);
 
     question("Array-based stack, capacity 5, already holds 5 items.\n"
              "  You push one more without checking capacity first.\n"
@@ -854,9 +954,281 @@ void lesson_13_stacks_queues(void)
     printf("     a naive queue into a correct, reusable one\n\n");
 
     printf("  Both used a fixed-size array on purpose. A linked list (like\n");
-    printf("  module 12's) removes the capacity limit entirely, at the\n");
+    printf("  module 13's) removes the capacity limit entirely, at the\n");
     printf("  cost of one malloc per item instead of one for the whole\n");
     printf("  block -- the same tradeoff module 9 first raised between\n");
     printf("  an array and a linked structure.\n");
+    wait_enter();
+}
+
+void lesson_15_enums_unions(void)
+{
+    title("MODULE 15 - ENUMS, UNIONS, AND TYPEDEF");
+
+    heading("PART 1: enum -- named constants instead of magic numbers");
+
+    printf("    enum Color { RED, GREEN, BLUE };\n\n");
+
+    enum Color { RED, GREEN, BLUE };
+    enum Color c = GREEN;
+
+    printf("  Running -- these are real int values, not just labels:\n\n");
+    printf("    RED   = %d\n", RED);
+    printf("    GREEN = %d\n", GREEN);
+    printf("    BLUE  = %d\n", BLUE);
+    printf("    sizeof(enum Color) = %zu bytes\n\n", sizeof(enum Color));
+
+    printf("  With no = given, the first name is 0 and each one after is\n");
+    printf("  one more than the last. c above holds GREEN, which prints\n");
+    printf("  as an ordinary int: %d.\n\n", c);
+
+    printf("  A number can be assigned instead, and counting picks up\n");
+    printf("  from there:\n\n");
+
+    enum Status { OK = 0, FAIL = 1 };
+
+    printf("    enum Status { OK = 0, FAIL = 1 };\n\n");
+    printf("  Running:\n");
+    printf("    OK   = %d\n", OK);
+    printf("    FAIL = %d\n\n", FAIL);
+
+    printf("  Compare that to the way earlier modules flagged a limit:\n\n");
+    printf("    #define MAX_RETRIES 3\n\n");
+    printf("  Running: MAX_RETRIES expands to %d -- the same kind of\n",
+           MAX_RETRIES);
+    printf("  plain int RED is.\n\n");
+
+    printf("  The difference does not show up in that printf. It shows up\n");
+    printf("  everywhere else: RED itself is still a plain int, but enum\n");
+    printf("  Color is a real declared type name -- a variable declared\n");
+    printf("  as one keeps that name for a debugger to show, and\n");
+    printf("  documents intent in a function's parameter list. C does\n");
+    printf("  NOT check that only RED, GREEN, or BLUE ever end up in\n");
+    printf("  such a variable; enforcing that is what C++'s enum class\n");
+    printf("  adds, not plain C. MAX_RETRIES has none of this -- it is\n");
+    printf("  gone before the compiler even sees it, replaced by the\n");
+    printf("  digit 3, with no type, no scope of its own, and no name\n");
+    printf("  left anywhere for a debugger to print.\n");
+
+    wait_enter();
+    clear_screen();
+    heading("PART 2: union -- one block of storage, one member at a time");
+
+    printf("    union Data { int i; double d; };\n\n");
+
+    union Data { int i; double d; };
+    union Data data;
+    struct Pair { int i; double d; };
+
+    printf("  A struct with these same two fields needs room for both. A\n");
+    printf("  union needs room for only the LARGER one, because every\n");
+    printf("  member starts at the same address:\n\n");
+
+    printf("    sizeof(int)          = %zu bytes\n", sizeof(int));
+    printf("    sizeof(double)       = %zu bytes\n", sizeof(double));
+    printf("    sizeof(union Data)   = %zu bytes  <- the larger member\n",
+           sizeof(union Data));
+    printf("    sizeof(struct Pair)  = %zu bytes  <- both fields, plus\n",
+           sizeof(struct Pair));
+    printf("                                          padding (Part 4)\n\n");
+
+    data.i = 42;
+    printf("    data.i = 42;\n");
+    printf("    printf(\"%%d\", data.i);   ->  %d\n\n", data.i);
+
+    printf("  data.d shares the exact same bytes data.i just used, and\n");
+    printf("  those bytes were never written as a double. Reading data.d\n");
+    printf("  right now is undefined behaviour by the C standard's own\n");
+    printf("  definition, not \"some garbage value\" -- which is exactly\n");
+    printf("  why this course will not print one. Rule 3 of this course\n");
+    printf("  applies to a union the same way it applies to a freed\n");
+    printf("  pointer: explain the trap, do not run it.\n\n");
+
+    printf("  Only whichever member was written last is meaningfully\n");
+    printf("  valid. A union is not a way to hold two values at once --\n");
+    printf("  it is a way to spend the space for one, when only one of\n");
+    printf("  several types is ever needed at a time. Code that needs to\n");
+    printf("  know WHICH member is currently valid stores that\n");
+    printf("  separately, often as an enum sitting next to the union.\n");
+
+    wait_enter();
+    clear_screen();
+    heading("PART 3: typedef -- naming a type");
+
+    printf("    typedef int count_t;\n");
+    printf("    count_t n = 5;\n\n");
+
+    typedef int count_t;
+    count_t n = 5;
+
+    printf("  Running: n = %d, sizeof(count_t) = %zu, sizeof(int) = %zu\n",
+           n, sizeof(count_t), sizeof(int));
+    printf("  -- count_t IS int, just spelled differently. typedef does\n");
+    printf("  not create a new type, only a new name for an existing one.\n\n");
+
+    printf("  The real payoff is dropping struct/enum/union at the point\n");
+    printf("  of use:\n\n");
+
+    printf("    typedef struct { int x; int y; } Point;\n");
+    printf("    Point p = { 3, 4 };        // no \"struct\" needed here\n\n");
+
+    typedef struct { int x; int y; } Point;
+    Point p = { 3, 4 };
+
+    printf("  Running: p.x = %d, p.y = %d\n\n", p.x, p.y);
+
+    printf("  The same works for an enum:\n\n");
+    printf("    typedef enum { MODE_ON, MODE_OFF } Mode;\n");
+    printf("    Mode m = MODE_ON;          // no \"enum\" needed here\n\n");
+
+    typedef enum { MODE_ON, MODE_OFF } Mode;
+    Mode m = MODE_ON;
+
+    printf("  Running: m = %d\n\n", m);
+
+    printf("  One trap: `typedef struct Foo { ... } Foo;` names Foo\n");
+    printf("  twice on purpose, not by accident. `struct Foo` is a tag --\n");
+    printf("  its own namespace, separate from ordinary identifiers -- and\n");
+    printf("  the typedef name Foo is a different identifier that happens\n");
+    printf("  to reuse the same spelling. The tag is what module 13's\n");
+    printf("  linked list used inside its own struct (`struct Node\n");
+    printf("  *next;`): the typedef name is not defined until the\n");
+    printf("  semicolon closing the whole declaration, so it cannot be\n");
+    printf("  used to refer to the type from inside its own braces.\n");
+
+    wait_enter();
+    clear_screen();
+    heading("PART 4: padding, revisited with an enum in the mix");
+
+    printf("  An enum constant is really just an int (Part 1), so a\n");
+    printf("  variable of an enum type costs as much space as one and\n");
+    printf("  aligns the same way. The field-order trap module 10 showed\n");
+    printf("  for int applies to it too:\n\n");
+
+    struct Bad2  { char a; enum Color color; char c; };
+    struct Good2 { char a; char c; enum Color color; };
+
+    printf("    struct Bad2  { char a; enum Color color; char c; };\n");
+    printf("    struct Good2 { char a; char c; enum Color color; };\n\n");
+
+    printf("  Running, on this machine, compiled with gcc:\n\n");
+    printf("    sizeof(struct Bad2)  = %zu bytes\n", sizeof(struct Bad2));
+    printf("    sizeof(struct Good2) = %zu bytes\n\n", sizeof(struct Good2));
+
+    printf("  Same three fields, same types, different order, different\n");
+    printf("  size -- module 10's Bad/Good result again, with an enum\n");
+    printf("  standing in for the int. This is what THIS compiler, on\n");
+    printf("  THIS machine, actually produced just now. The C standard\n");
+    printf("  guarantees none of it: not enum's size, not its alignment,\n");
+    printf("  not how much padding a compiler chooses to insert. A\n");
+    printf("  different compiler, a different target, or a packing\n");
+    printf("  pragma could all legally print different numbers for the\n");
+    printf("  exact same two structs.\n");
+
+    wait_enter();
+    clear_screen();
+    exercise(15);
+
+    question("In `enum Color { RED, GREEN, BLUE };`, what is the real\n"
+             "  type of the constant RED? (one word)",
+             "int",
+             "An enum introduces a set of named int constants. The enum\n"
+             "             type itself types a VARIABLE that holds one of them;\n"
+             "             the constants themselves are plain ints.");
+
+    question("union Data { int i; double d; }; data.i = 5; -- how many\n"
+             "  of its members hold a value the program actually put\n"
+             "  there right now? (a number)",
+             "1",
+             "Every member shares the same storage. Only i was written,\n"
+             "             so only i is meaningfully valid. Reading d now\n"
+             "             would be undefined behaviour, not a second value.");
+
+    question("typedef struct Foo { int x; } Foo; -- is `struct Foo` and\n"
+             "  the typedef name `Foo` the same identifier written twice,\n"
+             "  or two different ones? (answer: same or different)",
+             "different",
+             "The tag Foo lives in its own namespace, separate from the\n"
+             "             typedef name Foo. Naming the tag is optional; giving\n"
+             "             the typedef a target type on its left is not.");
+
+    question("struct S { char a; enum Color color; }; -- is sizeof(S)\n"
+             "  guaranteed to be the same on every C compiler? (yes or no)",
+             "no",
+             "The standard fixes neither enum's size nor its alignment,\n"
+             "             so how much padding a compiler inserts around it is\n"
+             "             a property of the compiler and platform, not the\n"
+             "             language.");
+
+    {
+        const char *task[] = {
+            "Read one integer, the day number typed after the prompt",
+            "below. Using a typedef'd enum Day (SUNDAY = 0 through",
+            "SATURDAY = 6), print the day's name by indexing an array",
+            "of strings with it. If the number is not 0-6, print",
+            "\"Invalid day.\" instead.",
+        };
+        const char *input[] = { "3" };
+        const char *expected[] = {
+            "Day number: 3",
+            "Wednesday",
+        };
+        const char *solution[] = {
+            "#include <stdio.h>",
+            "",
+            "typedef enum {",
+            "    SUNDAY, MONDAY, TUESDAY, WEDNESDAY,",
+            "    THURSDAY, FRIDAY, SATURDAY",
+            "} Day;",
+            "",
+            "int main(void)",
+            "{",
+            "    const char *names[] = {",
+            "        \"Sunday\", \"Monday\", \"Tuesday\", \"Wednesday\",",
+            "        \"Thursday\", \"Friday\", \"Saturday\",",
+            "    };",
+            "    int n;",
+            "    Day d;",
+            "",
+            "    printf(\"Day number: \");",
+            "    if (scanf(\"%d\", &n) != 1 || n < SUNDAY || n > SATURDAY) {",
+            "        printf(\"Invalid day.\\n\");",
+            "        return 1;",
+            "    }",
+            "",
+            "    d = n;",
+            "    printf(\"%s\\n\", names[d]);",
+            "    return 0;",
+            "}",
+            "",
+            "n is checked against SUNDAY and SATURDAY, the enum's own",
+            "first and last constants, before it is trusted as an index --",
+            "the same bounds check module 6 required for any array.",
+        };
+        challenge(task, 5, input, 1, expected, 2, solution,
+                  (int) (sizeof solution / sizeof solution[0]));
+    }
+
+    wait_enter();
+    clear_screen();
+    heading("SUMMARY");
+
+    printf("   - enum names a set of int constants and gives the enum\n");
+    printf("     itself a real type name; unlike #define, a variable of\n");
+    printf("     that type stays visible to a debugger (C does not check\n");
+    printf("     that only a valid member ever ends up in it)\n");
+    printf("   - union members share one block of storage; sizeof is the\n");
+    printf("     largest member, not the sum, and only the last-written\n");
+    printf("     member is safe to read back\n");
+    printf("   - typedef names an existing type; it earns its keep on\n");
+    printf("     struct/enum/union, dropping the keyword at every use\n");
+    printf("   - padding is a property of the compiler and the machine,\n");
+    printf("     not the language -- true for an int (module 10) and\n");
+    printf("     just as true for an enum\n\n");
+
+    printf("  That covers every kind of type this course builds by hand.\n");
+    printf("  What is left from here is practice: bigger programs that\n");
+    printf("  combine all of it, the way module 11's final test combined\n");
+    printf("  modules 1 through 10.\n");
     wait_enter();
 }

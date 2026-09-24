@@ -23,25 +23,37 @@ const {
   lesson09Classes,
   lesson10Errors,
 } = require("./lessons_more.js");
+const { lesson11Promises, lesson12Apis, lesson13Modules, lesson14NodeStdlib } = require("./lessons_advanced.js");
 
+// `tier` files a module under one of the three menu bands. Display
+// grouping only -- the lesson functions never see it.
 const MODULES = [
-  { title: "Running Node and console.log()", run: lesson01Running },
-  { title: "Variables and types", run: lesson02Variables },
-  { title: "Reading input", run: lesson03Input },
-  { title: "Conditions", run: lesson04Conditions },
-  { title: "Loops", run: lesson05Loops },
-  { title: "Arrays", run: lesson06Arrays },
-  { title: "Functions and this", run: lesson07Functions },
-  { title: "Objects", run: lesson08Objects },
-  { title: "Classes", run: lesson09Classes },
-  { title: "Errors", run: lesson10Errors },
+  { title: "Running Node and console.log()", run: lesson01Running, tier: "BASIC" },
+  { title: "Variables and types", run: lesson02Variables, tier: "BASIC" },
+  { title: "Reading input", run: lesson03Input, tier: "BASIC" },
+  { title: "Conditions", run: lesson04Conditions, tier: "BASIC" },
+  { title: "Loops", run: lesson05Loops, tier: "BASIC" },
+  { title: "Arrays", run: lesson06Arrays, tier: "INTERMEDIATE" },
+  { title: "Functions and this", run: lesson07Functions, tier: "INTERMEDIATE" },
+  { title: "Objects", run: lesson08Objects, tier: "INTERMEDIATE" },
+  { title: "Classes", run: lesson09Classes, tier: "ADVANCED" },
+  { title: "Errors", run: lesson10Errors, tier: "ADVANCED" },
+  { title: "Promises", run: lesson11Promises, tier: "ADVANCED" },
+  { title: "Working with APIs", run: lesson12Apis, tier: "ADVANCED" },
+  { title: "Modules", run: lesson13Modules, tier: "ADVANCED" },
+  { title: "Node-specific stdlib", run: lesson14NodeStdlib, tier: "ADVANCED" },
 ];
 
 function showMenu() {
   ui.clearScreen();
   ui.title("JAVASCRIPT COURSE - FROM ZERO TO CLASSES");
 
+  let shownTier = null;
   MODULES.forEach((module, i) => {
+    if (module.tier !== shownTier) {
+      shownTier = module.tier;
+      console.log(`\n  -- ${shownTier} --`);
+    }
     const n = String(i + 1).padStart(2, " ");
     console.log(`   [${n}]  ${module.title}`);
   });
@@ -54,7 +66,7 @@ async function main() {
     showMenu();
     const choice = (await ui.ask("\n  Pick a module: ")).trim();
 
-    if (choice === "0") {
+    if (choice === "0" || ui.isInputClosed()) {
       break;
     }
 
