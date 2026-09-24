@@ -60,16 +60,65 @@ split doesn't map onto Java's the same way (module 8).
 The courses are independent programs. The launcher only launches them: it
 does not know anything about what happens inside one.
 
-## Running
+## Installing
 
-Prebuilt releases (Windows `.zip`, Linux `.tar.gz`/`.deb`/Arch
-`.pkg.tar.zst`) are on the [Releases page](https://github.com/otzpt/CodeLearner/releases)
-— extract and run `codelearner.bat`/`codelearner.sh`, or `codelearner` on
-your PATH after installing the `.deb`/Arch package. Only the C and C++
-courses are inside; Python, JavaScript, Java, and C# need that language's
-own toolchain installed to run (see below). Want just one course, standalone,
-with no launcher and no other four? See
+One command, and `codelearner` is on your PATH. Neither installer needs
+root or Administrator: both write only inside your own home directory, and
+both replace an existing install rather than merging into it.
+
+Linux, any distribution:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/otzpt/CodeLearner/main/install.sh | sh
+```
+
+`wget -qO- <same URL> | sh` works identically if curl isn't installed. It
+asks no package manager anything, which is what makes it distribution-
+agnostic: it unpacks the release tarball into `~/.local/share/codelearner`
+and writes a wrapper to `~/.local/bin/codelearner`. Pass `--prefix DIR` to
+put it elsewhere, or `--uninstall` to remove it.
+
+Windows:
+
+```powershell
+irm https://raw.githubusercontent.com/otzpt/CodeLearner/main/install.ps1 | iex
+```
+
+Installs to `%LOCALAPPDATA%\Programs\CodeLearner` and adds that directory
+to your user PATH, so `codelearner` works in a new terminal. Download the
+script and run it directly for `-Uninstall` or `-Prefix`. It is a script
+rather than an `.msi` deliberately: an MSI buys a per-machine install and
+an Add/Remove Programs entry, and costs a WiX toolchain in CI plus a
+signing story, for a PATH entry a script writes in one line.
+
+Piping a script from the internet into a shell is worth reading first
+either way. Both are a single file at the root of this repository:
+[`install.sh`](install.sh), [`install.ps1`](install.ps1).
+
+### Or without an installer
+
+Every artifact is on the [Releases page](https://github.com/otzpt/CodeLearner/releases):
+
+| Download | What it is |
+| --- | --- |
+| `codelearner-x86_64.AppImage` | one self-contained file, `chmod +x` and run, nothing installed |
+| `codelearner-amd64.deb` | Debian/Ubuntu package, `sudo dpkg -i` |
+| `codelearner-x86_64.pkg.tar.zst` | Arch package, `sudo pacman -U` |
+| `codelearner-linux-x86_64.tar.gz` | the plain bundle, extract and run `codelearner.sh` |
+| `codelearner-windows-x86_64.zip` | the plain bundle, extract and run `codelearner.bat` |
+| `codelearner-csharp-standalone-*` | the C# course alone, one file, no .NET needed |
+
+The `.deb` and Arch packages install to `/opt/codelearner` and put the same
+`codelearner` command on PATH system-wide. The AppImage does not touch PATH
+at all, which is the point of it.
+
+Only the C, C++, GUI, C# and Assembly courses are compiled into these;
+Python, JavaScript and Java ship as source and run through their own
+language's toolchain (see below). Want just one course, standalone, with no
+launcher and none of the others? See
 [`docs/building-a-single-course.md`](docs/building-a-single-course.md).
+
+## Running
 
 To build it yourself instead:
 
@@ -694,6 +743,8 @@ only match dispatch boilerplate.
 ```
 README.md                   this file
 LICENSE                     MIT
+install.sh                  one-command install, any Linux distribution
+install.ps1                 the same for Windows, no admin rights
 CONTRIBUTING.md             how to add a module, a course, or a fix
 CODE_OF_CONDUCT.md          Contributor Covenant 2.1
 SECURITY.md                 what counts as a vulnerability here
