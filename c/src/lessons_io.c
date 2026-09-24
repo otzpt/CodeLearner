@@ -34,7 +34,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/wait.h>
+
+/* MinGW has no <sys/wait.h>, and needs none: on Windows system() returns
+ * the command's exit code directly, without POSIX's wait-status encoding
+ * wrapped around it. Defining the two macros to match lets run_shell below
+ * read the same on both platforms instead of branching at each use. */
+#ifdef _WIN32
+#  define WIFEXITED(status)   1
+#  define WEXITSTATUS(status) (status)
+#else
+#  include <sys/wait.h>
+#endif
 
 #include "lessons.h"
 #include "ui.h"

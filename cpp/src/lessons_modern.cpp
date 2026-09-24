@@ -35,8 +35,15 @@
 #include <utility>
 #include <vector>
 
-#ifndef _WIN32
-#include <sys/wait.h>
+/* MinGW has no <sys/wait.h>, and needs none: on Windows std::system returns
+ * the command's exit code directly, without POSIX's wait-status encoding
+ * wrapped around it. Guarding the include alone is not enough -- the two
+ * macros are used below, so Windows needs its own definitions of them. */
+#ifdef _WIN32
+#  define WIFEXITED(status)   1
+#  define WEXITSTATUS(status) (status)
+#else
+#  include <sys/wait.h>
 #endif
 
 #include "lessons.h"
