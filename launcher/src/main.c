@@ -53,6 +53,7 @@ struct Language {
 #define JAVA_BIN   "..\\java\\run.bat"
 #define GUI_BIN    "..\\gui\\gui-course.exe"
 #define CSHARP_BIN "..\\csharp\\run.bat"
+#define RUST_BIN   "..\\rust\\rust-course.exe"
 #else
 #define C_BIN      "../c/c-course"
 #define CPP_BIN    "../cpp/cpp-course"
@@ -63,6 +64,9 @@ struct Language {
 #define ASM_BIN    "../assembly/asm-course"
 #define CSHARP_BIN "../csharp/run"
 #define GIT_PATH   "../git/src/main.sh"
+#define ARDUINO_BIN "../arduino/arduino-course"
+#define MICROPY_PATH "../micropython/src/main.py"
+#define RUST_BIN   "../rust/rust-course"
 #endif
 
 static const struct Language LANGUAGES[] = {
@@ -109,6 +113,24 @@ static const struct Language LANGUAGES[] = {
     { "Git",        NULL, NULL },
 #else
     { "Git",        GIT_PATH, GIT_PATH },
+#endif
+#ifdef _WIN32
+    /* arduino/shim/Arduino.h reads Serial input with poll() and read() from
+     * <poll.h>/<unistd.h>, which Windows does not have. Not a path change:
+     * the stand-in for the Arduino core would need a Windows port. */
+    { "Arduino",    NULL, NULL },
+#else
+    { "Arduino",    ARDUINO_BIN, ARDUINO_BIN },
+#endif
+    { "Rust",       RUST_BIN, RUST_BIN },
+#ifdef _WIN32
+    /* The course runs on the unix port of MicroPython, which is not shipped
+     * for Windows (and has no shebang story there either). */
+    { "MicroPython", NULL, NULL },
+#else
+    /* A script with a `#!/usr/bin/env micropython` shebang, like Python's
+     * and JavaScript's entries: no build step, needs `micropython` on PATH. */
+    { "MicroPython", MICROPY_PATH, MICROPY_PATH },
 #endif
 };
 

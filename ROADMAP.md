@@ -207,10 +207,11 @@ Each entry is a target arc, not a spec. Per the one rule above, each should
 be shaped by what actually matters in that language, not forced into the
 same module skeleton as C.
 
-- **Rust** — ownership → borrowing → lifetimes → traits → `Result`/`Option`
-  → async → projects. Ownership is the whole point of Rust; it should get
-  the same weight module 9 (memory) gets in the C course, not a single
-  module in passing.
+- **Rust** (started): `rust/` has 8 modules (printing, variables, control
+  flow, functions, ownership, borrowing, memory, inline assembly and NASM).
+  Still to write: structs, lifetimes, traits, `Result`/`Option`, async,
+  projects. Ownership is the whole point of Rust; it has three modules and
+  deserves the weight module 9 (memory) gets in the C course.
 - **TypeScript** — types → interfaces → generics → narrowing → advanced
   types → projects.
 - **Go** — structs → interfaces → concurrency → networking → CLI/backend

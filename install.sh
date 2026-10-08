@@ -106,7 +106,9 @@ mv "$tmp/$BUNDLE_DIR" "$SHARE_DIR"
 # arrive here without them, and every one of these is useless unless
 # executable.
 for exe in launcher/launcher c/c-course cpp/cpp-course gui/gui-course \
-           assembly/asm-course csharp/csharp csharp/run java/run; do
+           assembly/asm-course csharp/csharp csharp/run java/run \
+           rust/rust-course arduino/arduino-course micropython/src/main.py \
+           c/asm/use_asm cpp/asm/use_asm rust/asm/use_asm; do
     [ -f "$SHARE_DIR/$exe" ] && chmod +x "$SHARE_DIR/$exe"
 done
 rm -f "$SHARE_DIR/codelearner.sh"     # the wrapper below replaces it

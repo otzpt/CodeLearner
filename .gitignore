@@ -5,6 +5,13 @@ c/c-course
 cpp/cpp-course
 gui/gui-course
 assembly/asm-course
+arduino/arduino-course
+arduino/build/
+rust/rust-course
+rust/asm/add.o
+rust/asm/use_asm
+c/asm/use_asm
+cpp/asm/use_asm
 launcher/launcher
 csharp/src/bin/
 csharp/src/obj/

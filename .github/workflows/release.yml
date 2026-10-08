@@ -88,6 +88,46 @@ jobs:
         if: runner.os == 'Linux'
         run: make -C assembly
 
+      # Rust and Arduino: Linux only for now. Both need just a toolchain the
+      # runner already has (rustc, g++). The Arduino stand-in for the core
+      # reads Serial with poll(), which Windows does not have.
+      - name: Build Rust and Arduino (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          set -euo pipefail
+          make -C rust
+          make -C arduino
+
+      # The NASM examples for the C, C++ and Rust assembly modules. nasm is
+      # installed for this build only: the courses do not need it, and a
+      # module shows its demo output only when asm/use_asm exists beside it.
+      - name: Build the NASM examples (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq nasm
+          make -C c asm-demo
+          make -C cpp asm-demo
+          make -C rust asm-demo
+          for course in c cpp rust; do
+            "$course/asm/use_asm" | grep -q 'add_numbers(40, 2) *= 42' \
+              || { echo "::error::the $course NASM example did not print 42"; exit 1; }
+          done
+
+      # Every challenge solution the Rust and Arduino courses show must build
+      # clean and print what its challenge promises, and no exercise may reach
+      # ahead of what its module has taught. (The Arduino module walk is left
+      # out: it feeds input on a timer, which a loaded runner can upset.)
+      - name: Verify the Rust and Arduino courses (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          set -euo pipefail
+          python3 rust/check-course.py
+          python3 rust/check-solutions.py
+          python3 arduino/check-solutions.py
+          python3 tools/check-teaching-order.py
+
       - name: Compile-check Java (no artifact -- verifies -Xlint:all -Werror passes)
         shell: bash
         run: |
@@ -131,6 +171,17 @@ jobs:
           cs_output=$(printf '6\n1\n\n\n\n\n\n\n\n\nn\nn\n\n\n0\n0\n' | timeout 20 ./launcher)
           echo "$cs_output" | grep -q "C# COURSE" || { echo "::error::launcher did not reach the C# course"; exit 1; }
           echo "$cs_output" | grep -q "See you next time" || { echo "::error::launcher did not exit cleanly after C#"; exit 1; }
+
+          # Arduino (10) and Rust (11): pick the course, quit it, quit the
+          # launcher. MicroPython (12) is source like Python and JavaScript
+          # and needs `micropython` on PATH, which this runner does not have.
+          for entry in "10 ARDUINO" "11 RUST"; do
+            number=${entry%% *}
+            name=${entry#* }
+            out=$(printf '%s\n0\n0\n' "$number" | timeout 20 ./launcher)
+            echo "$out" | grep -q "$name COURSE" || { echo "::error::launcher did not reach the $name course"; exit 1; }
+            echo "$out" | grep -q "See you next time" || { echo "::error::launcher did not exit cleanly after $name"; exit 1; }
+          done
 
       - name: Smoke-test the launcher (Windows)
         if: runner.os == 'Windows'
@@ -190,6 +241,23 @@ jobs:
             mkdir -p "$out/assembly"
             cp assembly/asm-course "$out/assembly/"
             chmod +x "$out/assembly/asm-course"
+            # Rust and Arduino are compiled, MicroPython is source. The
+            # Arduino folder keeps its Makefile, shim and sketch so that
+            # `make try` (the challenges tell students to use it) still works.
+            mkdir -p "$out/rust" "$out/arduino" "$out/micropython/src"
+            cp rust/rust-course "$out/rust/"
+            cp arduino/arduino-course arduino/Makefile "$out/arduino/"
+            cp -r arduino/shim arduino/course "$out/arduino/"
+            cp micropython/src/*.py "$out/micropython/src/"
+            chmod +x "$out/rust/rust-course" "$out/arduino/arduino-course" "$out/micropython/src/main.py"
+            # The assembly modules in C, C++ and Rust read these from next to
+            # their own binary: the NASM source, and the demo built above.
+            for course in c cpp rust; do
+              mkdir -p "$out/$course/asm"
+              cp "$course/asm/add.asm" "$course/asm/use_asm" "$out/$course/asm/"
+              cp "$course"/asm/use_asm.* "$out/$course/asm/"
+              chmod +x "$out/$course/asm/use_asm"
+            done
             printf '#!/bin/sh\ncd "$(dirname "$0")/launcher" && exec ./launcher\n' > "$out/codelearner.sh"
             chmod +x "$out/codelearner.sh" "$out/launcher/launcher"
           fi
@@ -263,17 +331,17 @@ jobs:
           #!/bin/sh
           cd /opt/codelearner/launcher && exec ./launcher
           EOF
-          chmod +x "$pkg/usr/bin/codelearner" "$pkg/opt/codelearner/launcher/launcher" "$pkg/opt/codelearner/gui/gui-course" "$pkg/opt/codelearner/assembly/asm-course" "$pkg/opt/codelearner/java/run" "$pkg/opt/codelearner/csharp/csharp" "$pkg/opt/codelearner/csharp/run"
+          chmod +x "$pkg/usr/bin/codelearner" "$pkg/opt/codelearner/launcher/launcher" "$pkg/opt/codelearner/gui/gui-course" "$pkg/opt/codelearner/assembly/asm-course" "$pkg/opt/codelearner/java/run" "$pkg/opt/codelearner/csharp/csharp" "$pkg/opt/codelearner/csharp/run" "$pkg/opt/codelearner/rust/rust-course" "$pkg/opt/codelearner/arduino/arduino-course" "$pkg/opt/codelearner/micropython/src/main.py"
           cat > "$pkg/DEBIAN/control" <<EOF
           Package: codelearner
           Version: $pkgver
           Architecture: amd64
           Maintainer: CodeLearner <noreply@invalid>
-          Suggests: python3, nodejs, default-jdk, gtk4
+          Suggests: python3, nodejs, default-jdk, gtk4, micropython, nasm, g++
           Description: Command-line programming courses, one per language
-           C, C++, GUI, C# and Assembly run standalone. The Python,
-           JavaScript and Java courses need that language's own toolchain
-           installed to run -- see Suggests. GTK4 is only needed to compile
+           C, C++, GUI, C#, Rust, Arduino and Assembly run standalone. The
+           Python, JavaScript, Java and MicroPython courses need that
+           language's own toolchain installed to run -- see Suggests. GTK4 is only needed to compile
            and run the GUI course's own taught examples, not to browse the
            course itself. Assembly is Linux/x86-64 only.
           EOF
@@ -307,6 +375,8 @@ jobs:
           optdepends=('python: run the Python course'
                       'nodejs: run the JavaScript course'
                       'jdk-openjdk: run the Java course'
+                      'micropython: run the MicroPython course'
+                      'nasm: rebuild the NASM examples of the C, C++ and Rust courses'
                       'gtk4: compile and run the GUI course examples')
           options=('!strip' '!debug')
           package() {
@@ -318,6 +388,14 @@ jobs:
             install -Dm755 "\$startdir/payload/java/run" "\$pkgdir/opt/codelearner/java/run"
             install -Dm755 "\$startdir/payload/csharp/csharp" "\$pkgdir/opt/codelearner/csharp/csharp"
             install -Dm755 "\$startdir/payload/csharp/run" "\$pkgdir/opt/codelearner/csharp/run"
+            install -Dm755 "\$startdir/payload/rust/rust-course" "\$pkgdir/opt/codelearner/rust/rust-course"
+            install -Dm755 "\$startdir/payload/arduino/arduino-course" "\$pkgdir/opt/codelearner/arduino/arduino-course"
+            install -Dm644 "\$startdir/payload/arduino/Makefile" "\$pkgdir/opt/codelearner/arduino/Makefile"
+            for dir in arduino/shim arduino/course micropython/src c/asm cpp/asm rust/asm; do
+              mkdir -p "\$pkgdir/opt/codelearner/\$dir"
+              cp -r "\$startdir/payload/\$dir/." "\$pkgdir/opt/codelearner/\$dir/"
+            done
+            chmod 755 "\$pkgdir/opt/codelearner/micropython/src/main.py" "\$pkgdir/opt/codelearner/c/asm/use_asm" "\$pkgdir/opt/codelearner/cpp/asm/use_asm" "\$pkgdir/opt/codelearner/rust/asm/use_asm"
             for f in "\$startdir/payload/python/src"/*.py; do
               install -Dm644 "\$f" "\$pkgdir/opt/codelearner/python/src/\$(basename "\$f")"
             done
@@ -371,7 +449,7 @@ jobs:
           HERE="$(dirname "$(readlink -f "$0")")"
           cd "$HERE/opt/launcher" && exec ./launcher
           EOF
-          chmod +x "$APPDIR/AppRun" "$APPDIR/opt/launcher/launcher" "$APPDIR/opt/csharp/csharp" "$APPDIR/opt/csharp/run" "$APPDIR/opt/java/run" "$APPDIR/opt/assembly/asm-course"
+          chmod +x "$APPDIR/AppRun" "$APPDIR/opt/launcher/launcher" "$APPDIR/opt/csharp/csharp" "$APPDIR/opt/csharp/run" "$APPDIR/opt/java/run" "$APPDIR/opt/assembly/asm-course" "$APPDIR/opt/rust/rust-course" "$APPDIR/opt/arduino/arduino-course" "$APPDIR/opt/micropython/src/main.py"
           wget -q https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage -O /tmp/appimagetool
           chmod +x /tmp/appimagetool
           ARCH=x86_64 /tmp/appimagetool --appimage-extract-and-run "$APPDIR" "codelearner-x86_64.AppImage"
@@ -422,6 +500,13 @@ jobs:
             you compile and run the examples it teaches. Assembly is
             bundled compiled on Linux only -- it makes raw Linux syscalls
             directly and has no Windows equivalent to build toward.
+
+            The Rust and Arduino courses are bundled compiled, also Linux
+            only (the Arduino one simulates the board on the PC through
+            `poll()`). MicroPython is included as source, needs
+            `micropython` on PATH, and is Linux only. The C, C++ and Rust
+            assembly modules show a NASM example built with `nasm` in CI;
+            rebuilding it yourself needs `nasm` (`make asm-demo`).
 
             **Windows:** portable `.zip` -- extract, run `codelearner.bat`.
             **Linux:** `.deb`, Arch `.pkg.tar.zst`, `.AppImage`, or the

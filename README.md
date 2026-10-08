@@ -10,12 +10,15 @@ worked example code the student can open and read.
 
 | Language | Modules | Where |
 | --- | --- | --- |
-| C | 19 — first program through file I/O, debugging, and function pointers/macros | [`c/`](c/) |
-| C++ | 12 — cout through templates and modern idioms | [`cpp/`](cpp/) |
+| C | 20: first program through file I/O, debugging, function pointers/macros, and inline assembly with NASM | [`c/`](c/) |
+| C++ | 13: cout through templates and modern idioms, then inline assembly and `extern "C"` | [`cpp/`](cpp/) |
 | Python | 13 — print() through files/context managers and working with a real API | [`python/`](python/) |
 | JavaScript | 14 — console.log() through modules and Node's own fs/process stdlib | [`javascript/`](javascript/) |
 | Java | 13 — System.out through the Collections Framework, generics, and concurrency | [`java/`](java/) |
 | C# | 14 — top-level statements through LINQ, async/await, and delegates/events | [`csharp/`](csharp/) |
+| Rust | 8: `println!` through ownership, borrowing, raw memory, and inline assembly with NASM | [`rust/`](rust/) |
+| MicroPython | 11: for the Raspberry Pi Pico: pins, PWM/ADC, interrupts, native/viper, `asm_thumb`, a robot | [`micropython/`](micropython/) |
+| Arduino | 13: `setup()`/`loop()` through registers, interrupts, AVR inline assembly, a robot (runs on a PC) | [`arduino/`](arduino/) |
 | GUI (GTK) | 1 — your first window | [`gui/`](gui/) |
 | Assembly | 4 — registers and syscalls, branching, loops, and a guessing game | [`assembly/`](assembly/) |
 | Git | 10 — what is git through GitHub Actions | [`git/`](git/) |
@@ -29,8 +32,8 @@ table (`MODULES` in `main.c`/`main.py`/`main.js`, or the equivalent),
 nothing else changes. GUI still has one module, filed under BASIC, with
 INTERMEDIATE and ADVANCED shown empty until it has enough content to split.
 
-Nine courses are covered. GUI, Assembly, and Git are not languages in the
-same sense the other six are, but all three get the same treatment as one:
+Twelve courses are covered. GUI, Assembly, and Git are not languages in the
+same sense the other nine are, but all three get the same treatment as one:
 their own directory, their own binary or script, their own entry in the
 launcher, rather than being folded into `c/`'s module list. Assembly goes
 further than GUI does, though -- its own delivery program (`assembly/src/ui.s`,
@@ -641,6 +644,27 @@ nothing fuzzier), the same "keep it short and unambiguous" rule
 `docs/writing-a-course.md` already states for every other course's
 `question()`.
 
+## The Rust, MicroPython and Arduino courses
+
+Three courses for people heading toward microcontrollers and systems work.
+Each has its own README with how to run it and how it was verified:
+[`rust/`](rust/README.md), [`micropython/`](micropython/README.md),
+[`arduino/`](arduino/README.md).
+
+The MicroPython and Arduino courses cannot touch hardware, because a course
+runs in a terminal. Each ships a small stand-in for the board (`sim.py`,
+`shim/Arduino.h`) so the code in a lesson is the code a board would run, and
+each lesson says where the PC differs from the chip: an `int` is 4 bytes here
+and 2 on an Uno, a float is 64-bit on the PC and usually 32-bit on a Pico,
+and time is simulated. AVR and Cortex-M0+ assembly is compiled
+(`avr-gcc`, `mpy-cross`) but never executed.
+
+Inline assembly and NASM also have a module in the C (module 20), C++
+(module 13) and Rust (module 8) courses. Those run for real on an x86-64
+Linux PC: the `asm` blocks are compiled into the course, and the NASM file in
+each course's `asm/` folder is built with `make asm-demo` and its output shown
+in the lesson.
+
 ## Design rules
 
 **Nothing is claimed without being shown.** Where an example can run, it runs.
@@ -746,8 +770,9 @@ from outside its class, an unhandled checked exception, `ArrayList<int>`,
 and the rest) — was produced by actually running `javac` against it, not
 recalled from documentation.
 
-`python3 tools/check-teaching-order.py` covers all six courses with a real
-teaching-order table (C, C++, Python, JavaScript, Java, C#) in one run — GUI
+`python3 tools/check-teaching-order.py` covers all nine language courses with a
+real teaching-order table (C, C++, Python, JavaScript, Java, C#, Rust,
+MicroPython, Arduino) in one run. GUI
 and Assembly are registered too, with empty tables. GUI's is empty because it
 has no second module yet for an exercise to reach ahead of. Assembly's stays
 empty for a structural reason instead: an `.s` file keeps its question text,

@@ -25,6 +25,15 @@ cd javascript/src && node main.js
 
 # Java -- compiles and runs in one command, no separate javac step
 cd java && ./run          # ./run.bat on Windows
+
+# Rust -- plain rustc; `make asm-demo` also builds module 8's NASM example (needs nasm)
+cd rust && make && ./rust-course
+
+# Arduino -- runs on the PC through a stand-in for the Arduino core (Linux, needs g++)
+cd arduino && make && ./arduino-course
+
+# MicroPython -- no build step; needs the `micropython` command (Linux)
+cd micropython/src && micropython main.py
 ```
 
 That's the whole thing for C and C++: one binary, copy it wherever you like.
