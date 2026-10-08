@@ -53,6 +53,7 @@ static const struct Module MODULES[] = {
     { "Debugging",                lesson_17_debugging,      "ADVANCED" },
     { "Real input/output",        lesson_18_file_io,        "ADVANCED" },
     { "Function pointers, callbacks, and macros", lesson_19_advanced, "ADVANCED" },
+    { "Inline assembly and NASM", lesson_20_assembly,  "ADVANCED" },
 };
 
 /* Number of elements in the array: the size of the whole array divided by

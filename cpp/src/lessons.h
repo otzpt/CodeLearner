@@ -19,5 +19,6 @@ void lesson09Classes();
 void lesson10Containers();
 void lesson11Templates();
 void lesson12Modern();
+void lesson13Assembly();
 
 #endif

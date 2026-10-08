@@ -36,5 +36,6 @@ void lesson_16_compilation(void);
 void lesson_17_debugging(void);
 void lesson_18_file_io(void);
 void lesson_19_advanced(void);
+void lesson_20_assembly(void);
 
 #endif

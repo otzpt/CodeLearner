@@ -39,6 +39,7 @@ int main() {
         {"Maps and sets", lesson10Containers, "ADVANCED"},
         {"Templates", lesson11Templates, "ADVANCED"},
         {"Modern C++ idioms", lesson12Modern, "ADVANCED"},
+        {"Inline assembly and NASM", lesson13Assembly, "ADVANCED"},
     };
 
     for (;;) {
