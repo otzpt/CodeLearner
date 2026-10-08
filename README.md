@@ -16,7 +16,7 @@ worked example code the student can open and read.
 | JavaScript | 14 — console.log() through modules and Node's own fs/process stdlib | [`javascript/`](javascript/) |
 | Java | 13 — System.out through the Collections Framework, generics, and concurrency | [`java/`](java/) |
 | C# | 14 — top-level statements through LINQ, async/await, and delegates/events | [`csharp/`](csharp/) |
-| Rust | 8: `println!` through ownership, borrowing, raw memory, and inline assembly with NASM | [`rust/`](rust/) |
+| Rust | 12: `println!` through ownership, borrowing, structs, enums, `Result`, volatile registers for the Pico, and inline assembly with NASM | [`rust/`](rust/) |
 | MicroPython | 11: for the Raspberry Pi Pico: pins, PWM/ADC, interrupts, native/viper, `asm_thumb`, a robot | [`micropython/`](micropython/) |
 | Arduino | 13: `setup()`/`loop()` through registers, interrupts, AVR inline assembly, a robot (runs on a PC) | [`arduino/`](arduino/) |
 | GUI (GTK) | 1 — your first window | [`gui/`](gui/) |
@@ -660,7 +660,7 @@ and time is simulated. AVR and Cortex-M0+ assembly is compiled
 (`avr-gcc`, `mpy-cross`) but never executed.
 
 Inline assembly and NASM also have a module in the C (module 20), C++
-(module 13) and Rust (module 8) courses. Those run for real on an x86-64
+(module 13) and Rust (module 12) courses. Those run for real on an x86-64
 Linux PC: the `asm` blocks are compiled into the course, and the NASM file in
 each course's `asm/` folder is built with `make asm-demo` and its output shown
 in the lesson.

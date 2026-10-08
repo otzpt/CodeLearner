@@ -12,7 +12,7 @@
 RUSTC      = rustc
 RUSTFLAGS  = --edition 2021
 TARGET     = rust-course
-SOURCES    = src/main.rs src/ui.rs src/lessons_basics.rs src/lessons_memory.rs src/lessons_advanced.rs
+SOURCES    = src/main.rs src/ui.rs src/lessons_basics.rs src/lessons_memory.rs src/lessons_data.rs src/lessons_hardware.rs src/lessons_advanced.rs hardware/regs.rs
 
 $(TARGET): $(SOURCES)
 	$(RUSTC) $(RUSTFLAGS) -o $@ src/main.rs

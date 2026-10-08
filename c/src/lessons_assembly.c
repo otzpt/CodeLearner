@@ -189,7 +189,7 @@ void lesson_20_assembly(void)
     puts("      its outputs look unused, or moved across other code.\n");
     puts("  And nothing checks the code itself. A wrong register name is an");
     puts("  assembler error; a wrong instruction that assembles is your bug.\n");
-    puts("  Compare with Rust (the Rust course, module 8): its asm! uses Intel");
+    puts("  Compare with Rust (the Rust course, module 12): its asm! uses Intel");
     puts("  syntax by default, names its operands, and states what it avoids");
     puts("  with options(nomem, nostack, pure). Same CPU, the opposite default.");
 

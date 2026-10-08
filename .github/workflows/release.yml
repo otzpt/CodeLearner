@@ -125,6 +125,8 @@ jobs:
           set -euo pipefail
           python3 rust/check-course.py
           python3 rust/check-solutions.py
+          rustup target add thumbv6m-none-eabi
+          python3 rust/check-embedded.py
           python3 arduino/check-solutions.py
           python3 tools/check-teaching-order.py
 

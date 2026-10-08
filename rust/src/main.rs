@@ -9,6 +9,8 @@
 
 mod lessons_advanced;
 mod lessons_basics;
+mod lessons_data;
+mod lessons_hardware;
 mod lessons_memory;
 mod ui;
 
@@ -21,7 +23,7 @@ struct Module {
     tier: &'static str,
 }
 
-const MODULES: [Module; 8] = [
+const MODULES: [Module; 12] = [
     Module { title: "Compiling and println!", run: lessons_basics::lesson_01_println, tier: "BASIC" },
     Module { title: "Variables and types", run: lessons_basics::lesson_02_variables, tier: "BASIC" },
     Module { title: "Control flow", run: lessons_basics::lesson_03_control_flow, tier: "BASIC" },
@@ -29,7 +31,11 @@ const MODULES: [Module; 8] = [
     Module { title: "Ownership", run: lessons_memory::lesson_05_ownership, tier: "INTERMEDIATE" },
     Module { title: "References and borrowing", run: lessons_memory::lesson_06_borrowing, tier: "INTERMEDIATE" },
     Module { title: "Memory: stack, heap, raw pointers", run: lessons_memory::lesson_07_memory, tier: "INTERMEDIATE" },
-    Module { title: "Inline assembly and NASM", run: lessons_advanced::lesson_08_assembly, tier: "ADVANCED" },
+    Module { title: "Structs and methods", run: lessons_data::lesson_08_structs, tier: "INTERMEDIATE" },
+    Module { title: "Enums, match and Option", run: lessons_data::lesson_09_enums, tier: "INTERMEDIATE" },
+    Module { title: "Result and the ? operator", run: lessons_data::lesson_10_results, tier: "INTERMEDIATE" },
+    Module { title: "Rust meets hardware", run: lessons_hardware::lesson_11_hardware, tier: "ADVANCED" },
+    Module { title: "Inline assembly and NASM", run: lessons_advanced::lesson_12_assembly, tier: "ADVANCED" },
 ];
 
 fn show_menu() {

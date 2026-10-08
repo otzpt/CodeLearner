@@ -1,4 +1,4 @@
-//! Module 8 - inline assembly and NASM.
+//! Module 12 - inline assembly and NASM.
 //!
 //! Everything here runs for real on this x86-64 PC: the asm! blocks are
 //! compiled into the course itself, and the NASM example is the real file
@@ -84,8 +84,8 @@ fn demo_memory() {
 #[cfg(not(target_arch = "x86_64"))]
 fn demo_memory() {}
 
-pub fn lesson_08_assembly() {
-    title("MODULE 8 - INLINE ASSEMBLY AND NASM");
+pub fn lesson_12_assembly() {
+    title("MODULE 12 - INLINE ASSEMBLY AND NASM");
 
     heading("PART 1: asm!, the CPU's own instructions inside Rust");
 
@@ -194,7 +194,7 @@ pub fn lesson_08_assembly() {
 
     wait_enter();
     clear_screen();
-    exercise(8);
+    exercise(12);
 
     question(
         "In the System V x86-64 ABI, which register holds the first integer\n  argument?",
@@ -237,7 +237,7 @@ pub fn lesson_08_assembly() {
     say("   - nothing checks a pointer or an unlisted clobber but you");
     say("   - NASM files link in through extern \"C\" and the System V ABI");
     println!();
-    say("  That is the course. The ROADMAP lists traits, Result/Option and");
-    say("  lifetimes as the next modules.");
+    say("  That is the course so far. The ROADMAP lists lifetimes, traits,");
+    say("  generics and async as the next modules.");
     wait_enter();
 }

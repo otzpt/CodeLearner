@@ -430,6 +430,6 @@ pub fn lesson_07_memory() {
     say("   - v[i] is bounds-checked and panics; .get(i) returns an Option");
     say("   - raw pointers are C's pointers; using one needs unsafe");
     println!();
-    say("  Module 8: writing the CPU's own instructions inside Rust.");
+    say("  Module 8: structs, to group values and give them methods.");
     wait_enter();
 }

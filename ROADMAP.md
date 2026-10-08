@@ -207,11 +207,12 @@ Each entry is a target arc, not a spec. Per the one rule above, each should
 be shaped by what actually matters in that language, not forced into the
 same module skeleton as C.
 
-- **Rust** (started): `rust/` has 8 modules (printing, variables, control
-  flow, functions, ownership, borrowing, memory, inline assembly and NASM).
-  Still to write: structs, lifetimes, traits, `Result`/`Option`, async,
-  projects. Ownership is the whole point of Rust; it has three modules and
-  deserves the weight module 9 (memory) gets in the C course.
+- **Rust** (started): `rust/` has 12 modules (printing, variables, control
+  flow, functions, ownership, borrowing, memory, structs, enums and
+  `Option`, `Result`, hardware registers and `no_std`, inline assembly and
+  NASM). Still to write: lifetimes, traits and generics, collections,
+  async, projects. Ownership is the whole point of Rust; it has three
+  modules and deserves the weight module 9 (memory) gets in the C course.
 - **TypeScript** — types → interfaces → generics → narrowing → advanced
   types → projects.
 - **Go** — structs → interfaces → concurrency → networking → CLI/backend
