@@ -4,7 +4,8 @@
 //! module 7 aimed at a chip. This PC has no registers to drive, so the demo
 //! runs against a struct in RAM; what is shown of the Raspberry Pi Pico's CPU
 //! is the assembly rustc really produces for it, read by check-embedded.py
-//! from a compile for thumbv6m-none-eabi. Compiled, not run.
+//! from a compile for thumbv6m-none-eabi, and executed by run-embedded.py on
+//! an emulated Cortex-M0+. An emulator, not a Pico.
 
 use crate::ui::{challenge, clear_screen, exercise, heading, question, say, title, wait_enter};
 use std::mem::offset_of;
@@ -125,6 +126,14 @@ pub fn lesson_11_hardware() {
     say("  the write. If its handler changes the same register, this code then");
     say("  writes back the old value and the handler's change is lost: the");
     say("  race of the Arduino and MicroPython interrupt modules.");
+    println!();
+    say("  This is observed, not argued. run-embedded.py executes these exact");
+    say("  instructions on an emulated Cortex-M0+, with an 'interrupt' that sets");
+    say("  another bit between the ldr and the str. The final value lacks that");
+    say("  bit: the handler's change was overwritten. It also counts the stores");
+    say("  that reach the register: one for the plain version, two for the");
+    say("  volatile one. An emulator models the instructions and their memory");
+    say("  accesses, not a Pico's peripherals or timing.");
 
     wait_enter();
     clear_screen();

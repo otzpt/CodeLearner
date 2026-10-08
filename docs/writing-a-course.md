@@ -247,6 +247,32 @@ arrow-function syntax `=>` is credited to module 6 for the identical reason
 arrow functions a named topic -- the check
 follows what a reader has actually seen, not which module "owns" a topic.
 
+## Courses for hardware
+
+A course runs in a terminal, so a course about a board has no board. Give it a
+small stand-in for the board's library (`arduino/shim/Arduino.h`,
+`micropython/src/sim.py`) so that the code in a lesson is the code the board
+would run. Keep three rules:
+
+- **Name the outside world.** Anything that plays the part of the world, such
+  as a button press, a voltage or time passing, gets a `sim_` / `sim.` name
+  and is called out as PC-only wherever a lesson uses it. Nothing with that
+  prefix is part of the real API.
+- **Say where the PC differs from the chip.** An `int` is 4 bytes on a PC and
+  2 on an Uno, a float is 64-bit on a PC and usually 32-bit on a board, and
+  time is simulated. Show the difference running; do not hide it.
+- **Do not claim what was not observed.** Code that cannot run on the PC
+  (AVR, Cortex-M0+) is compiled for its real target and the real compiler
+  output quoted. Where a simulator exists, execute it and read the results
+  back: `arduino/avr/run-avr.py` runs AVR code in simavr and
+  `rust/run-embedded.py` runs Thumb code in the Unicorn emulator. Where one
+  does not (`@micropython.asm_thumb`), say it was assembled, not executed.
+
+Each such course keeps its checks next to it: `check-course.py` (every module
+runs to its SUMMARY), `check-solutions.py` (every challenge solution builds
+clean and prints what its challenge promises, read straight from the lesson
+source) and the target-specific ones above.
+
 ## Verifying before committing
 
 For the C course:

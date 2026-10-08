@@ -3,8 +3,9 @@
 instructions module 11 quotes.
 
 The Pico's RP2040 has Arm Cortex-M0+ cores, which Rust calls the
-thumbv6m-none-eabi target. This cannot RUN that code on a PC; it compiles it
-and reads the assembly rustc produces, which is what the lesson shows.
+thumbv6m-none-eabi target. This compiles it and reads the assembly rustc
+produces, which is what the lesson shows. run-embedded.py then executes that
+code on an emulated Cortex-M0+.
 
     rustup target add thumbv6m-none-eabi     # once
     python3 check-embedded.py

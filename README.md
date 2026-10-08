@@ -657,7 +657,10 @@ runs in a terminal. Each ships a small stand-in for the board (`sim.py`,
 each lesson says where the PC differs from the chip: an `int` is 4 bytes here
 and 2 on an Uno, a float is 64-bit on the PC and usually 32-bit on a Pico,
 and time is simulated. AVR and Cortex-M0+ assembly is compiled
-(`avr-gcc`, `mpy-cross`) but never executed.
+(`avr-gcc`, `mpy-cross`, `rustc --target thumbv6m-none-eabi`). The AVR code is
+also executed on a simulated ATmega328P (`simavr`) and the Rust register code
+on an emulated Cortex-M0+ (Unicorn). MicroPython's `asm_thumb` listings are
+only assembled, never executed.
 
 Inline assembly and NASM also have a module in the C (module 20), C++
 (module 13) and Rust (module 12) courses. Those run for real on an x86-64

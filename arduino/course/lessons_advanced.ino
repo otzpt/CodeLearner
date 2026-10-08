@@ -358,6 +358,10 @@ void lesson_12_assembly()
     Serial.println("  The listings in this module were produced by the AVR");
     Serial.println("  compiler (avr-gcc 14.3, -mmcu=atmega328p -Os) from the files");
     Serial.println("  in avr/, and check-avr.py recompiles them to keep them true.");
+    Serial.println("  run-avr.py goes further: it EXECUTES them on a simulated");
+    Serial.println("  ATmega328P (simavr) and reads the results out of its memory,");
+    Serial.println("  so what the lesson says each one does is observed, not read");
+    Serial.println("  off the listing.");
     Serial.println();
     Serial.println("    void set_led(void) { PORTB |= (1 << 5); }");
     Serial.println();

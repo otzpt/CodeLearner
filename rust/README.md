@@ -31,6 +31,7 @@ Once built, module 12 runs `asm/use_asm` and prints its real output.
 python3 check-course.py       # every module runs to its SUMMARY, no panics
 python3 check-solutions.py    # every challenge solution builds warning-free and prints what it promises
 python3 check-embedded.py     # module 11's Thumb listings, compiled for the Pico's CPU
+python3 run-embedded.py       # the same code executed on an emulated Cortex-M0+ (Unicorn)
 python3 ../tools/check-teaching-order.py
 ```
 
@@ -41,4 +42,9 @@ running `rustc` (1.98.1) on the lines shown, not written from memory.
 thumbv6m-none-eabi`). It compiles `hardware/regs.rs` for the Raspberry Pi
 Pico's CPU and checks the instructions module 11 quotes, for example that two
 plain writes to one address keep a single store and two volatile writes keep
-both. The code is compiled, never run: there is no Pico or emulator here.
+both. That is the listing; `run-embedded.py` (needs `pip install unicorn
+pyelftools`) goes further and executes the same machine code on an emulated
+Cortex-M0+: it counts the stores that reach a fake register, and it injects an
+"interrupt" between `set_bit`'s read and write to show the handler's change
+being overwritten. An emulator is not a Pico: only the instructions and their
+memory accesses are modelled.

@@ -47,6 +47,10 @@ void lesson_07_analog()
     Serial.println(" mV the right way");
     Serial.println();
     Serial.println("  Fix: make one operand 32 bits before the multiplication.");
+    Serial.println();
+    Serial.println("  The PC only imitates the 16-bit wrap. The same two lines were");
+    Serial.println("  also built for the ATmega328P and run on a simulated one");
+    Serial.println("  (simavr, by avr/run-avr.py), which gave 3 and 5000.");
 
     wait_enter();
     clear_screen();
