@@ -6,12 +6,12 @@ past the existing C course's 19 modules. This file is the whole project:
 new languages, and what "done" looks like for the languages that already
 exist.
 
-Two courses outside the original five languages this file tracks have
-since been started -- see the README's own course tables, not this file,
-for their current state: **GUI (GTK)**, delivered in C since there is no
-separate "GTK language" to write a menu in; and **Assembly**, which is
-started below and whose own entry stays in this file since it was one of
-the "new languages" this roadmap already named.
+Courses outside the original five languages this file tracks have since
+been started -- see the README's own course tables, not this file, for their
+current state: **GUI (GTK)**, delivered in C since there is no separate "GTK
+language" to write a menu in; **Assembly**, **Rust**, **Arduino** and
+**MicroPython**, which have entries below; **Git**; and **Libraries**, which
+is a reference rather than a course (see below).
 
 ## The one rule everything else follows
 
@@ -82,11 +82,13 @@ why the ecosystem library exists), not silently working around it.
     `operator+`) shown by invoking `g++` live and printing its real error
     text, honestly gated on the compiler actually having run and failed
     the expected way rather than narrating any failure as if it were that.
-  - Module 12: modern C++ idioms — smart pointers (`unique_ptr`,
+  - Module 12, modern C++ idioms: built. Smart pointers (`unique_ptr`,
     `shared_ptr`) as the RAII idea from module 9 applied to dynamically
     allocated objects specifically, move semantics (`std::move`, why a
     copy is sometimes wasted work), `auto` and structured bindings beyond
     what module 2 already introduced.
+  - Module 13, inline assembly and `extern "C"`: built, added for the
+    microcontroller work.
   - Practical projects track, same shape as every other language here.
 - **Java**: OOP → collections → generics → concurrency → projects.
   - Module 11 — the Collections Framework: built. `List`/`Map`/`Set` as
@@ -201,18 +203,40 @@ every other course's Windows support is. The launcher reflects this:
 Assembly shows as unavailable on a Windows build, the same "coming soon"
 treatment as a language with no course yet, not a broken link.
 
+## Rust, Arduino and MicroPython: started
+
+Added for microcontroller work (a Raspberry Pi Pico or an Arduino board);
+the README's course tables have the module lists.
+
+- **Rust** (`rust/`, 12 modules): printing, variables, control flow,
+  functions, ownership, borrowing, memory, structs, enums and `Option`,
+  `Result`, hardware registers and `no_std`, inline assembly and NASM. Still
+  to write: lifetimes, traits and generics, collections, async, projects.
+  Ownership is the whole point of Rust; it has three modules and deserves
+  the weight module 9 (memory) gets in the C course.
+- **Arduino** (`arduino/`, 13 modules): `setup()`/`loop()` through registers,
+  interrupts and AVR inline assembly. It runs on a PC through a shim, so the
+  student needs no board; the course says where the PC differs.
+- **MicroPython** (`micropython/`, 11 modules): the Pico's pins, PWM/ADC,
+  interrupts, native/viper and `asm_thumb`, ending in a robot. A small
+  simulator stands in for `machine`.
+
+## Libraries: a reference, not a course
+
+[`libraries/`](libraries/) is a browser of pages for C and Python, one per
+job or per C header: what it is, the code, and the real output from running
+it on this machine. It exists to answer "which library, call or file gives
+me this" while building a system information tool, and has no lessons or
+exercises on purpose. The C track includes a reference page for each of 21
+headers (`stdio.h` to `termios.h`). Further languages are one folder of
+pages and a row in `TRACKS` in `libraries/src/main.c`.
+
 ## New languages — not started, no folders yet
 
 Each entry is a target arc, not a spec. Per the one rule above, each should
 be shaped by what actually matters in that language, not forced into the
 same module skeleton as C.
 
-- **Rust** (started): `rust/` has 12 modules (printing, variables, control
-  flow, functions, ownership, borrowing, memory, structs, enums and
-  `Option`, `Result`, hardware registers and `no_std`, inline assembly and
-  NASM). Still to write: lifetimes, traits and generics, collections,
-  async, projects. Ownership is the whole point of Rust; it has three
-  modules and deserves the weight module 9 (memory) gets in the C course.
 - **TypeScript** — types → interfaces → generics → narrowing → advanced
   types → projects.
 - **Go** — structs → interfaces → concurrency → networking → CLI/backend
@@ -282,4 +306,8 @@ should land in the same change so the two platforms do not drift.
 
 Filed as tracked issues rather than left in a file, since they're scoped
 enough to work individually: [issues #1-#14](https://github.com/otzpt/CodeLearner/issues).
-See `c/ROADMAP.md` for how they fit the existing course's path.
+See `c/ROADMAP.md` for how they fit the existing course's path. All 14 are
+still open. Two are partly answered since they were filed: the Libraries
+reference covers the headers named in #4 as reference pages (not as a course
+module), and C module 20 is the start of #7 (inline assembly and NASM, not yet
+reading compiled output).

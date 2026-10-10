@@ -1,6 +1,6 @@
 # Roadmap: past the course
 
-CodeLearner's C course (modules 1-19) covers a full 13-section target
+CodeLearner's C course (modules 1-20) covers a full 13-section target
 curriculum (fundamentals through advanced C). Sections 1-9 and 13 are
 built; section 10 (data structures) is started and continues past this
 course; sections 11 (algorithms) and 12 (practical C) are deliberately
@@ -10,7 +10,7 @@ beyond an interactive course. Nothing here is new course content; it's the
 map, kept in the repo so the next module isn't a mystery.
 
 Numbering rule: new modules are appended after the current last module
-(19) and tagged tier ADVANCED, regardless of how introductory their content
+(20) and tagged tier ADVANCED, regardless of how introductory their content
 actually is. This is a deliberate trade-off, not an oversight — see
 "Numbering vs. tiers" at the end of this file.
 
@@ -182,8 +182,9 @@ anything past module 9's memory model.
 `volatile`, `static` (file scope, not the keyword's other two meanings
 this course hasn't touched), `restrict`, alignment, and undefined
 behaviour as its own topic (distinct from the specific instances of UB
-already named throughout the course) are a plausible module 20, not
-designed here yet.
+already named throughout the course) are a plausible module 21, not
+designed here yet. (Module 20 became inline assembly and NASM, added for the
+microcontroller work; see "Assembly" below.)
 
 Atomics, threads, POSIX APIs, and sockets are genuinely beyond an
 interactive single-process CLI course — they need a real multi-process or
@@ -207,6 +208,11 @@ conventions, function calls, return values, memory addressing, syscalls.
 Then take a program you've already written for this course and read its
 compiled output (`gcc -S` or `objdump -d`). That's the payoff, not assembly
 for its own sake.
+
+Started: module 20 covers inline assembly (`__asm__` with operands and
+clobbers) and linking a NASM file into a C program. It only points at
+`gcc -S` in its summary, so reading your own compiled output as a skill is
+still open.
 
 ## Reading other people's C — beyond this course
 
