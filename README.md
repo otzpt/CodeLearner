@@ -1,10 +1,54 @@
 # CodeLearner
 
-Command-line programming courses, one per language. No browser, no account,
-no internet. Open a terminal, run the program, learn.
+Command-line programming courses, one per language: C, C++, Python,
+JavaScript, Java, C#, Rust, MicroPython, Arduino (on a PC, no board needed),
+Assembly, Git and a GTK window. No browser and no account. Everything runs
+offline except the Python and JavaScript modules that call a real web API and
+the update check, which only runs when you pick it.
 
 Each course is written **in the language it teaches**, so the source is itself
-worked example code the student can open and read.
+worked example code the student can open and read. Every exercise states the
+input to type and the output it must produce; a solution that produces them is
+correct however you wrote it.
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/otzpt/CodeLearner/main/install.sh | sh
+codelearner
+```
+
+That opens the launcher (this is its real output; Windows and the other
+install options are under [Installing](#installing)):
+
+```text
+  +======================================================+
+  |                  CODELEARNER                         |
+  +======================================================+
+  version 1.5.1
+
+   -- LANGUAGES --
+   [1]  C
+   [2]  C++
+   [3]  Python
+   [4]  JavaScript
+   [5]  Java
+   [6]  C#
+   [7]  GUI (GTK)
+   [8]  Assembly
+   [9]  Git
+   [10]  Arduino
+   [11]  Rust
+   [12]  MicroPython
+
+   -- LIBRARIES --
+   [13]  Libraries
+
+   [u]  Check for updates
+   [0]  Exit
+  ------------------------------------------------------
+```
+
+The Libraries entry is a reference, not a course: it shows the code for a
+library call and runs it, so you see the real output on your own machine.
 
 ## Status
 
@@ -354,7 +398,15 @@ C cannot know an argument count on its own; the classic
 both real numbers; and bit flags with `&`/`|`/`^`/`~`/`<<`/`>>`, set and
 cleared on a real byte, printed before and after.
 
-Modules 1-19 are stages 1-4 (started) of a longer path — more data
+Module 20 is inline assembly and NASM, added for microcontroller work. It
+compiles and runs real `__asm__` blocks on an x86-64 Linux PC (`mov`, `add`,
+`lea`, `movzbl`) and says so on any other CPU instead of pretending. It then
+covers what the programmer owes the compiler: outputs and inputs, clobbers,
+`volatile`, and an early-clobber output (`=&r`). The last part assembles a
+separate NASM file and links it into a C program. It only points at `gcc -S`;
+reading your own compiled output is still open.
+
+Modules 1-20 are stages 1-4 (started) of a longer path: more data
 structures and algorithms, real projects, POSIX, debugging tools, assembly,
 reading other people's C. [`c/ROADMAP.md`](c/ROADMAP.md) maps the rest of it
 and where each stage picks up.
@@ -811,6 +863,14 @@ region between the exercise and summary markers holds the call sequence that
 runs the exercise rather than the exercise itself, and a pattern there could
 only match dispatch boilerplate.
 
+The launcher's version parsing and release-tag reading have unit tests
+(`make -C launcher check`, 27 checks, run in CI on both platforms). The
+Libraries pages are checked by three scripts in `libraries/`:
+`check-pages.py` builds and runs every page (C with `-Wall -Wextra`) and
+requires a page for each of the 21 C headers, `check-browser.py` drives the
+browser and searches for each header by name, and `check-agreement.py`
+compares the C and Python mini fastfetch field by field.
+
 ## Layout
 
 ```
@@ -825,9 +885,12 @@ SECURITY.md                 what counts as a vulnerability here
 └── workflows/
     └── release.yml         builds + packages the launcher on a version tag
 launcher/
-├── Makefile
+├── Makefile                make, make VERSION=x.y.z, make check
+├── test_update.c           27 checks for the update helpers
 └── src/
-    └── main.c              pick a language, system() its binary, loop
+    ├── main.c              pick a language, system() its binary, loop,
+    │                        and [u] Check for updates
+    └── update.c  update.h  version parsing and the release tag, no I/O
 c/
 ├── Makefile
 └── src/
@@ -839,7 +902,8 @@ c/
     ├── lessons_advanced.c  modules 11-15
     ├── lessons_tooling.c   modules 16-17
     ├── lessons_io.c        module 18
-    └── lessons_lang_features.c  module 19
+    ├── lessons_lang_features.c  module 19
+    └── lessons_assembly.c  module 20
 gui/
 ├── Makefile
 └── src/
@@ -855,7 +919,8 @@ cpp/
     ├── ui.h  ui.cpp         screen, input, questions, challenges
     ├── lessons.h            one prototype per module
     ├── lessons_basics.cpp   modules 1-5
-    └── lessons_modern.cpp   modules 6-12
+    ├── lessons_modern.cpp   modules 6-12
+    └── lessons_assembly.cpp module 13
 python/
 └── src/
     ├── main.py              menu: a list of modules and a loop
@@ -889,6 +954,15 @@ csharp/
     ├── LessonsBasics.cs      modules 1-5
     ├── LessonsMore.cs        modules 6-10
     └── LessonsAdvanced.cs    modules 11-14
+assembly/                   x86-64 assembly course: src/ has main.s, ui.s, lessons_*.s
+git/                        Bash course: src/ has main.sh, ui.sh, lessons_*.sh
+rust/                       12 modules; check-course.py, check-embedded.py and
+                             run-embedded.py (the Pico's Thumb code, in an emulator)
+micropython/                11 modules; src/sim.py stands in for machine and time
+arduino/                    13 modules; shim/ stands in for the Arduino core,
+                             avr/ runs the AVR code in simavr
+libraries/                  the reference: src/main.c is the browser, c/ and
+                             python/ hold the pages (one file each)
 tools/
 └── check-teaching-order.py  fails if an exercise needs something not yet
                               taught, in any course
