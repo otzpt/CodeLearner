@@ -7,14 +7,44 @@
  * back" is just what a subprocess returning looks like. The launcher does
  * not need to know anything about what happens inside a course.
  *
+ * The one other thing it does is [u] Check for updates: when asked, one
+ * request to GitHub for the latest release, compared with the version this
+ * binary was built as. It never downloads or installs anything and never
+ * runs on its own.
+ *
  * Build:  make
  * Run:    ./launcher     (from inside this directory, so the relative
  *                          paths to ../c, ../cpp, ... resolve)
  */
 
+/* popen() is POSIX, and -std=c11 hides it unless asked. */
+#define _POSIX_C_SOURCE 200809L
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifndef _WIN32
+#include <sys/wait.h>
+#endif
+
+#include "update.h"
+
+/* The version this binary was built as. The release workflow passes the tag
+ * (make VERSION=1.5.1); a plain `make` is a development build. */
+#ifndef CODELEARNER_VERSION
+#define CODELEARNER_VERSION "dev"
+#endif
+
+#define RELEASES_API  "https://api.github.com/repos/otzpt/CodeLearner/releases/latest"
+#define RELEASES_PAGE "https://github.com/otzpt/CodeLearner/releases/latest"
+
+#ifdef _WIN32
+#define POPEN  _popen
+#define PCLOSE _pclose
+#else
+#define POPEN  popen
+#define PCLOSE pclose
+#endif
 
 /* One entry per language. `run_command` is NULL for a language with no
  * course yet -- shown as "coming soon" instead of being launchable. `path`
@@ -197,6 +227,112 @@ static int file_exists(const char *path)
     return 1;
 }
 
+/* Runs `command` through the shell and keeps the first size - 1 bytes of what
+ * it prints. The rest is read and dropped so the child never writes into a
+ * closed pipe. Returns pclose()'s status, or -1 if the shell did not start. */
+static int run_capture(const char *command, char *out, size_t size)
+{
+    FILE *pipe = POPEN(command, "r");
+    char chunk[512];
+    size_t used = 0;
+    size_t got;
+
+    out[0] = '\0';
+    if (pipe == NULL) {
+        return -1;
+    }
+    while ((got = fread(chunk, 1, sizeof chunk, pipe)) > 0) {
+        size_t room = size - 1 - used;
+        size_t take = got < room ? got : room;
+
+        memcpy(out + used, chunk, take);
+        used += take;
+    }
+    out[used] = '\0';
+    return PCLOSE(pipe);
+}
+
+static int exit_code(int status)
+{
+#ifdef _WIN32
+    return status;
+#else
+    return WIFEXITED(status) ? WEXITSTATUS(status) : -1;
+#endif
+}
+
+/* The first line of `text`, indented, cut to 100 characters. */
+static void print_first_line(const char *text)
+{
+    int length = (int)strcspn(text, "\r\n");
+
+    if (length > 100) {
+        length = 100;
+    }
+    if (length > 0) {
+        printf("  %.*s\n", length, text);
+    }
+}
+
+static void check_for_updates(void)
+{
+    static const char *const COMMANDS[] = {
+        "curl -fsS --max-time 10 -A \"CodeLearner/" CODELEARNER_VERSION "\" " RELEASES_API " 2>&1",
+#ifndef _WIN32
+        /* Some machines ship wget and not curl, which is why install.sh
+         * tries both. Only tried when the shell says curl is not there. */
+        "wget -qO- -T 10 -U \"CodeLearner/" CODELEARNER_VERSION "\" " RELEASES_API " 2>&1",
+#endif
+    };
+    /* SIMPLIFICATION: only the first 4 KB of GitHub's answer is kept. "tag_name"
+     * is about 1.5 KB in today; if GitHub ever moved it past 4 KB the check
+     * would report "no release tag" and this buffer is what to enlarge. */
+    char response[4096];
+    char tag[64];
+    int latest[3];
+    int current[3];
+    int status = -1;
+
+    printf("\n  Asking GitHub for the latest release...\n\n");
+    fflush(stdout);
+    for (size_t i = 0; i < sizeof COMMANDS / sizeof COMMANDS[0]; i++) {
+        status = exit_code(run_capture(COMMANDS[i], response, sizeof response));
+        if (status != 127) {   /* 127: the shell did not find the tool */
+            break;
+        }
+    }
+
+    if (status == 127) {
+        printf("  Could not check for updates: neither curl nor wget was found.\n");
+    } else if (status != 0) {
+        printf("  Could not check for updates (the request failed, status %d):\n", status);
+        print_first_line(response);
+    } else if (!release_tag_from_json(response, tag, sizeof tag)) {
+        printf("  Could not check for updates: GitHub's answer had no release tag.\n");
+    } else if (!version_parse(tag, latest)) {
+        printf("  Could not check for updates: the latest release is tagged \"%s\".\n", tag);
+    } else if (!version_parse(CODELEARNER_VERSION, current)) {
+        printf("  The latest release is %s.\n", tag);
+        printf("  This is a development build (version \"%s\"), so there is nothing to compare.\n",
+               CODELEARNER_VERSION);
+        return;
+    } else if (version_newer(latest, current)) {
+        printf("  A newer release is available: %s (you have v%s).\n\n", tag, CODELEARNER_VERSION);
+        printf("  Download it: %s\n", RELEASES_PAGE);
+        printf("  CodeLearner does not update itself. Reinstall the way you installed it\n");
+        printf("  (install.sh, the package, or the AppImage).\n");
+        return;
+    } else if (version_newer(current, latest)) {
+        printf("  You are running v%s, which is newer than the latest release (%s).\n",
+               CODELEARNER_VERSION, tag);
+        return;
+    } else {
+        printf("  You are up to date: v%s is the latest release.\n", CODELEARNER_VERSION);
+        return;
+    }
+    printf("\n  You can check by hand: %s\n", RELEASES_PAGE);
+}
+
 static void show_menu(void)
 {
     clear_screen();
@@ -204,6 +340,7 @@ static void show_menu(void)
     printf("  +======================================================+\n");
     printf("  |                  CODELEARNER                         |\n");
     printf("  +======================================================+\n");
+    printf("  version %s\n", CODELEARNER_VERSION);
     printf("\n");
 
     const char *shown_section = "";
@@ -220,7 +357,8 @@ static void show_menu(void)
             printf("   [%d]  %s (coming soon)\n", i + 1, LANGUAGES[i].name);
         }
     }
-    printf("\n   [0]  Exit\n");
+    printf("\n   [u]  Check for updates\n");
+    printf("   [0]  Exit\n");
     printf("  ------------------------------------------------------\n");
 }
 
@@ -238,6 +376,11 @@ int main(void)
         }
         if (strcmp(choice, "0") == 0) {
             break;
+        }
+        if (strcmp(choice, "u") == 0 || strcmp(choice, "U") == 0) {
+            check_for_updates();
+            wait_enter();
+            continue;
         }
 
         int n = atoi(choice);

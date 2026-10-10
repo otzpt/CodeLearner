@@ -79,7 +79,15 @@ jobs:
           make -C c CC=gcc
           make -C cpp CXX=g++
           make -C gui CC=gcc
-          make -C launcher CC=gcc
+          # The launcher shows this version and compares it with the latest
+          # release in "Check for updates". A tag v1.5.1 builds as 1.5.1 (and
+          # v1.5.1-ci1 as 1.5.1-ci1); anything else is a development build.
+          case "$GITHUB_REF" in
+            refs/tags/v*) version="${GITHUB_REF_NAME#v}" ;;
+            *)            version=dev ;;
+          esac
+          make -C launcher CC=gcc VERSION="$version"
+          make -C launcher CC=gcc VERSION="$version" check
 
       # Linux only, no CC override: assembly/'s Makefile calls `as`/`ld`
       # directly, and the course is raw Linux syscalls with no Windows
@@ -179,6 +187,15 @@ jobs:
           echo "$output" | grep -q "C COURSE" || { echo "::error::launcher did not reach the C course"; exit 1; }
           echo "$output" | grep -q "See you next time" || { echo "::error::launcher did not exit cleanly"; exit 1; }
 
+          # [u] Check for updates is reachable and returns to the menu. What it
+          # prints depends on the network and on GitHub's rate limit for shared
+          # runners, so any of its known outcomes passes; a crash or a hang
+          # does not. (The version comparison itself is covered by make check.)
+          output=$(printf 'u\n\n0\n' | timeout 30 ./launcher)
+          echo "$output" | grep -q "Check for updates" || { echo "::error::launcher menu has no Check for updates"; exit 1; }
+          echo "$output" | grep -qE "A newer release is available|You are up to date|newer than the latest release|development build|Could not check for updates" || { echo "::error::Check for updates printed no known outcome"; echo "$output"; exit 1; }
+          echo "$output" | grep -q "See you next time" || { echo "::error::launcher did not exit cleanly after Check for updates"; exit 1; }
+
           # C# separately: picks module 1, walks every WaitEnter/Question/
           # Challenge prompt in it (blank/"n" answers, same as the direct-
           # invocation verification in csharp/src's own history), confirms
@@ -217,6 +234,12 @@ jobs:
           $out = ("0`n" | & .\launcher.exe) -join "`n"
           if ($LASTEXITCODE -ne 0) { throw "launcher exited $LASTEXITCODE" }
           if ($out -notmatch "See you next time") { throw "launcher did not exit cleanly: $out" }
+          # [u] Check for updates: reachable, prints one of its known outcomes
+          # (the answer depends on the network), and returns to the menu.
+          $out = ("u`n`n0`n" | & .\launcher.exe) -join "`n"
+          if ($LASTEXITCODE -ne 0) { throw "launcher exited $LASTEXITCODE after Check for updates" }
+          if ($out -notmatch "A newer release is available|You are up to date|newer than the latest release|development build|Could not check for updates") { throw "Check for updates printed no known outcome: $out" }
+          if ($out -notmatch "See you next time") { throw "launcher did not exit cleanly after Check for updates: $out" }
 
       - name: Assemble the bundle
         shell: bash

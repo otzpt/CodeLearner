@@ -135,6 +135,20 @@ language's toolchain (see below). Want just one course, standalone, with no
 launcher and none of the others? See
 [`docs/building-a-single-course.md`](docs/building-a-single-course.md).
 
+### Updating
+
+CodeLearner does not update itself. The launcher shows its version under the
+title, and `[u] Check for updates` asks GitHub, once and only when you pick
+it, whether a newer release exists. It prints the release page and installs
+nothing. It needs `curl` (or `wget` on Linux). Like any web request it shows
+GitHub your IP address, and the request carries a `User-Agent` of
+`CodeLearner/<version>`; nothing else is sent.
+
+To update, reinstall the way you installed it: run `install.sh` again, or
+install the new package or AppImage. A launcher built from source with a
+plain `make` is a `dev` build: it can name the latest release but has nothing
+to compare it with.
+
 ## Running
 
 To build it yourself instead:
