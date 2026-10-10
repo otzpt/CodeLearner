@@ -277,30 +277,24 @@ same module skeleton as C.
 
 ## Packaging and distribution
 
-**A desktop entry, so the launcher appears in application menus.** Today
-`codelearner` is a terminal command and nothing else: rofi's `drun` mode,
-wofi, and every GNOME/KDE application menu read `.desktop` files, and this
-project installs none. `rofi -show run` finds it, because that mode searches
-PATH, but that is not where anyone looks for an application.
-
-One `.desktop` file already exists, written inline by the AppImage step in
-`.github/workflows/release.yml` and living only inside the AppImage, where
-nothing registers it with the system unless the user integrates the AppImage
-by hand. The work is to lift that file out into the repository as a real
-tracked file next to `assets/icon.png`, and install it from every path that
-installs anything: `install.sh` into `~/.local/share/applications`, the .deb
-and the Arch package into `/usr/share/applications`, with the AppImage step
-then copying the same file instead of printing its own copy. One definition,
-four consumers.
-
-`Terminal=true` is not optional in it. This is a TUI, and a launcher that
-starts it without a terminal runs the process headless with nothing visible
-on screen.
+**A desktop entry, so the launcher appears in application menus.** Done for
+Linux: `assets/com.otzpt.codelearner.desktop` is the one tracked definition
+(`Terminal=true`, because this is a TUI and a launcher that starts it without a
+terminal runs it headless with nothing on screen). The release bundle carries it
+and `install.sh` places it, with the icon, under `PREFIX/share/applications`
+and rewrites `Exec=` to the wrapper's full path; the `.deb` and the Arch
+package install it under `/usr/share`, and the AppImage uses the same file. CI
+validates it with `desktop-file-validate` and checks that the `.deb` and the
+Arch package contain the entry and the icon. `install.sh` was run against a
+fake release (prefix with a space in it, uninstall, and a release without the
+files). Not run against a real release yet: that needs the next release tag.
 
 Windows has the same gap for the same reason: `install.ps1` adds a PATH
 entry and no Start Menu shortcut. A `.lnk` in
-`%APPDATA%\Microsoft\Windows\Start Menu\Programs` is the counterpart, and it
-should land in the same change so the two platforms do not drift.
+`%APPDATA%\Microsoft\Windows\Start Menu\Programs` is the counterpart. Still
+open: `install.ps1` has never been run (see the README note) and nothing here
+can run PowerShell, so a shortcut written blind would be a second unverified
+change in an unverified script. It needs someone with a Windows machine.
 
 ## C-specific backlog
 

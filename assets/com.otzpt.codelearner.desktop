@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+Name=CodeLearner
+Comment=Command-line programming courses, one per language
+Exec=codelearner
+Icon=com.otzpt.codelearner
+# A terminal program: without this a menu launcher starts it with nothing
+# visible and the process runs headless.
+Terminal=true
+Categories=Education;ComputerScience;
+Keywords=programming;learn;courses;terminal;

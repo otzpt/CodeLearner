@@ -45,11 +45,14 @@ done
 SHARE_DIR="${PREFIX}/share/codelearner"
 BIN_DIR="${PREFIX}/bin"
 WRAPPER="${BIN_DIR}/codelearner"
+APP_ID="com.otzpt.codelearner"
+APPS_DIR="${PREFIX}/share/applications"
+ICON_DIR="${PREFIX}/share/icons/hicolor/512x512/apps"
 
 if [ "$ACTION" = "uninstall" ]; then
     rm -rf "$SHARE_DIR"
-    rm -f "$WRAPPER"
-    echo "Removed $SHARE_DIR and $WRAPPER"
+    rm -f "$WRAPPER" "$APPS_DIR/$APP_ID.desktop" "$ICON_DIR/$APP_ID.png"
+    echo "Removed $SHARE_DIR, $WRAPPER and the application menu entry"
     exit 0
 fi
 
@@ -122,6 +125,23 @@ cat > "$WRAPPER" <<EOF
 cd "$SHARE_DIR/launcher" && exec ./launcher
 EOF
 chmod +x "$WRAPPER"
+
+# An application menu entry, so CodeLearner can be started without a terminal
+# already open. Releases before this one do not carry the files, so it is
+# optional. Exec= is rewritten to the wrapper's full path (quoted, in case the
+# prefix has a space in it) because a desktop session does not always have
+# ~/.local/bin on its PATH. Written line by line instead of with sed, so no
+# character in the path needs escaping.
+if [ -f "$SHARE_DIR/desktop/$APP_ID.desktop" ]; then
+    mkdir -p "$APPS_DIR" "$ICON_DIR"
+    while IFS= read -r line || [ -n "$line" ]; do
+        case "$line" in
+            Exec=*) printf 'Exec="%s"\n' "$WRAPPER" ;;
+            *)      printf '%s\n' "$line" ;;
+        esac
+    done < "$SHARE_DIR/desktop/$APP_ID.desktop" > "$APPS_DIR/$APP_ID.desktop"
+    cp "$SHARE_DIR/desktop/$APP_ID.png" "$ICON_DIR/$APP_ID.png"
+fi
 
 echo
 echo "Installed to $SHARE_DIR"

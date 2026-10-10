@@ -123,8 +123,10 @@ curl -fsSL https://raw.githubusercontent.com/otzpt/CodeLearner/main/install.sh |
 `wget -qO- <same URL> | sh` works identically if curl isn't installed. It
 asks no package manager anything, which is what makes it distribution-
 agnostic: it unpacks the release tarball into `~/.local/share/codelearner`
-and writes a wrapper to `~/.local/bin/codelearner`. Pass `--prefix DIR` to
-put it elsewhere, or `--uninstall` to remove it.
+and writes a wrapper to `~/.local/bin/codelearner`. It also adds a
+CodeLearner entry (with the icon) to your application menu, which opens a
+terminal; the `.deb`, the Arch package and the AppImage do the same. Pass
+`--prefix DIR` to put everything elsewhere, or `--uninstall` to remove it.
 
 Windows:
 

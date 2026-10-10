@@ -298,6 +298,12 @@ jobs:
             cp libraries/c/* "$out/libraries/c/"
             cp libraries/python/* "$out/libraries/python/"
             chmod +x "$out/libraries/libraries"
+            # The application menu entry and its icon, for install.sh to place
+            # (the .deb, the Arch package and the AppImage install them
+            # themselves). One tracked file, assets/com.otzpt.codelearner.desktop.
+            mkdir -p "$out/desktop"
+            cp assets/com.otzpt.codelearner.desktop "$out/desktop/"
+            cp assets/icon.png "$out/desktop/com.otzpt.codelearner.png"
             # The assembly modules in C, C++ and Rust read these from next to
             # their own binary: the NASM source, and the demo built above.
             for course in c cpp rust; do
@@ -360,6 +366,13 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "standalone C# binary exited $LASTEXITCODE" }
           if ($out -notmatch "See you next time") { throw "standalone C# binary did not exit cleanly: $out" }
 
+      - name: Check the desktop entry (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          set -euo pipefail
+          command -v desktop-file-validate >/dev/null || sudo apt-get install -y desktop-file-utils
+          desktop-file-validate assets/com.otzpt.codelearner.desktop
+
       - name: Package Linux (.deb)
         if: runner.os == 'Linux'
         run: |
@@ -375,6 +388,11 @@ jobs:
           mkdir -p "$pkg/DEBIAN" "$pkg/usr/bin" "$pkg/opt/codelearner"
           cp -r codelearner-linux-x86_64/* "$pkg/opt/codelearner/"
           rm -f "$pkg/opt/codelearner/codelearner.sh"
+          # The menu entry and icon go where desktops look; the copy in the
+          # bundle is only for install.sh.
+          rm -rf "$pkg/opt/codelearner/desktop"
+          install -Dm644 assets/com.otzpt.codelearner.desktop "$pkg/usr/share/applications/com.otzpt.codelearner.desktop"
+          install -Dm644 assets/icon.png "$pkg/usr/share/icons/hicolor/512x512/apps/com.otzpt.codelearner.png"
           cat > "$pkg/usr/bin/codelearner" <<'EOF'
           #!/bin/sh
           cd /opt/codelearner/launcher && exec ./launcher
@@ -394,6 +412,10 @@ jobs:
            course itself. Assembly is Linux/x86-64 only.
           EOF
           dpkg-deb --build --root-owner-group "$pkg" "codelearner-amd64.deb"
+          # The package must actually carry the menu entry and its icon.
+          listing="$(dpkg-deb -c codelearner-amd64.deb)"
+          echo "$listing" | grep -q ' ./usr/share/applications/com.otzpt.codelearner.desktop$' || { echo "::error::the .deb has no desktop entry"; exit 1; }
+          echo "$listing" | grep -q ' ./usr/share/icons/hicolor/512x512/apps/com.otzpt.codelearner.png$' || { echo "::error::the .deb has no icon"; exit 1; }
 
       - name: Package Linux (Arch .pkg.tar.zst)
         if: runner.os == 'Linux'
@@ -456,6 +478,8 @@ jobs:
             done
             install -Dm644 "\$startdir/payload/README.md" "\$pkgdir/opt/codelearner/README.md"
             install -Dm644 "\$startdir/payload/LICENSE" "\$pkgdir/opt/codelearner/LICENSE"
+            install -Dm644 "\$startdir/payload/desktop/com.otzpt.codelearner.desktop" "\$pkgdir/usr/share/applications/com.otzpt.codelearner.desktop"
+            install -Dm644 "\$startdir/payload/desktop/com.otzpt.codelearner.png" "\$pkgdir/usr/share/icons/hicolor/512x512/apps/com.otzpt.codelearner.png"
             mkdir -p "\$pkgdir/usr/bin"
             cat > "\$pkgdir/usr/bin/codelearner" <<'WRAPPER'
           #!/bin/sh
@@ -468,6 +492,9 @@ jobs:
             useradd -m builder && chown -R builder /pkg &&
             sudo -u builder makepkg -f --noconfirm --nodeps'
           cp codelearner-*.pkg.tar.zst "$GITHUB_WORKSPACE/codelearner-x86_64.pkg.tar.zst"
+          listing="$(zstd -dc "$GITHUB_WORKSPACE/codelearner-x86_64.pkg.tar.zst" | tar -t)"
+          echo "$listing" | grep -q 'usr/share/applications/com.otzpt.codelearner.desktop$' || { echo "::error::the Arch package has no desktop entry"; exit 1; }
+          echo "$listing" | grep -q 'usr/share/icons/hicolor/512x512/apps/com.otzpt.codelearner.png$' || { echo "::error::the Arch package has no icon"; exit 1; }
 
       - name: Package Linux (AppImage)
         if: runner.os == 'Linux'
@@ -480,19 +507,10 @@ jobs:
           rm -f "$APPDIR/opt/codelearner.sh"
           cp assets/icon.png "$APPDIR/$appid.png"
           cp assets/icon.png "$APPDIR/usr/share/icons/hicolor/512x512/apps/$appid.png"
-          # Terminal=true: this is a CLI program, not a windowed one -- the
-          # desktop entry has to say so, or a launcher that double-clicks it
-          # opens nothing visible while the process runs headless.
-          cat > "$APPDIR/$appid.desktop" <<EOF
-          [Desktop Entry]
-          Name=CodeLearner
-          Comment=Command-line programming courses, one per language
-          Exec=codelearner
-          Icon=$appid
-          Type=Application
-          Categories=Development;Education;
-          Terminal=true
-          EOF
+          # The same desktop entry the other packages install; see the file
+          # for why it says Terminal=true.
+          cp "assets/$appid.desktop" "$APPDIR/$appid.desktop"
+          rm -rf "$APPDIR/opt/desktop"
           cat > "$APPDIR/AppRun" <<'EOF'
           #!/bin/sh
           HERE="$(dirname "$(readlink -f "$0")")"
