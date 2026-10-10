@@ -43,6 +43,10 @@ struct Language {
     const char *name;
     const char *path;
     const char *run_command;
+    /* The tab of the menu this entry is listed under ("LANGUAGES",
+     * "LIBRARIES"). Left out (NULL), an entry is a language. A heading is
+     * printed whenever the tab changes, so a new tab is one field on its row. */
+    const char *section;
 };
 
 #ifdef _WIN32
@@ -67,41 +71,42 @@ struct Language {
 #define ARDUINO_BIN "../arduino/arduino-course"
 #define MICROPY_PATH "../micropython/src/main.py"
 #define RUST_BIN   "../rust/rust-course"
+#define LIBRARIES_BIN "../libraries/libraries"
 #endif
 
 static const struct Language LANGUAGES[] = {
-    { "C",          C_BIN,    C_BIN },
-    { "C++",        CPP_BIN,  CPP_BIN },
+    { "C",          C_BIN,    C_BIN, NULL },
+    { "C++",        CPP_BIN,  CPP_BIN, NULL },
 #ifdef _WIN32
     /* On Linux these two are unchanged: a shebang line plus the execute bit
      * (chmod +x) already picks the right interpreter, the same guarantee
      * PATH gives here, so there is nothing to make explicit. */
-    { "Python",     PY_PATH,  "python " PY_PATH },
-    { "JavaScript", JS_PATH,  "node " JS_PATH },
+    { "Python",     PY_PATH,  "python " PY_PATH, NULL },
+    { "JavaScript", JS_PATH,  "node " JS_PATH, NULL },
 #else
-    { "Python",     PY_PATH,  PY_PATH },
-    { "JavaScript", JS_PATH,  JS_PATH },
+    { "Python",     PY_PATH,  PY_PATH, NULL },
+    { "JavaScript", JS_PATH,  JS_PATH, NULL },
 #endif
-    { "Java",       JAVA_BIN, JAVA_BIN },
+    { "Java",       JAVA_BIN, JAVA_BIN, NULL },
     /* Same wrapper story as Java: `dotnet run` has to run from inside the
      * project directory, so this cannot point straight at a .cs file the
      * way Python's/JavaScript's entries do. Cross-platform via `dotnet`
      * itself, so unlike Python/JavaScript there's no Windows-vs-Linux
      * split to make explicit here -- the run/run.bat wrapper covers it. */
-    { "C#",         CSHARP_BIN, CSHARP_BIN },
+    { "C#",         CSHARP_BIN, CSHARP_BIN, NULL },
     /* Not a language -- GTK, a C library -- but treated as a peer entry
      * here on purpose, the same way it gets its own top-level course
      * directory instead of living inside c/'s module list. */
-    { "GUI (GTK)",  GUI_BIN,  GUI_BIN },
+    { "GUI (GTK)",  GUI_BIN,  GUI_BIN, NULL },
 #ifdef _WIN32
     /* Genuinely not "coming soon later" the way an unbuilt language is --
      * this course makes raw Linux syscalls directly (syscall + Linux
      * syscall numbers), which have no Windows equivalent to translate to.
      * A Windows build would need its own real implementation against a
      * completely different ABI, not a path change. */
-    { "Assembly",   NULL, NULL },
+    { "Assembly",   NULL, NULL, NULL },
 #else
-    { "Assembly",   ASM_BIN, ASM_BIN },
+    { "Assembly",   ASM_BIN, ASM_BIN, NULL },
 #endif
 #ifdef _WIN32
     /* Same reasoning as Python/JavaScript's own installer story, the
@@ -110,27 +115,35 @@ static const struct Language LANGUAGES[] = {
      * comment above this struct. Bash has no equivalent guaranteed
      * install on a stock Windows machine -- Git for Windows and WSL both
      * ship one, but neither is assumed here the way a JDK is for Java. */
-    { "Git",        NULL, NULL },
+    { "Git",        NULL, NULL, NULL },
 #else
-    { "Git",        GIT_PATH, GIT_PATH },
+    { "Git",        GIT_PATH, GIT_PATH, NULL },
 #endif
 #ifdef _WIN32
     /* arduino/shim/Arduino.h reads Serial input with poll() and read() from
      * <poll.h>/<unistd.h>, which Windows does not have. Not a path change:
      * the stand-in for the Arduino core would need a Windows port. */
-    { "Arduino",    NULL, NULL },
+    { "Arduino",    NULL, NULL, NULL },
 #else
-    { "Arduino",    ARDUINO_BIN, ARDUINO_BIN },
+    { "Arduino",    ARDUINO_BIN, ARDUINO_BIN, NULL },
 #endif
-    { "Rust",       RUST_BIN, RUST_BIN },
+    { "Rust",       RUST_BIN, RUST_BIN, NULL },
 #ifdef _WIN32
     /* The course runs on the unix port of MicroPython, which is not shipped
      * for Windows (and has no shebang story there either). */
-    { "MicroPython", NULL, NULL },
+    { "MicroPython", NULL, NULL, NULL },
 #else
     /* A script with a `#!/usr/bin/env micropython` shebang, like Python's
      * and JavaScript's entries: no build step, needs `micropython` on PATH. */
-    { "MicroPython", MICROPY_PATH, MICROPY_PATH },
+    { "MicroPython", MICROPY_PATH, MICROPY_PATH, NULL },
+#endif
+#ifdef _WIN32
+    /* Not a course: a reference to the libraries behind a task (and, for C and
+     * Python, everything a system-information tool such as fastfetch needs).
+     * Its pages read /proc and /sys, which Windows does not have. */
+    { "Libraries",  NULL, NULL, "LIBRARIES" },
+#else
+    { "Libraries",  LIBRARIES_BIN, LIBRARIES_BIN, "LIBRARIES" },
 #endif
 };
 
@@ -193,7 +206,14 @@ static void show_menu(void)
     printf("  +======================================================+\n");
     printf("\n");
 
+    const char *shown_section = "";
     for (int i = 0; i < LANGUAGE_COUNT; i++) {
+        const char *section = LANGUAGES[i].section != NULL ? LANGUAGES[i].section : "LANGUAGES";
+
+        if (strcmp(section, shown_section) != 0) {
+            printf("%s   -- %s --\n", shown_section[0] != '\0' ? "\n" : "", section);
+            shown_section = section;
+        }
         if (LANGUAGES[i].run_command != NULL) {
             printf("   [%d]  %s\n", i + 1, LANGUAGES[i].name);
         } else {
@@ -210,7 +230,7 @@ int main(void)
 
     for (;;) {
         show_menu();
-        printf("\n  Pick a language: ");
+        printf("\n  Pick an entry: ");
         fflush(stdout);
 
         if (!read_line(choice, sizeof choice)) {

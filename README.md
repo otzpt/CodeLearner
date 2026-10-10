@@ -20,6 +20,7 @@ worked example code the student can open and read.
 | MicroPython | 11: for the Raspberry Pi Pico: pins, PWM/ADC, interrupts, native/viper, `asm_thumb`, a robot | [`micropython/`](micropython/) |
 | Arduino | 13: `setup()`/`loop()` through registers, interrupts, AVR inline assembly, a robot (runs on a PC) | [`arduino/`](arduino/) |
 | GUI (GTK) | 1 — your first window | [`gui/`](gui/) |
+| Libraries | a reference, not a course: C and Python pages with the code and its real output, from the standard library to everything a fastfetch needs | [`libraries/`](libraries/) |
 | Assembly | 4 — registers and syscalls, branching, loops, and a guessing game | [`assembly/`](assembly/) |
 | Git | 10 — what is git through GitHub Actions | [`git/`](git/) |
 | Launcher | done — pick a language, open its course | [`launcher/`](launcher/) |
@@ -667,6 +668,18 @@ Inline assembly and NASM also have a module in the C (module 20), C++
 Linux PC: the `asm` blocks are compiled into the course, and the NASM file in
 each course's `asm/` folder is built with `make asm-demo` and its output shown
 in the lesson.
+
+## The Libraries reference
+
+The launcher has a second tab, **LIBRARIES**, below the languages. It is a wiki,
+not a course: pick C or Python, then a page. Each page names the header or
+module for one job, shows the code, and runs it on your machine. The pages
+cover the basics of both standard libraries and, in the second half, everything
+a system-information tool such as fastfetch is made of (OS, kernel, CPU, GPU,
+memory, disk, uptime, packages, desktop, monitors, network, battery, terminal
+size, colours, layout), ending in a complete mini fastfetch in each language.
+See [`libraries/README.md`](libraries/README.md) for how a page is written and
+how it was verified.
 
 ## Design rules
 

@@ -1,0 +1,56 @@
+TITLE: Overview: where every fastfetch field comes from
+GROUP: Start here
+USES: the pages under System information, Terminal and Putting it together
+SUMMARY: A system-information tool is a list of small readers. Each field below
+  has one best source on Linux. The pages after this one show the code for
+  each, and the last page puts them all in one program.
+NOTES:
+  - Prefer, in this order: the standard library (os.uname, shutil, platform,
+    socket), then a file in /proc or /sys, then an environment variable, and
+    only then another program (subprocess) or a third-party package.
+  - Everything here is Linux. macOS and Windows have other sources, which is
+    what the third-party psutil package hides behind one API.
+  - A field may be missing: no battery on a desktop, no DMI in a container, no
+    cpufreq in a virtual machine. A good tool omits the line.
+  - Try each source by hand before coding it: the commands at the bottom.
+SEE: pydoc os, pydoc platform, man 5 proc, man 5 sysfs, man 5 os-release
+---
+  Field          Where it comes from                         Page
+  -------------  ------------------------------------------  ----------------
+  OS             platform.freedesktop_os_release()           Operating system
+  Host           /sys/devices/virtual/dmi/id/product_name    Machine model
+  Kernel         os.uname().release                          Kernel, hostname
+  Hostname       os.uname().nodename, socket.gethostname()   Kernel, hostname
+  User, Shell    pwd.getpwuid(), os.environ["SHELL"]         User, home, shell
+  Uptime         time.clock_gettime(CLOCK_BOOTTIME)          Uptime and load
+  Packages       dpkg status, /var/lib/pacman/local, ...     Packages
+  Terminal       walk the parent processes in /proc          Shell and terminal
+  Desktop / WM   os.environ, Wayland socket owner (SO_PEERCRED)  Desktop, session
+  Display        /sys/class/drm/card*-*/{status,modes}       Monitors
+  CPU            /proc/cpuinfo, os.cpu_count(), cpufreq      CPU
+  GPU            /sys/class/drm/card*/device + pci.ids       Graphics card
+  Memory, Swap   /proc/meminfo (MemAvailable)                Memory and swap
+  Disk           shutil.disk_usage(), /proc/self/mounts      Disk usage
+  Local IP       socket.if_nameindex() + ioctl, /proc/net/route  Network
+  Battery        /sys/class/power_supply/BAT*                Battery
+  Locale         locale.setlocale(), sys.stdout.encoding     Language, locale
+  Layout         shutil.get_terminal_size(), ANSI, unicodedata  Terminal pages
+
+  Python modules used (all standard library):
+    os, sys, platform, socket, shutil, pwd, getpass, time, locale, struct,
+    fcntl, termios, pathlib, re, itertools, unicodedata, subprocess
+
+  Third-party packages worth knowing:
+    psutil      cpu, memory, disks, network, battery, sensors, on every OS
+    distro      distribution name and version (pre-3.10 replacement)
+    wcwidth     how many columns a character takes
+    pyudev      hardware devices through udev
+    python-xlib talk to an X11 server (window manager, screens)
+
+  Try the source by hand first:
+    cat /etc/os-release              uname -a              hostnamectl
+    cat /proc/cpuinfo | head -30     cat /proc/meminfo     cat /proc/uptime
+    ls /sys/class/drm                ls /sys/class/power_supply
+    cat /sys/devices/virtual/dmi/id/product_name
+    lspci -k | grep -A3 VGA          ip -br addr           findmnt
+    echo $XDG_CURRENT_DESKTOP $XDG_SESSION_TYPE

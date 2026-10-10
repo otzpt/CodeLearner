@@ -1,0 +1,48 @@
+TITLE: C headers at a glance (standard C, POSIX, Linux)
+GROUP: Start here
+USES: the pages named "<header>.h: ..." in this list
+SUMMARY: One line per header: where it comes from, what it is for, and which
+  page documents it. The header pages say what each provides, the return
+  values and errors, the pitfalls, and how a system-information tool such as
+  VoidFetch uses it.
+NOTES:
+  - Standard C (ISO C) is the same everywhere a C compiler exists. POSIX is the
+    Unix standard: Linux, macOS and the BSDs have it, Windows does not. Linux-
+    specific means this kernel and glibc only: sysinfo, the /proc and /sys
+    files, CLOCK_BOOTTIME.
+  - Compile with  cc -std=gnu11 -Wall -Wextra page.c  (the browser does). With
+    a strict  -std=c11  the POSIX names are hidden unless you put
+    #define _POSIX_C_SOURCE 200809L before the first include.
+  - libc is linked automatically. Only math.h needs  -lm  (a page's LIBS line).
+  - Where a call can fail, the page shows how: the return value to test and
+    the errno to read (see errno.h).
+SEE: man 7 feature_test_macros, man 7 libc
+---
+  Header            Comes from         Page                                  Use it for
+  ----------------  -----------------  ------------------------------------  ---------------------------
+  stdio.h           standard C         stdio.h: streams, files ...           reading /proc, snprintf
+  stdlib.h          standard C         stdlib.h: conversion, memory ...      strtol, realloc, getenv
+  string.h          standard C         string.h: lengths, comparing ...      splitting lines, memcpy
+  stdbool.h         standard C (C99)   stdbool.h: bool, true and false       "this field exists" flags
+  stdint.h          standard C (C99)   stdint.h and inttypes.h: ...          uint64_t byte counts
+  ctype.h           standard C         ctype.h: classifying ...              trimming, hex digits
+  time.h            standard C + POSIX time.h: now, dates, durations ...     uptime, boot time
+  errno.h           standard C + POSIX errno.h: error codes and messages     "not available here"
+  limits.h          standard C + POSIX limits.h: type limits ...             PATH_MAX, HOST_NAME_MAX
+
+  unistd.h          POSIX              unistd.h: process ids, limits ...     hostname, sysconf, readlink
+  sys/utsname.h     POSIX              sys/utsname.h: kernel ...             kernel, architecture
+  pwd.h             POSIX              pwd.h: user name, home ...            user, home, login shell
+  sys/types.h       POSIX              sys/types.h: pid_t, uid_t ...         the types the calls return
+  sys/stat.h        POSIX              sys/stat.h: file type, size ...       exists? directory? symlink?
+  sys/statvfs.h     POSIX              sys/statvfs.h: disk usage ...         the Disk line
+  dirent.h          POSIX              dirent.h: listing a directory         package counts, interfaces
+  sys/sysinfo.h     Linux only         sys/sysinfo.h: uptime, load ...       RAM total, uptime, load
+
+  signal.h          standard C + POSIX signal.h: handling signals            Ctrl-C, resize, SIGPIPE
+  fcntl.h           POSIX              fcntl.h: open() and descriptor flags  /dev/tty, O_CLOEXEC
+  sys/ioctl.h       Unix, Linux codes  sys/ioctl.h: device control requests  terminal size, MAC address
+  termios.h         POSIX              termios.h: terminal modes             raw keys, echo off
+
+  Other headers used by the pages: dirent.h, ifaddrs.h and arpa/inet.h (network),
+  locale.h and langinfo.h (language), wchar.h (text width), math.h (maths).

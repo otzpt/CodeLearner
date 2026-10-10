@@ -1,0 +1,53 @@
+TITLE: Overview: where every fastfetch field comes from
+GROUP: Start here
+USES: the pages under System information, Terminal and Putting it together
+SUMMARY: A system-information tool is a list of small readers. Each field below
+  has one best source on Linux. The pages after this one show the code for
+  each, and the last page puts them all in one program.
+NOTES:
+  - Prefer, in this order: a system call or libc function (uname, sysinfo,
+    statvfs, getifaddrs), then a file in /proc or /sys, then an environment
+    variable, and only then a library or another program.
+  - Everything here is Linux. macOS and the BSDs use different calls
+    (sysctl, getifaddrs works, but /proc and /sys do not exist).
+  - A field may be missing: no battery on a desktop, no DMI in a container, no
+    cpufreq in a virtual machine. A good tool omits the line.
+  - Try each source by hand before coding it: the commands at the bottom.
+SEE: man 5 proc, man 5 sysfs, man 5 os-release
+---
+  Field          Where it comes from                         Page
+  -------------  ------------------------------------------  ----------------
+  OS             /etc/os-release  PRETTY_NAME                Operating system
+  Host           /sys/devices/virtual/dmi/id/product_name    Machine model
+  Kernel         uname()  release                            Kernel, hostname
+  Hostname       uname()  nodename, gethostname()            Kernel, hostname
+  User, Shell    getpwuid_r(), $SHELL                        User, home, shell
+  Uptime         clock_gettime(CLOCK_BOOTTIME), /proc/uptime Uptime and load
+  Packages       dpkg status, /var/lib/pacman/local, ...     Packages
+  Terminal       walk the parent processes in /proc          Shell and terminal
+  Desktop / WM   $XDG_CURRENT_DESKTOP, Wayland socket owner  Desktop, session
+  Display        /sys/class/drm/card*-*/{status,modes}       Monitors
+  CPU            /proc/cpuinfo, sysconf, cpufreq in /sys     CPU
+  GPU            /sys/class/drm/card*/device + pci.ids       Graphics card
+  Memory, Swap   /proc/meminfo (MemAvailable)                Memory and swap
+  Disk           statvfs(), /proc/self/mounts                Disk usage
+  Local IP       getifaddrs(), /proc/net/route               Network
+  Battery        /sys/class/power_supply/BAT*                Battery
+  Locale         setlocale(), nl_langinfo(CODESET)           Language, locale
+  Layout         ioctl(TIOCGWINSZ), ANSI codes, wcwidth      Terminal pages
+
+  Libraries that exist for the jobs where files are not enough:
+    libpci (pciutils)       PCI devices and their names, instead of pci.ids
+    libdrm                  the display mode actually in use
+    libwayland-client       outputs and their sizes under Wayland
+    xcb / Xlib + XRandR     the window manager and outputs under X11
+    sqlite3, librpm         the package database of Fedora and openSUSE
+    libdbus / sd-bus        ask systemd or other services for information
+
+  Try the source by hand first:
+    cat /etc/os-release              uname -a              hostnamectl
+    cat /proc/cpuinfo | head -30     cat /proc/meminfo     cat /proc/uptime
+    ls /sys/class/drm                ls /sys/class/power_supply
+    cat /sys/devices/virtual/dmi/id/product_name
+    lspci -k | grep -A3 VGA          ip -br addr           findmnt
+    echo $XDG_CURRENT_DESKTOP $XDG_SESSION_TYPE

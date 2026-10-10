@@ -12,6 +12,7 @@ rust/asm/add.o
 rust/asm/use_asm
 c/asm/use_asm
 cpp/asm/use_asm
+libraries/libraries
 launcher/launcher
 csharp/src/bin/
 csharp/src/obj/
