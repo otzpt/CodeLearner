@@ -12,8 +12,9 @@ own:
         vm.wait_for_screen("Hello")
         print(vm.screen_text())
 
-Needs qemu-system-x86_64. Talks to it through QMP on a loopback TCP port, so
-nothing is written outside a temporary folder.
+Needs qemu-system-x86_64. Talks to it through QMP on a UNIX socket inside a
+private (mode 0700) temporary folder, so no other user on the machine can
+connect to the emulator, and nothing is written outside that folder.
 """
 
 import json
@@ -30,21 +31,26 @@ def qemu_available():
     return shutil.which("qemu-system-x86_64") is not None
 
 
-def free_port():
-    with socket.socket() as s:
-        s.bind(("127.0.0.1", 0))
-        return s.getsockname()[1]
+def private_dir():
+    """A new directory only this user can enter (mkdtemp creates it 0700).
+
+    A UNIX socket path must fit in about 108 bytes, and TMPDIR can be long, so
+    a long one falls back to /tmp."""
+    base = tempfile.gettempdir()
+    if len(base) > 60:
+        base = "/tmp"
+    return tempfile.mkdtemp(prefix="asmcourse-", dir=base)
 
 
 class Vm:
     def __init__(self, image, drive_args=None, extra=None, serial=True):
         self.image = image
-        self.tmp = tempfile.mkdtemp(prefix="asmcourse-")
+        self.tmp = private_dir()
         self.serial_path = os.path.join(self.tmp, "serial.txt")
         self.log_path = os.path.join(self.tmp, "qemu.log")
-        port = free_port()
+        qmp_path = os.path.join(self.tmp, "qmp.sock")
         args = ["qemu-system-x86_64", "-display", "none", "-no-reboot",
-                "-qmp", "tcp:127.0.0.1:%d,server,nowait" % port]
+                "-qmp", "unix:%s,server=on,wait=off" % qmp_path]
         args += drive_args or ["-drive", "format=raw,file=" + image]
         if serial:
             args += ["-serial", "file:" + self.serial_path]
@@ -52,13 +58,18 @@ class Vm:
         self.proc = subprocess.Popen(args, stdout=subprocess.DEVNULL,
                                      stderr=open(self.log_path, "w"))
         self.sock = None
-        for _ in range(100):
+        for _ in range(200):
             try:
-                self.sock = socket.create_connection(("127.0.0.1", port), timeout=5)
+                sock = socket.socket(socket.AF_UNIX)
+                sock.settimeout(5)
+                sock.connect(qmp_path)
+                self.sock = sock
                 break
             except OSError:
+                sock.close()
                 time.sleep(0.05)
         if self.sock is None:
+            self.close()
             raise RuntimeError("could not reach QEMU's monitor")
         self.buf = b""
         self._read_json()                       # the greeting
