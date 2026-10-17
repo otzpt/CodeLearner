@@ -461,16 +461,16 @@ COURSES = {
     },
     "assembly": {
         "dir": "assembly/src",
-        "glob": "lessons_*.s",
+        "glob": "lessons_*.asm",
         # Assembly has no exercise()-shaped call the way every other course
-        # does -- the markers here are literal comments in the .s source
-        # (see lessons_asm.s) written specifically for this regex, not code.
-        "exercise_marker": r'# exercise\((\d+)\)',
-        "summary_marker": r'# summary\(\d+\)',
+        # does -- the markers here are literal comments in the .asm source
+        # (see lessons_basics.asm) written specifically for this regex, not code.
+        "exercise_marker": r'; exercise\((\d+)\)',
+        "summary_marker": r'; summary\(\d+\)',
         # Empty, and staying empty even now that assembly has four modules:
         # unlike every other course, the text between these markers is not
         # the exercise itself. It is the call sequence that runs it, because
-        # an .s file keeps its question text, its challenge, and its example
+        # an .asm file keeps its question text, its challenge, and its example
         # solution in .rodata at the top of the file -- outside the marked
         # region entirely. A first_taught entry here would only ever match
         # the boilerplate (mov/call/cmp/jne) every module's dispatch shares,

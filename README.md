@@ -65,7 +65,7 @@ library call and runs it, so you see the real output on your own machine.
 | Arduino | 13: `setup()`/`loop()` through registers, interrupts, AVR inline assembly, a robot (runs on a PC) | [`arduino/`](arduino/) |
 | GUI (GTK) | 1 — your first window | [`gui/`](gui/) |
 | Libraries | a reference, not a course: C and Python pages with the code and its real output, from the standard library to everything a fastfetch needs | [`libraries/`](libraries/) |
-| Assembly | 4 — registers and syscalls, branching, loops, and a guessing game | [`assembly/`](assembly/) |
+| Assembly | 16 — registers and syscalls through memory, the stack, bits and strings, then C together with assembly, and a boot sector to an operating system kernel with interrupts, in NASM (Intel syntax) | [`assembly/`](assembly/README.md) |
 | Git | 10 — what is git through GitHub Actions | [`git/`](git/) |
 | Launcher | done — pick a language, open its course | [`launcher/`](launcher/) |
 
@@ -81,8 +81,8 @@ Twelve courses are covered. GUI, Assembly, and Git are not languages in the
 same sense the other nine are, but all three get the same treatment as one:
 their own directory, their own binary or script, their own entry in the
 launcher, rather than being folded into `c/`'s module list. Assembly goes
-further than GUI does, though -- its own delivery program (`assembly/src/ui.s`,
-`main.s`) is genuinely written in x86-64 assembly, the same "written in the
+further than GUI does, though -- its own delivery program (`assembly/src/ui.asm`,
+`main.asm`) is genuinely written in x86-64 assembly, the same "written in the
 language it teaches" rule every other course follows literally, just with
 no standard library underneath it (raw `read`/`write`/`exit` syscalls, no
 libc at all). GUI's own delivery stays C, since there is no separate "GTK
@@ -677,41 +677,60 @@ random number.
 
 ## The Assembly course
 
+Sixteen modules, in NASM's Intel syntax: the instructions first, then C and
+assembly together, then a boot sector, protected mode, long mode, a kernel
+written in C and interrupts. The last seven are the path to an operating
+system and have their own source in [`assembly/os/`](assembly/os/).
+
 | # | Module | The thing it exists for |
 | --- | --- | --- |
-| 1 | Registers, syscalls, your first program | AT&T syntax reads backwards from most tutorials; a syscall is a number in `rax` plus arguments in the same registers a call would use |
+| 1 | Registers, syscalls, your first program | Intel syntax puts the destination first and AT&T, which `gcc -S` prints, the reverse; a syscall is a number in `rax` plus arguments in the same registers a call would use |
 | 2 | Comparing and branching: if/else | `cmp` keeps flags and throws its result away; `jl`/`jg` are signed and `jb`/`ja` are not, and picking wrong is a bug nothing warns about |
 | 3 | Loops | a loop is a label and a jump backwards; the `loop` instruction is slower than `dec`/`jnz` and hardcodes `rcx`, which any `call` may clobber |
 | 4 | Reading input, and a guessing game | `read` writes no terminator and keeps your newline; digits are bytes, and `div` divides `rdx:rax`, so a stale `rdx` kills the process with SIGFPE |
+| 5 | Memory and addressing | `mov rax, label` is an address and `[label]` is what is there; writing `eax` zeroes the top half of `rax` but `ax` does not; a bare `mov [x], 5` is a one-byte store |
+| 6 | The stack, and calling a function | the stack grows down and `pop` erases nothing; a stray `push` makes `ret` go somewhere else; `rbx` and `r12`-`r15` are the callee's to put back, and `syscall` destroys `rcx` |
+| 7 | Bits, flags and arithmetic | `shr` against `sar` on a negative number; `CF` and `OF` are two kinds of overflow from one `add`; `idiv` needs `cqo` where `div` needs `xor rdx, rdx` |
+| 8 | Strings and block instructions | `rep movsb` advances `rdi`, so a `memcpy` that returns its destination has to save it; a forward copy over an overlapping range repeats bytes |
+| 9 | Assembly and C together | the System V convention is the whole interface; a freestanding compiler still calls `memcpy`; a packed struct and `-mno-red-zone` exist because of real hardware |
+| 10 | Real mode and the boot sector | `org 0x7C00`, the `0x55 0xAA` signature, and three ways a boot sector fails without a word |
+| 11 | Talking to the hardware | `in`/`out`, the serial port, video memory; an attribute of 0 is black on black |
+| 12 | Loading more code | two stages, `dl` is the boot drive, the A20 line, and a port bit that resets the machine |
+| 13 | Protected mode | the GDT, selectors and the far jump; nearly every mistake is a triple fault |
+| 14 | Long mode and paging | page tables, and the order the CPU forces: PAE, `EFER.LME`, `cr0.PG` |
+| 15 | A kernel in C | an assembly entry, a linker script, zeroed `.bss`, `volatile`, `-mgeneral-regs-only` |
+| 16 | Interrupts | the IDT, one stub per vector, remapping the PIC, end-of-interrupt |
 
 Linux/x86-64 only — see [`ROADMAP.md`](ROADMAP.md)'s note on why there is
 no Windows path to translate this one to. This is the one course where
 "written in the language it teaches" is taken completely literally: unlike
 the GUI course, there genuinely is a language here to write a menu in, so
-`assembly/src/ui.s` and `main.s` are real x86-64 assembly, not C that talks
-about assembly. No libc, no C runtime — `title`/`heading`/`question`/
+`assembly/src/ui.asm` and `main.asm` are real x86-64 assembly, not C that
+talks about assembly. No libc, no C runtime — `title`/`heading`/`question`/
 `ask_yes`/`read_line` are all built from nothing but the `read`, `write`
-and `exit` syscalls, called directly.
+and `exit` syscalls, called directly. It needs `nasm` and `ld` to build.
+Intel syntax rather than AT&T because it is what NASM, the Intel and AMD
+manuals and the operating-system tutorials use, and because the C, C++ and
+Rust courses already show NASM.
 
 Every function that needs an argument to survive more than one call saves
-it into a real stack frame (`push %rbp; mov %rsp, %rbp; sub $N, %rsp`)
-rather than juggling `push`/`pop` pairs around each call — the same shape
-`gcc -O0`'s own output uses, which module 1 shows side by side with
-`ui.s`'s hand-written version of the same thing. Two bugs caught during
-verification, not by inspection: an early draft of `question()` tried to
-print an argument through a register that had already been overwritten,
-and a piped `printf | ./asm-course` test appeared to break `ask_yes()`
-because a pipe (unlike a real terminal) can hand `read()` more than one
-line in a single call — both are why every module in this project is
-walked with a real FIFO and delays between lines before being trusted, not
-just assembled and eyeballed.
+it into a real stack frame (`push rbp; mov rbp, rsp; sub rsp, N`) rather
+than juggling `push`/`pop` pairs around each call — the same shape
+`gcc -O0`'s own output uses, which module 1 shows beside `ui.asm`'s
+hand-written version of the same thing. The exercise's expected answers
+are one word each (`first`, `rsi`, `number`) on purpose: grading is an
+exact string comparison (`ui.asm`'s `trim_and_lower` plus `streq` --
+case-insensitive and whitespace-trimmed, nothing fuzzier), the same "keep
+it short and unambiguous" rule `docs/writing-a-course.md` already states
+for every other course's `question()`.
 
-The exercise's expected answers are one word each (`second`, `rsi`,
-`number`) on purpose: grading is an exact string comparison (`ui.s`'s
-`trim_and_lower` plus `streq` -- case-insensitive and whitespace-trimmed,
-nothing fuzzier), the same "keep it short and unambiguous" rule
-`docs/writing-a-course.md` already states for every other course's
-`question()`.
+How it was verified is in [`assembly/README.md`](assembly/README.md):
+two checkers, one that walks every module and builds and runs every
+example solution, one that boots every operating-system image in QEMU and
+reads the screen, the serial port and the CPU's registers back. Modules 10
+to 16 were run in QEMU with SeaBIOS; **nothing here was run on real
+hardware**, and one of the lessons (module 14) says where QEMU is more
+forgiving than a real CPU.
 
 ## The Rust, MicroPython and Arduino courses
 
@@ -956,7 +975,10 @@ csharp/
     ├── LessonsBasics.cs      modules 1-5
     ├── LessonsMore.cs        modules 6-10
     └── LessonsAdvanced.cs    modules 11-14
-assembly/                   x86-64 assembly course: src/ has main.s, ui.s, lessons_*.s
+assembly/                   x86-64 assembly course (NASM, Intel syntax): src/ has main.asm,
+                             ui.asm, lessons_*.asm; solutions/ and examples/ are the code
+                             the lessons print; os/ is the boot sector to kernel
+                             source; check-course.py and check-os.py verify it (README.md)
 git/                        Bash course: src/ has main.sh, ui.sh, lessons_*.sh
 rust/                       12 modules; check-course.py, check-embedded.py and
                              run-embedded.py (the Pico's Thumb code, in an emulator)

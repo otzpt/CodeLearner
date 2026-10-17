@@ -180,10 +180,10 @@ Each module's row in its course's module table (`MODULES` in
 carries one extra field: the tier name as a plain string. The menu-drawing
 loop prints a `-- TIER --` divider whenever that field changes from the
 previous row, so reordering or splitting modules never requires touching
-anything beyond that one field per row. Assembly and GUI, with a single
-module each, print INTERMEDIATE and ADVANCED anyway, empty, as fixed
-strings — there is nothing to group yet, but the arc the course is headed
-toward stays visible.
+anything beyond that one field per row. GUI, with a single module, prints
+INTERMEDIATE and ADVANCED anyway, empty, as fixed strings — there is
+nothing to group yet, but the arc the course is headed toward stays
+visible.
 
 The split is by what a module assumes, not by module count: BASIC covers
 syntax fundamentals a student needs before touching pointers or

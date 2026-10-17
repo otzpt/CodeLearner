@@ -89,12 +89,22 @@ jobs:
           make -C launcher CC=gcc VERSION="$version"
           make -C launcher CC=gcc VERSION="$version" check
 
-      # Linux only, no CC override: assembly/'s Makefile calls `as`/`ld`
+      # Linux only, no CC override: assembly/'s Makefile calls `nasm`/`ld`
       # directly, and the course is raw Linux syscalls with no Windows
-      # equivalent to build toward -- see ROADMAP.md's note on why.
+      # equivalent to build toward -- see ROADMAP.md's note on why. nasm is
+      # installed here, before the build; the NASM examples step further down
+      # installs it too, which is a no-op by then.
       - name: Build Assembly (Linux)
         if: runner.os == 'Linux'
-        run: make -C assembly
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq nasm
+          make -C assembly
+          # Walks every module and runs every example solution. The parts that
+          # boot an image need qemu, which is not installed here: they print
+          # that they were skipped.
+          make -C assembly check
 
       # Rust and Arduino: Linux only for now. Both need just a toolchain the
       # runner already has (rustc, g++). The Arduino stand-in for the core
@@ -566,7 +576,11 @@ jobs:
             nothing beyond a C compiler to browse; GTK4 is only needed if
             you compile and run the examples it teaches. Assembly is
             bundled compiled on Linux only -- it makes raw Linux syscalls
-            directly and has no Windows equivalent to build toward.
+            directly and has no Windows equivalent to build toward. It is
+            now 16 modules in NASM's Intel syntax, from registers to a
+            kernel written in C that handles interrupts; modules 10 to
+            16 boot disk images, which needs `qemu-system-x86_64` to try
+            (not bundled) and were run in QEMU, not on real hardware.
 
             The Rust and Arduino courses are bundled compiled, also Linux
             only (the Arduino one simulates the board on the PC through

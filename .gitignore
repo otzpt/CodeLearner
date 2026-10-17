@@ -5,6 +5,9 @@ c/c-course
 cpp/cpp-course
 gui/gui-course
 assembly/asm-course
+assembly/os/**/*.bin
+assembly/os/**/*.elf
+assembly/os/**/os.img
 arduino/arduino-course
 arduino/build/
 rust/rust-course

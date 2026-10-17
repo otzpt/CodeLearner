@@ -179,16 +179,29 @@ why the ecosystem library exists), not silently working around it.
     every course's own `Program.cs`/`main.c`/etc. already uses.
   - Practical projects track.
 
-## Assembly — started
+## Assembly — 16 modules
 
-[`assembly/`](assembly/), modules 1-4: registers and syscalls, comparing
-and branching, loops, then reading input and building a number-guessing
-game out of the three before it. Module 4 is where the course stops being
-read-only: everything up to it prints, and it is the first one whose own
-example program waits for you. Target arc from here: memory addressing →
-the stack in more depth (currently only what a function's own
-prologue/epilogue needs) → more instructions → calling conventions beyond
-"arguments in rdi/rsi/...".
+[`assembly/`](assembly/), in NASM's Intel syntax. Modules 1-4: registers and
+syscalls, comparing and branching, loops, then reading input and a
+number-guessing game. Modules 5-8 go under the instructions: memory and
+addressing, the stack and the calling convention, bits and flags and
+arithmetic, strings and the block instructions. Module 9 puts C and assembly
+together, both directions and freestanding. Modules 10-16 are the path to an
+operating system, written to follow someone who is writing one: a boot sector
+in real mode, the serial port and video memory, a second stage that reads the
+disk and the memory map, protected mode, long mode with its page tables, a
+kernel in C, and interrupts (IDT, PIC, timer, keyboard).
+
+Everything in 10-16 runs in QEMU with SeaBIOS and is checked there by
+`assembly/check-os.py`, which reads the screen, the serial port, the CPU's
+registers and QEMU's exception log. Not run on real hardware.
+
+Still to write, none of it started: physical memory management from the
+E820 map, and a page-frame allocator; a higher-half kernel and page tables
+beyond one identity map; enabling SSE and the FPU (module 15 compiles with
+`-mgeneral-regs-only` until then); a keyboard driver with a real scancode
+table; the APIC and more than one CPU; a scheduler, a system call interface
+and user mode; booting under UEFI instead of the BIOS; and a file system.
 Distinct from `c/ROADMAP.md` section 9, which is "read enough asm to
 understand your own compiled C" for someone taking the C course, not a
 full course in its own right.
