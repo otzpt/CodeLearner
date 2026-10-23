@@ -30,15 +30,26 @@
  * SEE: /usr/include/raylib.h, https://www.raylib.com/cheatsheet/cheatsheet.html
  * LIBS: -lraylib -lm
  * PROVIDES:
- *   InitWindow(w, h, title)       open the window, once
- *   WindowShouldClose()           true after ESC or the close button
- *   SetTargetFPS(fps)             frames per second of the loop
- *   BeginDrawing(), EndDrawing()  start and show one frame
- *   ClearBackground(colour)       fill the frame
- *   DrawRectangle(x, y, w, h, c)  a filled rectangle
- *   DrawText(text, x, y, size, c) text with the default font
- *   IsKeyPressed(KEY_UP)          the key went down this frame
- *   CloseWindow()                 close it and free everything
+ *   Window and loop
+ *   void InitWindow(int w, int h, const char *title)   open it, once; size in pixels
+ *   bool WindowShouldClose(void)  true after ESC or the close button
+ *   void SetTargetFPS(int fps)    frames per second of the loop
+ *   float GetFrameTime(void)      seconds the last frame took
+ *   void CloseWindow(void)        close it and free everything
+ *   Drawing (between BeginDrawing() and EndDrawing())
+ *   void ClearBackground(Color c) fill the frame
+ *   void DrawRectangle(int x, int y, int w, int h, Color c)       filled
+ *   void DrawRectangleLines(int x, int y, int w, int h, Color c)  outline
+ *   void DrawText(const char *text, int x, int y, int size, Color c)
+ *   Keyboard (KEY_UP, KEY_A, KEY_SPACE, KEY_ENTER, ...)
+ *   bool IsKeyPressed(int key)    true on the one frame the key goes down
+ *   bool IsKeyDown(int key)       true every frame while it is held
+ *   bool IsKeyReleased(int key)   true on the frame it comes back up
+ *   int GetKeyPressed(void)       next queued key, 0 when none
+ *   void SetExitKey(int key)      KEY_NULL stops ESC from closing
+ *   Colours: Color is { r, g, b, a }, each 0-255. Named ones: WHITE, RAYWHITE,
+ *   BLACK, GRAY, RED, GREEN, BLUE, YELLOW, ORANGE, PURPLE, GOLD, LIME.
+ *   Your own: (Color){ 255, 80, 80, 255 }
  */
 
 #include <raylib.h>
