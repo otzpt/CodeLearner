@@ -449,6 +449,16 @@ COURSES = {
             (99, r"\benum\s+[A-Z]"),
         ],
     },
+    "security": {
+        "dir": "security/src",
+        "glob": "lessons_*.py",
+        "exercise_marker": r"ui\.exercise\((\d+)\)",
+        "summary_marker": r'\n    ui\.wait_enter\(\)\n    ui\.clear_screen\(\)\n    ui\.heading\("SUMMARY',
+        # Empty on purpose: one module so far, so no earlier module an
+        # exercise could reach ahead of. Grows into a real table the same
+        # way the Python course's did, once a second module exists here.
+        "first_taught": [],
+    },
     "gui": {
         "dir": "gui/src",
         "glob": "lessons_*.c",

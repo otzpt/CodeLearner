@@ -111,6 +111,7 @@ mv "$tmp/$BUNDLE_DIR" "$SHARE_DIR"
 for exe in launcher/launcher c/c-course cpp/cpp-course gui/gui-course \
            assembly/asm-course csharp/csharp csharp/run java/run \
            rust/rust-course arduino/arduino-course micropython/src/main.py \
+           security/src/main.py \
            c/asm/use_asm cpp/asm/use_asm rust/asm/use_asm libraries/libraries; do
     [ -f "$SHARE_DIR/$exe" ] && chmod +x "$SHARE_DIR/$exe"
 done

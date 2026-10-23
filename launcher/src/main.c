@@ -88,6 +88,7 @@ struct Language {
 #define GUI_BIN    "..\\gui\\gui-course.exe"
 #define CSHARP_BIN "..\\csharp\\run.bat"
 #define RUST_BIN   "..\\rust\\rust-course.exe"
+#define SEC_PATH   "..\\security\\src\\main.py"
 #else
 #define C_BIN      "../c/c-course"
 #define CPP_BIN    "../cpp/cpp-course"
@@ -101,6 +102,7 @@ struct Language {
 #define ARDUINO_BIN "../arduino/arduino-course"
 #define MICROPY_PATH "../micropython/src/main.py"
 #define RUST_BIN   "../rust/rust-course"
+#define SEC_PATH   "../security/src/main.py"
 #define LIBRARIES_BIN "../libraries/libraries"
 #endif
 
@@ -158,6 +160,15 @@ static const struct Language LANGUAGES[] = {
     { "Arduino",    ARDUINO_BIN, ARDUINO_BIN, NULL },
 #endif
     { "Rust",       RUST_BIN, RUST_BIN, NULL },
+    /* Topic course, not a language, implemented in Python -- registered the
+     * same way Python's own entry is: a bare .py path on Linux (shebang +
+     * execute bit), with the "python " prefix added on Windows where the
+     * extension association is what makes the path runnable. */
+#ifdef _WIN32
+    { "Security",   SEC_PATH, "python " SEC_PATH, NULL },
+#else
+    { "Security",   SEC_PATH, SEC_PATH, NULL },
+#endif
 #ifdef _WIN32
     /* The course runs on the unix port of MicroPython, which is not shipped
      * for Windows (and has no shebang story there either). */

@@ -256,7 +256,7 @@ jobs:
         run: |
           set -euo pipefail
           out=codelearner-${{ matrix.name }}
-          mkdir -p "$out"/{launcher,c,cpp,gui,csharp,python/src,javascript/src,java/src}
+          mkdir -p "$out"/{launcher,c,cpp,gui,csharp,python/src,javascript/src,java/src,security/src}
 
           if [ "${{ runner.os }}" = "Windows" ]; then
             cp launcher/launcher.exe "$out/launcher/"
@@ -327,6 +327,7 @@ jobs:
           fi
 
           cp python/src/*.py "$out/python/src/"
+          cp security/src/*.py "$out/security/src/"
           cp javascript/src/*.js "$out/javascript/src/"
           cp java/src/*.java "$out/java/src/"
           cp README.md LICENSE "$out/"
@@ -491,6 +492,12 @@ jobs:
             for f in "\$startdir/payload/javascript/src"/*.js; do
               install -Dm644 "\$f" "\$pkgdir/opt/codelearner/javascript/src/\$(basename "\$f")"
             done
+            for f in "\$startdir/payload/security/src"/*.py; do
+              install -Dm644 "\$f" "\$pkgdir/opt/codelearner/security/src/\$(basename "\$f")"
+            done
+            # The launcher runs main.py as a bare path (shebang), so it needs
+            # the execute bit the 644 install above leaves off.
+            chmod 755 "\$pkgdir/opt/codelearner/security/src/main.py"
             for f in "\$startdir/payload/java/src"/*.java; do
               install -Dm644 "\$f" "\$pkgdir/opt/codelearner/java/src/\$(basename "\$f")"
             done

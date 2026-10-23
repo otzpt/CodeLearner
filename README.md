@@ -3,8 +3,8 @@
 Command-line programming courses, one per language: C, C++, Python,
 JavaScript, Java, C#, Rust, MicroPython, Arduino (on a PC, no board needed),
 Assembly, Git and a GTK window. No browser and no account. Everything runs
-offline except the Python and JavaScript modules that call a real web API and
-the update check, which only runs when you pick it.
+offline except the Python, JavaScript and Security modules that call a real
+web API and the update check, which only runs when you pick it.
 
 Each course is written **in the language it teaches**, so the source is itself
 worked example code the student can open and read. Every exercise states the
@@ -37,10 +37,11 @@ install options are under [Installing](#installing)):
    [9]  Git
    [10]  Arduino
    [11]  Rust
-   [12]  MicroPython
+   [12]  Security
+   [13]  MicroPython
 
    -- LIBRARIES --
-   [13]  Libraries
+   [14]  Libraries
 
    [u]  Check for updates
    [0]  Exit
@@ -63,6 +64,7 @@ library call and runs it, so you see the real output on your own machine.
 | Rust | 12: `println!` through ownership, borrowing, structs, enums, `Result`, volatile registers for the Pico, and inline assembly with NASM | [`rust/`](rust/) |
 | MicroPython | 11: for the Raspberry Pi Pico: pins, PWM/ADC, interrupts, native/viper, `asm_thumb`, a robot | [`micropython/`](micropython/) |
 | Arduino | 13: `setup()`/`loop()` through registers, interrupts, AVR inline assembly, a robot (runs on a PC) | [`arduino/`](arduino/) |
+| Security | 1 so far — a topic course in Python: HTTP requests, what a server's headers reveal, and the urllib 4xx/5xx-raises trap | [`security/`](security/) |
 | GUI (GTK) | 1 — your first window | [`gui/`](gui/) |
 | Libraries | a reference, not a course: C and Python pages with the code and its real output, from the standard library to reading system information, plus raylib for games | [`libraries/`](libraries/) |
 | Assembly | 16 — registers and syscalls through memory, the stack, bits and strings, then C together with assembly, and a boot sector to an operating system kernel with interrupts, in NASM (Intel syntax) | [`assembly/`](assembly/README.md) |
