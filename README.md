@@ -48,8 +48,8 @@ install options are under [Installing](#installing)):
   ------------------------------------------------------
 ```
 
-The Libraries entry is a reference, not a course: it shows the code for a
-library call and runs it, so you see the real output on your own machine.
+The Libraries entry is a reference manual, not a course: man-page style pages
+for C and Python libraries, each with an example that runs on your machine.
 
 ## Status
 
@@ -66,7 +66,7 @@ library call and runs it, so you see the real output on your own machine.
 | Arduino | 13: `setup()`/`loop()` through registers, interrupts, AVR inline assembly, a robot (runs on a PC) | [`arduino/`](arduino/) |
 | Security | 1 so far — a topic course in Python: HTTP requests, what a server's headers reveal, and the urllib 4xx/5xx-raises trap | [`security/`](security/) |
 | GUI (GTK) | 1 — your first window | [`gui/`](gui/) |
-| Libraries | a reference, not a course: C and Python pages with the code and its real output, from the standard library to reading system information, plus raylib for games | [`libraries/`](libraries/) |
+| Libraries | a reference manual, not a course: man-page style pages for the C and Python libraries (standard C, POSIX, Linux, /proc and /sys, raylib), each example run live | [`libraries/`](libraries/) |
 | Assembly | 16 — registers and syscalls through memory, the stack, bits and strings, then C together with assembly, and a boot sector to an operating system kernel with interrupts, in NASM (Intel syntax) | [`assembly/`](assembly/README.md) |
 | Git | 10 — what is git through GitHub Actions | [`git/`](git/) |
 | Launcher | done — pick a language, open its course | [`launcher/`](launcher/) |
@@ -760,14 +760,14 @@ in the lesson.
 
 ## The Libraries reference
 
-The launcher has a second tab, **LIBRARIES**, below the languages. It is a wiki,
-not a course: pick C or Python, then a page. Each page names the header or
-module for one job, shows the code, and runs it on your machine. The pages
-cover the basics of both standard libraries and, in the second half, where
-Linux keeps system information (OS, kernel, CPU, GPU, memory, disk, uptime,
-packages, desktop, monitors, network, battery, terminal size, colours, layout),
-ending in a complete system summary program in each language. The C list also
-has a raylib page for games.
+The launcher has a second tab, **LIBRARIES**, below the languages. It is a
+reference manual, not a course: pick C or Python, then a page. Each page is
+laid out like a man page (NAME, SYNOPSIS, DESCRIPTION, STANDARDS, NOTES,
+APPLICATION USAGE, EXAMPLE, SEE ALSO) and runs its example on your machine.
+The C manual covers the standard C library, POSIX, Linux, the files in /proc,
+/sys and /etc, terminal control sequences, and raylib; the Python manual
+covers the built-ins, the standard library, the same files, and terminal
+control sequences.
 See [`libraries/README.md`](libraries/README.md) for how a page is written and
 how it was verified.
 
@@ -889,11 +889,10 @@ only match dispatch boilerplate.
 
 The launcher's version parsing and release-tag reading have unit tests
 (`make -C launcher check`, 27 checks, run in CI on both platforms). The
-Libraries pages are checked by three scripts in `libraries/`:
+Libraries pages are checked by two scripts in `libraries/`:
 `check-pages.py` builds and runs every page (C with `-Wall -Wextra`) and
-requires a page for each of the 21 C headers, `check-browser.py` drives the
-browser and searches for each header by name, and `check-agreement.py`
-compares the C and Python system summary programs field by field.
+requires a page for each of the 21 C headers, and `check-browser.py` drives
+the browser and searches for each header by name.
 
 ## Layout
 

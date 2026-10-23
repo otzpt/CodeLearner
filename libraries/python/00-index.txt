@@ -1,0 +1,35 @@
+TITLE: intro: how this manual is organised
+GROUP: Introduction
+USES: every page after this one
+SUMMARY: One page per built-in, module or system file, laid out like a man
+  page: NAME, SYNOPSIS, DESCRIPTION, NOTES, then an EXAMPLE that is run on
+  this machine, and SEE ALSO. The output shown is what this machine printed,
+  not a copy.
+NOTES:
+  - Every module here is in the standard library: nothing to install.
+  - The examples run with  python3 -W error page.py , so a deprecated call
+    fails instead of printing a warning.
+  - The Files pages read Linux interfaces (/proc and /sys). The same files
+    are documented on the C side; the Python pages show reading them with
+    pathlib and str methods.
+  - Type a word at the page list to search every page, including the code.
+SEE: https://docs.python.org/3/library/, pydoc <module>
+---
+  Part                          Pages
+  ----------------------------  ------------------------------------------------
+  Built-ins                     print() and f-strings, open() and pathlib,
+                                str methods, exceptions
+  Standard library              os, sys, os.scandir, math, statistics, time,
+                                datetime, collections, json, subprocess, re,
+                                argparse, platform, socket, pwd, getpass,
+                                shutil, locale, unicodedata
+  Files: /proc and /sys         /proc/cpuinfo, /proc/meminfo,
+                                /sys/devices/virtual/dmi/id, /sys/class/drm,
+                                /sys/class/power_supply
+  Terminal control sequences    ANSI escape codes: colours and styles
+
+  Third-party packages that cover the same ground on every OS:
+    psutil      CPU, memory, disks, network, battery, sensors
+    distro      distribution name and version (before Python 3.10)
+    wcwidth     how many columns a character takes
+    colorama    ANSI colours on older Windows consoles

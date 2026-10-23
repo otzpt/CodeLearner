@@ -179,9 +179,8 @@ static const struct Language LANGUAGES[] = {
     { "MicroPython", MICROPY_PATH, MICROPY_PATH, NULL },
 #endif
 #ifdef _WIN32
-    /* Not a course: a reference to the libraries behind a task (and, for C and
-     * Python, where Linux keeps system information).
-     * Its pages read /proc and /sys, which Windows does not have. */
+    /* Not a course: a man-page style reference manual for the C and Python
+     * libraries. Some pages read /proc and /sys, which Windows does not have. */
     { "Libraries",  NULL, NULL, "LIBRARIES" },
 #else
     { "Libraries",  LIBRARIES_BIN, LIBRARIES_BIN, "LIBRARIES" },

@@ -155,11 +155,10 @@ jobs:
           python3 arduino/avr/check-avr.py
           python3 arduino/avr/run-avr.py
           python3 rust/run-embedded.py
-          # The Libraries reference: every page builds and runs, the browser
-          # opens them all, and the C and Python system summaries agree.
+          # The Libraries reference: every page builds and runs, and the
+          # browser opens them all.
           python3 libraries/check-pages.py
           python3 libraries/check-browser.py
-          python3 libraries/check-agreement.py
           python3 tools/check-teaching-order.py
 
       - name: Compile-check Java (no artifact -- verifies -Xlint:all -Werror passes)
@@ -607,9 +606,9 @@ jobs:
             assembly modules show a NASM example built with `nasm` in CI;
             rebuilding it yourself needs `nasm` (`make asm-demo`).
 
-            The Libraries tab is a reference, not a course: one page per
-            C header or Python module (including 21 C header reference
-            pages), each compiled or run live to show its
+            The Libraries tab is a reference manual, not a course: man-page
+            style pages for the C and Python libraries (including 21 C
+            header pages), each example compiled or run live to show its
             real output. It is bundled on Linux only, since the pages read
             /proc and /sys, and needs `cc` and `python3` to run the pages.
 

@@ -1,6 +1,6 @@
 /*
- * TITLE: raylib: a window, drawing and the keyboard (games)
- * GROUP: Games
+ * TITLE: raylib: window, drawing and keyboard input
+ * GROUP: Third-party libraries
  * USES: #include <raylib.h>   (Arch: pacman -S raylib)
  * SUMMARY: raylib opens a window and draws shapes, text and images in it with
  *   one call each. A game is one loop: read the keys, move things, then draw

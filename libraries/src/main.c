@@ -1,31 +1,29 @@
 /*
  * Libraries - a reference browser, not a course.
  *
- * A wiki of how to use libraries, one page per thing you might want to do,
- * in the style of a manual page or a good Stack Overflow answer: what it is,
- * which header or module, the code, and the real output of running that code
- * on this machine. There are no lessons and no exercises.
+ * A manual for the C and Python libraries, laid out like man pages: NAME,
+ * SYNOPSIS, DESCRIPTION, STANDARDS, NOTES, APPLICATION USAGE, EXAMPLE and
+ * SEE ALSO, with the example compiled and run on this machine. There are no
+ * lessons and no exercises.
  *
  * Every page is a real source file in the c/ or python/ folder next to this
  * program. The page shows the file and then RUNS it, so what is printed
  * is what this machine said, not what someone remembered. Pages are plain
  * files: add one by dropping a file in the folder.
  *
- * A page starts with a header comment of "KEY: value" lines:
+ * A page starts with a header comment of "KEY: value" lines. The man page
+ * section each one is shown under is on the right:
  *
- *   TITLE     the heading
- *   GROUP     the section it is listed under
- *   USES      the header / import it needs
- *   SUMMARY   what it does, in a line or two
- *   NOTES     caveats and gotchas, one per line
- *   SEE       where the real documentation is
- *   LIBS      extra linker flags (C only), e.g. -lm
- *
- * Header reference pages also use:
- *
- *   STANDARD  where it comes from: ISO C, POSIX, or Linux-specific
- *   PROVIDES  the functions, macros and types worth knowing, one per line
- *   USEDFOR   what it is commonly used for, one per line
+ *   TITLE     "name: what it is for"                     NAME
+ *   GROUP     the part of the manual it is listed under  (menu)
+ *   USES      the header / import it needs               SYNOPSIS
+ *   PROVIDES  functions, macros and types, one per line  SYNOPSIS
+ *   LIBS      extra linker flags (C only), e.g. -lm      SYNOPSIS
+ *   SUMMARY   what it does                               DESCRIPTION
+ *   STANDARD  ISO C, POSIX, or Linux-specific            STANDARDS
+ *   NOTES     caveats, one per line                      NOTES
+ *   USEDFOR   common uses, one per line                  APPLICATION USAGE
+ *   SEE       where the upstream documentation is        SEE ALSO
  *
  * Pages ending in .txt are documentation only and are not run.
  *
@@ -164,18 +162,12 @@ static void print_lines(const char *text, const char *indent)
     }
 }
 
-/* "Label:  first line" and then the other lines under it, aligned. */
-static void print_labelled(const char *label, const char *text)
+/* A man page section: its name, then `text` indented under it. */
+static void section(const char *name, const char *text, const char *indent)
 {
-    const char *newline = strchr(text, '\n');
-    int first = newline != NULL ? (int) (newline - text) : (int) strlen(text);
-    int width = (int) strlen(label) + 2;
-
-    printf("  %s  %.*s\n", label, first, text);
-    if (newline != NULL) {
-        char indent[32];
-        snprintf(indent, sizeof indent, "  %*s", width, "");
-        print_lines(newline + 1, indent);
+    if (text[0] != '\0') {
+        printf("\n  %s\n", name);
+        print_lines(text, indent);
     }
 }
 
@@ -469,49 +461,47 @@ static void run_page(const struct Track *track, const struct Page *page)
 
 static void show_page(const struct Track *track, const struct Page *page)
 {
-    clear_screen();
-    title(page->title);
+    /* The frame shows the name alone ("stdio.h", "printf(3)"), as a man
+     * page header does; the full title is the NAME section. */
+    char name[sizeof page->title];
+    snprintf(name, sizeof name, "%s", page->title);
+    char *colon = strstr(name, ": ");
+    if (colon != NULL) {
+        *colon = '\0';
+    }
 
-    if (page->uses[0] != '\0') {
-        print_labelled("Uses:", page->uses);
-        printf("\n");
+    clear_screen();
+    title(name);
+
+    section("NAME", page->title, "      ");
+    if (page->uses[0] != '\0' || page->provides[0] != '\0') {
+        printf("\n  SYNOPSIS\n");
+        if (page->uses[0] != '\0') {
+            print_lines(page->uses, "      ");
+        }
+        if (page->provides[0] != '\0') {
+            printf("\n");
+            print_lines(page->provides, "    ");
+        }
+        if (page->libs[0] != '\0') {
+            printf("\n      Link with %s.\n", page->libs);
+        }
     }
-    if (page->standard[0] != '\0') {
-        print_labelled("Standard:", page->standard);
-        printf("\n");
-    }
-    if (page->summary[0] != '\0') {
-        print_lines(page->summary, "  ");
-        printf("\n");
-    }
-    if (page->provides[0] != '\0') {
-        printf("  Provides:\n");
-        print_lines(page->provides, "  ");
-        printf("\n");
-    }
-    if (page->notes[0] != '\0') {
-        printf("  Good to know:\n");
-        print_lines(page->notes, "  ");
-        printf("\n");
-    }
-    if (page->used_for[0] != '\0') {
-        printf("  Used for:\n");
-        print_lines(page->used_for, "  ");
-        printf("\n");
-    }
-    if (page->see[0] != '\0') {
-        printf("  Documentation: %s\n", page->see);
-    }
+    section("DESCRIPTION", page->summary, "      ");
+    section("STANDARDS", page->standard, "      ");
+    section("NOTES", page->notes, "    ");
+    section("APPLICATION USAGE", page->used_for, "    ");
 
     if (page->documentation_only) {
         printf("\n");
         show_body(page);
     } else {
-        heading("CODE");
+        heading("EXAMPLE");
         show_body(page);
-        heading("RUN, on this machine");
+        heading("EXAMPLE OUTPUT, on this machine");
         run_page(track, page);
     }
+    section("SEE ALSO", page->see, "      ");
     wait_enter();
 }
 
@@ -634,9 +624,9 @@ static void run_track(const struct Track *track)
 static void show_tracks(void)
 {
     clear_screen();
-    title("LIBRARIES - A REFERENCE, NOT A COURSE");
-    puts("  How to use libraries, one page per job, with the code and its");
-    puts("  real output on this machine. Pick a language:\n");
+    title("LIBRARIES - A REFERENCE MANUAL");
+    puts("  The C and Python libraries, documented like man pages, with");
+    puts("  each example run on this machine. Pick a language:\n");
     for (int i = 0; i < TRACK_COUNT; i++) {
         printf("   [%d]  %s\n", i + 1, TRACKS[i].name);
     }

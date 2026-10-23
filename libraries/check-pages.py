@@ -65,7 +65,9 @@ def main():
                 for required in ("TITLE", "GROUP", "SUMMARY"):
                     if not fields.get(required):
                         problems.append("header lacks " + required)
-                if fields.get("GROUP", "").startswith("Header reference"):
+                # A page titled for one of the documented headers is that
+                # header's reference page and needs every man page section.
+                if track == "c" and fields.get("TITLE", "").split(":")[0].split(" ")[0] in C_HEADERS:
                     for required in ("STANDARD", "PROVIDES", "USEDFOR", "SEE"):
                         if not fields.get(required):
                             problems.append("header reference page lacks " + required)

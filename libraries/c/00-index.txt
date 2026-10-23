@@ -1,0 +1,67 @@
+TITLE: intro: how this manual is organised
+GROUP: Introduction
+USES: every page after this one
+SUMMARY: One page per header, function family or system file, laid out like
+  a man page: NAME, SYNOPSIS, DESCRIPTION, STANDARDS, NOTES, APPLICATION
+  USAGE, then an EXAMPLE that is compiled and run on this machine, and SEE
+  ALSO. The output shown is what this machine printed, not a copy.
+NOTES:
+  - Standard C (ISO C) is the same everywhere a C compiler exists. POSIX is the
+    Unix standard: Linux, macOS and the BSDs have it, Windows does not. Linux-
+    specific means this kernel and glibc only: sysinfo, the /proc and /sys
+    files, CLOCK_BOOTTIME.
+  - The examples compile with  cc -std=gnu11 -Wall -Wextra page.c . With a
+    strict  -std=c11  the POSIX names are hidden unless you put
+    #define _POSIX_C_SOURCE 200809L before the first include.
+  - libc is linked automatically. A page whose SYNOPSIS says "Link with" needs
+    those flags after the source file (math.h needs -lm).
+  - Where a call can fail, the page shows how: the return value to test and
+    the errno to read (see errno.h).
+  - Type a word at the page list to search every page, including the code.
+SEE: man 7 standards, man 7 feature_test_macros, man 7 libc
+---
+  Part                          Pages
+  ----------------------------  ------------------------------------------------
+  Standard C library            stdio.h, printf(3), fopen(3), sscanf(3),
+                                string.h, stdlib.h, math.h, time.h, errno.h,
+                                stdint.h, ctype.h, stdbool.h, limits.h,
+                                locale.h, wchar.h
+  POSIX                         unistd.h, sys/types.h, sys/stat.h, fcntl.h,
+                                dirent.h, pwd.h, sys/utsname.h, sys/statvfs.h,
+                                signal.h, termios.h, sys/ioctl.h, ifaddrs.h
+  Linux                         sys/sysinfo.h, clock_gettime(2), getloadavg(3)
+  Files: /proc, /sys and /etc   os-release(5), /proc/cpuinfo, /proc/meminfo,
+                                /sys/devices/virtual/dmi/id, /sys/class/drm,
+                                /sys/class/power_supply
+  Terminal control sequences    console_codes(4): ANSI colours and styles
+  Third-party libraries         raylib (needs the raylib package)
+
+  Where each header comes from:
+
+  Header            Standard
+  ----------------  -------------------------------------------
+  stdio.h           ISO C (popen, getline, fileno: POSIX)
+  stdlib.h          ISO C (setenv, realpath: POSIX)
+  string.h          ISO C (strdup, strndup: POSIX)
+  math.h            ISO C, link with -lm
+  time.h            ISO C (clock_gettime, strptime: POSIX)
+  errno.h           ISO C (most E* names: POSIX)
+  stdint.h          ISO C99
+  ctype.h           ISO C
+  stdbool.h         ISO C99 (keywords in C23)
+  limits.h          ISO C (PATH_MAX, HOST_NAME_MAX: POSIX)
+  locale.h          ISO C (langinfo.h: POSIX)
+  wchar.h           ISO C (wcwidth: POSIX, XSI option)
+  unistd.h          POSIX
+  sys/types.h       POSIX
+  sys/stat.h        POSIX
+  fcntl.h           POSIX
+  dirent.h          POSIX
+  pwd.h             POSIX
+  sys/utsname.h     POSIX
+  sys/statvfs.h     POSIX
+  signal.h          ISO C (sigaction, kill: POSIX)
+  termios.h         POSIX
+  sys/ioctl.h       Unix; the request codes are Linux-specific
+  ifaddrs.h         BSD, provided by glibc
+  sys/sysinfo.h     Linux only

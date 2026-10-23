@@ -234,12 +234,12 @@ the README's course tables have the module lists.
   interrupts, native/viper and `asm_thumb`, ending in a robot. A small
   simulator stands in for `machine`.
 
-## Libraries: a reference, not a course
+## Libraries: a reference manual, not a course
 
-[`libraries/`](libraries/) is a browser of pages for C and Python, one per
-job or per C header: what it is, the code, and the real output from running
-it on this machine. It exists to answer "which library, call or file gives
-me this" while building a system information tool, and has no lessons or
+[`libraries/`](libraries/) is a man-page style manual for C and Python, one
+page per header, function family, module or system file, with an example run
+on this machine. It answers "which library, call or file does this, and how
+do I use it" the way official documentation would, and has no lessons or
 exercises on purpose. The C track includes a reference page for each of 21
 headers (`stdio.h` to `termios.h`). Further languages are one folder of
 pages and a row in `TRACKS` in `libraries/src/main.c`.
