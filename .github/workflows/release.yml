@@ -215,10 +215,13 @@ jobs:
           echo "$cs_output" | grep -q "C# COURSE" || { echo "::error::launcher did not reach the C# course"; exit 1; }
           echo "$cs_output" | grep -q "See you next time" || { echo "::error::launcher did not exit cleanly after C#"; exit 1; }
 
-          # Arduino (10) and Rust (11): pick the course, quit it, quit the
-          # launcher. MicroPython (12) is source like Python and JavaScript
-          # and needs `micropython` on PATH, which this runner does not have.
-          out=$(printf '13\n0\n0\n' | timeout 20 ./launcher)
+          # Arduino (10), Rust (11) and Security (12): pick the course, quit
+          # it, quit the launcher. MicroPython (13) is source like Python and
+          # JavaScript and needs `micropython` on PATH, which this runner does
+          # not have. Libraries is 14.
+          out=$(printf '12\n0\n0\n' | timeout 20 ./launcher)
+          echo "$out" | grep -q "SECURITY WITH PYTHON" || { echo "::error::launcher did not reach the Security course"; exit 1; }
+          out=$(printf '14\n0\n0\n' | timeout 20 ./launcher)
           echo "$out" | grep -q "LIBRARIES - A REFERENCE" || { echo "::error::launcher did not reach the Libraries reference"; exit 1; }
           for entry in "10 ARDUINO" "11 RUST"; do
             number=${entry%% *}
