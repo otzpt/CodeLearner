@@ -26,7 +26,9 @@ make
 ./libraries            # or pick "Libraries" in the launcher, under its own tab
 ```
 
-Needs `cc` (for the C pages) and `python3` (for the Python pages). Linux only:
+Needs `cc` (for the C pages) and `python3` (for the Python pages). The
+raylib page under Games also needs raylib (Arch: `pacman -S raylib`); without
+it that one page does not compile. Linux only:
 the pages read `/proc` and `/sys`. Type a number to open a page, or a word to
 search (try `memory`). The first page of each language maps every fastfetch
 field to its source.
@@ -73,6 +75,7 @@ both.
 
 ```bash
 python3 check-pages.py       # every page builds clean (C: -Wall -Wextra) and runs with output;
+                             # a page whose library is not installed is skipped and counted;
                              # each of the 21 headers has a page that includes it
 python3 check-browser.py     # ./libraries opens every page; search finds each header by name
 python3 check-agreement.py   # the C and the Python mini fastfetch agree on every stable field

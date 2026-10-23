@@ -20,6 +20,9 @@ from header_list import C_HEADERS  # noqa: E402
 HERE = os.path.dirname(os.path.abspath(__file__))
 BROWSER = os.path.join(HERE, "libraries")
 ANSI = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
+# Same rule as check-pages.py: a page whose library is not installed here
+# (raylib on the CI runner) may fail to compile; any other compile error fails.
+NOT_INSTALLED = re.compile(r"fatal error: [^:\s]+\.h: |cannot find -l[^\s:]+")
 
 
 def run(lines, timeout=300):
@@ -48,7 +51,8 @@ def main():
         problems = []
         if code != 0:
             problems.append(f"exit status {code}")
-        if "did not compile" in text:
+        sections = [s.split("Press ENTER")[0] for s in text.split("RUN, on this machine")[1:]]
+        if any("did not compile" in s and not NOT_INSTALLED.search(s) for s in sections):
             problems.append("a page did not compile")
         if "No " + track + " pages found" in text:
             problems.append("no pages found")

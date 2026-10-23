@@ -20,6 +20,9 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 FIELD = re.compile(r"^([A-Z]+):")
+# A page for a library outside libc (raylib) on a machine without it. The CI
+# runner has no raylib package, so these are reported as skipped, not failed.
+NOT_INSTALLED = re.compile(r"fatal error: [^:\s]+\.h: |cannot find -l[^\s:]+")
 
 from header_list import C_HEADERS  # noqa: E402
 
@@ -49,6 +52,7 @@ def main():
     failures = []
     titles = {}
     count = 0
+    skipped = 0
 
     with tempfile.TemporaryDirectory() as scratch:
         for track, pattern in (("c", "*.c"), ("python", "*.py"), ("c", "*.txt"), ("python", "*.txt")):
@@ -75,6 +79,11 @@ def main():
                     libs = fields.get("LIBS", "").split()
                     build = subprocess.run(["cc", "-std=gnu11", "-Wall", "-Wextra", "-o", program, path] + libs,
                                            capture_output=True, text=True)
+                    missing = NOT_INSTALLED.search(build.stderr) if build.returncode != 0 else None
+                    if missing:
+                        print("skip  " + name + " (" + missing.group(0) + ")")
+                        skipped += 1
+                        continue
                     if build.returncode != 0 or build.stderr.strip():
                         problems.append("build problem:\n" + build.stderr)
                     else:
@@ -116,7 +125,7 @@ def main():
 
     if count == 0:
         sys.exit("no pages found")
-    print(f"{count - len(failures)}/{count} pages ok")
+    print(f"{count - len(failures) - skipped}/{count} pages ok, {skipped} skipped (library not installed)")
     sys.exit(1 if failures else 0)
 
 
