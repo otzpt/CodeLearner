@@ -29,7 +29,7 @@
  *     /proc/meminfo (see the memory page).
  *   - uptime is a whole number of seconds.
  *   - struct sysinfo has no "available" field and no per-process data.
- * TOOL:
+ * USEDFOR:
  *   - The cheapest way to get total RAM, swap size, uptime and process count
  *     without opening a file.
  *   - get_nprocs() for the logical CPU count (same as sysconf's

@@ -28,8 +28,8 @@
  *   - A network or removable drive can block statvfs for a long time.
  *   - Linux also has statfs() in sys/vfs.h, with f_type to identify the
  *     filesystem; statvfs is the portable one.
- * TOOL:
- *   - The "Disk" line: used and total of "/" (and any other real mount).
+ * USEDFOR:
+ *   - Used and total space of "/" or any other mount, as df shows it.
  *   - f_flag & ST_RDONLY to mark a read-only root.
  * SEE: man 3 statvfs, man 5 proc (search /proc/[pid]/mounts), man 3 getmntent
  */

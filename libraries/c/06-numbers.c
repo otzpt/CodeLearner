@@ -34,7 +34,7 @@
  *   - rand() is not random enough for anything that matters, and gives the
  *     same sequence every run unless you call srand.
  *   - system() runs a shell command: never pass it text that came from outside.
- * TOOL:
+ * USEDFOR:
  *   - strtol for numbers read from /proc; getenv for HOME, SHELL, XDG_*.
  *   - realloc to grow a list of lines or fields as they are found.
  *   - realpath to resolve a symlink fully (for example /etc/os-release).

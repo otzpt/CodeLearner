@@ -2,7 +2,7 @@
  * TITLE: A logo on the left, information on the right
  * GROUP: Terminal
  * USES: print line by line; pad each logo line to the logo's width
- * SUMMARY: A fastfetch layout is two lists printed side by side: line N of the
+ * SUMMARY: A logo beside information is two lists printed side by side: line N of the
  *   logo, a gap, then line N of the information. Pad the logo lines to equal
  *   width so the information column lines up.
  * NOTES:
@@ -14,8 +14,7 @@
  *   - Colour the logo with one colour for the whole logo (the distribution's
  *     ANSI_COLOR), reset at the end of EACH row, then print the information.
  *   - Check the terminal width first and drop the logo on a narrow terminal.
- *   - Real fastfetch logos are ASCII art with colour placeholders; to use a
- *     distribution's logo, store each as a text file and read it into the
+ *   - To use a distribution's logo, store each as a text file and read it into the
  *     array.
  * SEE: the alignment page, the terminal size page
  */

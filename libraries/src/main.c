@@ -25,7 +25,7 @@
  *
  *   STANDARD  where it comes from: ISO C, POSIX, or Linux-specific
  *   PROVIDES  the functions, macros and types worth knowing, one per line
- *   TOOL      how a system-information tool (VoidFetch) uses it
+ *   USEDFOR   what it is commonly used for, one per line
  *
  * Pages ending in .txt are documentation only and are not run.
  *
@@ -80,7 +80,7 @@ struct Page {
     char libs[128];
     char standard[256];
     char provides[MAX_TEXT];
-    char tool[MAX_TEXT];
+    char used_for[MAX_TEXT];
     int documentation_only;
     long body_offset;
 };
@@ -206,7 +206,7 @@ static char *field_for(struct Page *page, const char *key, size_t *size)
         { "LIBS",    page->libs,    sizeof page->libs },
         { "STANDARD", page->standard, sizeof page->standard },
         { "PROVIDES", page->provides, sizeof page->provides },
-        { "TOOL",     page->tool,     sizeof page->tool },
+        { "USEDFOR",  page->used_for, sizeof page->used_for },
     };
 
     for (size_t i = 0; i < sizeof fields / sizeof fields[0]; i++) {
@@ -314,8 +314,8 @@ static int load_page(struct Page *page)
             }
         } else if (current != NULL) {
             /* Summaries wrap onto indented lines: join them flush left.
-             * Lists (notes, provides, tool) keep their own indentation. */
-            if (current != page->notes && current != page->provides && current != page->tool) {
+             * Lists (notes, provides, used for) keep their own indentation. */
+            if (current != page->notes && current != page->provides && current != page->used_for) {
                 while (*text == ' ') {
                     text++;
                 }
@@ -494,9 +494,9 @@ static void show_page(const struct Track *track, const struct Page *page)
         print_lines(page->notes, "  ");
         printf("\n");
     }
-    if (page->tool[0] != '\0') {
-        printf("  In VoidFetch:\n");
-        print_lines(page->tool, "  ");
+    if (page->used_for[0] != '\0') {
+        printf("  Used for:\n");
+        print_lines(page->used_for, "  ");
         printf("\n");
     }
     if (page->see[0] != '\0') {

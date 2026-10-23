@@ -29,7 +29,7 @@
  *     optional file exists, fopen it and test for NULL.
  *   - Linux adds statx(), which also returns the file's creation time where
  *     the filesystem records it (needs _GNU_SOURCE).
- * TOOL:
+ * USEDFOR:
  *   - S_ISDIR to count only directories (pacman local database, flatpak apps)
  *     when dirent's d_type is DT_UNKNOWN.
  *   - lstat to see that /bin/sh is a link and readlink to find what it is.

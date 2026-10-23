@@ -30,7 +30,7 @@
  *     without -t).
  *   - Prefer stdio (fopen) for text lines; use open() when you need the
  *     flags or are working with devices, pipes and sockets.
- * TOOL:
+ * USEDFOR:
  *   - open("/dev/tty", O_RDONLY | O_CLOEXEC) then ioctl(TIOCGWINSZ) gives the
  *     terminal size when output is piped.
  *   - open + one read() for a small /proc file, into a buffer large enough

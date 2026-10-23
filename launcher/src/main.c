@@ -169,7 +169,7 @@ static const struct Language LANGUAGES[] = {
 #endif
 #ifdef _WIN32
     /* Not a course: a reference to the libraries behind a task (and, for C and
-     * Python, everything a system-information tool such as fastfetch needs).
+     * Python, where Linux keeps system information).
      * Its pages read /proc and /sys, which Windows does not have. */
     { "Libraries",  NULL, NULL, "LIBRARIES" },
 #else

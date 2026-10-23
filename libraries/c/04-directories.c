@@ -28,7 +28,7 @@
  *   - readdir returns NULL both at the end AND on error. Set errno = 0
  *     before the loop and test it afterwards to tell them apart.
  *   - The pointer from readdir is only good until the next readdir call.
- * TOOL:
+ * USEDFOR:
  *   - Count installed packages: entries in /var/lib/pacman/local,
  *     /var/lib/flatpak/app.
  *   - List network interfaces (/sys/class/net) and GPUs (/sys/class/drm).

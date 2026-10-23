@@ -1,5 +1,5 @@
 """
-TITLE: A complete mini fastfetch
+TITLE: A complete system summary program
 GROUP: Putting it together
 USES: everything on the System information and Terminal pages
 SUMMARY: One program that gathers the fields, builds a "Label: value" list,
@@ -12,11 +12,8 @@ NOTES:
   - Every read is wrapped so one failing source cannot stop the others: a
     broken field becomes None, not a traceback.
   - Colour comes from ANSI_COLOR in os-release, with a default.
-  - Run it on its own to try it: python3 minifetch.py
-  - fastfetch itself does the same job with many more sources, optional
-    libraries (libpci, libdrm, wayland, xcb) for what sysfs cannot say, and a
-    configuration file for which fields to show.
-SEE: the pages above, and https://github.com/fastfetch-cli/fastfetch
+  - Run it on its own to try it: python3 system-summary.py
+SEE: the pages above
 """
 
 import getpass

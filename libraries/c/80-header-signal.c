@@ -32,10 +32,10 @@
  *     EINTR. SA_RESTART restarts most calls for you.
  *   - SIGKILL numbers and SIGUSR1's number differ between architectures: use
  *     the names.
- * TOOL:
+ * USEDFOR:
  *   - SIGINT: reset colours and show the cursor before exiting.
  *   - SIGWINCH: re-read the terminal size and redraw, in a live mode.
- *   - SIGPIPE: ignore it so  voidfetch | head  ends quietly.
+ *   - SIGPIPE: ignore it so  prog | head  ends quietly.
  * SEE: man 7 signal, man 2 sigaction, man 7 signal-safety
  */
 

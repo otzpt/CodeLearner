@@ -64,7 +64,7 @@ library call and runs it, so you see the real output on your own machine.
 | MicroPython | 11: for the Raspberry Pi Pico: pins, PWM/ADC, interrupts, native/viper, `asm_thumb`, a robot | [`micropython/`](micropython/) |
 | Arduino | 13: `setup()`/`loop()` through registers, interrupts, AVR inline assembly, a robot (runs on a PC) | [`arduino/`](arduino/) |
 | GUI (GTK) | 1 — your first window | [`gui/`](gui/) |
-| Libraries | a reference, not a course: C and Python pages with the code and its real output, from the standard library to everything a fastfetch needs | [`libraries/`](libraries/) |
+| Libraries | a reference, not a course: C and Python pages with the code and its real output, from the standard library to reading system information, plus raylib for games | [`libraries/`](libraries/) |
 | Assembly | 16 — registers and syscalls through memory, the stack, bits and strings, then C together with assembly, and a boot sector to an operating system kernel with interrupts, in NASM (Intel syntax) | [`assembly/`](assembly/README.md) |
 | Git | 10 — what is git through GitHub Actions | [`git/`](git/) |
 | Launcher | done — pick a language, open its course | [`launcher/`](launcher/) |
@@ -761,10 +761,11 @@ in the lesson.
 The launcher has a second tab, **LIBRARIES**, below the languages. It is a wiki,
 not a course: pick C or Python, then a page. Each page names the header or
 module for one job, shows the code, and runs it on your machine. The pages
-cover the basics of both standard libraries and, in the second half, everything
-a system-information tool such as fastfetch is made of (OS, kernel, CPU, GPU,
-memory, disk, uptime, packages, desktop, monitors, network, battery, terminal
-size, colours, layout), ending in a complete mini fastfetch in each language.
+cover the basics of both standard libraries and, in the second half, where
+Linux keeps system information (OS, kernel, CPU, GPU, memory, disk, uptime,
+packages, desktop, monitors, network, battery, terminal size, colours, layout),
+ending in a complete system summary program in each language. The C list also
+has a raylib page for games.
 See [`libraries/README.md`](libraries/README.md) for how a page is written and
 how it was verified.
 
@@ -890,7 +891,7 @@ Libraries pages are checked by three scripts in `libraries/`:
 `check-pages.py` builds and runs every page (C with `-Wall -Wextra`) and
 requires a page for each of the 21 C headers, `check-browser.py` drives the
 browser and searches for each header by name, and `check-agreement.py`
-compares the C and Python mini fastfetch field by field.
+compares the C and Python system summary programs field by field.
 
 ## Layout
 

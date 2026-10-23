@@ -1,9 +1,9 @@
-TITLE: Overview: where every fastfetch field comes from
+TITLE: Overview: where Linux keeps system information
 GROUP: Start here
 USES: the pages under System information, Terminal and Putting it together
-SUMMARY: A system-information tool is a list of small readers. Each field below
-  has one best source on Linux. The pages after this one show the code for
-  each, and the last page puts them all in one program.
+SUMMARY: Each piece of system information below has one best source on Linux.
+  The pages after this one show the code for each, and the last page puts
+  them all in one program.
 NOTES:
   - Prefer, in this order: the standard library (os.uname, shutil, platform,
     socket), then a file in /proc or /sys, then an environment variable, and
@@ -11,11 +11,11 @@ NOTES:
   - Everything here is Linux. macOS and Windows have other sources, which is
     what the third-party psutil package hides behind one API.
   - A field may be missing: no battery on a desktop, no DMI in a container, no
-    cpufreq in a virtual machine. A good tool omits the line.
+    cpufreq in a virtual machine. Leave it out rather than print a guess.
   - Try each source by hand before coding it: the commands at the bottom.
 SEE: pydoc os, pydoc platform, man 5 proc, man 5 sysfs, man 5 os-release
 ---
-  Field          Where it comes from                         Page
+  Information    Where it comes from                         Page
   -------------  ------------------------------------------  ----------------
   OS             platform.freedesktop_os_release()           Operating system
   Host           /sys/devices/virtual/dmi/id/product_name    Machine model

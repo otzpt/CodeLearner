@@ -3,7 +3,7 @@
  * GROUP: System information
  * USES: read /proc/meminfo; or #include <sys/sysinfo.h> (sysinfo)
  * SUMMARY: /proc/meminfo lists memory in kB. "Used" is MemTotal minus
- *   MemAvailable, which is how free, htop and fastfetch count it.
+ *   MemAvailable, which is how free and htop count it.
  * NOTES:
  *   - Values are in kB but mean KiB (1024 bytes). 16384000 kB is 15.6 GiB.
  *   - MemFree is memory nothing uses at all. Linux fills spare memory with

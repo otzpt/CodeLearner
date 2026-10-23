@@ -34,10 +34,10 @@
  *   - time_t is 64 bits on 64-bit Linux. On 32-bit systems it overflows in 2038.
  *   - A time zone comes from TZ or /etc/localtime; tm_isdst says whether
  *     daylight saving applies.
- * TOOL:
- *   - clock_gettime(CLOCK_BOOTTIME) for the uptime line.
+ * USEDFOR:
+ *   - clock_gettime(CLOCK_BOOTTIME) for the uptime.
  *   - time(NULL) minus uptime gives the boot time; format it with strftime.
- *   - CLOCK_MONOTONIC to measure how long each field took, for a --timing option.
+ *   - CLOCK_MONOTONIC to measure how long a piece of code took.
  * SEE: man 3 strftime, man 2 clock_gettime, man 3 mktime, man 7 time
  */
 

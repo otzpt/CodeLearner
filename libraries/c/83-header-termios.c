@@ -30,8 +30,8 @@
  *   - Use TCSAFLUSH to discard unread input when you change modes.
  *   - This page opens a pseudo-terminal so it works everywhere, even where the
  *     program has no terminal of its own (ssh, cron, this browser).
- * TOOL:
- *   - A plain fetch tool does not need termios: it prints and exits.
+ * USEDFOR:
+ *   - A program that prints and exits does not need termios.
  *   - Needed for a "press any key" pause, for an interactive mode that
  *     redraws on a keypress, or for reading the terminal's reply to an
  *     escape-sequence query (such as the size of a character cell), which

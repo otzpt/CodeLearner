@@ -35,8 +35,8 @@
  *     test "can I read this optional file", just try fopen and check NULL.
  *   - getlogin() needs a controlling terminal and fails in many places: use
  *     getpwuid(getuid()) (see pwd.h).
- * TOOL:
- *   - gethostname for the user@host title; getuid with getpwuid for the name.
+ * USEDFOR:
+ *   - gethostname for a user@host prompt; getuid with getpwuid for the name.
  *   - sysconf(_SC_NPROCESSORS_ONLN) for the thread count, _SC_PAGE_SIZE for
  *     converting page counts, _SC_CLK_TCK for CPU times in /proc/<pid>/stat.
  *   - readlink("/proc/self/exe") for the program's own path;

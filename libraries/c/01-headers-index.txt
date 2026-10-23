@@ -3,8 +3,7 @@ GROUP: Start here
 USES: the pages named "<header>.h: ..." in this list
 SUMMARY: One line per header: where it comes from, what it is for, and which
   page documents it. The header pages say what each provides, the return
-  values and errors, the pitfalls, and how a system-information tool such as
-  VoidFetch uses it.
+  values and errors, the pitfalls, and what it is commonly used for.
 NOTES:
   - Standard C (ISO C) is the same everywhere a C compiler exists. POSIX is the
     Unix standard: Linux, macOS and the BSDs have it, Windows does not. Linux-
@@ -23,7 +22,7 @@ SEE: man 7 feature_test_macros, man 7 libc
   stdio.h           standard C         stdio.h: streams, files ...           reading /proc, snprintf
   stdlib.h          standard C         stdlib.h: conversion, memory ...      strtol, realloc, getenv
   string.h          standard C         string.h: lengths, comparing ...      splitting lines, memcpy
-  stdbool.h         standard C (C99)   stdbool.h: bool, true and false       "this field exists" flags
+  stdbool.h         standard C (C99)   stdbool.h: bool, true and false       "value was found" flags
   stdint.h          standard C (C99)   stdint.h and inttypes.h: ...          uint64_t byte counts
   ctype.h           standard C         ctype.h: classifying ...              trimming, hex digits
   time.h            standard C + POSIX time.h: now, dates, durations ...     uptime, boot time

@@ -30,7 +30,7 @@
  *   - strdup allocates: free() the result.
  *   - strrchr(path, '/') + 1 is the file name; strcspn(line, "\n") is the
  *     index of the newline (the length without it).
- * TOOL:
+ * USEDFOR:
  *   - strncmp(line, "MemTotal:", 9) == 0 to pick a key out of /proc/meminfo.
  *   - strchr(line, '=') to split KEY=value in os-release.
  *   - strcspn to trim the newline fgets leaves; strrchr to get a process name.

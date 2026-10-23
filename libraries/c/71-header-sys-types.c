@@ -26,7 +26,7 @@
  *   - mode_t is shown in octal: printf("%o", mode) gives 644, not 420.
  *   - uid 0 is root. A tool run as root sees more (some /sys and /proc files)
  *     and should say so.
- * TOOL:
+ * USEDFOR:
  *   - pid_t for walking parent processes in /proc.
  *   - uid_t from getuid() into getpwuid().
  *   - ssize_t from readlink and read; off_t from stat's st_size.

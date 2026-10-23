@@ -1,5 +1,5 @@
 /*
- * TITLE: A complete mini fastfetch
+ * TITLE: A complete system summary program
  * GROUP: Putting it together
  * USES: everything on the System information and Terminal pages
  * SUMMARY: One program that gathers the fields, builds a "Label: value" list,
@@ -12,11 +12,8 @@
  *   - Every read has a bounded buffer and every parse checks its result.
  *   - Colour comes from ANSI_COLOR in os-release, with a default.
  *   - Compile it on its own to try it:
- *       cc -std=gnu11 -Wall -Wextra minifetch.c -o minifetch
- *   - fastfetch itself does the same job with many more sources, the optional
- *     libraries (libpci, libdrm, wayland, xcb) for things sysfs cannot say,
- *     and a configuration file for which fields to show.
- * SEE: the pages above, and https://github.com/fastfetch-cli/fastfetch
+ *       cc -std=gnu11 -Wall -Wextra system-summary.c -o system-summary
+ * SEE: the pages above
  */
 
 #define _GNU_SOURCE

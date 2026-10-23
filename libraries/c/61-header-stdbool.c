@@ -22,11 +22,11 @@
  *     a value other than 0 or 1 in memory is undefined behaviour. Test
  *     the byte (byte != 0) and store the result.
  *   - Before C99 programs defined their own TRUE and FALSE. Do not mix the two.
- * TOOL:
- *   - Give every field reader the shape  bool field_xxx(char *out, size_t size):
- *     true when the information exists. The print loop skips fields that return
- *     false, so a desktop without a battery simply has no battery line.
- *   - Options such as --no-logo and --json are bools in the config struct.
+ * USEDFOR:
+ *   - A reader that may find nothing returns bool:  bool read_x(char *out, size_t size)
+ *     is true when the information exists, so the caller can skip it (a desktop
+ *     has no battery).
+ *   - Command-line options such as --quiet are bools in a config struct.
  * SEE: man 0 stdbool.h
  */
 

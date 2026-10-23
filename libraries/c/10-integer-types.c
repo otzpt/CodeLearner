@@ -26,7 +26,7 @@
  *     have uint8_t. In practice every Linux system has them.
  *   - To look at the bytes of a number, copy them with memcpy into a
  *     uint8_t array; do not cast the pointer.
- * TOOL:
+ * USEDFOR:
  *   - uint64_t for byte counts built from kB values (kib * 1024).
  *   - uint64_t clock ticks and jiffies read from /proc/<pid>/stat.
  *   - SCNu64 with sscanf to read counters from /proc/net/dev without a cast.

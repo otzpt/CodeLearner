@@ -66,7 +66,7 @@ def main():
                     if not fields.get(required):
                         problems.append("header lacks " + required)
                 if fields.get("GROUP", "").startswith("Header reference"):
-                    for required in ("STANDARD", "PROVIDES", "TOOL", "SEE"):
+                    for required in ("STANDARD", "PROVIDES", "USEDFOR", "SEE"):
                         if not fields.get(required):
                             problems.append("header reference page lacks " + required)
                 title = (track, fields.get("TITLE"))

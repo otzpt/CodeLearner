@@ -28,9 +28,9 @@
  *     the distribution's.
  *   - uname fails only if you pass a bad pointer (EFAULT): in practice it
  *     always works, but check the result anyway.
- * TOOL:
- *   - The "Kernel" line (sysname + release) and the architecture in the OS line.
- *   - The hostname for the user@host title.
+ * USEDFOR:
+ *   - Report the kernel (sysname + release) and the architecture (machine).
+ *   - The hostname for a user@host prompt or a log line.
  * SEE: man 2 uname, man 2 gethostname
  */
 

@@ -26,7 +26,7 @@
  *     for a signed int. Compare against the limit first.
  *   - Plain char can be signed or unsigned depending on the machine
  *     (CHAR_MIN tells you). Cast to unsigned char before ctype functions.
- * TOOL:
+ * USEDFOR:
  *   - char path[PATH_MAX] for readlink("/proc/self/exe") and realpath.
  *   - char host[HOST_NAME_MAX + 1] for gethostname.
  *   - char user[LOGIN_NAME_MAX] when you need a login name buffer.

@@ -32,9 +32,9 @@
  *   - Files under /proc report size 0: loop on fgets until NULL, never use
  *     ftell to size a read.
  *   - Do not use gets() (removed from C11) or sprintf (no size limit).
- * TOOL:
+ * USEDFOR:
  *   - Read /proc and /sys files with fopen and fgets, one line at a time.
- *   - Build every field with snprintf into a fixed buffer, and check the
+ *   - Build strings with snprintf into a fixed buffer, and check the
  *     returned length against the buffer size.
  *   - popen("lspci -nn", "r") reads another program's output when no file has
  *     the answer; pclose returns its exit status.

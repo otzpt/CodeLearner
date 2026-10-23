@@ -29,9 +29,9 @@
  *     the macro names, never the numbers.
  *   - Where a normal function exists, prefer it: getifaddrs() over the
  *     SIOCGIF requests, tcgetattr() over the terminal ioctls.
- * TOOL:
- *   - TIOCGWINSZ for the terminal width, so the logo is dropped on a narrow
- *     terminal (try stdout, then stdin, then /dev/tty).
+ * USEDFOR:
+ *   - TIOCGWINSZ for the terminal width, to fit output to a narrow terminal
+ *     (try stdout, then stdin, then /dev/tty).
  *   - SIOCGIFHWADDR for an interface's MAC address (getifaddrs also reports it,
  *     as an AF_PACKET entry).
  * SEE: man 2 ioctl, man 4 tty_ioctl, man 7 netdevice

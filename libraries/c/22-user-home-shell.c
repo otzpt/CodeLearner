@@ -29,9 +29,9 @@
  *     /etc/passwd: do not read that file yourself.
  *   - getlogin() needs a controlling terminal and often fails: avoid it.
  *   - pw_gecos holds the full name first, then comma separated extras.
- * TOOL:
- *   - The user name and home directory for the title and for finding config.
- *   - pw_shell for the "Shell" line when $SHELL is not set.
+ * USEDFOR:
+ *   - The user name, and the home directory for finding config files.
+ *   - pw_shell for the login shell when $SHELL is not set.
  * SEE: man 3 getpwuid, man 5 passwd, man 7 environ
  */
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check that the C and the Python mini fastfetch agree.
+"""Check that the C and the Python system summary programs agree.
 
 The two programs read the same machine through different APIs (libc and
 /proc on one side, the standard library and /proc on the other). If a field
@@ -36,13 +36,13 @@ def fields(output):
 
 
 def run_c(scratch):
-    program = os.path.join(scratch, "minifetch")
-    subprocess.run(["cc", "-std=gnu11", "-o", program, os.path.join(HERE, "c", "50-minifetch.c")], check=True)
+    program = os.path.join(scratch, "system-summary")
+    subprocess.run(["cc", "-std=gnu11", "-o", program, os.path.join(HERE, "c", "50-system-summary.c")], check=True)
     return subprocess.run([program], capture_output=True, text=True, check=True).stdout
 
 
 def run_python():
-    return subprocess.run([sys.executable, os.path.join(HERE, "python", "50-minifetch.py")],
+    return subprocess.run([sys.executable, os.path.join(HERE, "python", "50-system-summary.py")],
                           capture_output=True, text=True, check=True).stdout
 
 

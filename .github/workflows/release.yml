@@ -156,7 +156,7 @@ jobs:
           python3 arduino/avr/run-avr.py
           python3 rust/run-embedded.py
           # The Libraries reference: every page builds and runs, the browser
-          # opens them all, and the C and Python mini fastfetch agree.
+          # opens them all, and the C and Python system summaries agree.
           python3 libraries/check-pages.py
           python3 libraries/check-browser.py
           python3 libraries/check-agreement.py
@@ -590,8 +590,8 @@ jobs:
             rebuilding it yourself needs `nasm` (`make asm-demo`).
 
             The Libraries tab is a reference, not a course: one page per
-            C header or Python module (including the 21 C headers behind
-            a fastfetch-style tool), each compiled or run live to show its
+            C header or Python module (including 21 C header reference
+            pages), each compiled or run live to show its
             real output. It is bundled on Linux only, since the pages read
             /proc and /sys, and needs `cc` and `python3` to run the pages.
 

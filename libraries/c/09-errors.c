@@ -29,9 +29,9 @@
  *   - A /proc or /sys file may exist on one machine and not another (no
  *     battery on a desktop). Treat ENOENT as "not available", not as a crash.
  *   - Never compare errno to a number; compare to the name.
- * TOOL:
- *   - ENOENT after fopen: the field does not exist on this machine, so skip it.
- *   - EACCES: the field needs root. Show "(permission denied)" or skip it.
+ * USEDFOR:
+ *   - ENOENT after fopen: the file does not exist on this machine (no battery, no DMI).
+ *   - EACCES: the file needs root. Show "(permission denied)" or skip it.
  *   - ENOTTY after ioctl(TIOCGWINSZ): output is not a terminal; fall back to 80.
  * SEE: man 3 errno, man 3 strerror, man 3 perror
  */

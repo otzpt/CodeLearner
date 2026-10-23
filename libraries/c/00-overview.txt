@@ -1,9 +1,9 @@
-TITLE: Overview: where every fastfetch field comes from
+TITLE: Overview: where Linux keeps system information
 GROUP: Start here
 USES: the pages under System information, Terminal and Putting it together
-SUMMARY: A system-information tool is a list of small readers. Each field below
-  has one best source on Linux. The pages after this one show the code for
-  each, and the last page puts them all in one program.
+SUMMARY: Each piece of system information below has one best source on Linux.
+  The pages after this one show the code for each, and the last page puts
+  them all in one program.
 NOTES:
   - Prefer, in this order: a system call or libc function (uname, sysinfo,
     statvfs, getifaddrs), then a file in /proc or /sys, then an environment
@@ -11,11 +11,11 @@ NOTES:
   - Everything here is Linux. macOS and the BSDs use different calls
     (sysctl, getifaddrs works, but /proc and /sys do not exist).
   - A field may be missing: no battery on a desktop, no DMI in a container, no
-    cpufreq in a virtual machine. A good tool omits the line.
+    cpufreq in a virtual machine. Leave it out rather than print a guess.
   - Try each source by hand before coding it: the commands at the bottom.
 SEE: man 5 proc, man 5 sysfs, man 5 os-release
 ---
-  Field          Where it comes from                         Page
+  Information    Where it comes from                         Page
   -------------  ------------------------------------------  ----------------
   OS             /etc/os-release  PRETTY_NAME                Operating system
   Host           /sys/devices/virtual/dmi/id/product_name    Machine model

@@ -24,7 +24,7 @@
  *     made of several bytes that these functions cannot classify; see
  *     wctype.h (iswalpha) and the alignment page.
  *   - A hexadecimal digit's value is  isdigit(c) ? c - '0' : tolower(c) - 'a' + 10.
- * TOOL:
+ * USEDFOR:
  *   - isdigit to decide whether a "model name" or version string starts with a
  *     number; isspace to trim a value read from /proc.
  *   - tolower to compare a distribution id case-insensitively.
