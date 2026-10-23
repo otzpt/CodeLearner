@@ -495,9 +495,9 @@ jobs:
             for f in "\$startdir/payload/security/src"/*.py; do
               install -Dm644 "\$f" "\$pkgdir/opt/codelearner/security/src/\$(basename "\$f")"
             done
-            # The launcher runs main.py as a bare path (shebang), so it needs
-            # the execute bit the 644 install above leaves off.
-            chmod 755 "\$pkgdir/opt/codelearner/security/src/main.py"
+            # The launcher runs these entry points as bare paths (shebang), so
+            # they need the execute bit the 644 installs above leave off.
+            chmod 755 "\$pkgdir/opt/codelearner/python/src/main.py" "\$pkgdir/opt/codelearner/javascript/src/main.js" "\$pkgdir/opt/codelearner/security/src/main.py"
             for f in "\$startdir/payload/java/src"/*.java; do
               install -Dm644 "\$f" "\$pkgdir/opt/codelearner/java/src/\$(basename "\$f")"
             done
