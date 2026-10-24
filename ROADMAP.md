@@ -234,6 +234,23 @@ the README's course tables have the module lists.
   interrupts, native/viper and `asm_thumb`, ending in a robot. A small
   simulator stands in for `machine`.
 
+## Security: started
+
+`security/` is a topic course implemented in Python, standard library only.
+Module 1 (Your first request) covers the request and response, the Server
+header as information disclosure, missing security headers, and urllib
+raising on 4xx/5xx. INTERMEDIATE and ADVANCED are listed empty in its menu.
+
+Next module, not started: **plain HTTP is readable on the wire.** Run a
+server on your own machine (`python3 -m http.server`), log in to a page on it
+with a test password, and capture that traffic with Wireshark or tcpdump on
+the loopback interface: the password is in the capture as plain text. Then
+compare HTTPS, where the same capture shows only the encrypted TLS records
+and the server name. Only the student's own machine and traffic, never
+someone else's network; the module says so and why (capturing other people's
+traffic without permission is illegal in most countries). It came from a real
+case: a school platform served its login page over HTTP only.
+
 ## Libraries: a reference manual, not a course
 
 [`libraries/`](libraries/) is a man-page style manual for C and Python, one
