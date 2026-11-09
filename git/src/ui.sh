@@ -58,8 +58,7 @@ ui_title_centered() {
 }
 
 ui_heading() {
-    printf '\n  %s\n' "$(ui_tr "ui_heading() {
-    printf '\n  %s\n' ")"
+    printf '\n  %s\n' "$(ui_tr "$1")"
     ui_rule
 }
 
