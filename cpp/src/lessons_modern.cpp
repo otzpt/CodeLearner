@@ -380,7 +380,9 @@ void lesson08Vectors() {
          "", "    std::cout << \"Enter numbers, -1 to stop:\\n\";",
          "    while (std::cin >> n && n != -1) {", "        nums.push_back(n);",
          "    }", "", "    std::sort(nums.begin(), nums.end());",
-         "    for (int x : nums) {", "        std::cout << x << \" \";", "    }",
+         "    bool first = true;", "    for (int x : nums) {",
+         "        if (!first) {", "            std::cout << \" \";", "        }",
+         "        std::cout << x;", "        first = false;", "    }",
          "    std::cout << \"\\n\";",
          "    std::cout << nums.size() << \"\\n\";", "    return 0;", "}"});
 

@@ -100,11 +100,13 @@ int main(void)
             break;
         }
 
-        /* atoi returns 0 for anything that is not a number, and 0 already
-         * means quit, so "abc" falls through to the invalid branch. */
-        int n = atoi(choice);
+        /* strtol, not atoi: atoi is undefined for a number too big for an
+         * int, and it would read "2xyz" as 2. *end is only '\0' when the
+         * whole line was a number. */
+        char *end;
+        long n = strtol(choice, &end, 10);
 
-        if (n >= 1 && n <= MODULE_COUNT) {
+        if (*end == '\0' && n >= 1 && n <= MODULE_COUNT) {
             clear_screen();
             MODULES[n - 1].run();
         } else {

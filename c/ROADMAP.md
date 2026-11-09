@@ -41,9 +41,9 @@ directly rather than starting something new:
 - Local vs. global variables (their own PART, distinct from scope/lifetime
   above, which is about a single variable's existence; this is about two
   places a name can live and which one wins).
-- Recursion (a base case, a recursive case, and and the stack-depth
-  failure described, not run (module 7 PART 5 prints the typed error and
-  says why it is not run here).
+- Recursion (a base case, a recursive case, and the stack-depth failure
+  described, not run: module 7 PART 5 prints the typed error and says why
+  it is not run here).
 
 Organizing a program into multiple `.c` files belongs with module 16
 (compilation and project structure) — it is inseparable from linking and

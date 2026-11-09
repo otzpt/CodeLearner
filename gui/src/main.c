@@ -71,9 +71,10 @@ int main(void)
             break;
         }
 
-        int n = atoi(choice);
+        char *end;
+        long n = strtol(choice, &end, 10);
 
-        if (n >= 1 && n <= MODULE_COUNT) {
+        if (*end == '\0' && n >= 1 && n <= MODULE_COUNT) {
             clear_screen();
             MODULES[n - 1].run();
         } else {

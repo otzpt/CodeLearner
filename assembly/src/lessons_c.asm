@@ -136,7 +136,8 @@ m9_p3c:
     ln ""
     ln "  The system call is inline assembly, the same instruction as in"
     ln "  module 1, with the registers named in the constraints. The"
-    ln "  finished program is 9128 bytes."
+    ln "  finished program was 9128 bytes when this module was built; the"
+    ln "  exact size depends on your linker's version and defaults."
     db 0
 
 m9_p4:

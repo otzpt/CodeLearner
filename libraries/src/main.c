@@ -659,8 +659,9 @@ int main(void)
             break;
         }
 
-        int n = atoi(choice);
-        if (n >= 1 && n <= TRACK_COUNT) {
+        char *end;
+        long n = strtol(choice, &end, 10);
+        if (*end == '\0' && n >= 1 && n <= TRACK_COUNT) {
             run_track(&TRACKS[n - 1]);
         }
     }

@@ -382,10 +382,10 @@ EOF
   documentation, this course has no network access to a real GitHub
   release to run against, so that part is stated, not demonstrated.
 EOF
-    if command -v gh &>/dev/null; then
+    if command -v gh &>/dev/null && gh auth status &>/dev/null; then
         cat <<'EOF'
 
-  This machine has the gh CLI installed, so here is a real one, from this
+  This machine has the gh CLI logged in, so here is a real one, from this
   very project's own public repository:
 EOF
         ui_run "gh release list --repo otzpt/CodeLearner --limit 3" \

@@ -280,6 +280,9 @@ On Debian or Ubuntu:
 sudo apt install default-jdk
 ```
 
+`default-jdk` can be older than 22, depending on the release. Check with
+`java -version`, and if it is, install a newer `openjdk-NN-jdk` package.
+
 You need the .NET SDK for the C# course. On Arch:
 
 ```bash

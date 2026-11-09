@@ -26,8 +26,10 @@ on:
       - "v*"
   workflow_dispatch:
 
+# The build job runs third-party code and writes nothing to the repository.
+# Only the release job below gets write access.
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
@@ -342,6 +344,8 @@ jobs:
             7z a "$out.zip" "$out" > /dev/null
           else
             tar -czf "$out.tar.gz" "$out"
+            # install.sh checks the tarball against this.
+            sha256sum "$out.tar.gz" > "$out.tar.gz.sha256"
             # A .zip alongside the .tar.gz, same payload -- some Linux users
             # reach for zip out of habit, and `zip` is preinstalled on the
             # ubuntu-22.04 runner image (unlike 7z, which is Windows-only
@@ -559,6 +563,7 @@ jobs:
           path: |
             codelearner-windows-x86_64.zip
             codelearner-linux-x86_64.tar.gz
+            codelearner-linux-x86_64.tar.gz.sha256
             codelearner-linux-x86_64.zip
             codelearner-amd64.deb
             codelearner-x86_64.pkg.tar.zst
@@ -571,6 +576,8 @@ jobs:
     name: Publish release
     needs: [build]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     if: |
       always() && needs.build.result == 'success'
       && startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, '-')
@@ -579,7 +586,7 @@ jobs:
         with:
           path: artifacts
       - name: Publish to GitHub Releases
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@8a0cd651e5b2365bd640854a3fa5dfc70e4875f3 # v3
         with:
           files: artifacts/**/*
           generate_release_notes: true

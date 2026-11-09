@@ -71,7 +71,11 @@ int main() {
 
         int n;
         try {
-            n = std::stoi(choice);
+            std::size_t used = 0;
+            n = std::stoi(choice, &used);
+            if (used != choice.size()) {
+                n = 0;
+            }
         } catch (...) {
             n = 0;
         }

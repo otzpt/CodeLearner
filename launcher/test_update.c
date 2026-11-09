@@ -62,6 +62,11 @@ int main(void)
     CHECK(!version_parse("1.5.0.1", v));
     CHECK(!version_parse("1.5.x", v));
     CHECK(!version_parse("1.-5.0", v));
+    CHECK(!version_parse("99999999999.0.0", v));
+    CHECK(!version_parse("1.99999999999.0", v));
+    CHECK(!version_parse(" 1.5.0", v));
+    CHECK(!version_parse("1. 5.0", v));
+    CHECK(!version_parse("+1.5.0", v));
 
     /* version_newer: numeric, not alphabetical */
     CHECK(newer("v1.5.1", "1.5.0"));

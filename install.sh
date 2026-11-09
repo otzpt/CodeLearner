@@ -47,6 +47,13 @@ USAGE
     shift
 done
 
+# The wrapper and the menu entry store this path, so it has to work from any
+# directory, not just the one this script was started in.
+case "$PREFIX" in
+    /*) ;;
+    *) PREFIX="$(pwd)/$PREFIX" ;;
+esac
+
 SHARE_DIR="${PREFIX}/share/codelearner"
 BIN_DIR="${PREFIX}/bin"
 WRAPPER="${BIN_DIR}/codelearner"
@@ -95,6 +102,24 @@ trap 'rm -rf "$tmp"' EXIT INT TERM
 echo "Downloading $ASSET..."
 fetch "$URL" "$tmp/$ASSET"
 
+# SIMPLIFICATION: a missing .sha256 only warns, because releases made before
+# this check do not publish one. Make it fatal once the latest release does.
+# The file comes from the same release as the tarball, so this catches a
+# damaged download or a replaced tarball, not a compromised release.
+if ! command -v sha256sum >/dev/null 2>&1; then
+    echo "install.sh: sha256sum not found, skipping the checksum check." >&2
+elif fetch "$URL.sha256" "$tmp/$ASSET.sha256" 2>/dev/null; then
+    expected="$(cut -d' ' -f1 "$tmp/$ASSET.sha256")"
+    actual="$(sha256sum "$tmp/$ASSET" | cut -d' ' -f1)"
+    if [ "$expected" != "$actual" ]; then
+        echo "install.sh: checksum mismatch for $ASSET, not installing it." >&2
+        exit 1
+    fi
+    echo "Checksum OK."
+else
+    echo "install.sh: this release publishes no checksum, skipping the check." >&2
+fi
+
 echo "Extracting..."
 tar -xzf "$tmp/$ASSET" -C "$tmp"
 [ -d "$tmp/$BUNDLE_DIR" ] || {
@@ -117,7 +142,8 @@ for exe in launcher/launcher c/c-course cpp/cpp-course gui/gui-course \
            assembly/asm-course csharp/csharp csharp/run java/run \
            rust/rust-course arduino/arduino-course micropython/src/main.py \
            python/src/main.py javascript/src/main.js security/src/main.py \
-           c/asm/use_asm cpp/asm/use_asm rust/asm/use_asm libraries/libraries; do
+           c/asm/use_asm cpp/asm/use_asm rust/asm/use_asm libraries/libraries \
+           git/src/main.sh; do
     [ -f "$SHARE_DIR/$exe" ] && chmod +x "$SHARE_DIR/$exe"
 done
 rm -f "$SHARE_DIR/codelearner.sh"     # the wrapper below replaces it
@@ -126,23 +152,26 @@ rm -f "$SHARE_DIR/codelearner.sh"     # the wrapper below replaces it
 # (../c, ../python, ...), so it has to be started from inside that layout --
 # the same reason the .deb and Arch packages ship a wrapper instead of
 # symlinking the binary onto PATH.
-cat > "$WRAPPER" <<EOF
-#!/bin/sh
-cd "$SHARE_DIR/launcher" && exec ./launcher
-EOF
+#
+# Single quotes keep every character of the path literal; a ' inside it is
+# closed, escaped and reopened.
+quoted_dir="'$(printf '%s' "$SHARE_DIR/launcher" | sed "s/'/'\\\\''/g")'"
+printf '#!/bin/sh\ncd %s && exec ./launcher\n' "$quoted_dir" > "$WRAPPER"
 chmod +x "$WRAPPER"
 
 # An application menu entry, so CodeLearner can be started without a terminal
 # already open. Releases before this one do not carry the files, so it is
 # optional. Exec= is rewritten to the wrapper's full path (quoted, in case the
 # prefix has a space in it) because a desktop session does not always have
-# ~/.local/bin on its PATH. Written line by line instead of with sed, so no
-# character in the path needs escaping.
+# ~/.local/bin on its PATH.
 if [ -f "$SHARE_DIR/desktop/$APP_ID.desktop" ]; then
     mkdir -p "$APPS_DIR" "$ICON_DIR"
+    # Desktop Entry spec: inside quotes \ " ` $ take a backslash, the value as
+    # a whole then takes string escaping (\ becomes \\), and % is written %%.
+    exec_path="$(printf '%s' "$WRAPPER" | sed -e 's/[\\"`$]/\\&/g' -e 's/\\/\\\\/g' -e 's/%/%%/g')"
     while IFS= read -r line || [ -n "$line" ]; do
         case "$line" in
-            Exec=*) printf 'Exec="%s"\n' "$WRAPPER" ;;
+            Exec=*) printf 'Exec="%s"\n' "$exec_path" ;;
             *)      printf '%s\n' "$line" ;;
         esac
     done < "$SHARE_DIR/desktop/$APP_ID.desktop" > "$APPS_DIR/$APP_ID.desktop"

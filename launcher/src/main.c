@@ -393,8 +393,9 @@ int main(void)
             continue;
         }
 
-        int n = atoi(choice);
-        if (n < 1 || n > LANGUAGE_COUNT) {
+        char *end;
+        long n = strtol(choice, &end, 10);
+        if (*end != '\0' || n < 1 || n > LANGUAGE_COUNT) {
             printf("\n  Not a valid option.\n");
             wait_enter();
             continue;
