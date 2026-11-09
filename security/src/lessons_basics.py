@@ -197,16 +197,17 @@ def lesson_01_first_request():
     ui.clear_screen()
     ui.heading("SUMMARY")
 
-    print("   - an HTTP response is a status line, headers, and a body;")
-    print("     security is read from the first two, not just the body")
-    print("   - the Server header is information disclosure -- a version")
-    print("     number is the attacker's first recon, given away free")
-    print("   - security headers are opt-in; the finding is the MISSING")
-    print("     one, visible only because you checked for it on purpose")
-    print("   - urllib RAISES on 4xx/5xx (HTTPError, a URLError subclass);")
-    print("     never let the exception stand in for the real result")
-    print("   - always pass timeout= -- a first network script with no")
-    print("     timeout is the classic 'why did it freeze' afternoon")
+    if not ui.print_summary_pt(1):
+        print("   - an HTTP response is a status line, headers, and a body;")
+        print("     security is read from the first two, not just the body")
+        print("   - the Server header is information disclosure -- a version")
+        print("     number is the attacker's first recon, given away free")
+        print("   - security headers are opt-in; the finding is the MISSING")
+        print("     one, visible only because you checked for it on purpose")
+        print("   - urllib RAISES on 4xx/5xx (HTTPError, a URLError subclass);")
+        print("     never let the exception stand in for the real result")
+        print("   - always pass timeout= -- a first network script with no")
+        print("     timeout is the classic 'why did it freeze' afternoon")
     ui.wait_enter()
 
 

@@ -20,7 +20,7 @@ CXX      = g++
 CXXFLAGS = -std=gnu++17 -Wall -Wextra -g -Ishim
 TARGET   = arduino-course
 LOOPS   ?= 10
-TABS     = course/ui.ino course/lessons_basics.ino course/lessons_more.ino \
+TABS     = course/strings_pt.ino course/ui.ino course/lessons_basics.ino course/lessons_more.ino \
            course/lessons_advanced.ino course/course.ino
 
 $(TARGET): build/sketch.cpp shim/main.cpp shim/Arduino.h

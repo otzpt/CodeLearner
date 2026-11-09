@@ -3,6 +3,7 @@
 //! Same purpose and the same visual style as the other courses' ui modules,
 //! kept as a separate implementation rather than shared code.
 
+use crate::strings_pt::tr;
 use std::io::{self, Write};
 
 const WIDTH: usize = 54; // inside width of the frame, matching the other courses
@@ -37,7 +38,7 @@ pub fn read_line() -> Option<String> {
 }
 
 pub fn wait_enter() {
-    print!("\n  Press ENTER to continue...");
+    print!("\n  {}", tr("Press ENTER to continue..."));
     read_line();
 }
 
@@ -62,7 +63,7 @@ pub fn title(text: &str) {
 }
 
 pub fn heading(text: &str) {
-    println!("\n  {text}");
+    println!("\n  {}", tr(text));
     rule();
 }
 
@@ -75,7 +76,7 @@ pub fn ask_yes(question_text: &str) -> bool {
 }
 
 pub fn exercise(number: u32) {
-    println!("\n  >> EXERCISE - MODULE {number}");
+    println!("\n  {} {number}", tr(">> EXERCISE - MODULE"));
     rule();
 }
 
@@ -83,14 +84,14 @@ pub fn exercise(number: u32) {
 /// and shows `why` either way. Nobody is blocked from continuing.
 pub fn question(text: &str, correct: &str, why: &str) -> bool {
     println!("\n  {text}");
-    print!("  Your answer: ");
+    print!("  {} ", tr("Your answer:"));
     let answer = read_line().unwrap_or_default();
 
     let right = answer.trim().to_lowercase() == correct.trim().to_lowercase();
     if right {
-        println!("\n  CORRECT.  {why}");
+        println!("\n  {}  {why}", tr("CORRECT."));
     } else {
-        println!("\n  NOT QUITE. The answer is: {correct}");
+        println!("\n  {} {correct}", tr("NOT QUITE. The answer is:"));
         println!("             {why}");
     }
     right
@@ -104,7 +105,7 @@ pub fn question(text: &str, correct: &str, why: &str) -> bool {
 /// the code that does it is written. `solution` is one way of getting there
 /// and appears only after a confirmation.
 pub fn challenge(task: &[&str], input: &[&str], expected: &[&str], solution: &[&str]) {
-    println!("\n  >> WRITE THIS YOURSELF, in a real file");
+    println!("\n  {}", tr(">> WRITE THIS YOURSELF, in a real file"));
     rule();
 
     for line in task {
@@ -112,25 +113,25 @@ pub fn challenge(task: &[&str], input: &[&str], expected: &[&str], solution: &[&
     }
 
     if !input.is_empty() {
-        println!("\n  Try it with this input:\n");
+        println!("\n  {}\n", tr("Try it with this input:"));
         for line in input {
             println!("      {line}");
         }
     }
 
     if !expected.is_empty() {
-        println!("\n  It must print:\n");
+        println!("\n  {}\n", tr("It must print:"));
         for line in expected {
             println!("      {line}");
         }
-        println!("\n  That output is the whole specification. Any code that");
-        println!("  produces it is correct.");
+        println!("\n  {}", tr("That output is the whole specification. Any code that"));
+        println!("  {}", tr("produces it is correct."));
     }
 
-    println!("\n  Try it first. Compile and run with:");
+    println!("\n  {}", tr("Try it first. Compile and run with:"));
     println!("    rustc test.rs && ./test");
 
-    if !ask_yes("Want to see example code?") {
+    if !ask_yes(tr("Want to see example code?")) {
         return;
     }
 
@@ -140,7 +141,7 @@ pub fn challenge(task: &[&str], input: &[&str], expected: &[&str], solution: &[&
         println!("  {line}");
     }
     rule();
-    println!("  This is EXAMPLE CODE, not the answer. It is one way to get");
-    println!("  that output; yours may look nothing like it and still be");
-    println!("  right -- or better. Compare the output, not the code.");
+    println!("  {}", tr("This is EXAMPLE CODE, not the answer. It is one way to get"));
+    println!("  {}", tr("that output; yours may look nothing like it and still be"));
+    println!("  {}", tr("right -- or better. Compare the output, not the code."));
 }

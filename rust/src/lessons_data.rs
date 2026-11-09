@@ -210,12 +210,14 @@ pub fn lesson_08_structs() {
     clear_screen();
     heading("SUMMARY");
 
-    say("   - struct groups named fields; mutability belongs to the whole variable");
-    say("   - impl adds methods: &self reads, &mut self changes, self consumes");
-    say("   - #[derive(Debug, Clone, Copy)] writes the boring code for you");
-    say("   - #[repr(C)] fixes the layout; a tuple struct makes a distinct type");
-    println!();
-    say("  Module 9: enums, and a value that can be missing.");
+    if !crate::strings_pt::print_summary_pt(8) {
+        say("   - struct groups named fields; mutability belongs to the whole variable");
+        say("   - impl adds methods: &self reads, &mut self changes, self consumes");
+        say("   - #[derive(Debug, Clone, Copy)] writes the boring code for you");
+        say("   - #[repr(C)] fixes the layout; a tuple struct makes a distinct type");
+        println!();
+        say("  Module 9: enums, and a value that can be missing.");
+    }
     wait_enter();
 }
 
@@ -394,12 +396,14 @@ pub fn lesson_09_enums() {
     clear_screen();
     heading("SUMMARY");
 
-    say("   - enum: a fixed set of variants; match must cover them all");
-    say("   - variants can carry data: Move(i32), Turn { degrees: i32 }");
-    say("   - Option<T> replaces null: Some(value) or None, handled before use");
-    say("   - unwrap() panics on None; unwrap_or, if let and match do not");
-    println!();
-    say("  Module 10: Result, for operations that can fail.");
+    if !crate::strings_pt::print_summary_pt(9) {
+        say("   - enum: a fixed set of variants; match must cover them all");
+        say("   - variants can carry data: Move(i32), Turn { degrees: i32 }");
+        say("   - Option<T> replaces null: Some(value) or None, handled before use");
+        say("   - unwrap() panics on None; unwrap_or, if let and match do not");
+        println!();
+        say("  Module 10: Result, for operations that can fail.");
+    }
     wait_enter();
 }
 
@@ -552,11 +556,13 @@ pub fn lesson_10_results() {
     clear_screen();
     heading("SUMMARY");
 
-    say("   - Result<T, E> is Ok(value) or Err(reason); the type forces a decision");
-    say("   - ? returns the Err to the caller, or unwraps the Ok");
-    say("   - handle recoverable failures; unwrap/expect only for bugs");
-    say("   - parse() tells a bad number from a zero, unlike parseInt()");
-    println!();
-    say("  Module 11: Rust meets hardware.");
+    if !crate::strings_pt::print_summary_pt(10) {
+        say("   - Result<T, E> is Ok(value) or Err(reason); the type forces a decision");
+        say("   - ? returns the Err to the caller, or unwraps the Ok");
+        say("   - handle recoverable failures; unwrap/expect only for bugs");
+        say("   - parse() tells a bad number from a zero, unlike parseInt()");
+        println!();
+        say("  Module 11: Rust meets hardware.");
+    }
     wait_enter();
 }

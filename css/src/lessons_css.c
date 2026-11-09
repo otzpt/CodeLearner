@@ -211,12 +211,14 @@ void lesson_01_layout(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - box-sizing: border-box makes width mean what you expect.\n");
-    printf("   - Vertical margins collapse. Horizontal ones and flex items\n");
-    printf("     do not.\n");
-    printf("   - Inline elements ignore width.\n");
-    printf("   - position: absolute needs a positioned ancestor, and\n");
-    printf("     z-index needs a position.\n");
+    if (!print_summary_pt(1)) {
+        printf("   - box-sizing: border-box makes width mean what you expect.\n");
+        printf("   - Vertical margins collapse. Horizontal ones and flex items\n");
+        printf("     do not.\n");
+        printf("   - Inline elements ignore width.\n");
+        printf("   - position: absolute needs a positioned ancestor, and\n");
+        printf("     z-index needs a position.\n");
+    }
     wait_enter();
 }
 
@@ -363,12 +365,14 @@ void lesson_02_flexbox(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - justify-content follows the main axis, and flex-direction\n");
-    printf("     decides which axis that is.\n");
-    printf("   - flex: 1 shares the remaining space.\n");
-    printf("   - Items refuse to shrink below their content until you set\n");
-    printf("     min-width: 0.\n");
-    printf("   - flex-wrap: wrap lets items move to a new line.\n");
+    if (!print_summary_pt(2)) {
+        printf("   - justify-content follows the main axis, and flex-direction\n");
+        printf("     decides which axis that is.\n");
+        printf("   - flex: 1 shares the remaining space.\n");
+        printf("   - Items refuse to shrink below their content until you set\n");
+        printf("     min-width: 0.\n");
+        printf("   - flex-wrap: wrap lets items move to a new line.\n");
+    }
     wait_enter();
 }
 
@@ -516,10 +520,12 @@ void lesson_03_grid(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - fr is a share of the free space.\n");
-    printf("   - repeat(auto-fit, minmax(...)) adapts with no media query.\n");
-    printf("   - grid-template-areas draws the layout in text.\n");
-    printf("   - minmax(0, 1fr) stops content forcing a column wider.\n");
+    if (!print_summary_pt(3)) {
+        printf("   - fr is a share of the free space.\n");
+        printf("   - repeat(auto-fit, minmax(...)) adapts with no media query.\n");
+        printf("   - grid-template-areas draws the layout in text.\n");
+        printf("   - minmax(0, 1fr) stops content forcing a column wider.\n");
+    }
     wait_enter();
 }
 
@@ -686,11 +692,13 @@ void lesson_04_responsive(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - em multiplies when nested. rem does not.\n");
-    printf("   - Base rules first, media queries after them.\n");
-    printf("   - clamp() gives a value limits on both sides.\n");
-    printf("   - @container responds to the available space, not the\n");
-    printf("     window.\n");
+    if (!print_summary_pt(4)) {
+        printf("   - em multiplies when nested. rem does not.\n");
+        printf("   - Base rules first, media queries after them.\n");
+        printf("   - clamp() gives a value limits on both sides.\n");
+        printf("   - @container responds to the available space, not the\n");
+        printf("     window.\n");
+    }
     wait_enter();
 }
 
@@ -865,14 +873,16 @@ void lesson_05_modern(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - Specificity is compared column by column, then source\n");
-    printf("     order decides.\n");
-    printf("   - An invalid var() falls back to inherited or initial, not\n");
-    printf("     to the previous rule.\n");
-    printf("   - :is() takes its argument's weight. :where() weighs\n");
-    printf("     nothing.\n");
-    printf("   - Unlayered styles beat layered ones.\n");
-    printf("   - :has() selects by contents, and rules can be nested with\n");
-    printf("     &.\n");
+    if (!print_summary_pt(5)) {
+        printf("   - Specificity is compared column by column, then source\n");
+        printf("     order decides.\n");
+        printf("   - An invalid var() falls back to inherited or initial, not\n");
+        printf("     to the previous rule.\n");
+        printf("   - :is() takes its argument's weight. :where() weighs\n");
+        printf("     nothing.\n");
+        printf("   - Unlayered styles beat layered ones.\n");
+        printf("   - :has() selects by contents, and rules can be nested with\n");
+        printf("     &.\n");
+    }
     wait_enter();
 }

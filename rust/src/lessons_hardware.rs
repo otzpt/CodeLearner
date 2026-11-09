@@ -216,13 +216,15 @@ pub fn lesson_11_hardware() {
     clear_screen();
     heading("SUMMARY");
 
-    say("   - a register is a 32-bit word at an address; Rust reaches it with");
-    say("     raw pointers and read_volatile / write_volatile");
-    say("   - volatile stops the compiler deleting or merging register writes");
-    say("   - set_bit is read, modify, write: three instructions, not atomic");
-    say("   - RP2040 atomic aliases: +0x1000 XOR, +0x2000 SET, +0x3000 CLR");
-    say("   - #![no_std] code uses core only; rp-hal wraps this unsafe in safe types");
-    println!();
-    say("  Module 12: writing the CPU's own instructions inside Rust.");
+    if !crate::strings_pt::print_summary_pt(11) {
+        say("   - a register is a 32-bit word at an address; Rust reaches it with");
+        say("     raw pointers and read_volatile / write_volatile");
+        say("   - volatile stops the compiler deleting or merging register writes");
+        say("   - set_bit is read, modify, write: three instructions, not atomic");
+        say("   - RP2040 atomic aliases: +0x1000 XOR, +0x2000 SET, +0x3000 CLR");
+        say("   - #![no_std] code uses core only; rp-hal wraps this unsafe in safe types");
+        println!();
+        say("  Module 12: writing the CPU's own instructions inside Rust.");
+    }
     wait_enter();
 }

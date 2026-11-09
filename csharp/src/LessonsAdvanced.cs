@@ -131,14 +131,17 @@ static class LessonsAdvanced
         Ui.ClearScreen();
         Ui.Heading("SUMMARY");
 
-        Console.WriteLine("  - Where filters, Select transforms -- chain them instead of nesting loops");
-        Console.WriteLine("  - Sum, Count, OrderBy(Descending) replace the loops that reduce a list");
-        Console.WriteLine("    to one value or a sorted copy");
-        Console.WriteLine("  - a LINQ query is lazy: it runs at enumeration time, not creation time --");
-        Console.WriteLine("    .ToList() forces it to run once, immediately, if that's what you want");
-        Console.WriteLine();
-        Console.WriteLine("  Module 12 is async/await -- compared directly against JavaScript's");
-        Console.WriteLine("  own Promise-based version of the same idea.");
+        if (!Strings.PrintSummaryPt(11))
+        {
+            Console.WriteLine("  - Where filters, Select transforms -- chain them instead of nesting loops");
+            Console.WriteLine("  - Sum, Count, OrderBy(Descending) replace the loops that reduce a list");
+            Console.WriteLine("    to one value or a sorted copy");
+            Console.WriteLine("  - a LINQ query is lazy: it runs at enumeration time, not creation time --");
+            Console.WriteLine("    .ToList() forces it to run once, immediately, if that's what you want");
+            Console.WriteLine();
+            Console.WriteLine("  Module 12 is async/await -- compared directly against JavaScript's");
+            Console.WriteLine("  own Promise-based version of the same idea.");
+        }
         Ui.WaitEnter();
     }
 
@@ -339,20 +342,23 @@ static class LessonsAdvanced
         Ui.ClearScreen();
         Ui.Heading("SUMMARY");
 
-        Console.WriteLine("  - a Task is pending, then completes or faults once -- the same shape");
-        Console.WriteLine("    a JavaScript Promise has, under a different name");
-        Console.WriteLine("  - Task.Delay doesn't block the thread the way Thread.Sleep does; only");
-        Console.WriteLine("    awaiting it actually waits");
-        Console.WriteLine("  - await is contagious: a method that awaits must be async, and so");
-        Console.WriteLine("    must every caller above it, up to the entry point");
-        Console.WriteLine("  - Task.WhenAll runs independent awaits concurrently instead of one");
-        Console.WriteLine("    after another");
-        Console.WriteLine("  - an awaited faulted Task throws, caught with the same try/catch");
-        Console.WriteLine("    module 10 already taught -- no new mechanism");
-        Console.WriteLine();
-        Console.WriteLine("  Module 13 is generics and interfaces in depth -- a generic method");
-        Console.WriteLine("  with a real constraint, and default interface methods, past what");
-        Console.WriteLine("  module 8's records and structs already touched.");
+        if (!Strings.PrintSummaryPt(12))
+        {
+            Console.WriteLine("  - a Task is pending, then completes or faults once -- the same shape");
+            Console.WriteLine("    a JavaScript Promise has, under a different name");
+            Console.WriteLine("  - Task.Delay doesn't block the thread the way Thread.Sleep does; only");
+            Console.WriteLine("    awaiting it actually waits");
+            Console.WriteLine("  - await is contagious: a method that awaits must be async, and so");
+            Console.WriteLine("    must every caller above it, up to the entry point");
+            Console.WriteLine("  - Task.WhenAll runs independent awaits concurrently instead of one");
+            Console.WriteLine("    after another");
+            Console.WriteLine("  - an awaited faulted Task throws, caught with the same try/catch");
+            Console.WriteLine("    module 10 already taught -- no new mechanism");
+            Console.WriteLine();
+            Console.WriteLine("  Module 13 is generics and interfaces in depth -- a generic method");
+            Console.WriteLine("  with a real constraint, and default interface methods, past what");
+            Console.WriteLine("  module 8's records and structs already touched.");
+        }
         Ui.WaitEnter();
 
         static async Task<int> ComputeAsync()
@@ -535,20 +541,23 @@ static class LessonsAdvanced
         Ui.ClearScreen();
         Ui.Heading("SUMMARY");
 
-        Console.WriteLine("  - an unconstrained T only has what every type has (Object's own");
-        Console.WriteLine("    members) -- CompareTo needs where T : IComparable<T> first");
-        Console.WriteLine("  - that constraint accepts any type implementing IComparable<T>,");
-        Console.WriteLine("    value type or reference type alike -- int and string both qualify");
-        Console.WriteLine("  - since C# 8, an interface method may have a body -- a default");
-        Console.WriteLine("    implementation, inherited unless the implementing class overrides it");
-        Console.WriteLine("  - a default body only resolves through an interface-typed reference,");
-        Console.WriteLine("    not through the concrete class, even though the class implements it");
-        Console.WriteLine("  - real Java has had default methods since Java 8 too; this course's");
-        Console.WriteLine("    own Java module 9 only ever shows the pure-contract half");
-        Console.WriteLine();
-        Console.WriteLine("  Module 14 is delegates and events -- passing behavior itself as a");
-        Console.WriteLine("  value, and the one trap that makes event its own keyword instead");
-        Console.WriteLine("  of a plain delegate field.");
+        if (!Strings.PrintSummaryPt(13))
+        {
+            Console.WriteLine("  - an unconstrained T only has what every type has (Object's own");
+            Console.WriteLine("    members) -- CompareTo needs where T : IComparable<T> first");
+            Console.WriteLine("  - that constraint accepts any type implementing IComparable<T>,");
+            Console.WriteLine("    value type or reference type alike -- int and string both qualify");
+            Console.WriteLine("  - since C# 8, an interface method may have a body -- a default");
+            Console.WriteLine("    implementation, inherited unless the implementing class overrides it");
+            Console.WriteLine("  - a default body only resolves through an interface-typed reference,");
+            Console.WriteLine("    not through the concrete class, even though the class implements it");
+            Console.WriteLine("  - real Java has had default methods since Java 8 too; this course's");
+            Console.WriteLine("    own Java module 9 only ever shows the pure-contract half");
+            Console.WriteLine();
+            Console.WriteLine("  Module 14 is delegates and events -- passing behavior itself as a");
+            Console.WriteLine("  value, and the one trap that makes event its own keyword instead");
+            Console.WriteLine("  of a plain delegate field.");
+        }
         Ui.WaitEnter();
 
         static T LargerOf<T>(T a, T b) where T : IComparable<T>
@@ -745,14 +754,17 @@ static class LessonsAdvanced
         Ui.ClearScreen();
         Ui.Heading("SUMMARY");
 
-        Console.WriteLine("  - Action<T> and Func<T,R> pass behavior itself as a value -- a");
-        Console.WriteLine("    method or lambda held by reference, called whenever the receiver decides");
-        Console.WriteLine("  - delegate names a signature Action/Func would otherwise describe");
-        Console.WriteLine("    generically -- and is what an event's type must be");
-        Console.WriteLine("  - a plain delegate field can be reassigned or nulled by any code holding a");
-        Console.WriteLine("    reference to it; event restricts outside code to += and -= only");
-        Console.WriteLine("  - ?.Invoke skips the call when nobody has subscribed yet, instead of");
-        Console.WriteLine("    throwing NullReferenceException on a null delegate");
+        if (!Strings.PrintSummaryPt(14))
+        {
+            Console.WriteLine("  - Action<T> and Func<T,R> pass behavior itself as a value -- a");
+            Console.WriteLine("    method or lambda held by reference, called whenever the receiver decides");
+            Console.WriteLine("  - delegate names a signature Action/Func would otherwise describe");
+            Console.WriteLine("    generically -- and is what an event's type must be");
+            Console.WriteLine("  - a plain delegate field can be reassigned or nulled by any code holding a");
+            Console.WriteLine("    reference to it; event restricts outside code to += and -= only");
+            Console.WriteLine("  - ?.Invoke skips the call when nobody has subscribed yet, instead of");
+            Console.WriteLine("    throwing NullReferenceException on a null delegate");
+        }
         Ui.WaitEnter();
 
         static void RunTwice(Action<string> action)

@@ -124,12 +124,13 @@ def lesson_01_running():
     ui.clear_screen()
     ui.heading("SUMMARY")
 
-    print("   - MicroPython runs your .py directly on the chip: boot.py, then main.py")
-    print("   - the same language as Python 3, with a smaller standard library")
-    print("   - a missing method fails at runtime, only when that line is reached")
-    print("   - the REPL tests one line at a time; Ctrl-C stops a program")
-    print()
-    print("  Module 2: numbers, and why a float is not the same on the chip.")
+    if not ui.print_summary_pt(1):
+        print("   - MicroPython runs your .py directly on the chip: boot.py, then main.py")
+        print("   - the same language as Python 3, with a smaller standard library")
+        print("   - a missing method fails at runtime, only when that line is reached")
+        print("   - the REPL tests one line at a time; Ctrl-C stops a program")
+        print()
+        print("  Module 2: numbers, and why a float is not the same on the chip.")
     ui.wait_enter()
 
 
@@ -227,12 +228,13 @@ def lesson_02_numbers():
     ui.clear_screen()
     ui.heading("SUMMARY")
 
-    print("   - integers never overflow; / always gives a float, // floors")
-    print("   - a float is 64-bit on this PC and usually 32-bit on a board")
-    print("   - 1.0 + 1e-8 - 1.0 tells the two apart")
-    print("   - str is characters, bytes is wire data; encode() and decode()")
-    print()
-    print("  Module 3: decisions, loops and functions.")
+    if not ui.print_summary_pt(2):
+        print("   - integers never overflow; / always gives a float, // floors")
+        print("   - a float is 64-bit on this PC and usually 32-bit on a board")
+        print("   - 1.0 + 1e-8 - 1.0 tells the two apart")
+        print("   - str is characters, bytes is wire data; encode() and decode()")
+        print()
+        print("  Module 3: decisions, loops and functions.")
     ui.wait_enter()
 
 
@@ -383,11 +385,12 @@ def lesson_03_flow():
     ui.clear_screen()
     ui.heading("SUMMARY")
 
-    print("   - indentation is the block; 0, '', [] and None are false")
-    print("   - range(a, b) stops before b; while True is the robot's main loop")
-    print("   - assigning to a global inside a function makes it local")
-    print()
-    print("  Module 4: lists, bytes, and the memory they use.")
+    if not ui.print_summary_pt(3):
+        print("   - indentation is the block; 0, '', [] and None are false")
+        print("   - range(a, b) stops before b; while True is the robot's main loop")
+        print("   - assigning to a global inside a function makes it local")
+        print()
+        print("  Module 4: lists, bytes, and the memory they use.")
     ui.wait_enter()
 
 
@@ -512,10 +515,11 @@ def lesson_04_memory():
     ui.clear_screen()
     ui.heading("SUMMARY")
 
-    print("   - b = a shares a list; a[:] copies it")
-    print("   - bytearray: one byte per element, changeable in place")
-    print("   - an out-of-range store into a bytearray is silently masked")
-    print("   - memoryview slices without copying; gc.collect() before timing")
-    print()
-    print("  Module 5: pins, the first real hardware.")
+    if not ui.print_summary_pt(4):
+        print("   - b = a shares a list; a[:] copies it")
+        print("   - bytearray: one byte per element, changeable in place")
+        print("   - an out-of-range store into a bytearray is silently masked")
+        print("   - memoryview slices without copying; gc.collect() before timing")
+        print()
+        print("  Module 5: pins, the first real hardware.")
     ui.wait_enter()

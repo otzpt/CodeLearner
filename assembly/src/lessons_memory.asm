@@ -504,7 +504,7 @@ lesson_05_memory:
     challenge m5_challenge, m5_solution
 
     ; summary(5)
-    summary m5_summary_hdr, m5_summary
+    summary m5_summary_hdr, m5_summary, 5
     pop rbx
     ret
 
@@ -664,7 +664,7 @@ lesson_06_stack:
     challenge m6_challenge, m6_solution
 
     ; summary(6)
-    summary m6_summary_hdr, m6_summary
+    summary m6_summary_hdr, m6_summary, 6
     add rsp, 8
     pop r14
     pop r13

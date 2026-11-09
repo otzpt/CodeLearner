@@ -56,15 +56,15 @@ MODULES = [
 
 def show_menu():
     ui.clear_screen()
-    ui.title("MICROPYTHON COURSE - FROM print() TO THE PICO")
+    ui.title(ui.tr("MICROPYTHON COURSE - FROM print() TO THE PICO"))
 
     shown_tier = None
     for number, module in enumerate(MODULES, 1):
         if module["tier"] != shown_tier:
             shown_tier = module["tier"]
-            print("\n  -- " + shown_tier + " --")
-        print("   [{:2d}]  {}".format(number, module["title"]))
-    print("\n   [ 0]  Quit")
+            print("\n  -- " + ui.tr(shown_tier) + " --")
+        print("   [{:2d}]  {}".format(number, ui.tr(module["title"])))
+    print("\n   [ 0]  " + ui.tr("Quit"))
     ui.rule()
 
 
@@ -72,7 +72,7 @@ def main():
     while True:
         show_menu()
         try:
-            choice = input("\n  Pick a module: ").strip()
+            choice = input("\n  " + ui.tr("Pick a module:") + " ").strip()
         except EOFError:
             break
 
@@ -91,13 +91,13 @@ def main():
             except EOFError:
                 break
         else:
-            print("\n  Not a valid option.")
+            print("\n  " + ui.tr("Not a valid option."))
             try:
                 ui.wait_enter()
             except EOFError:
                 break
 
-    print("\n  See you next time.\n")
+    print("\n  " + ui.tr("See you next time.") + "\n")
 
 
 main()

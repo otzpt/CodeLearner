@@ -11,13 +11,13 @@
 CXX      = g++
 CXXFLAGS = -std=c++20 -Wall -Wextra -g
 TARGET   = cpp-course
-SOURCES  = src/main.cpp src/ui.cpp src/lessons_basics.cpp src/lessons_modern.cpp src/lessons_assembly.cpp
+SOURCES  = src/main.cpp src/ui.cpp src/strings_pt.cpp src/lessons_basics.cpp src/lessons_modern.cpp src/lessons_assembly.cpp
 OBJECTS  = $(SOURCES:.cpp=.o)
 
 $(TARGET): $(OBJECTS)
 	$(CXX) $(CXXFLAGS) -o $@ $(OBJECTS)
 
-%.o: %.cpp src/ui.h src/lessons.h
+%.o: %.cpp src/ui.h src/lessons.h src/strings_pt.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 run: $(TARGET)

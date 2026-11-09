@@ -44,21 +44,21 @@ int main() {
 
     for (;;) {
         clearScreen();
-        title("C++ COURSE - FROM C TO CLASSES");
+        title(tr("C++ COURSE - FROM C TO CLASSES"));
 
         std::string shownTier;
         for (size_t i = 0; i < modules.size(); i++) {
             if (modules[i].tier != shownTier) {
                 shownTier = modules[i].tier;
-                std::cout << "\n  -- " << shownTier << " --\n";
+                std::cout << "\n  -- " << tr(shownTier.c_str()) << " --\n";
             }
             std::cout << "   [" << (i + 1 < 10 ? " " : "") << (i + 1) << "]  "
-                      << modules[i].title << "\n";
+                      << tr(modules[i].title.c_str()) << "\n";
         }
-        std::cout << "\n   [ 0]  Quit\n";
+        std::cout << "\n   [ 0]  " << tr("Quit") << "\n";
         rule();
 
-        std::cout << "\n  Pick a module: ";
+        std::cout << "\n  " << tr("Pick a module:") << " ";
         std::cout.flush();
 
         std::string choice;
@@ -88,15 +88,15 @@ int main() {
             try {
                 modules[n - 1].run();
             } catch (const std::exception &e) {
-                std::cout << "\n  Something went wrong: " << e.what() << "\n";
+                std::cout << "\n  " << tr("Something went wrong:") << " " << e.what() << "\n";
                 waitEnter();
             }
         } else {
-            std::cout << "\n  Not a valid option.\n";
+            std::cout << "\n  " << tr("Not a valid option.") << "\n";
             waitEnter();
         }
     }
 
-    std::cout << "\n  See you next time.\n\n";
+    std::cout << "\n  " << tr("See you next time.") << "\n\n";
     return 0;
 }

@@ -769,26 +769,28 @@ void lesson_16_compilation(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - a .h is a promise (declarations); a .c is the fulfillment\n");
-    printf("     (definitions) -- the same .h can be #included by many .c\n");
-    printf("     files\n");
-    printf("   - a header guard (#ifndef/#define/#endif) stops a header's\n");
-    printf("     own contents from being defined twice when it ends up\n");
-    printf("     #included more than once\n");
-    printf("   - cc -c compiles one file into an unlinked .o; the linker\n");
-    printf("     combines .o files into one executable, and is where\n");
-    printf("     \"undefined reference\" comes from, not the compiler\n");
-    printf("   - -Wall -Wextra catch real bugs without ever refusing to\n");
-    printf("     compile them -- a warning is advice, not an error\n");
-    printf("   - -g adds debug symbols for a debugger (module 17); it\n");
-    printf("     never changes what the program computes\n");
-    printf("   - a Makefile automates the same compile-then-link pipeline\n");
-    printf("     PART 3 ran by hand; a static library bundles already-\n");
-    printf("     compiled code so a linker flag can pull it in by name\n\n");
+    if (!print_summary_pt(16)) {
+        printf("   - a .h is a promise (declarations); a .c is the fulfillment\n");
+        printf("     (definitions) -- the same .h can be #included by many .c\n");
+        printf("     files\n");
+        printf("   - a header guard (#ifndef/#define/#endif) stops a header's\n");
+        printf("     own contents from being defined twice when it ends up\n");
+        printf("     #included more than once\n");
+        printf("   - cc -c compiles one file into an unlinked .o; the linker\n");
+        printf("     combines .o files into one executable, and is where\n");
+        printf("     \"undefined reference\" comes from, not the compiler\n");
+        printf("   - -Wall -Wextra catch real bugs without ever refusing to\n");
+        printf("     compile them -- a warning is advice, not an error\n");
+        printf("   - -g adds debug symbols for a debugger (module 17); it\n");
+        printf("     never changes what the program computes\n");
+        printf("   - a Makefile automates the same compile-then-link pipeline\n");
+        printf("     PART 3 ran by hand; a static library bundles already-\n");
+        printf("     compiled code so a linker flag can pull it in by name\n\n");
 
-    printf("  Module 17 picks up right where PART 4 and PART 5 left off:\n");
-    printf("  reading these same kinds of diagnostics under a real\n");
-    printf("  debugger and a sanitizer, instead of only in the terminal.\n");
+        printf("  Module 17 picks up right where PART 4 and PART 5 left off:\n");
+        printf("  reading these same kinds of diagnostics under a real\n");
+        printf("  debugger and a sanitizer, instead of only in the terminal.\n");
+    }
     wait_enter();
 
     /* Single cleanup block, reached whether every step above succeeded or
@@ -1306,23 +1308,25 @@ void lesson_17_debugging(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - a compiler only reads source text; gdb and a sanitizer\n");
-    printf("     both watch a program actually run, so they report things\n");
-    printf("     only run time ever produces\n");
-    printf("   - gdb pauses a program with a breakpoint, moves one line at\n");
-    printf("     a time with step/next, and reads real values with print\n");
-    printf("     and info locals -- without ever changing what it computes\n");
-    printf("   - a backtrace lists every frame still on the call stack,\n");
-    printf("     #0 innermost -- the function that was actually running,\n");
-    printf("     then who called it, all the way back to main()\n");
-    printf("   - a NULL-pointer write faults every time and is safe to run\n");
-    printf("     for real; a use-after-free is not, which is why this\n");
-    printf("     module compiled it with AddressSanitizer from the start\n");
-    printf("   - AddressSanitizer only checks code that actually executes,\n");
-    printf("     and only certain bug classes; -fsanitize=undefined covers\n");
-    printf("     a different family -- together, one flag each\n");
-    printf("   - the same recipe works on anything written next:\n");
-    printf("     cc -fsanitize=address,undefined yourfile.c -o test && ./test\n");
+    if (!print_summary_pt(17)) {
+        printf("   - a compiler only reads source text; gdb and a sanitizer\n");
+        printf("     both watch a program actually run, so they report things\n");
+        printf("     only run time ever produces\n");
+        printf("   - gdb pauses a program with a breakpoint, moves one line at\n");
+        printf("     a time with step/next, and reads real values with print\n");
+        printf("     and info locals -- without ever changing what it computes\n");
+        printf("   - a backtrace lists every frame still on the call stack,\n");
+        printf("     #0 innermost -- the function that was actually running,\n");
+        printf("     then who called it, all the way back to main()\n");
+        printf("   - a NULL-pointer write faults every time and is safe to run\n");
+        printf("     for real; a use-after-free is not, which is why this\n");
+        printf("     module compiled it with AddressSanitizer from the start\n");
+        printf("   - AddressSanitizer only checks code that actually executes,\n");
+        printf("     and only certain bug classes; -fsanitize=undefined covers\n");
+        printf("     a different family -- together, one flag each\n");
+        printf("   - the same recipe works on anything written next:\n");
+        printf("     cc -fsanitize=address,undefined yourfile.c -o test && ./test\n");
+    }
     wait_enter();
 
     for (size_t i = 0; i < sizeof M17_SCRATCH_FILES / sizeof M17_SCRATCH_FILES[0]; i++) {

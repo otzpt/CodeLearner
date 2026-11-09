@@ -11,7 +11,7 @@
 CC      = cc
 CFLAGS  = -std=c11 -Wall -Wextra -g
 TARGET  = c-course
-SOURCES = src/main.c src/ui.c src/lessons_basics.c src/lessons_memory.c src/lessons_advanced.c src/lessons_tooling.c src/lessons_io.c src/lessons_lang_features.c src/lessons_assembly.c
+SOURCES = src/main.c src/ui.c src/strings_pt.c src/lessons_basics.c src/lessons_memory.c src/lessons_advanced.c src/lessons_tooling.c src/lessons_io.c src/lessons_lang_features.c src/lessons_assembly.c
 OBJECTS = $(SOURCES:.c=.o)
 
 $(TARGET): $(OBJECTS)
@@ -19,7 +19,7 @@ $(TARGET): $(OBJECTS)
 
 # Rebuild a .o when its .c or any header changes. Without the header
 # dependency, editing ui.h would rebuild nothing and leave a stale binary.
-%.o: %.c src/ui.h src/lessons.h
+%.o: %.c src/ui.h src/lessons.h src/strings_pt.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 run: $(TARGET)

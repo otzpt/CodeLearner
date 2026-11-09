@@ -144,12 +144,14 @@ pub fn lesson_05_ownership() {
     clear_screen();
     heading("SUMMARY");
 
-    say("   - one owner; dropped when it goes out of scope; no free() to forget");
-    say("   - assigning or passing a String moves it; the old name is dead");
-    say("   - a move copies the 3-word header, not the heap bytes");
-    say("   - .clone() is the explicit deep copy");
-    println!();
-    say("  Module 6: borrowing, to use a value without taking it.");
+    if !crate::strings_pt::print_summary_pt(5) {
+        say("   - one owner; dropped when it goes out of scope; no free() to forget");
+        say("   - assigning or passing a String moves it; the old name is dead");
+        say("   - a move copies the 3-word header, not the heap bytes");
+        say("   - .clone() is the explicit deep copy");
+        println!();
+        say("  Module 6: borrowing, to use a value without taking it.");
+    }
     wait_enter();
 }
 
@@ -281,12 +283,14 @@ pub fn lesson_06_borrowing() {
     clear_screen();
     heading("SUMMARY");
 
-    say("   - &value lends read-only; &mut value lends with permission to change");
-    say("   - many & XOR one &mut, checked at compile time");
-    say("   - a reference cannot outlive its value: no dangling pointers");
-    say("   - a slice (&str, &[T]) is a pointer and a length");
-    println!();
-    say("  Module 7: what all of this looks like in memory.");
+    if !crate::strings_pt::print_summary_pt(6) {
+        say("   - &value lends read-only; &mut value lends with permission to change");
+        say("   - many & XOR one &mut, checked at compile time");
+        say("   - a reference cannot outlive its value: no dangling pointers");
+        say("   - a slice (&str, &[T]) is a pointer and a length");
+        println!();
+        say("  Module 7: what all of this looks like in memory.");
+    }
     wait_enter();
 }
 
@@ -425,11 +429,13 @@ pub fn lesson_07_memory() {
     clear_screen();
     heading("SUMMARY");
 
-    say("   - size_of::<T>(); String and Vec are a 3-word header over heap data");
-    say("   - a Vec reallocates as it grows; with_capacity avoids it");
-    say("   - v[i] is bounds-checked and panics; .get(i) returns an Option");
-    say("   - raw pointers are C's pointers; using one needs unsafe");
-    println!();
-    say("  Module 8: structs, to group values and give them methods.");
+    if !crate::strings_pt::print_summary_pt(7) {
+        say("   - size_of::<T>(); String and Vec are a 3-word header over heap data");
+        say("   - a Vec reallocates as it grows; with_capacity avoids it");
+        say("   - v[i] is bounds-checked and panics; .get(i) returns an Option");
+        say("   - raw pointers are C's pointers; using one needs unsafe");
+        println!();
+        say("  Module 8: structs, to group values and give them methods.");
+    }
     wait_enter();
 }

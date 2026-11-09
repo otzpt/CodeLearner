@@ -90,11 +90,13 @@ void lesson01Compiling() {
     clearScreen();
     heading("SUMMARY");
 
-    std::cout << "   - g++, not gcc; .cpp, not .c\n";
-    std::cout << "   - std::cout << value, chained, no format string\n";
-    std::cout << "   - \\n by default, std::endl when you need it flushed now\n\n";
+    if (!print_summary_pt(1)) {
+        std::cout << "   - g++, not gcc; .cpp, not .c\n";
+        std::cout << "   - std::cout << value, chained, no format string\n";
+        std::cout << "   - \\n by default, std::endl when you need it flushed now\n\n";
 
-    std::cout << "  Module 2: variables, and one trap that did not go away.\n";
+        std::cout << "  Module 2: variables, and one trap that did not go away.\n";
+    }
     waitEnter();
 }
 
@@ -182,9 +184,11 @@ void lesson02Variables() {
     clearScreen();
     heading("SUMMARY");
 
-    std::cout << "   - std::string and auto are the two real upgrades here\n";
-    std::cout << "   - int / int still truncates -- cast one side first\n";
-    std::cout << "   - static_cast<T>(x) is the modern spelling of (T)x\n";
+    if (!print_summary_pt(2)) {
+        std::cout << "   - std::string and auto are the two real upgrades here\n";
+        std::cout << "   - int / int still truncates -- cast one side first\n";
+        std::cout << "   - static_cast<T>(x) is the modern spelling of (T)x\n";
+    }
     waitEnter();
 }
 
@@ -285,9 +289,11 @@ void lesson03Input() {
     clearScreen();
     heading("SUMMARY");
 
-    std::cout << "   - cin >> x needs no &; getline(cin, str) has no size cap\n";
-    std::cout << "   - mixing >> and getline leaves a newline behind -- ignore() it\n";
-    std::cout << "   - !(cin >> x) is true when the read failed\n";
+    if (!print_summary_pt(3)) {
+        std::cout << "   - cin >> x needs no &; getline(cin, str) has no size cap\n";
+        std::cout << "   - mixing >> and getline leaves a newline behind -- ignore() it\n";
+        std::cout << "   - !(cin >> x) is true when the read failed\n";
+    }
     waitEnter();
 }
 
@@ -379,10 +385,12 @@ void lesson04Conditions() {
     clearScreen();
     heading("SUMMARY");
 
-    std::cout << "   - the first true branch runs; order matters, as before\n";
-    std::cout << "   - bool is a real type; cout still prints it as 1/0 unless\n";
-    std::cout << "     boolalpha is set\n";
-    std::cout << "   - = still is not ==, and the compiler still only warns\n";
+    if (!print_summary_pt(4)) {
+        std::cout << "   - the first true branch runs; order matters, as before\n";
+        std::cout << "   - bool is a real type; cout still prints it as 1/0 unless\n";
+        std::cout << "     boolalpha is set\n";
+        std::cout << "   - = still is not ==, and the compiler still only warns\n";
+    }
     waitEnter();
 }
 
@@ -477,10 +485,12 @@ void lesson05Loops() {
     clearScreen();
     heading("SUMMARY");
 
-    std::cout << "   - for/while carry over unchanged, off-by-one included\n";
-    std::cout << "   - range-based for removes the index entirely\n";
-    std::cout << "   - `for (auto x : ...)` copies; `for (auto &x : ...)` does not\n\n";
+    if (!print_summary_pt(5)) {
+        std::cout << "   - for/while carry over unchanged, off-by-one included\n";
+        std::cout << "   - range-based for removes the index entirely\n";
+        std::cout << "   - `for (auto x : ...)` copies; `for (auto &x : ...)` does not\n\n";
 
-    std::cout << "  Module 6: std::string, and everything strcmp made painful.\n";
+        std::cout << "  Module 6: std::string, and everything strcmp made painful.\n";
+    }
     waitEnter();
 }

@@ -319,22 +319,24 @@ void lesson_01_gtk(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - GTK needs pkg-config in the compile line; gcc alone\n");
-    printf("     cannot find its headers or libraries\n");
-    printf("   - a GTK4 app builds its window inside the function connected\n");
-    printf("     to \"activate\", not inside main() -- main() only starts\n");
-    printf("     the event loop\n");
-    printf("   - G_CALLBACK casts away the real function signature, so a\n");
-    printf("     mismatched callback compiles and misbehaves instead of\n");
-    printf("     failing to build\n");
-    printf("   - widgets are reference-counted GObjects, not malloc'd\n");
-    printf("     blocks -- the window frees its children when it is freed,\n");
-    printf("     you do not free() them yourself\n\n");
+    if (!print_summary_pt(1)) {
+        printf("   - GTK needs pkg-config in the compile line; gcc alone\n");
+        printf("     cannot find its headers or libraries\n");
+        printf("   - a GTK4 app builds its window inside the function connected\n");
+        printf("     to \"activate\", not inside main() -- main() only starts\n");
+        printf("     the event loop\n");
+        printf("   - G_CALLBACK casts away the real function signature, so a\n");
+        printf("     mismatched callback compiles and misbehaves instead of\n");
+        printf("     failing to build\n");
+        printf("   - widgets are reference-counted GObjects, not malloc'd\n");
+        printf("     blocks -- the window frees its children when it is freed,\n");
+        printf("     you do not free() them yourself\n\n");
 
-    printf("  This is one window with one button. GTK's own reference at\n");
-    printf("  docs.gtk.org is where the rest of it -- layout containers,\n");
-    printf("  dozens of widgets, CSS styling -- actually lives; this module\n");
-    printf("  is the trap-filled first step onto that ground, not the\n");
-    printf("  whole of it.\n");
+        printf("  This is one window with one button. GTK's own reference at\n");
+        printf("  docs.gtk.org is where the rest of it -- layout containers,\n");
+        printf("  dozens of widgets, CSS styling -- actually lives; this module\n");
+        printf("  is the trap-filled first step onto that ground, not the\n");
+        printf("  whole of it.\n");
+    }
     wait_enter();
 }

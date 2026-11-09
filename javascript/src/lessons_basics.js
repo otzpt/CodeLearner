@@ -83,11 +83,13 @@ async function lesson01Running() {
   ui.clearScreen();
   ui.heading("SUMMARY");
 
-  console.log("   - node file.js runs directly, no build step");
-  console.log("   - console.log() joins arguments with a space");
-  console.log("   - `${expr}` inside backticks interpolates; regular quotes do not");
-  console.log();
-  console.log("  Module 2: variables, and a coercion rule Python does not have.");
+  if (!ui.printSummaryPt(1)) {
+    console.log("   - node file.js runs directly, no build step");
+    console.log("   - console.log() joins arguments with a space");
+    console.log("   - `${expr}` inside backticks interpolates; regular quotes do not");
+    console.log();
+    console.log("  Module 2: variables, and a coercion rule Python does not have.");
+  }
   await ui.waitEnter();
 }
 
@@ -177,9 +179,11 @@ async function lesson02Variables() {
   ui.clearScreen();
   ui.heading("SUMMARY");
 
-  console.log("   - always ===, never == -- == converts with rules nobody remembers");
-  console.log("   - NaN !== NaN; check with Number.isNaN()");
-  console.log("   - let/const control reassignment, not type or mutability");
+  if (!ui.printSummaryPt(2)) {
+    console.log("   - always ===, never == -- == converts with rules nobody remembers");
+    console.log("   - NaN !== NaN; check with Number.isNaN()");
+    console.log("   - let/const control reassignment, not type or mutability");
+  }
   await ui.waitEnter();
 }
 
@@ -280,9 +284,11 @@ async function lesson03Input() {
   ui.clearScreen();
   ui.heading("SUMMARY");
 
-  console.log("   - reading input is async; every caller up the chain must be too");
-  console.log("   - a real terminal is fine; a pre-closed test pipe can hang a second read");
-  console.log("   - this course's own ask() avoids that by draining readline's iterator by hand");
+  if (!ui.printSummaryPt(3)) {
+    console.log("   - reading input is async; every caller up the chain must be too");
+    console.log("   - a real terminal is fine; a pre-closed test pipe can hang a second read");
+    console.log("   - this course's own ask() avoids that by draining readline's iterator by hand");
+  }
   await ui.waitEnter();
 }
 
@@ -378,9 +384,11 @@ async function lesson04Conditions() {
   ui.clearScreen();
   ui.heading("SUMMARY");
 
-  console.log("   - only the first true branch runs; order matters");
-  console.log("   - [] and {} are TRUTHY in JS -- opposite of Python");
-  console.log("   - = still is not ==, and Node does not even warn about it");
+  if (!ui.printSummaryPt(4)) {
+    console.log("   - only the first true branch runs; order matters");
+    console.log("   - [] and {} are TRUTHY in JS -- opposite of Python");
+    console.log("   - = still is not ==, and Node does not even warn about it");
+  }
   await ui.waitEnter();
 }
 
@@ -472,10 +480,12 @@ async function lesson05Loops() {
   ui.clearScreen();
   ui.heading("SUMMARY");
 
-  console.log("   - for/while carry over unchanged, off-by-one included");
-  console.log("   - of -> values, in -> keys as strings; do not mix them up on arrays");
-  console.log();
-  console.log("  Module 6: arrays, and the same aliasing bug Python has too.");
+  if (!ui.printSummaryPt(5)) {
+    console.log("   - for/while carry over unchanged, off-by-one included");
+    console.log("   - of -> values, in -> keys as strings; do not mix them up on arrays");
+    console.log();
+    console.log("  Module 6: arrays, and the same aliasing bug Python has too.");
+  }
   await ui.waitEnter();
 }
 

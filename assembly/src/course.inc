@@ -11,6 +11,9 @@
 extern title
 extern heading
 extern print_cstr
+extern translate
+extern print_tr
+extern summary_text
 extern print_paged
 extern wait_enter
 extern clear_screen
@@ -128,13 +131,18 @@ extern show_bin
     call offer_solution
 %endmacro
 
-; summary <heading>, <text>   the last screen of a module
-%macro summary 2
+; summary <heading>, <text>, <module>   the last screen of a module
+%macro summary 3
     call wait_enter
     call clear_screen
     mov rdi, %1
+    call translate
+    mov rdi, rax
     call heading
     mov rdi, %2
+    mov rsi, %3
+    call summary_text
+    mov rdi, rax
     call print_cstr
     call wait_enter
 %endmacro

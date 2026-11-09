@@ -311,7 +311,7 @@ lesson_09_c:
     challenge m9_challenge, m9_solution
 
     ; summary(9)
-    summary m9_summary_hdr, m9_summary
+    summary m9_summary_hdr, m9_summary, 9
     ret
 
 ; Tells the linker this object does not need an executable stack.

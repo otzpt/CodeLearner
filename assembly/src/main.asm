@@ -19,6 +19,9 @@ global _start
 extern clear_screen
 extern title
 extern print_cstr
+extern detect_language
+extern translate
+extern print_tr
 extern print_num
 extern read_line
 extern rule
@@ -104,9 +107,16 @@ choice_buf: resb 16
 section .text
 
 _start:
+    ; The stack holds argc, the argv pointers and a zero, then envp.
+    mov rax, [rsp]
+    lea rdi, [rsp+rax*8+16]
+    call detect_language
+
 .menu_loop:
     call clear_screen
     mov rdi, menu_title
+    call translate
+    mov rdi, rax
     call title
 
     ; r12 = current entry, r13 = 1-based number shown, r14 = the tier
@@ -127,7 +137,7 @@ _start:
     mov rdi, tier_prefix
     call print_cstr
     mov rdi, r14
-    call print_cstr
+    call print_tr
     mov rdi, tier_suffix
     call print_cstr
 .no_tier_header:
@@ -144,7 +154,7 @@ _start:
     mov rdi, item_middle
     call print_cstr
     mov rdi, [r12]
-    call print_cstr
+    call print_tr
     mov rdi, newline
     call print_cstr
 
@@ -154,11 +164,11 @@ _start:
 .items_done:
 
     mov rdi, menu_quit
-    call print_cstr
+    call print_tr
     call rule
 
     mov rdi, prompt
-    call print_cstr
+    call print_tr
 
     mov rdi, choice_buf
     mov rsi, 16
@@ -202,13 +212,13 @@ _start:
 
 .invalid:
     mov rdi, invalid_msg
-    call print_cstr
+    call print_tr
     call wait_enter
     jmp .menu_loop
 
 .quit:
     mov rdi, bye_msg
-    call print_cstr
+    call print_tr
     mov rdi, 0
     mov rax, 60
     syscall

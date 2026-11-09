@@ -27,6 +27,7 @@
 #include <sys/wait.h>
 #endif
 
+#include "strings_pt.h"
 #include "update.h"
 
 /* The version this binary was built as. The release workflow passes the tag
@@ -219,7 +220,7 @@ static void clear_screen(void)
 
 static void wait_enter(void)
 {
-    printf("\n  Press ENTER to continue...");
+    printf("\n  %s", tr("Press ENTER to continue..."));
     fflush(stdout);
     int c;
     while ((c = getchar()) != '\n' && c != EOF) {
@@ -371,17 +372,18 @@ static void show_menu(void)
         const char *section = LANGUAGES[i].section != NULL ? LANGUAGES[i].section : "LANGUAGES";
 
         if (strcmp(section, shown_section) != 0) {
-            printf("%s   -- %s --\n", shown_section[0] != '\0' ? "\n" : "", section);
+            printf("%s   -- %s --\n", shown_section[0] != '\0' ? "\n" : "", tr(section));
             shown_section = section;
         }
         if (LANGUAGES[i].run_command != NULL) {
             printf("   [%d]  %s\n", i + 1, LANGUAGES[i].name);
         } else {
-            printf("   [%d]  %s (coming soon)\n", i + 1, LANGUAGES[i].name);
+            printf("   [%d]  %s %s\n", i + 1, LANGUAGES[i].name, tr("(coming soon)"));
         }
     }
-    printf("\n   [u]  Check for updates\n");
-    printf("   [0]  Exit\n");
+    printf("\n   [u]  %s\n", tr("Check for updates"));
+    printf("   [l]  %s\n", lang_pt() ? "English" : "Portugues (PT-PT)");
+    printf("   [0]  %s\n", tr("Exit"));
     printf("  ------------------------------------------------------\n");
 }
 
@@ -389,9 +391,11 @@ int main(void)
 {
     char choice[16];
 
+    use_chosen_language();
+
     for (;;) {
         show_menu();
-        printf("\n  Pick an entry: ");
+        printf("\n  %s ", tr("Pick an entry:"));
         fflush(stdout);
 
         if (!read_line(choice, sizeof choice)) {
@@ -399,6 +403,10 @@ int main(void)
         }
         if (strcmp(choice, "0") == 0) {
             break;
+        }
+        if (strcmp(choice, "l") == 0 || strcmp(choice, "L") == 0) {
+            toggle_language();
+            continue;
         }
         if (strcmp(choice, "u") == 0 || strcmp(choice, "U") == 0) {
             check_for_updates();
@@ -409,7 +417,7 @@ int main(void)
         char *end;
         long n = strtol(choice, &end, 10);
         if (*end != '\0' || n < 1 || n > LANGUAGE_COUNT) {
-            printf("\n  Not a valid option.\n");
+            printf("\n  %s\n", tr("Not a valid option."));
             wait_enter();
             continue;
         }
@@ -435,6 +443,6 @@ int main(void)
         system(lang->run_command);
     }
 
-    printf("\n  See you next time.\n\n");
+    printf("\n  %s\n\n", tr("See you next time."));
     return 0;
 }

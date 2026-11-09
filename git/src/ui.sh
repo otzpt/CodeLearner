@@ -12,7 +12,7 @@ ui_clear_screen() {
 }
 
 ui_wait_enter() {
-    printf '\n  Press ENTER to continue...'
+    printf '\n  %s' "$(ui_tr 'Press ENTER to continue...')"
     read -r _
 }
 
@@ -58,7 +58,8 @@ ui_title_centered() {
 }
 
 ui_heading() {
-    printf '\n  %s\n' "$1"
+    printf '\n  %s\n' "$(ui_tr "ui_heading() {
+    printf '\n  %s\n' ")"
     ui_rule
 }
 
@@ -70,7 +71,7 @@ ui_ask_yes() {
 }
 
 ui_exercise() {
-    printf '\n  >> EXERCISE - MODULE %s\n' "$1"
+    printf '\n  %s %s\n' "$(ui_tr '>> EXERCISE - MODULE')" "$1"
     ui_rule
 }
 
@@ -79,14 +80,14 @@ ui_exercise() {
 # is to show the right answer, not to fail anyone.
 ui_question() {
     local text=$1 correct=$2 why=$3 answer norm_answer norm_correct
-    printf '\n  %s\n  Your answer: ' "$text"
+    printf '\n  %s\n  %s ' "$(ui_tr 'Your answer:')" "$text"
     read -r answer
     norm_answer=$(printf '%s\n' "$answer" | tr '[:upper:]' '[:lower:]' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
     norm_correct=$(printf '%s\n' "$correct" | tr '[:upper:]' '[:lower:]' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
     if [[ "$norm_answer" == "$norm_correct" ]]; then
-        printf '\n  CORRECT.  %s\n' "$why"
+        printf '\n  %s  %s\n' "$(ui_tr 'CORRECT.')" "$why"
     else
-        printf '\n  NOT QUITE. The answer is: %s\n' "$correct"
+        printf '\n  %s %s\n' "$(ui_tr 'NOT QUITE. The answer is:')" "$correct"
         printf '             %s\n' "$why"
     fi
 }
@@ -102,22 +103,22 @@ ui_challenge() {
     local -n _task=$1 _expected=$2 _solution=$3
     local line
 
-    printf '\n  >> TRY THIS YOURSELF, in a real directory\n'
+    printf '\n  %s\n' "$(ui_tr '>> TRY THIS YOURSELF, in a real directory')"
     ui_rule
     for line in "${_task[@]}"; do
         printf '  %s\n' "$line"
     done
 
     if [[ ${#_expected[@]} -gt 0 ]]; then
-        printf '\n  You should see:\n\n'
+        printf '\n  %s\n\n' "$(ui_tr 'You should see:')"
         for line in "${_expected[@]}"; do
             printf '      %s\n' "$line"
         done
-        printf '\n  That output is the whole specification. Any commands that\n'
-        printf '  produce it are correct.\n'
+        printf '\n  %s\n' "$(ui_tr 'That output is the whole specification. Any commands that')"
+        printf '  %s\n' "$(ui_tr 'produce it are correct.')"
     fi
 
-    if ! ui_ask_yes 'Want to see example commands?'; then
+    if ! ui_ask_yes "$(ui_tr 'Want to see example commands?')"; then
         return
     fi
 
@@ -127,9 +128,9 @@ ui_challenge() {
         printf '  %s\n' "$line"
     done
     ui_rule
-    printf '  This is EXAMPLE, not the answer. It is one way to reach that\n'
-    printf '  result; a different sequence of commands landing on the same\n'
-    printf '  state is correct too.\n'
+    printf '  %s\n' "$(ui_tr 'This is EXAMPLE, not the answer. It is one way to reach that')"
+    printf '  %s\n' "$(ui_tr 'result; a different sequence of commands landing on the same')"
+    printf '  %s\n' "$(ui_tr 'state is correct too.')"
 }
 
 # A fresh, empty scratch directory. Every module builds and tears down its

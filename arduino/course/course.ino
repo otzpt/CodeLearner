@@ -43,14 +43,14 @@ const Module MODULES[] = {
 void show_menu()
 {
     clear_screen();
-    title("ARDUINO COURSE - FROM setup() TO REGISTERS");
+    title(tr("ARDUINO COURSE - FROM setup() TO REGISTERS"));
 
     const char *shown_tier = "";
     for (int i = 0; i < MODULE_COUNT; i++) {
         if (strcmp(MODULES[i].tier, shown_tier) != 0) {
             shown_tier = MODULES[i].tier;
             Serial.print("\n  -- ");
-            Serial.print(shown_tier);
+            Serial.print(tr(shown_tier));
             Serial.println(" --");
         }
         Serial.print("   [");
@@ -59,10 +59,10 @@ void show_menu()
         }
         Serial.print(i + 1);
         Serial.print("]  ");
-        Serial.println(MODULES[i].title);
+        Serial.println(tr(MODULES[i].title));
     }
 
-    Serial.println("\n   [ 0]  Quit");
+    Serial.print("\n   [ 0]  "); Serial.println(tr("Quit"));
     rule();
 }
 
@@ -76,13 +76,13 @@ void setup()
 void loop()
 {
     show_menu();
-    Serial.print("\n  Pick a module: ");
+    Serial.print("\n  "); Serial.print(tr("Pick a module:")); Serial.print(" ");
 
     String choice = read_line();
     choice.trim();
 
     if (choice == "0") {
-        Serial.println("\n  See you next time.\n");
+        Serial.print("\n  "); Serial.print(tr("See you next time.")); Serial.println("\n");
         sim_quit();
     }
 
@@ -91,7 +91,7 @@ void loop()
         clear_screen();
         MODULES[n - 1].run();
     } else {
-        Serial.println("\n  Not a valid option.");
+        Serial.print("\n  "); Serial.println(tr("Not a valid option."));
         wait_enter();
     }
 }

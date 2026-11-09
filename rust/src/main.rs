@@ -12,6 +12,7 @@ mod lessons_basics;
 mod lessons_data;
 mod lessons_hardware;
 mod lessons_memory;
+mod strings_pt;
 mod ui;
 
 /// One menu entry: what is shown, the function that runs, and which of the
@@ -40,25 +41,25 @@ const MODULES: [Module; 12] = [
 
 fn show_menu() {
     ui::clear_screen();
-    ui::title("RUST COURSE - FROM println! TO MEMORY");
+    ui::title(strings_pt::tr("RUST COURSE - FROM println! TO MEMORY"));
 
     let mut shown_tier = "";
     for (index, module) in MODULES.iter().enumerate() {
         if module.tier != shown_tier {
             shown_tier = module.tier;
-            println!("\n  -- {shown_tier} --");
+            println!("\n  -- {} --", strings_pt::tr(shown_tier));
         }
-        println!("   [{:>2}]  {}", index + 1, module.title);
+        println!("   [{:>2}]  {}", index + 1, strings_pt::tr(module.title));
     }
 
-    println!("\n   [ 0]  Quit");
+    println!("\n   [ 0]  {}", strings_pt::tr("Quit"));
     ui::rule();
 }
 
 fn main() {
     loop {
         show_menu();
-        print!("\n  Pick a module: ");
+        print!("\n  {} ", strings_pt::tr("Pick a module:"));
 
         // End of input (Ctrl-D, or a script feeding the program) counts as
         // quitting; without it this loop would spin forever on nothing.
@@ -76,11 +77,11 @@ fn main() {
                 (MODULES[number - 1].run)();
             }
             _ => {
-                println!("\n  Not a valid option.");
+                println!("\n  {}", strings_pt::tr("Not a valid option."));
                 ui::wait_enter();
             }
         }
     }
 
-    println!("\n  See you next time.\n");
+    println!("\n  {}\n", strings_pt::tr("See you next time."));
 }

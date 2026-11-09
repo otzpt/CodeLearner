@@ -100,9 +100,11 @@ async function lesson06Arrays() {
   ui.clearScreen();
   ui.heading("SUMMARY");
 
-  console.log("   - const stops reassignment, not mutation; b = a still aliases");
-  console.log("   - [...a] copies; sort() mutates AND sorts as text by default");
-  console.log("   - map/filter/reduce return something new; none mutate the original");
+  if (!ui.printSummaryPt(6)) {
+    console.log("   - const stops reassignment, not mutation; b = a still aliases");
+    console.log("   - [...a] copies; sort() mutates AND sorts as text by default");
+    console.log("   - map/filter/reduce return something new; none mutate the original");
+  }
   await ui.waitEnter();
 }
 
@@ -215,11 +217,13 @@ async function lesson07Functions() {
   ui.clearScreen();
   ui.heading("SUMMARY");
 
-  console.log("   - regular function: this = whatever is left of the dot when called");
-  console.log("   - arrow function: this = whatever it was where the arrow was written");
-  console.log("   - let per iteration in a loop; var shares one binding across all of it");
-  console.log();
-  console.log("  Module 8: objects, and the one place == and === are both wrong.");
+  if (!ui.printSummaryPt(7)) {
+    console.log("   - regular function: this = whatever is left of the dot when called");
+    console.log("   - arrow function: this = whatever it was where the arrow was written");
+    console.log("   - let per iteration in a loop; var shares one binding across all of it");
+    console.log();
+    console.log("  Module 8: objects, and the one place == and === are both wrong.");
+  }
   await ui.waitEnter();
 }
 
@@ -302,9 +306,11 @@ async function lesson08Objects() {
   ui.clearScreen();
   ui.heading("SUMMARY");
 
-  console.log("   - both == and === compare objects/arrays by reference, not contents");
-  console.log("   - JSON.stringify/.parse round-trips data, and compares contents indirectly");
-  console.log("   - ?. stops at a missing link instead of throwing");
+  if (!ui.printSummaryPt(8)) {
+    console.log("   - both == and === compare objects/arrays by reference, not contents");
+    console.log("   - JSON.stringify/.parse round-trips data, and compares contents indirectly");
+    console.log("   - ?. stops at a missing link instead of throwing");
+  }
   await ui.waitEnter();
 }
 
@@ -434,9 +440,11 @@ async function lesson09Classes() {
   ui.clearScreen();
   ui.heading("SUMMARY");
 
-  console.log("   - #field is real private -- a SyntaxError from outside, not a convention");
-  console.log("   - extends/super work like C++ inheritance");
-  console.log("   - no guaranteed destructor timing -- use try/finally for deterministic cleanup");
+  if (!ui.printSummaryPt(9)) {
+    console.log("   - #field is real private -- a SyntaxError from outside, not a convention");
+    console.log("   - extends/super work like C++ inheritance");
+    console.log("   - no guaranteed destructor timing -- use try/finally for deterministic cleanup");
+  }
   await ui.waitEnter();
 }
 
@@ -580,15 +588,17 @@ async function lesson10Errors() {
   ui.clearScreen();
   ui.heading("SUMMARY");
 
-  console.log("   - throw to signal a problem; try/catch to handle it; finally always runs");
-  console.log("   - TypeError, RangeError, SyntaxError -- know what each one means");
-  console.log("   - extends Error + super(msg) is how you make your own catchable type");
-  console.log();
-  console.log("  That covers the core course. Like Python, no manual memory --");
-  console.log("  garbage collected, with try/finally standing in for RAII.");
-  console.log();
-  console.log("  Module 11 names the object await has been unwrapping since");
-  console.log("  module 3: a Promise.");
+  if (!ui.printSummaryPt(10)) {
+    console.log("   - throw to signal a problem; try/catch to handle it; finally always runs");
+    console.log("   - TypeError, RangeError, SyntaxError -- know what each one means");
+    console.log("   - extends Error + super(msg) is how you make your own catchable type");
+    console.log();
+    console.log("  That covers the core course. Like Python, no manual memory --");
+    console.log("  garbage collected, with try/finally standing in for RAII.");
+    console.log();
+    console.log("  Module 11 names the object await has been unwrapping since");
+    console.log("  module 3: a Promise.");
+  }
   await ui.waitEnter();
 }
 

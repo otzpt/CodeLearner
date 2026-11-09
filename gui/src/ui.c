@@ -23,7 +23,7 @@ void clear_screen(void)
 
 void wait_enter(void)
 {
-    printf("\n  Press ENTER to continue...");
+    printf("\n  %s", tr("Press ENTER to continue..."));
     fflush(stdout);
 
     int c;
@@ -72,7 +72,7 @@ void title(const char *text)
 
 void heading(const char *text)
 {
-    printf("\n  %s\n", text);
+    printf("\n  %s\n", tr(text));
     rule();
 }
 
@@ -102,7 +102,7 @@ int ask_yes(const char *question_text)
 
 void exercise(int number)
 {
-    printf("\n  >> EXERCISE - MODULE %d\n", number);
+    printf("\n  %s %d\n", tr(">> EXERCISE - MODULE"), number);
     rule();
 }
 
@@ -133,7 +133,7 @@ int question(const char *text, const char *correct, const char *why)
     char expected[64];
 
     printf("\n  %s\n", text);
-    printf("  Your answer: ");
+    printf("  %s ", tr("Your answer:"));
     fflush(stdout);
 
     if (!read_line(answer, sizeof answer)) {
@@ -146,9 +146,9 @@ int question(const char *text, const char *correct, const char *why)
     int right = strcmp(cleaned, expected) == 0;
 
     if (right) {
-        printf("\n  CORRECT.  %s\n", why);
+        printf("\n  %s  %s\n", tr("CORRECT."), why);
     } else {
-        printf("\n  NOT QUITE. The answer is: %s\n", correct);
+        printf("\n  %s %s\n", tr("NOT QUITE. The answer is:"), correct);
         printf("             %s\n", why);
     }
     return right;

@@ -138,12 +138,14 @@ void lesson_07_analog()
     clear_screen();
     heading("SUMMARY");
 
-    Serial.println("   - analogRead is 0-1023; analogWrite is 0-255 and only on PWM pins");
-    Serial.println("   - PWM is fast on/off, not a real voltage");
-    Serial.println("   - on a 16-bit int chip, widen to 32 bits BEFORE multiplying");
-    Serial.println("   - map() truncates and does not clamp; follow it with constrain()");
-    Serial.println();
-    Serial.println("  Module 8: waiting without freezing the board.");
+    if (!print_summary_pt(7)) {
+        Serial.println("   - analogRead is 0-1023; analogWrite is 0-255 and only on PWM pins");
+        Serial.println("   - PWM is fast on/off, not a real voltage");
+        Serial.println("   - on a 16-bit int chip, widen to 32 bits BEFORE multiplying");
+        Serial.println("   - map() truncates and does not clamp; follow it with constrain()");
+        Serial.println();
+        Serial.println("  Module 8: waiting without freezing the board.");
+    }
     wait_enter();
 }
 
@@ -328,12 +330,14 @@ void lesson_08_time()
     clear_screen();
     heading("SUMMARY");
 
-    Serial.println("   - delay() makes the chip deaf; millis() lets it keep working");
-    Serial.println("   - if (millis() - last >= interval) { last += interval; ... }");
-    Serial.println("   - millis() wraps after about 49.7 days");
-    Serial.println("   - always subtract: millis() - start, never compare to a sum");
-    Serial.println();
-    Serial.println("  Module 9: text, and what it costs on a chip this small.");
+    if (!print_summary_pt(8)) {
+        Serial.println("   - delay() makes the chip deaf; millis() lets it keep working");
+        Serial.println("   - if (millis() - last >= interval) { last += interval; ... }");
+        Serial.println("   - millis() wraps after about 49.7 days");
+        Serial.println("   - always subtract: millis() - start, never compare to a sum");
+        Serial.println();
+        Serial.println("  Module 9: text, and what it costs on a chip this small.");
+    }
     wait_enter();
 }
 
@@ -469,12 +473,14 @@ void lesson_09_text()
     clear_screen();
     heading("SUMMARY");
 
-    Serial.println("   - text is a char array plus a terminating zero: N letters, N+1");
-    Serial.println("   - strlen counts letters, sizeof counts the array");
-    Serial.println("   - String is comfortable but lives in the heap: avoid it in");
-    Serial.println("     code that runs for days");
-    Serial.println("   - indexOf, substring and toInt, or sscanf, pull numbers out");
-    Serial.println();
-    Serial.println("  Module 10: memory, bits and the chip's own registers.");
+    if (!print_summary_pt(9)) {
+        Serial.println("   - text is a char array plus a terminating zero: N letters, N+1");
+        Serial.println("   - strlen counts letters, sizeof counts the array");
+        Serial.println("   - String is comfortable but lives in the heap: avoid it in");
+        Serial.println("     code that runs for days");
+        Serial.println("   - indexOf, substring and toInt, or sscanf, pull numbers out");
+        Serial.println();
+        Serial.println("  Module 10: memory, bits and the chip's own registers.");
+    }
     wait_enter();
 }

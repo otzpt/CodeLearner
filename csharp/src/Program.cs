@@ -31,7 +31,7 @@ ShowMenu();
 
 while (true)
 {
-    Console.Write("\n  Pick a module: ");
+    Console.Write("\n  " + Strings.Tr("Pick a module:") + " ");
     string? choice = Console.ReadLine();
 
     if (choice is null || choice.Trim() == "0")
@@ -51,25 +51,25 @@ while (true)
         }
         catch (Exception e)
         {
-            Console.WriteLine($"\n  Something went wrong: {e.Message}");
+            Console.WriteLine($"\n  {Strings.Tr("Something went wrong:")} {e.Message}");
             Ui.WaitEnter();
         }
     }
     else
     {
-        Console.WriteLine("\n  Not a valid option.");
+        Console.WriteLine("\n  " + Strings.Tr("Not a valid option."));
         Ui.WaitEnter();
     }
 
     ShowMenu();
 }
 
-Console.WriteLine("\n  See you next time.\n");
+Console.WriteLine("\n  " + Strings.Tr("See you next time.") + "\n");
 
 void ShowMenu()
 {
     Ui.ClearScreen();
-    Ui.Title("C# COURSE - FROM TOP-LEVEL STATEMENTS TO IDISPOSABLE");
+    Ui.Title(Strings.Tr("C# COURSE - FROM TOP-LEVEL STATEMENTS TO IDISPOSABLE"));
 
     string shownTier = "";
     for (int i = 0; i < modules.Length; i++)
@@ -77,10 +77,10 @@ void ShowMenu()
         if (modules[i].Tier != shownTier)
         {
             shownTier = modules[i].Tier;
-            Console.WriteLine($"\n  -- {shownTier} --");
+            Console.WriteLine($"\n  -- {Strings.Tr(shownTier)} --");
         }
-        Console.WriteLine($"   [{i + 1,2}]  {modules[i].Title}");
+        Console.WriteLine($"   [{i + 1,2}]  {Strings.Tr(modules[i].Title)}");
     }
-    Console.WriteLine("\n   [ 0]  Quit");
+    Console.WriteLine("\n   [ 0]  " + Strings.Tr("Quit"));
     Ui.Rule();
 }

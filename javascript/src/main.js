@@ -46,25 +46,25 @@ const MODULES = [
 
 function showMenu() {
   ui.clearScreen();
-  ui.title("JAVASCRIPT COURSE - FROM ZERO TO CLASSES");
+  ui.title(ui.tr("JAVASCRIPT COURSE - FROM ZERO TO CLASSES"));
 
   let shownTier = null;
   MODULES.forEach((module, i) => {
     if (module.tier !== shownTier) {
       shownTier = module.tier;
-      console.log(`\n  -- ${shownTier} --`);
+      console.log(`\n  -- ${ui.tr(shownTier)} --`);
     }
     const n = String(i + 1).padStart(2, " ");
-    console.log(`   [${n}]  ${module.title}`);
+    console.log(`   [${n}]  ${ui.tr(module.title)}`);
   });
-  console.log("\n   [ 0]  Quit");
+  console.log("\n   [ 0]  " + ui.tr("Quit"));
   ui.rule();
 }
 
 async function main() {
   for (;;) {
     showMenu();
-    const choice = (await ui.ask("\n  Pick a module: ")).trim();
+    const choice = (await ui.ask("\n  " + ui.tr("Pick a module:") + " ")).trim();
 
     if (choice === "0" || ui.isInputClosed()) {
       break;
@@ -75,12 +75,12 @@ async function main() {
       ui.clearScreen();
       await MODULES[n - 1].run();
     } else {
-      console.log("\n  Not a valid option.");
+      console.log("\n  " + ui.tr("Not a valid option."));
       await ui.waitEnter();
     }
   }
 
-  console.log("\n  See you next time.\n");
+  console.log("\n  " + ui.tr("See you next time.") + "\n");
   ui.closeInput();
 }
 
@@ -90,7 +90,7 @@ main().catch((err) => {
   // broke, still close the readline interface so the process actually
   // exits instead of hanging on an open stdin handle, then fail loudly
   // enough that it is not mistaken for a normal quit.
-  console.error(`\n  Something went wrong: ${err.message}`);
+  console.error(`\n  ${ui.tr("Something went wrong:")} ${err.message}`);
   ui.closeInput();
   process.exitCode = 1;
 });

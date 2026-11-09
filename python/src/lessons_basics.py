@@ -93,11 +93,12 @@ def lesson_01_running():
     ui.clear_screen()
     ui.heading("SUMMARY")
 
-    print("   - python3 file.py runs directly, no build step")
-    print("   - print() joins arguments with a space; sep= and end= change that")
-    print("   - a mistake later in the file is only caught once execution reaches it")
-    print()
-    print("  Module 2: variables, and a division rule that is not C's.")
+    if not ui.print_summary_pt(1):
+        print("   - python3 file.py runs directly, no build step")
+        print("   - print() joins arguments with a space; sep= and end= change that")
+        print("   - a mistake later in the file is only caught once execution reaches it")
+        print()
+        print("  Module 2: variables, and a division rule that is not C's.")
     ui.wait_enter()
 
 
@@ -187,9 +188,10 @@ def lesson_02_variables():
     ui.clear_screen()
     ui.heading("SUMMARY")
 
-    print("   - assignment, not declaration; a name can point at any type")
-    print("   - / is always true division; // floors, toward negative infinity")
-    print("   - f-strings: f\"{expr:spec}\" -- computed once, formatted for display")
+    if not ui.print_summary_pt(2):
+        print("   - assignment, not declaration; a name can point at any type")
+        print("   - / is always true division; // floors, toward negative infinity")
+        print("   - f-strings: f\"{expr:spec}\" -- computed once, formatted for display")
     ui.wait_enter()
 
 
@@ -271,9 +273,10 @@ def lesson_03_input():
     ui.clear_screen()
     ui.heading("SUMMARY")
 
-    print("   - input() always returns a str; convert with int()/float()")
-    print("   - str + int raises TypeError rather than silently doing the wrong thing")
-    print("   - int(bad_text) raises ValueError -- catchable with try/except")
+    if not ui.print_summary_pt(3):
+        print("   - input() always returns a str; convert with int()/float()")
+        print("   - str + int raises TypeError rather than silently doing the wrong thing")
+        print("   - int(bad_text) raises ValueError -- catchable with try/except")
     ui.wait_enter()
 
 
@@ -392,9 +395,10 @@ def lesson_04_conditions():
     ui.clear_screen()
     ui.heading("SUMMARY")
 
-    print("   - indentation IS the block; no braces, and inconsistency is a syntax error")
-    print("   - 0, 0.0, \"\", [], {}, None are falsy; everything else is truthy")
-    print("   - `if name:` is the idiomatic emptiness check")
+    if not ui.print_summary_pt(4):
+        print("   - indentation IS the block; no braces, and inconsistency is a syntax error")
+        print("   - 0, 0.0, \"\", [], {}, None are falsy; everything else is truthy")
+        print("   - `if name:` is the idiomatic emptiness check")
     ui.wait_enter()
 
 
@@ -500,9 +504,10 @@ def lesson_05_loops():
     ui.clear_screen()
     ui.heading("SUMMARY")
 
-    print("   - for walks a sequence; range(a, b) is a to b-1")
-    print("   - looping over a list needs no index; enumerate() adds one when wanted")
-    print("   - n -= 1, not n--; break/continue are unchanged from C")
-    print()
-    print("  Module 6: lists, and the aliasing bug that costs people an afternoon.")
+    if not ui.print_summary_pt(5):
+        print("   - for walks a sequence; range(a, b) is a to b-1")
+        print("   - looping over a list needs no index; enumerate() adds one when wanted")
+        print("   - n -= 1, not n--; break/continue are unchanged from C")
+        print()
+        print("  Module 6: lists, and the aliasing bug that costs people an afternoon.")
     ui.wait_enter()

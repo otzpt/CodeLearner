@@ -422,21 +422,23 @@ void lesson_19_advanced(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - a function's bare name decays to its own address; a\n");
-    printf("     function pointer variable can hold it and call through\n");
-    printf("     it, exactly the way this course's own MODULES table\n");
-    printf("     dispatches to every lesson\n");
-    printf("   - a callback is a function pointer parameter -- the code\n");
-    printf("     calling it never needs to know what it actually does\n");
-    printf("   - a variadic function has no way to know its own argument\n");
-    printf("     count on its own; something the caller controls (an\n");
-    printf("     explicit count, or printf's own format string) has to\n");
-    printf("     say so\n");
-    printf("   - a function-like macro substitutes raw tokens, not\n");
-    printf("     evaluated values -- ((x)*(x)) is what keeps the caller's\n");
-    printf("     own operators from reaching in unparenthesized\n");
-    printf("   - &, |, ^, ~, <<, >> work on an int's actual bits: & tests\n");
-    printf("     one, | sets it, ^ toggles it, and & with a NOT'd mask\n");
-    printf("     clears it without touching any other bit\n");
+    if (!print_summary_pt(19)) {
+        printf("   - a function's bare name decays to its own address; a\n");
+        printf("     function pointer variable can hold it and call through\n");
+        printf("     it, exactly the way this course's own MODULES table\n");
+        printf("     dispatches to every lesson\n");
+        printf("   - a callback is a function pointer parameter -- the code\n");
+        printf("     calling it never needs to know what it actually does\n");
+        printf("   - a variadic function has no way to know its own argument\n");
+        printf("     count on its own; something the caller controls (an\n");
+        printf("     explicit count, or printf's own format string) has to\n");
+        printf("     say so\n");
+        printf("   - a function-like macro substitutes raw tokens, not\n");
+        printf("     evaluated values -- ((x)*(x)) is what keeps the caller's\n");
+        printf("     own operators from reaching in unparenthesized\n");
+        printf("   - &, |, ^, ~, <<, >> work on an int's actual bits: & tests\n");
+        printf("     one, | sets it, ^ toggles it, and & with a NOT'd mask\n");
+        printf("     clears it without touching any other bit\n");
+    }
     wait_enter();
 }

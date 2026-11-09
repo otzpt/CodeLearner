@@ -269,15 +269,17 @@ void lesson_11_final_test(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - the final test adds nothing but rand()/srand() -- the rest\n");
-    printf("     is modules 1-10, combined into two full programs\n");
-    printf("   - malloc a runtime-decided amount, and free it before exit\n");
-    printf("   - pass structs by pointer to a function once they hold more\n");
-    printf("     than a couple of fields\n\n");
+    if (!print_summary_pt(11)) {
+        printf("   - the final test adds nothing but rand()/srand() -- the rest\n");
+        printf("     is modules 1-10, combined into two full programs\n");
+        printf("   - malloc a runtime-decided amount, and free it before exit\n");
+        printf("   - pass structs by pointer to a function once they hold more\n");
+        printf("     than a couple of fields\n\n");
 
-    printf("  Modules 12 and 13 go further into memory, if you want it:\n");
-    printf("  pointers to pointers and realloc in one, linked lists in the\n");
-    printf("  other.\n");
+        printf("  Modules 12 and 13 go further into memory, if you want it:\n");
+        printf("  pointers to pointers and realloc in one, linked lists in the\n");
+        printf("  other.\n");
+    }
     wait_enter();
 }
 
@@ -473,19 +475,21 @@ void lesson_12_growing_memory(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - int **p is a pointer to a pointer; free it inside out,\n");
-    printf("     every row before the array of rows\n");
-    printf("   - always realloc into a temporary, never back into the\n");
-    printf("     same variable you are resizing\n");
-    printf("   - doubling capacity when full keeps the number of reallocs\n");
-    printf("     small, even for an array that grows a lot\n\n");
+    if (!print_summary_pt(12)) {
+        printf("   - int **p is a pointer to a pointer; free it inside out,\n");
+        printf("     every row before the array of rows\n");
+        printf("   - always realloc into a temporary, never back into the\n");
+        printf("     same variable you are resizing\n");
+        printf("   - doubling capacity when full keeps the number of reallocs\n");
+        printf("     small, even for an array that grows a lot\n\n");
 
-    printf("  What you have now is everything module 9 promised: you know\n");
-    printf("  where every byte you asked for came from, and where it went.\n\n");
+        printf("  What you have now is everything module 9 promised: you know\n");
+        printf("  where every byte you asked for came from, and where it went.\n\n");
 
-    printf("  Module 13 is a second way to grow a collection: a linked\n");
-    printf("  list, one node at a time instead of realloc's doubling\n");
-    printf("  blocks.\n");
+        printf("  Module 13 is a second way to grow a collection: a linked\n");
+        printf("  list, one node at a time instead of realloc's doubling\n");
+        printf("  blocks.\n");
+    }
     wait_enter();
 }
 
@@ -627,15 +631,17 @@ void lesson_13_linked_lists(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - a struct may point at its own type; that is what a\n");
-    printf("     linked list is\n");
-    printf("   - inserting at the head is O(1), but reverses the order\n");
-    printf("     items came in\n");
-    printf("   - save ->next before you free a node, or you cannot get to\n");
-    printf("     the rest of the list\n\n");
+    if (!print_summary_pt(13)) {
+        printf("   - a struct may point at its own type; that is what a\n");
+        printf("     linked list is\n");
+        printf("   - inserting at the head is O(1), but reverses the order\n");
+        printf("     items came in\n");
+        printf("   - save ->next before you free a node, or you cannot get to\n");
+        printf("     the rest of the list\n\n");
 
-    printf("  Module 14 builds on this: two data structures, stacks and\n");
-    printf("  queues, using a plain array instead of another linked list.\n");
+        printf("  Module 14 builds on this: two data structures, stacks and\n");
+        printf("  queues, using a plain array instead of another linked list.\n");
+    }
     wait_enter();
 }
 
@@ -952,22 +958,24 @@ void lesson_14_stacks_queues(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - a stack is LIFO: push and pop both happen at `top`\n");
-    printf("   - a queue is FIFO: enqueue at the back, dequeue from the\n");
-    printf("     front\n");
-    printf("   - an array-based stack or queue needs a real capacity\n");
-    printf("     check before writing -- \"stack overflow\" is that check\n");
-    printf("     missing, not a metaphor\n");
-    printf("   - a naive array queue reports full long before it actually\n");
-    printf("     is, because `front` and `rear` only ever move forward\n");
-    printf("   - %% (modulo) wraps an index back to 0, which is what turns\n");
-    printf("     a naive queue into a correct, reusable one\n\n");
+    if (!print_summary_pt(14)) {
+        printf("   - a stack is LIFO: push and pop both happen at `top`\n");
+        printf("   - a queue is FIFO: enqueue at the back, dequeue from the\n");
+        printf("     front\n");
+        printf("   - an array-based stack or queue needs a real capacity\n");
+        printf("     check before writing -- \"stack overflow\" is that check\n");
+        printf("     missing, not a metaphor\n");
+        printf("   - a naive array queue reports full long before it actually\n");
+        printf("     is, because `front` and `rear` only ever move forward\n");
+        printf("   - %% (modulo) wraps an index back to 0, which is what turns\n");
+        printf("     a naive queue into a correct, reusable one\n\n");
 
-    printf("  Both used a fixed-size array on purpose. A linked list (like\n");
-    printf("  module 13's) removes the capacity limit entirely, at the\n");
-    printf("  cost of one malloc per item instead of one for the whole\n");
-    printf("  block -- the same tradeoff module 9 first raised between\n");
-    printf("  an array and a linked structure.\n");
+        printf("  Both used a fixed-size array on purpose. A linked list (like\n");
+        printf("  module 13's) removes the capacity limit entirely, at the\n");
+        printf("  cost of one malloc per item instead of one for the whole\n");
+        printf("  block -- the same tradeoff module 9 first raised between\n");
+        printf("  an array and a linked structure.\n");
+    }
     wait_enter();
 }
 
@@ -1223,22 +1231,24 @@ void lesson_15_enums_unions(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - enum names a set of int constants and gives the enum\n");
-    printf("     itself a real type name; unlike #define, a variable of\n");
-    printf("     that type stays visible to a debugger (C does not check\n");
-    printf("     that only a valid member ever ends up in it)\n");
-    printf("   - union members share one block of storage; sizeof is the\n");
-    printf("     largest member, not the sum, and only the last-written\n");
-    printf("     member is safe to read back\n");
-    printf("   - typedef names an existing type; it earns its keep on\n");
-    printf("     struct/enum/union, dropping the keyword at every use\n");
-    printf("   - padding is a property of the compiler and the machine,\n");
-    printf("     not the language -- true for an int (module 10) and\n");
-    printf("     just as true for an enum\n\n");
+    if (!print_summary_pt(15)) {
+        printf("   - enum names a set of int constants and gives the enum\n");
+        printf("     itself a real type name; unlike #define, a variable of\n");
+        printf("     that type stays visible to a debugger (C does not check\n");
+        printf("     that only a valid member ever ends up in it)\n");
+        printf("   - union members share one block of storage; sizeof is the\n");
+        printf("     largest member, not the sum, and only the last-written\n");
+        printf("     member is safe to read back\n");
+        printf("   - typedef names an existing type; it earns its keep on\n");
+        printf("     struct/enum/union, dropping the keyword at every use\n");
+        printf("   - padding is a property of the compiler and the machine,\n");
+        printf("     not the language -- true for an int (module 10) and\n");
+        printf("     just as true for an enum\n\n");
 
-    printf("  That covers every kind of type this course builds by hand.\n");
-    printf("  What is left from here is practice: bigger programs that\n");
-    printf("  combine all of it, the way module 11's final test combined\n");
-    printf("  modules 1 through 10.\n");
+        printf("  That covers every kind of type this course builds by hand.\n");
+        printf("  What is left from here is practice: bigger programs that\n");
+        printf("  combine all of it, the way module 11's final test combined\n");
+        printf("  modules 1 through 10.\n");
+    }
     wait_enter();
 }

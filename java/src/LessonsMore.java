@@ -101,9 +101,11 @@ class LessonsMore {
         Ui.clearScreen();
         Ui.heading("SUMMARY");
 
-        System.out.println("   - arrays are fixed-size; .length is a field, no parentheses");
-        System.out.println("   - String is immutable; .length() is a method, parentheses required");
-        System.out.println("   - == compares identity, not content -- .equals() for content, always");
+        if (!Strings.printSummaryPt(6)) {
+            System.out.println("   - arrays are fixed-size; .length is a field, no parentheses");
+            System.out.println("   - String is immutable; .length() is a method, parentheses required");
+            System.out.println("   - == compares identity, not content -- .equals() for content, always");
+        }
         Ui.waitEnter();
     }
 
@@ -197,9 +199,11 @@ class LessonsMore {
         Ui.clearScreen();
         Ui.heading("SUMMARY");
 
-        System.out.println("   - no default-argument syntax -- overloading fills the same need");
-        System.out.println("   - overloads differ by parameter list, chosen at compile time");
-        System.out.println("   - each overload is a separate method -- nothing shared or mutated between calls");
+        if (!Strings.printSummaryPt(7)) {
+            System.out.println("   - no default-argument syntax -- overloading fills the same need");
+            System.out.println("   - overloads differ by parameter list, chosen at compile time");
+            System.out.println("   - each overload is a separate method -- nothing shared or mutated between calls");
+        }
         Ui.waitEnter();
     }
 
@@ -331,9 +335,11 @@ class LessonsMore {
         Ui.clearScreen();
         Ui.heading("SUMMARY");
 
-        System.out.println("   - ArrayList grows; add/get/size replace []/.length");
-        System.out.println("   - a generic type parameter must be an object type -- Integer, not int");
-        System.out.println("   - autoboxing/unboxing convert automatically; the type itself still must be boxed");
+        if (!Strings.printSummaryPt(8)) {
+            System.out.println("   - ArrayList grows; add/get/size replace []/.length");
+            System.out.println("   - a generic type parameter must be an object type -- Integer, not int");
+            System.out.println("   - autoboxing/unboxing convert automatically; the type itself still must be boxed");
+        }
         Ui.waitEnter();
     }
 
@@ -453,9 +459,11 @@ class LessonsMore {
         Ui.clearScreen();
         Ui.heading("SUMMARY");
 
-        System.out.println("   - private is enforced by the compiler -- not a convention like Python's _grade");
-        System.out.println("   - implementing an interface means implementing every method it declares, or it will not compile");
-        System.out.println("   - garbage collected like Python; try-with-resources gives C++'s RAII-style deterministic cleanup, opt-in");
+        if (!Strings.printSummaryPt(9)) {
+            System.out.println("   - private is enforced by the compiler -- not a convention like Python's _grade");
+            System.out.println("   - implementing an interface means implementing every method it declares, or it will not compile");
+            System.out.println("   - garbage collected like Python; try-with-resources gives C++'s RAII-style deterministic cleanup, opt-in");
+        }
         Ui.waitEnter();
     }
 
@@ -612,18 +620,20 @@ class LessonsMore {
         Ui.clearScreen();
         Ui.heading("SUMMARY");
 
-        System.out.println("   - try/catch/finally: same shape as every other course here");
-        System.out.println("   - checked exceptions must be caught or declared -- enforced at compile time");
-        System.out.println("   - unchecked (RuntimeException) needs neither -- same as every exception in C++/Python/JS");
-        System.out.println();
-        System.out.println("  That covers the core course. Garbage collected like Python and");
-        System.out.println("  JavaScript, statically typed and compiled like C and C++, and");
-        System.out.println("  the one course here where the compiler itself enforces both");
-        System.out.println("  access control and exception handling before the program is");
-        System.out.println("  ever allowed to run.");
-        System.out.println();
-        System.out.println("  Module 11 rounds out the Collections Framework module 8's");
-        System.out.println("  ArrayList only touched one part of: Map and Set.");
+        if (!Strings.printSummaryPt(10)) {
+            System.out.println("   - try/catch/finally: same shape as every other course here");
+            System.out.println("   - checked exceptions must be caught or declared -- enforced at compile time");
+            System.out.println("   - unchecked (RuntimeException) needs neither -- same as every exception in C++/Python/JS");
+            System.out.println();
+            System.out.println("  That covers the core course. Garbage collected like Python and");
+            System.out.println("  JavaScript, statically typed and compiled like C and C++, and");
+            System.out.println("  the one course here where the compiler itself enforces both");
+            System.out.println("  access control and exception handling before the program is");
+            System.out.println("  ever allowed to run.");
+            System.out.println();
+            System.out.println("  Module 11 rounds out the Collections Framework module 8's");
+            System.out.println("  ArrayList only touched one part of: Map and Set.");
+        }
         Ui.waitEnter();
     }
 

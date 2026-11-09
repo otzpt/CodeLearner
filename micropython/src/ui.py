@@ -8,6 +8,8 @@ the screen is cleared with ANSI codes only.
 
 import sys
 
+from strings_pt import print_summary_pt, tr  # noqa: F401
+
 WIDTH = 54  # inside width of the frame, matching the other courses
 
 
@@ -16,7 +18,7 @@ def clear_screen():
 
 
 def wait_enter():
-    input("\n  Press ENTER to continue...")
+    input("\n  " + tr("Press ENTER to continue..."))
 
 
 def rule():
@@ -40,7 +42,7 @@ def title(text):
 
 
 def heading(text):
-    print("\n  " + text)
+    print("\n  " + tr(text))
     rule()
 
 
@@ -50,19 +52,19 @@ def ask_yes(question_text):
 
 
 def exercise(number):
-    print("\n  >> EXERCISE - MODULE " + str(number))
+    print("\n  " + tr(">> EXERCISE - MODULE") + " " + str(number))
     rule()
 
 
 def question(text, correct, why):
     print("\n  " + text)
-    answer = input("  Your answer: ")
+    answer = input("  " + tr("Your answer:") + " ")
 
     right = answer.strip().lower() == correct.strip().lower()
     if right:
-        print("\n  CORRECT.  " + why)
+        print("\n  " + tr("CORRECT.") + "  " + why)
     else:
-        print("\n  NOT QUITE. The answer is: " + correct)
+        print("\n  " + tr("NOT QUITE. The answer is:") + " " + correct)
         print("             " + why)
     return right
 
@@ -76,28 +78,28 @@ def challenge(task, input_lines, expected, solution):
     `expected`, however the code that does it is written. `solution` is one
     way of getting there and appears only after a confirmation.
     """
-    print("\n  >> WRITE THIS YOURSELF, in a real file")
+    print("\n  " + tr(">> WRITE THIS YOURSELF, in a real file"))
     rule()
 
     for line in task:
         print("  " + line)
 
     if input_lines:
-        print("\n  Try it with this input:\n")
+        print("\n  " + tr("Try it with this input:") + "\n")
         for line in input_lines:
             print("      " + line)
 
     if expected:
-        print("\n  It must print:\n")
+        print("\n  " + tr("It must print:") + "\n")
         for line in expected:
             print("      " + line)
-        print("\n  That output is the whole specification. Any code that")
-        print("  produces it is correct.")
+        print("\n  " + tr("That output is the whole specification. Any code that"))
+        print("  " + tr("produces it is correct."))
 
-    print("\n  Try it first. Run with:")
+    print("\n  " + tr("Try it first. Run with:"))
     print("    micropython test.py")
 
-    if not ask_yes("Want to see example code?"):
+    if not ask_yes(tr("Want to see example code?")):
         return
 
     print()
@@ -105,6 +107,6 @@ def challenge(task, input_lines, expected, solution):
     for line in solution:
         print("  " + line)
     rule()
-    print("  This is EXAMPLE CODE, not the answer. It is one way to get")
-    print("  that output; yours may look nothing like it and still be")
-    print("  right -- or better. Compare the output, not the code.")
+    print("  " + tr("This is EXAMPLE CODE, not the answer. It is one way to get"))
+    print("  " + tr("that output; yours may look nothing like it and still be"))
+    print("  " + tr("right -- or better. Compare the output, not the code."))

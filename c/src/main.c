@@ -65,18 +65,18 @@ static const struct Module MODULES[] = {
 static void show_menu(void)
 {
     clear_screen();
-    title("C COURSE - FROM ZERO TO MEMORY");
+    title(tr("C COURSE - FROM ZERO TO MEMORY"));
 
     const char *shown_tier = "";
     for (int i = 0; i < MODULE_COUNT; i++) {
         if (strcmp(MODULES[i].tier, shown_tier) != 0) {
             shown_tier = MODULES[i].tier;
-            printf("\n  -- %s --\n", shown_tier);
+            printf("\n  -- %s --\n", tr(shown_tier));
         }
-        printf("   [%2d]  %s\n", i + 1, MODULES[i].title);
+        printf("   [%2d]  %s\n", i + 1, tr(MODULES[i].title));
     }
 
-    printf("\n   [ 0]  Quit\n");
+    printf("\n   [ 0]  %s\n", tr("Quit"));
     rule();
 }
 
@@ -86,7 +86,7 @@ int main(void)
 
     for (;;) {
         show_menu();
-        printf("\n  Pick a module: ");
+        printf("\n  %s ", tr("Pick a module:"));
         fflush(stdout);
 
         /* End of input (Ctrl-D, or the program being fed from a file) counts
@@ -110,11 +110,11 @@ int main(void)
             clear_screen();
             MODULES[n - 1].run();
         } else {
-            printf("\n  Not a valid option.\n");
+            printf("\n  %s\n", tr("Not a valid option."));
             wait_enter();
         }
     }
 
-    printf("\n  See you next time.\n\n");
+    printf("\n  %s\n\n", tr("See you next time."));
     return 0;
 }

@@ -20,6 +20,8 @@ export LC_ALL=C LANG=C
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd)
 
 # shellcheck source=ui.sh
+source "$SCRIPT_DIR/strings_pt.sh"
+# shellcheck source=ui.sh
 source "$SCRIPT_DIR/ui.sh"
 # shellcheck source=lessons_basics.sh
 source "$SCRIPT_DIR/lessons_basics.sh"
@@ -54,13 +56,13 @@ MODULE_FUNCS=(
 
 show_menu() {
     ui_clear_screen
-    ui_title_centered "GIT COURSE"
+    ui_title_centered "$(ui_tr 'GIT COURSE')"
 
     local i
     for i in "${!MODULE_TITLES[@]}"; do
-        printf '   [%2d]  %s\n' "$((i + 1))" "${MODULE_TITLES[$i]}"
+        printf '   [%2d]  %s\n' "$((i + 1))" "$(ui_tr "${MODULE_TITLES[$i]}")"
     done
-    printf '\n   [ 0]  Quit\n'
+    printf '\n   [ 0]  %s\n' "$(ui_tr 'Quit')"
     ui_rule
 }
 
@@ -73,7 +75,7 @@ main() {
     local choice
     while true; do
         show_menu
-        printf '\n  Pick a module: '
+        printf '\n  %s ' "$(ui_tr 'Pick a module:')"
 
         if ! read -r choice; then
             break
@@ -84,12 +86,12 @@ main() {
             ui_clear_screen
             "${MODULE_FUNCS[$((10#$choice - 1))]}"
         else
-            printf '\n  Not a valid option.\n'
+            printf '\n  %s\n' "$(ui_tr 'Not a valid option.')"
             ui_wait_enter
         fi
     done
 
-    printf '\n  See you next time.\n\n'
+    printf '\n  %s\n\n' "$(ui_tr 'See you next time.')"
 }
 
 main "$@"

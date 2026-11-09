@@ -201,12 +201,14 @@ void lesson_01_dom(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - querySelector returns null for no match, so check before\n");
-    printf("     you use it.\n");
-    printf("   - A script can only see what has already been parsed. Use\n");
-    printf("     defer.\n");
-    printf("   - innerHTML on user input is cross-site scripting.\n");
-    printf("   - querySelectorAll is a snapshot.\n");
+    if (!print_summary_pt(1)) {
+        printf("   - querySelector returns null for no match, so check before\n");
+        printf("     you use it.\n");
+        printf("   - A script can only see what has already been parsed. Use\n");
+        printf("     defer.\n");
+        printf("   - innerHTML on user input is cross-site scripting.\n");
+        printf("   - querySelectorAll is a snapshot.\n");
+    }
     wait_enter();
 }
 
@@ -384,12 +386,14 @@ void lesson_02_events(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - Pass the function. fn() calls it at once.\n");
-    printf("   - Events bubble. target is the origin and currentTarget is\n");
-    printf("     the listener's element.\n");
-    printf("   - Delegation covers elements that do not exist yet.\n");
-    printf("   - Removing a listener needs the same function object.\n");
-    printf("   - innerHTML += destroys the listeners inside.\n");
+    if (!print_summary_pt(2)) {
+        printf("   - Pass the function. fn() calls it at once.\n");
+        printf("   - Events bubble. target is the origin and currentTarget is\n");
+        printf("     the listener's element.\n");
+        printf("   - Delegation covers elements that do not exist yet.\n");
+        printf("   - Removing a listener needs the same function object.\n");
+        printf("   - innerHTML += destroys the listeners inside.\n");
+    }
     wait_enter();
 }
 
@@ -533,10 +537,12 @@ void lesson_03_forms(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - .value is always a string.\n");
-    printf("   - .checked is the state of a checkbox.\n");
-    printf("   - preventDefault() keeps you on the page.\n");
-    printf("   - FormData follows the same rules as a real submission.\n");
+    if (!print_summary_pt(3)) {
+        printf("   - .value is always a string.\n");
+        printf("   - .checked is the state of a checkbox.\n");
+        printf("   - preventDefault() keeps you on the page.\n");
+        printf("   - FormData follows the same rules as a real submission.\n");
+    }
     wait_enter();
 }
 
@@ -674,10 +680,12 @@ void lesson_04_fetch(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - fetch takes two awaits: the response, then the body.\n");
-    printf("   - A 404 does not reject. Check response.ok.\n");
-    printf("   - A body can be read once.\n");
-    printf("   - AbortSignal.timeout() gives a request a limit.\n");
+    if (!print_summary_pt(4)) {
+        printf("   - fetch takes two awaits: the response, then the body.\n");
+        printf("   - A 404 does not reject. Check response.ok.\n");
+        printf("   - A body can be read once.\n");
+        printf("   - AbortSignal.timeout() gives a request a limit.\n");
+    }
     wait_enter();
 }
 
@@ -836,9 +844,11 @@ void lesson_05_state(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - localStorage stores strings, so use JSON for anything\n");
-    printf("     else.\n");
-    printf("   - Keep state in variables and draw the page from it.\n");
-    printf("   - Build user content with createElement and textContent.\n");
+    if (!print_summary_pt(5)) {
+        printf("   - localStorage stores strings, so use JSON for anything\n");
+        printf("     else.\n");
+        printf("   - Keep state in variables and draw the page from it.\n");
+        printf("   - Build user content with createElement and textContent.\n");
+    }
     wait_enter();
 }

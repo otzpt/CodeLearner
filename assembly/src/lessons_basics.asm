@@ -198,7 +198,7 @@ lesson_01_registers:
     challenge m1_challenge, m1_solution
 
     ; summary(1)
-    summary m1_summary_hdr, m1_summary
+    summary m1_summary_hdr, m1_summary, 1
     ret
 
 ; Tells the linker this object does not need an executable stack.

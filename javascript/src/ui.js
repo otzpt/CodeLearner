@@ -22,6 +22,7 @@
 
 const readline = require("node:readline");
 const { stdin, stdout } = require("node:process");
+const { tr, printSummaryPt } = require("./strings_pt.js");
 
 const WIDTH = 54; // inside width of the frame, matching the other courses
 
@@ -58,7 +59,7 @@ function clearScreen() {
 }
 
 async function waitEnter() {
-  await ask("\n  Press ENTER to continue...");
+  await ask("\n  " + tr("Press ENTER to continue..."));
 }
 
 function rule() {
@@ -82,7 +83,7 @@ function title(text) {
 }
 
 function heading(text) {
-  console.log(`\n  ${text}`);
+  console.log(`\n  ${tr(text)}`);
   rule();
 }
 
@@ -92,19 +93,19 @@ async function askYes(questionText) {
 }
 
 function exercise(number) {
-  console.log(`\n  >> EXERCISE - MODULE ${number}`);
+  console.log(`\n  ${tr(">> EXERCISE - MODULE")} ${number}`);
   rule();
 }
 
 async function question(text, correct, why) {
   console.log(`\n  ${text}`);
-  const answer = await ask("  Your answer: ");
+  const answer = await ask("  " + tr("Your answer:") + " ");
 
   const right = answer.trim().toLowerCase() === correct.trim().toLowerCase();
   if (right) {
-    console.log(`\n  CORRECT.  ${why}`);
+    console.log(`\n  ${tr("CORRECT.")}  ${why}`);
   } else {
-    console.log(`\n  NOT QUITE. The answer is: ${correct}`);
+    console.log(`\n  ${tr("NOT QUITE. The answer is:")} ${correct}`);
     console.log(`             ${why}`);
   }
   return right;
@@ -118,7 +119,7 @@ async function question(text, correct, why) {
 // the code that does it is written. `solution` is one way of getting there
 // and appears only after a confirmation.
 async function challenge(task, input, expected, solution) {
-  console.log("\n  >> WRITE THIS YOURSELF, in a real file");
+  console.log("\n  " + tr(">> WRITE THIS YOURSELF, in a real file"));
   rule();
 
   for (const line of task) {
@@ -126,25 +127,25 @@ async function challenge(task, input, expected, solution) {
   }
 
   if (input.length > 0) {
-    console.log("\n  Try it with this input:\n");
+    console.log("\n  " + tr("Try it with this input:") + "\n");
     for (const line of input) {
       console.log(`      ${line}`);
     }
   }
 
   if (expected.length > 0) {
-    console.log("\n  It must print:\n");
+    console.log("\n  " + tr("It must print:") + "\n");
     for (const line of expected) {
       console.log(`      ${line}`);
     }
-    console.log("\n  That output is the whole specification. Any code that");
-    console.log("  produces it is correct.");
+    console.log("\n  " + tr("That output is the whole specification. Any code that"));
+    console.log("  " + tr("produces it is correct."));
   }
 
-  console.log("\n  Try it first. Run with:");
+  console.log("\n  " + tr("Try it first. Run with:"));
   console.log("    node test.js");
 
-  if (!(await askYes("Want to see example code?"))) {
+  if (!(await askYes(tr("Want to see example code?")))) {
     return;
   }
 
@@ -154,9 +155,9 @@ async function challenge(task, input, expected, solution) {
     console.log(`  ${line}`);
   }
   rule();
-  console.log("  This is EXAMPLE CODE, not the answer. It is one way to get");
-  console.log("  that output; yours may look nothing like it and still be");
-  console.log("  right -- or better. Compare the output, not the code.");
+  console.log("  " + tr("This is EXAMPLE CODE, not the answer. It is one way to get"));
+  console.log("  " + tr("that output; yours may look nothing like it and still be"));
+  console.log("  " + tr("right -- or better. Compare the output, not the code."));
 }
 
 function closeInput() {
@@ -164,6 +165,8 @@ function closeInput() {
 }
 
 module.exports = {
+  tr,
+  printSummaryPt,
   ask,
   isInputClosed,
   clearScreen,

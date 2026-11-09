@@ -10,13 +10,13 @@
 CC      = cc
 CFLAGS  = -std=c11 -Wall -Wextra -g
 TARGET  = css-course
-SOURCES = src/main.c src/ui.c src/lessons_css.c
+SOURCES = src/main.c src/ui.c src/strings_pt.c src/lessons_css.c
 OBJECTS = $(SOURCES:.c=.o)
 
 $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
 
-%.o: %.c src/ui.h src/lessons.h
+%.o: %.c src/ui.h src/lessons.h src/strings_pt.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 run: $(TARGET)

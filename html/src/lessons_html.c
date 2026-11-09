@@ -249,13 +249,15 @@ void lesson_01_structure(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - <!doctype html> selects standards mode. Forget it and the\n");
-    printf("     layout rules change silently.\n");
-    printf("   - HTML never reports an error. It repairs, and the repair\n");
-    printf("     may not be what you meant.\n");
-    printf("   - Inspect shows the tree the browser built, which is the one\n");
-    printf("     that counts.\n");
-    printf("   - Elements describe meaning. Their look belongs to CSS.\n");
+    if (!print_summary_pt(1)) {
+        printf("   - <!doctype html> selects standards mode. Forget it and the\n");
+        printf("     layout rules change silently.\n");
+        printf("   - HTML never reports an error. It repairs, and the repair\n");
+        printf("     may not be what you meant.\n");
+        printf("   - Inspect shows the tree the browser built, which is the one\n");
+        printf("     that counts.\n");
+        printf("   - Elements describe meaning. Their look belongs to CSS.\n");
+    }
     wait_enter();
 }
 
@@ -424,14 +426,16 @@ void lesson_02_forms(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - <label for> makes the text clickable and names the field\n");
-    printf("     for screen readers.\n");
-    printf("   - A field with no name is not sent, and nothing warns you.\n");
-    printf("   - method=\"get\" puts values in the URL. Never use it for\n");
-    printf("     passwords.\n");
-    printf("   - Browser validation is a convenience. The server decides.\n");
-    printf("   - A button in a form submits it unless it says\n");
-    printf("     type=\"button\".\n");
+    if (!print_summary_pt(2)) {
+        printf("   - <label for> makes the text clickable and names the field\n");
+        printf("     for screen readers.\n");
+        printf("   - A field with no name is not sent, and nothing warns you.\n");
+        printf("   - method=\"get\" puts values in the URL. Never use it for\n");
+        printf("     passwords.\n");
+        printf("   - Browser validation is a convenience. The server decides.\n");
+        printf("   - A button in a form submits it unless it says\n");
+        printf("     type=\"button\".\n");
+    }
     wait_enter();
 }
 
@@ -569,13 +573,15 @@ void lesson_03_accessibility(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - Test with the Tab key.\n");
-    printf("   - Native elements come with behaviour. Styled divs do not.\n");
-    printf("   - ARIA changes what is announced and nothing else.\n");
-    printf("   - alt describes what the image communicates, and is empty on\n");
-    printf("     decoration.\n");
-    printf("   - Link text and meaning must survive without sight of the\n");
-    printf("     page around them.\n");
+    if (!print_summary_pt(3)) {
+        printf("   - Test with the Tab key.\n");
+        printf("   - Native elements come with behaviour. Styled divs do not.\n");
+        printf("   - ARIA changes what is announced and nothing else.\n");
+        printf("   - alt describes what the image communicates, and is empty on\n");
+        printf("     decoration.\n");
+        printf("   - Link text and meaning must survive without sight of the\n");
+        printf("     page around them.\n");
+    }
     wait_enter();
 }
 
@@ -714,12 +720,14 @@ void lesson_04_metadata(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - <meta charset=\"utf-8\"> first in the head, and files saved\n");
-    printf("     as UTF-8.\n");
-    printf("   - No viewport tag means a shrunken page on a phone.\n");
-    printf("   - description and og: tags are for other programs, not for\n");
-    printf("     your page.\n");
-    printf("   - <base> rewrites every relative URL, including #anchors.\n");
+    if (!print_summary_pt(4)) {
+        printf("   - <meta charset=\"utf-8\"> first in the head, and files saved\n");
+        printf("     as UTF-8.\n");
+        printf("   - No viewport tag means a shrunken page on a phone.\n");
+        printf("   - description and og: tags are for other programs, not for\n");
+        printf("     your page.\n");
+        printf("   - <base> rewrites every relative URL, including #anchors.\n");
+    }
     wait_enter();
 }
 
@@ -862,9 +870,11 @@ void lesson_05_practical(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - Tables are for data, with a caption and th scope.\n");
-    printf("   - width and height reserve an image's space.\n");
-    printf("   - details and popover work with no script at all.\n");
-    printf("   - A correct page is mostly choosing the right elements.\n");
+    if (!print_summary_pt(5)) {
+        printf("   - Tables are for data, with a caption and th scope.\n");
+        printf("   - width and height reserve an image's space.\n");
+        printf("   - details and popover work with no script at all.\n");
+        printf("   - A correct page is mostly choosing the right elements.\n");
+    }
     wait_enter();
 }

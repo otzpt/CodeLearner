@@ -13,7 +13,7 @@ CC      = cc
 VERSION ?= dev
 CFLAGS  = -std=c11 -Wall -Wextra -g -DCODELEARNER_VERSION=\"$(VERSION)\"
 TARGET  = launcher
-SOURCES = src/main.c src/update.c
+SOURCES = src/main.c src/update.c src/strings_pt.c
 OBJECTS = $(SOURCES:.c=.o)
 
 $(TARGET): $(OBJECTS)

@@ -106,12 +106,14 @@ void lesson_01_compiling(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - C compiles before it runs\n");
-    printf("   - every program starts at main\n");
-    printf("   - printf writes, \\n breaks the line\n");
-    printf("   - -Wall -Wextra, always\n\n");
+    if (!print_summary_pt(1)) {
+        printf("   - C compiles before it runs\n");
+        printf("   - every program starts at main\n");
+        printf("   - printf writes, \\n breaks the line\n");
+        printf("   - -Wall -Wextra, always\n\n");
 
-    printf("  Module 2: storing values in variables.\n");
+        printf("  Module 2: storing values in variables.\n");
+    }
     wait_enter();
 }
 
@@ -245,10 +247,12 @@ void lesson_02_variables(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - the type comes before the name and never changes\n");
-    printf("   - each type has its own printf marker\n");
-    printf("   - int / int gives int, even stored into a float\n");
-    printf("   - convert before dividing, not after\n");
+    if (!print_summary_pt(2)) {
+        printf("   - the type comes before the name and never changes\n");
+        printf("   - each type has its own printf marker\n");
+        printf("   - int / int gives int, even stored into a float\n");
+        printf("   - convert before dividing, not after\n");
+    }
     wait_enter();
 }
 
@@ -372,10 +376,12 @@ void lesson_03_input(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - scanf takes & for numbers, no & for arrays\n");
-    printf("   - no & -> Segmentation fault\n");
-    printf("   - always cap the size: %%49s into an array of 50\n");
-    printf("   - fgets is safer and reads the whole line\n");
+    if (!print_summary_pt(3)) {
+        printf("   - scanf takes & for numbers, no & for arrays\n");
+        printf("   - no & -> Segmentation fault\n");
+        printf("   - always cap the size: %%49s into an array of 50\n");
+        printf("   - fgets is safer and reads the whole line\n");
+    }
     wait_enter();
 }
 
@@ -551,11 +557,13 @@ void lesson_04_conditions(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - only the first true branch runs; order matters\n");
-    printf("   - == compares, = assigns\n");
-    printf("   - 0 is false, everything else is true\n");
-    printf("   - braces always\n");
-    printf("   - switch needs a break in every case, or it falls into the next one\n");
+    if (!print_summary_pt(4)) {
+        printf("   - only the first true branch runs; order matters\n");
+        printf("   - == compares, = assigns\n");
+        printf("   - 0 is false, everything else is true\n");
+        printf("   - braces always\n");
+        printf("   - switch needs a break in every case, or it falls into the next one\n");
+    }
     wait_enter();
 }
 
@@ -718,13 +726,15 @@ void lesson_05_loops(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - for: start; condition; step\n");
-    printf("   - indices run 0 to n-1: use <, not <=\n");
-    printf("   - C does not check array bounds\n");
-    printf("   - something inside a while must change the condition\n");
-    printf("   - do-while checks after the body, so it always runs at least once\n\n");
+    if (!print_summary_pt(5)) {
+        printf("   - for: start; condition; step\n");
+        printf("   - indices run 0 to n-1: use <, not <=\n");
+        printf("   - C does not check array bounds\n");
+        printf("   - something inside a while must change the condition\n");
+        printf("   - do-while checks after the body, so it always runs at least once\n\n");
 
-    printf("  Module 6 starts the part that sets C apart: arrays,\n");
-    printf("  memory and pointers.\n");
+        printf("  Module 6 starts the part that sets C apart: arrays,\n");
+        printf("  memory and pointers.\n");
+    }
     wait_enter();
 }

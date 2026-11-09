@@ -350,7 +350,7 @@ lesson_02_branching:
     challenge m2_challenge, m2_solution
 
     ; summary(2)
-    summary m2_summary_hdr, m2_summary
+    summary m2_summary_hdr, m2_summary, 2
     ret
 
 lesson_03_loops:
@@ -372,7 +372,7 @@ lesson_03_loops:
     challenge m3_challenge, m3_solution
 
     ; summary(3)
-    summary m3_summary_hdr, m3_summary
+    summary m3_summary_hdr, m3_summary, 3
     ret
 
 ; Tells the linker this object does not need an executable stack.
