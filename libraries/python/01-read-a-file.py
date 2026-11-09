@@ -1,10 +1,23 @@
 """
 TITLE: open() and pathlib: reading a file
-GROUP: Built-ins
+GROUP: Common tasks
 USES: built-in open(), pathlib.Path
 SUMMARY: open() in a with block reads a file and closes it afterwards.
   Iterating over the file gives one line at a time. Path.read_text() reads
   it all at once.
+SIGNATURE:
+  open(file, mode="r", encoding=None)
+  pathlib.Path(path).read_text(encoding=None)
+PARAMETERS:
+  - file: a path, as str or Path.
+  - mode: "r" to read, "w" to replace, "a" to append, "b" added for bytes.
+  - encoding: the text encoding. Give it for text you did not write.
+RETURNS: open: a file object, which iterates over lines. read_text: the whole
+  file as a str.
+ERRORS:
+  - FileNotFoundError, PermissionError, IsADirectoryError, all subclasses of
+    OSError.
+  - UnicodeDecodeError when the bytes do not fit the encoding.
 NOTES:
   - Always use `with open(...) as f`: the file is closed even if an exception
     happens.

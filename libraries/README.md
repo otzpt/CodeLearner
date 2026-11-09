@@ -1,13 +1,16 @@
 # Libraries
 
 A reference manual for the C and Python libraries, laid out like man pages.
-One page per header, function family, module or system file: NAME, SYNOPSIS,
-DESCRIPTION, STANDARDS, NOTES, APPLICATION USAGE, an EXAMPLE, and SEE ALSO.
+One page per task, header, function family, module or system file: NAME,
+SYNOPSIS, DESCRIPTION, PARAMETERS, RETURN VALUE, ERRORS, STANDARDS, NOTES,
+APPLICATION USAGE, an EXAMPLE, and SEE ALSO.
 The example is compiled and **run on this machine** each time the page is
 opened, so the output shown is what this machine printed. There are no lessons
 and no exercises.
 
-The C manual is in six parts: the standard C library, POSIX, Linux, files
+Both manuals start with **Common tasks**: reading a file, parsing text, sorting,
+timeouts and running another program. After that, the C manual is in six parts:
+the standard C library, POSIX, Linux, files
 (`/proc`, `/sys` and `os-release`), terminal control sequences, and
 third-party libraries (raylib). It has a reference page for each of 21
 headers (stdio.h, stdlib.h, string.h, unistd.h, sys/statvfs.h, termios.h and
@@ -41,8 +44,15 @@ browser reads. Each key is shown under a man page section:
  * USES: #include <sys/utsname.h>                                     SYNOPSIS
  * PROVIDES:                                                          SYNOPSIS
  *   int uname(struct utsname *buf)    fills buf; -1 on error
+ * SIGNATURE:                                                        SYNOPSIS
+ *   int uname(struct utsname *name)
  * LIBS: -lm                     (C only: extra linker flags)         SYNOPSIS
  * SUMMARY: One or two lines saying what it does.                     DESCRIPTION
+ * PARAMETERS:                                                       PARAMETERS
+ *   - name: a struct to fill
+ * RETURNS: 0, or -1 on failure.                                      RETURN VALUE
+ * ERRORS:                                                           ERRORS
+ *   - EFAULT: name is not a valid pointer
  * STANDARD: POSIX.                                                   STANDARDS
  * NOTES:                                                             NOTES
  *   - a caveat per line
@@ -52,7 +62,8 @@ browser reads. Each key is shown under a man page section:
  */
 ```
 
-`TITLE`, `GROUP` and `SUMMARY` are required. The title is "name: what it is
+`TITLE`, `GROUP`, `SUMMARY`, `PARAMETERS`, `RETURNS`, `ERRORS` and one of
+`SIGNATURE` or `PROVIDES` are required on every runnable page. The title is "name: what it is
 for"; the page frame shows the name alone, as a man page header does. A C page
 titled for one of the 21 documented headers must also have `STANDARD`,
 `PROVIDES`, `USEDFOR` and `SEE`, and `check-pages.py` enforces that.
@@ -60,7 +71,7 @@ titled for one of the 21 documented headers must also have `STANDARD`,
 Python pages use a docstring (`"""`) with the same `KEY: value` lines. A page
 ending in `.txt` is documentation only: the same header, a line with `---`,
 then the text. Pages are listed in file-name order under their `GROUP`, and the
-file numbers keep each part together (C: 10 standard C, 30 POSIX, 50 Linux,
+file numbers keep each part together (C: 01 common tasks, 10 standard C, 30 POSIX, 50 Linux,
 60 files, 70 terminal, 90 third-party). To add a page, drop a file in the
 folder: the browser needs no change. To add a language, add a row to `TRACKS`
 in `src/main.c` and a folder of pages.

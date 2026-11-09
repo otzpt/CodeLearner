@@ -5,6 +5,15 @@ USES: import time, os, datetime
 SUMMARY: time.clock_gettime(time.CLOCK_BOOTTIME) is seconds since boot, the
   same number as the first value in /proc/uptime. os.getloadavg() gives the
   1, 5 and 15 minute load.
+SIGNATURE:
+  time.clock_gettime(time.CLOCK_BOOTTIME)
+  os.getloadavg()
+PARAMETERS:
+  - The clock id. getloadavg takes nothing.
+RETURNS: clock_gettime: seconds as a float. getloadavg: a tuple of three
+  floats.
+ERRORS:
+  - OSError from getloadavg when the load cannot be read.
 NOTES:
   - CLOCK_BOOTTIME keeps counting while the machine is suspended;
     CLOCK_MONOTONIC does not. Use BOOTTIME for "up for".

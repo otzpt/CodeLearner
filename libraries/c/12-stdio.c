@@ -19,6 +19,18 @@
  *   FILE *tmpfile(void); int remove(path); int rename(old, new)
  *   stdin, stdout, stderr; EOF; BUFSIZ; FILENAME_MAX
  *   POSIX: popen / pclose, getline, fileno
+ * PARAMETERS:
+ *   - path, mode: the file and how to open it (see the notes).
+ *   - buf, size: destination and its whole size.
+ *   - stream or f: a FILE pointer from fopen, or stdin, stdout, stderr.
+ *   - whence: SEEK_SET, SEEK_CUR or SEEK_END.
+ * RETURNS: fopen: a stream or NULL. fgets: buf or NULL. fread and fwrite:
+ *   items transferred, which may be fewer than asked. fclose, fflush: 0 or
+ *   EOF. The printf family: characters written, negative on error. The scanf
+ *   family: fields filled, or EOF.
+ * ERRORS:
+ *   - fopen sets errno: ENOENT, EACCES, EISDIR when writing to a directory.
+ *   - Use feof and ferror to tell the end of a file from a failure.
  * NOTES:
  *   - Modes: "r" read, "w" create or empty the file, "a" append; add "+" to
  *     read and write. "b" changes nothing on Linux.

@@ -4,6 +4,14 @@ GROUP: Files: /proc and /sys
 USES: read /proc/meminfo; os.sysconf for the total
 SUMMARY: /proc/meminfo lists memory in kB. "Used" is MemTotal minus
   MemAvailable, which is how free and htop count it.
+SIGNATURE:
+  open("/proc/meminfo", encoding="utf-8")
+  os.sysconf(name)
+PARAMETERS:
+  - name: such as "SC_PHYS_PAGES".
+RETURNS: "Key:   value kB" lines. sysconf: an int.
+ERRORS:
+  - FileNotFoundError only when /proc is not mounted.
 NOTES:
   - Values are in kB but mean KiB (1024 bytes). 16384000 kB is 15.6 GiB.
   - MemFree is memory nothing uses at all. Linux fills spare memory with cache,

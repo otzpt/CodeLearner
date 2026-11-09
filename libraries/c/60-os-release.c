@@ -4,6 +4,14 @@
  * USES: read /etc/os-release (fallback /usr/lib/os-release)
  * SUMMARY: Every modern Linux distribution ships a file of KEY=value lines
  *   that names itself. This is where "Ubuntu 26.04 LTS" comes from.
+ * SIGNATURE:
+ *   FILE *fopen("/etc/os-release", "r")
+ *   KEY=value lines, values optionally in quotes
+ * PARAMETERS:
+ *   - None: the path is fixed, with /usr/lib/os-release as the fallback.
+ * RETURNS: Lines of text, one key per line, in no guaranteed order.
+ * ERRORS:
+ *   - ENOENT in some containers and on systems that are not Linux.
  * NOTES:
  *   - Keys you will want: PRETTY_NAME (display name), NAME, ID (short,
  *     lower-case, like "ubuntu"), ID_LIKE (what it derives from),

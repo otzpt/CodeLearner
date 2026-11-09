@@ -17,6 +17,14 @@
  *   ENOTTY   25  not a terminal (wrong device)  ENOMEM  12  out of memory
  *   char *strerror(int errnum)   (string.h)  the message for a code
  *   void perror(const char *prefix)  (stdio.h)  prints "prefix: message" to stderr
+ * PARAMETERS:
+ *   - errnum: an error number, usually errno.
+ *   - prefix: your own text, printed before the message.
+ * RETURNS: strerror returns the message. perror prints it and returns
+ *   nothing.
+ * ERRORS:
+ *   - strerror on an unknown number returns text such as Unknown error 999.
+ *   - errno itself is only meaningful just after a call that failed.
  * NOTES:
  *   - errno is only meaningful right after a call that FAILED. A successful
  *     call may leave any value in it. Read it immediately, or save it.

@@ -17,6 +17,18 @@
  *   void *memset(p, byte, n); int memcmp(a, b, n)    fill and compare bytes
  *   char *strerror(int errnum)          message for an errno value
  *   POSIX: char *strdup(s), strtok_r(s, delim, &save), size_t strnlen(s, max)
+ * PARAMETERS:
+ *   - s, a, b: zero-terminated strings.
+ *   - n, max: a byte count.
+ *   - c: a character, passed as an int.
+ *   - dst, src, p: blocks of memory, of at least n bytes.
+ * RETURNS: strlen: a length. strcmp and memcmp: 0 when equal, otherwise the
+ *   sign of the first difference. The search functions: a pointer, or NULL
+ *   when nothing was found. memcpy, memmove, memset: their first argument.
+ * ERRORS:
+ *   - These functions report no errors. A missing zero byte or too small a
+ *     destination is undefined behaviour.
+ *   - strdup returns NULL with errno ENOMEM.
  * NOTES:
  *   - == on two strings compares addresses, not text. Use strcmp(a, b) == 0.
  *   - strcpy and strcat cannot be told a size. Copy with

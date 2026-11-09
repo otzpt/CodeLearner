@@ -5,6 +5,16 @@ USES: import os, platform, socket
 SUMMARY: os.uname() wraps the uname system call: kernel name, release,
   architecture and hostname in one named tuple. platform has the same pieces
   as separate functions.
+SIGNATURE:
+  os.uname()
+  socket.gethostname()
+  platform.machine(), platform.system()
+PARAMETERS:
+  - None.
+RETURNS: uname: a named tuple of sysname, nodename, release, version,
+  machine. The others: a str.
+ERRORS:
+  - AttributeError for os.uname on Windows, where it does not exist.
 NOTES:
   - release is what people mean by "kernel version": 6.17.0-5-generic.
   - machine is the architecture: x86_64, aarch64, riscv64.

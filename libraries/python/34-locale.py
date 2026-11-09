@@ -5,6 +5,17 @@ USES: import locale, os, sys
 SUMMARY: The locale decides the language, date formats and the character
   encoding. It comes from the environment (LC_ALL, then LC_*, then LANG).
   locale.setlocale(locale.LC_ALL, "") adopts it.
+SIGNATURE:
+  locale.setlocale(category, locale=None)
+  locale.getlocale()
+  sys.stdout.encoding
+PARAMETERS:
+  - category: locale.LC_ALL, or one part.
+  - locale: a name, "" for the environment's, None to only ask.
+RETURNS: setlocale: the locale now in effect. getlocale: a tuple of language
+  and encoding.
+ERRORS:
+  - locale.Error when the locale is not installed.
 NOTES:
   - sys.stdout.encoding is what print() uses to turn text into bytes. If it is
     "utf-8" you can print box-drawing characters and accents. If it is "ascii"

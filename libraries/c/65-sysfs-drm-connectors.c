@@ -5,6 +5,15 @@
  * SUMMARY: Every video output of a GPU is a "connector" folder named like
  *   card1-HDMI-A-1. status says connected or not, and modes lists the
  *   resolutions the monitor offers, best first.
+ * SIGNATURE:
+ *   DIR *opendir("/sys/class/drm")
+ *   FILE *fopen("<connector>/status", "r")
+ * PARAMETERS:
+ *   - connector: a folder such as card1-HDMI-A-1.
+ * RETURNS: status holds connected or disconnected. modes holds one
+ *   WIDTHxHEIGHT per line.
+ * ERRORS:
+ *   - ENOENT over ssh, in containers, or with no GPU driver.
  * NOTES:
  *   - modes is a list of "WIDTHxHEIGHT" lines, the monitor's preferred mode
  *     first. It is what the monitor SUPPORTS, not necessarily what is in use.

@@ -5,6 +5,20 @@
  * SUMMARY: printf pads by BYTES. Colour escape codes and UTF-8 letters are
  *   bytes that take no (or a different) space on screen, so "%-12s" misaligns
  *   a column of coloured or accented text. Pad by VISIBLE width instead.
+ * SIGNATURE:
+ *   size_t mbrtowc(wchar_t *out, const char *s, size_t n, mbstate_t *state)
+ *   int wcwidth(wchar_t c)
+ * PARAMETERS:
+ *   - out: receives the decoded character.
+ *   - s, n: the bytes, and how many may be read.
+ *   - state: conversion state, zeroed before the first call.
+ *   - c: a decoded character.
+ * RETURNS: mbrtowc: bytes used, 0 for the zero byte. wcwidth: the columns c
+ *   takes, or -1.
+ * ERRORS:
+ *   - mbrtowc returns (size_t) -1 with EILSEQ for invalid bytes and (size_t)
+ *     -2 for a truncated character.
+ *   - wcwidth returns -1 for a character that is not printable.
  * NOTES:
  *   - Measure on screen: skip ESC [ ... letter sequences, decode UTF-8 with
  *     mbrtowc, and ask wcwidth how many columns each character takes (1 for

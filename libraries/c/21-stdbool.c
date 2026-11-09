@@ -11,6 +11,12 @@
  *   true     1
  *   false    0
  *   __bool_true_false_are_defined    1
+ * PARAMETERS:
+ *   - None: this page is about types and macros, not functions.
+ * RETURNS: Not applicable: nothing here is called.
+ * ERRORS:
+ *   - A byte other than 0 or 1 read straight into a bool is undefined
+ *     behaviour.
  * NOTES:
  *   - Converting to bool normalises: bool b = 5; makes b equal 1. An int
  *     assigned from a bool is exactly 0 or 1.

@@ -4,6 +4,21 @@ GROUP: Standard library
 USES: import math, statistics
 SUMMARY: math has the floating-point functions; statistics has mean and
   median; divmod and // do integer division.
+SIGNATURE:
+  round(number, ndigits=None)
+  divmod(a, b)
+  math.floor(x), math.ceil(x), math.isclose(a, b)
+  statistics.mean(data), statistics.median(data)
+PARAMETERS:
+  - number, x, a, b: the values.
+  - ndigits: how many decimals to keep.
+  - data: a sequence of numbers.
+RETURNS: round: an int when ndigits is None. divmod: a tuple of quotient and
+  remainder. mean, median: a number.
+ERRORS:
+  - ZeroDivisionError from division by zero.
+  - ValueError from math.sqrt of a negative number.
+  - statistics.StatisticsError for empty data.
 NOTES:
   - 7 / 2 is 3.5 (always a float); 7 // 2 is 3; divmod(7, 2) is (3, 1).
   - round(2.5) is 2 and round(3.5) is 4: Python rounds halves to even.

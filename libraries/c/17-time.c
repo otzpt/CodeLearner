@@ -21,6 +21,18 @@
  *   int clock_gettime(clockid_t, struct timespec *)
  *   CLOCK_REALTIME, CLOCK_MONOTONIC, CLOCK_BOOTTIME (Linux)
  *   int nanosleep(const struct timespec *request, struct timespec *left)
+ * PARAMETERS:
+ *   - t: a time_t, usually from time(NULL).
+ *   - tm: a struct tm to fill.
+ *   - format: conversions such as %Y and %H:%M.
+ *   - clockid_t: one of the CLOCK_ names in the synopsis.
+ * RETURNS: time: seconds since 1970, or -1. localtime_r, gmtime_r: tm, or
+ *   NULL. mktime: a time_t, or -1. strftime: bytes stored, or 0 if it did
+ *   not fit. clock_gettime, nanosleep: 0, or -1.
+ * ERRORS:
+ *   - clock_gettime sets EINVAL for a clock this system does not have.
+ *   - nanosleep returns -1 with EINTR if a signal arrives, and stores the
+ *     time left.
  * NOTES:
  *   - Use the _r versions (localtime_r, gmtime_r). The plain ones return a
  *     pointer to shared static memory.

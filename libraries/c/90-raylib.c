@@ -5,6 +5,17 @@
  * SUMMARY: raylib opens a window and draws shapes, text and images in it with
  *   one call each. A game is one loop: read the keys, move things, then draw
  *   the frame between BeginDrawing() and EndDrawing().
+ * PARAMETERS:
+ *   - w, h, x, y: sizes and positions in pixels, with y growing downward.
+ *   - fps: frames per second.
+ *   - key: a KEY_ name.
+ *   - c: a Color.
+ * RETURNS: The bool functions: true or false. GetFrameTime: seconds.
+ *   GetKeyPressed: a key code, or 0. The drawing calls return nothing.
+ * ERRORS:
+ *   - Most calls report nothing and log a warning instead.
+ *   - With no display InitWindow fails: IsWindowReady() is false, and
+ *     nothing else may be called.
  * NOTES:
  *   - Not part of libc: install it first. Arch has it in extra (raylib).
  *     Debian has it only in testing and unstable. Elsewhere, build it from

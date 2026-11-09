@@ -3,6 +3,21 @@ TITLE: collections, json: Counter, dicts and JSON
 GROUP: Standard library
 USES: import collections, json
 SUMMARY: A dict maps keys to values. Counter counts things; json turns dicts into text and back.
+SIGNATURE:
+  collections.Counter(iterable)
+  Counter.most_common(n=None)
+  json.dumps(obj, indent=None)
+  json.loads(text)
+PARAMETERS:
+  - iterable: the things to count.
+  - n: how many to return.
+  - obj: dicts, lists, strings, numbers, booleans and None.
+  - indent: spaces per level, for people to read.
+RETURNS: Counter: a dict subclass. most_common: a list of (item, count).
+  dumps: a str. loads: the data.
+ERRORS:
+  - TypeError from dumps for a type JSON has no form for.
+  - json.JSONDecodeError, a ValueError, from loads on bad text.
 NOTES:
   - dict.get(key, default) avoids KeyError; setdefault and defaultdict build
     groups.

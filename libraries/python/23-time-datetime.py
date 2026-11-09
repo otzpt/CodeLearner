@@ -5,6 +5,20 @@ USES: import time, datetime
 SUMMARY: time.time() is seconds since 1970. datetime gives dates you can
   format and subtract. time.clock_gettime reads the precise clocks, including
   the one that counts since boot.
+SIGNATURE:
+  time.time(), time.monotonic()
+  time.clock_gettime(clk_id)
+  datetime.datetime.now(tz=None)
+  datetime.strftime(format), datetime.strptime(text, format)
+PARAMETERS:
+  - clk_id: such as time.CLOCK_BOOTTIME.
+  - tz: a time zone, or None for local time with no zone.
+  - format: codes such as %Y-%m-%d.
+RETURNS: time, monotonic, clock_gettime: seconds as a float. now, strptime: a
+  datetime. strftime: a str.
+ERRORS:
+  - ValueError from strptime when the text does not match the format.
+  - TypeError when subtracting an aware datetime from a naive one.
 NOTES:
   - datetime.now() is local time without a zone; datetime.now(timezone.utc) is
     aware. Subtracting two datetimes gives a timedelta.

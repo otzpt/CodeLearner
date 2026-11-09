@@ -5,6 +5,16 @@
  * SUMMARY: Each power source is a folder in /sys/class/power_supply. A
  *   battery has type "Battery", a capacity from 0 to 100, and a status such as
  *   Charging, Discharging, Full or Not charging.
+ * SIGNATURE:
+ *   DIR *opendir("/sys/class/power_supply")
+ *   FILE *fopen("<supply>/capacity", "r")
+ * PARAMETERS:
+ *   - supply: a folder such as BAT0 or AC.
+ * RETURNS: type names the source. capacity is 0 to 100. status is a word
+ *   such as Charging.
+ * ERRORS:
+ *   - An empty folder on a desktop is the normal case, not an error.
+ *   - ENOENT for capacity on batteries that report energy_now instead.
  * NOTES:
  *   - Desktops have no battery: the folder is empty, or holds only mains
  *     adapters (type "Mains"). That is the normal case, not an error.

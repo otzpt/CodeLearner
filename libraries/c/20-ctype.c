@@ -13,6 +13,13 @@
  *   isspace(c)                      space, tab, newline, return, form feed
  *   isprint(c), ispunct(c), iscntrl(c)
  *   int toupper(c), tolower(c)      the converted character (other input unchanged)
+ * PARAMETERS:
+ *   - c: one character, as an unsigned char value or EOF.
+ * RETURNS: The is functions: non-zero for true, 0 for false. toupper and
+ *   tolower: the converted character, or c unchanged.
+ * ERRORS:
+ *   - No errors are reported. A negative value other than EOF is undefined
+ *     behaviour.
  * NOTES:
  *   - Pass an unsigned char (or EOF). A plain char with a negative value is
  *     undefined behaviour, so cast: isdigit((unsigned char) c).

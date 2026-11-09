@@ -2,9 +2,9 @@
  * Libraries - a reference browser, not a course.
  *
  * A manual for the C and Python libraries, laid out like man pages: NAME,
- * SYNOPSIS, DESCRIPTION, STANDARDS, NOTES, APPLICATION USAGE, EXAMPLE and
- * SEE ALSO, with the example compiled and run on this machine. There are no
- * lessons and no exercises.
+ * SYNOPSIS, DESCRIPTION, PARAMETERS, RETURN VALUE, ERRORS, STANDARDS, NOTES,
+ * APPLICATION USAGE, EXAMPLE and SEE ALSO, with the example compiled and run
+ * on this machine. There are no lessons and no exercises.
  *
  * Every page is a real source file in the c/ or python/ folder next to this
  * program. The page shows the file and then RUNS it, so what is printed
@@ -18,8 +18,12 @@
  *   GROUP     the part of the manual it is listed under  (menu)
  *   USES      the header / import it needs               SYNOPSIS
  *   PROVIDES  functions, macros and types, one per line  SYNOPSIS
+ *   SIGNATURE how to call it, one per line               SYNOPSIS
  *   LIBS      extra linker flags (C only), e.g. -lm      SYNOPSIS
  *   SUMMARY   what it does                               DESCRIPTION
+ *   PARAMETERS what each argument means                  PARAMETERS
+ *   RETURNS   what comes back                            RETURN VALUE
+ *   ERRORS    how it fails, and what to look for         ERRORS
  *   STANDARD  ISO C, POSIX, or Linux-specific            STANDARDS
  *   NOTES     caveats, one per line                      NOTES
  *   USEDFOR   common uses, one per line                  APPLICATION USAGE
@@ -79,6 +83,10 @@ struct Page {
     char standard[256];
     char provides[MAX_TEXT];
     char used_for[MAX_TEXT];
+    char signature[MAX_TEXT];
+    char parameters[MAX_TEXT];
+    char returns[MAX_TEXT];
+    char errors[MAX_TEXT];
     int documentation_only;
     long body_offset;
 };
@@ -199,6 +207,10 @@ static char *field_for(struct Page *page, const char *key, size_t *size)
         { "STANDARD", page->standard, sizeof page->standard },
         { "PROVIDES", page->provides, sizeof page->provides },
         { "USEDFOR",  page->used_for, sizeof page->used_for },
+        { "SIGNATURE",  page->signature,  sizeof page->signature },
+        { "PARAMETERS", page->parameters, sizeof page->parameters },
+        { "RETURNS",    page->returns,    sizeof page->returns },
+        { "ERRORS",     page->errors,     sizeof page->errors },
     };
 
     for (size_t i = 0; i < sizeof fields / sizeof fields[0]; i++) {
@@ -307,7 +319,9 @@ static int load_page(struct Page *page)
         } else if (current != NULL) {
             /* Summaries wrap onto indented lines: join them flush left.
              * Lists (notes, provides, used for) keep their own indentation. */
-            if (current != page->notes && current != page->provides && current != page->used_for) {
+            if (current != page->notes && current != page->provides && current != page->used_for
+                && current != page->signature && current != page->parameters
+                && current != page->errors) {
                 while (*text == ' ') {
                     text++;
                 }
@@ -478,10 +492,14 @@ static void show_page(const struct Track *track, const struct Page *page)
     title(name);
 
     section("NAME", page->title, "      ");
-    if (page->uses[0] != '\0' || page->provides[0] != '\0') {
+    if (page->uses[0] != '\0' || page->provides[0] != '\0' || page->signature[0] != '\0') {
         printf("\n  SYNOPSIS\n");
         if (page->uses[0] != '\0') {
             print_lines(page->uses, "      ");
+        }
+        if (page->signature[0] != '\0') {
+            printf("\n");
+            print_lines(page->signature, "    ");
         }
         if (page->provides[0] != '\0') {
             printf("\n");
@@ -492,6 +510,9 @@ static void show_page(const struct Track *track, const struct Page *page)
         }
     }
     section("DESCRIPTION", page->summary, "      ");
+    section("PARAMETERS", page->parameters, "    ");
+    section("RETURN VALUE", page->returns, "      ");
+    section("ERRORS", page->errors, "    ");
     section("STANDARDS", page->standard, "      ");
     section("NOTES", page->notes, "    ");
     section("APPLICATION USAGE", page->used_for, "    ");
@@ -535,6 +556,7 @@ static int contains_ignoring_case(const char *haystack, const char *needle)
 static int page_matches(const struct Page *page, const char *query)
 {
     if (contains_ignoring_case(page->title, query) || contains_ignoring_case(page->summary, query)
+        || contains_ignoring_case(page->signature, query)
         || contains_ignoring_case(page->notes, query) || contains_ignoring_case(page->uses, query)) {
         return 1;
     }

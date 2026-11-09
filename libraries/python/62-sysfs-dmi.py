@@ -4,6 +4,14 @@ GROUP: Files: /proc and /sys
 USES: pathlib.Path  (read /sys/devices/virtual/dmi/id, or /proc/device-tree/model)
 SUMMARY: On PCs the firmware describes the machine in DMI tables, and the
   kernel exposes them as small text files.
+SIGNATURE:
+  pathlib.Path("/sys/devices/virtual/dmi/id", name).read_text()
+PARAMETERS:
+  - name: a file such as product_name.
+RETURNS: One line of text, ending in a newline.
+ERRORS:
+  - FileNotFoundError on machines with no DMI.
+  - PermissionError for the serial number files.
 NOTES:
   - Readable by everyone: sys_vendor, product_name, product_version,
     board_vendor, board_name, bios_vendor, bios_version.

@@ -804,9 +804,11 @@ course, and leaves Node behind for the DOM, events, forms, `fetch` and storage.
 
 The launcher lists **Libraries** under **REFERENCE**, after the courses. It is a
 reference manual, not a course: pick C or Python, then a page. Each page is
-laid out like a man page (NAME, SYNOPSIS, DESCRIPTION, STANDARDS, NOTES,
-APPLICATION USAGE, EXAMPLE, SEE ALSO) and runs its example on your machine.
-The C manual covers the standard C library, POSIX, Linux, the files in /proc,
+laid out like a man page (NAME, SYNOPSIS, DESCRIPTION, PARAMETERS, RETURN VALUE,
+ERRORS, STANDARDS, NOTES, APPLICATION USAGE, EXAMPLE, SEE ALSO) and runs its
+example on your machine. Both manuals open with Common tasks: reading a file,
+parsing text, sorting, timeouts and running another program.
+The C manual then covers the standard C library, POSIX, Linux, the files in /proc,
 /sys and /etc, terminal control sequences, and raylib; the Python manual
 covers the built-ins, the standard library, the same files, and terminal
 control sequences.

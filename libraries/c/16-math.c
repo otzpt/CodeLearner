@@ -5,6 +5,17 @@
  * LIBS: -lm
  * SUMMARY: math.h has the floating-point functions. On Linux they live in
  *   a separate library, libm, so the link needs -lm.
+ * SIGNATURE:
+ *   double sqrt(double x)
+ *   double pow(double x, double y)
+ *   double floor(double x), ceil(double x), round(double x)
+ * PARAMETERS:
+ *   - x, y: the values, as doubles.
+ * RETURNS: The result, as a double.
+ * ERRORS:
+ *   - sqrt of a negative number returns NaN. Overflow returns HUGE_VAL.
+ *   - These set errno to EDOM or ERANGE, and raise floating-point
+ *     exceptions.
  * NOTES:
  *   - Forget -lm and the link can fail with "undefined reference to
  *     `sqrt'" (the compiler sees the header, the linker cannot find the

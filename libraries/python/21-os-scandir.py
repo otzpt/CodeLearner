@@ -5,6 +5,17 @@ USES: os.scandir, pathlib.Path
 SUMMARY: os.scandir() and Path.iterdir() list the entries of a directory.
   Many Linux interfaces are directories: /sys/class/net has one entry per
   network interface, /proc one per process.
+SIGNATURE:
+  os.scandir(path=".")
+  pathlib.Path(path).iterdir()
+  pathlib.Path(path).glob(pattern)
+PARAMETERS:
+  - path: the directory.
+  - pattern: a wildcard such as "card*".
+RETURNS: scandir: an iterator of DirEntry, usable in a with block. iterdir
+  and glob: Path objects.
+ERRORS:
+  - FileNotFoundError, PermissionError, NotADirectoryError, all OSError.
 NOTES:
   - Entries come in no particular order: sorted() them if order matters.
   - Path("/sys/class/net").iterdir() yields Path objects; entry.name is the

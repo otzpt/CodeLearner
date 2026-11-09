@@ -4,6 +4,17 @@ GROUP: Built-ins
 USES: built-in exceptions, import errno
 SUMMARY: Reading system files fails in ordinary ways (missing, forbidden,
   not a number). Catch the specific exception, so a real bug is not hidden.
+SIGNATURE:
+  try: ... except SomeError as error: ... else: ... finally: ...
+  raise SomeError(message) from cause
+PARAMETERS:
+  - SomeError: the class to catch, or a tuple of them.
+  - cause: the exception that led to this one.
+RETURNS: Not a function. error.errno and error.strerror are set on an
+  OSError.
+ERRORS:
+  - An exception that no except clause matches keeps travelling up the stack,
+    and ends the program with a traceback.
 NOTES:
   - FileNotFoundError, PermissionError and IsADirectoryError are all OSError;
     error.errno holds the number and error.strerror the message.

@@ -18,6 +18,18 @@
  *   void exit(int status), abort(void); int atexit(void (*function)(void))
  *   EXIT_SUCCESS (0), EXIT_FAILURE (1), RAND_MAX, NULL, size_t
  *   POSIX: char *realpath(path, resolved), int setenv(name, value, overwrite)
+ * PARAMETERS:
+ *   - s, end, base: as on the parsing page.
+ *   - n, count, size: byte counts and array shapes.
+ *   - base, compare: the array to sort and a function returning below, equal
+ *     to or above zero.
+ *   - name: an environment variable.
+ * RETURNS: strtol family: the number. malloc, calloc, realloc: memory, or
+ *   NULL. bsearch: the element, or NULL. getenv: the value, or NULL.
+ * ERRORS:
+ *   - strtol: ERANGE. malloc family: NULL with ENOMEM.
+ *   - atoi and atof cannot report an error at all, so avoid them.
+ *   - realpath returns NULL with errno ENOENT or EACCES.
  * NOTES:
  *   - getenv returns NULL when the variable is not set, and a pointer into
  *     the environment otherwise: read it, never write to it.
