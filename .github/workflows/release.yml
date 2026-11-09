@@ -81,6 +81,10 @@ jobs:
           make -C c CC=gcc
           make -C cpp CXX=g++
           make -C gui CC=gcc
+          # -Werror because these three have never been built anywhere else.
+          for course in html css webjs; do
+            make -C "$course" CC=gcc CFLAGS="-std=c11 -Wall -Wextra -g -Werror"
+          done
           # The launcher shows this version and compares it with the latest
           # release in "Check for updates". A tag v1.5.1 builds as 1.5.1 (and
           # v1.5.1-ci1 as 1.5.1-ci1); anything else is a development build.
@@ -163,6 +167,20 @@ jobs:
           python3 libraries/check-browser.py
           python3 tools/check-teaching-order.py
 
+      # Every module of the web courses reaches its SUMMARY. Blank lines answer
+      # the prompts, and running out of input ends the menu.
+      - name: Walk the web courses (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -euo pipefail
+          for course in html css webjs; do
+            for module in 1 2 3 4 5; do
+              out=$({ printf '%s\n' "$module"; printf '\n%.0s' $(seq 200); } | timeout 20 "$course/$course-course")
+              grep -q "SUMMARY" <<<"$out" || { echo "::error::$course module $module did not reach its SUMMARY"; exit 1; }
+            done
+          done
+
       - name: Compile-check Java (no artifact -- verifies -Xlint:all -Werror passes)
         shell: bash
         run: |
@@ -216,15 +234,15 @@ jobs:
           echo "$cs_output" | grep -q "C# COURSE" || { echo "::error::launcher did not reach the C# course"; exit 1; }
           echo "$cs_output" | grep -q "See you next time" || { echo "::error::launcher did not exit cleanly after C#"; exit 1; }
 
-          # Arduino (5), Rust (4) and Security (11): pick the course, quit
+          # Arduino (5), Rust (4) and Security (14): pick the course, quit
           # it, quit the launcher. MicroPython (6) is source like Python and
           # JavaScript and needs `micropython` on PATH, which this runner does
-          # not have. Libraries is 14.
-          out=$(printf '11\n0\n0\n' | timeout 20 ./launcher)
-          echo "$out" | grep -q "SECURITY WITH PYTHON" || { echo "::error::launcher did not reach the Security course"; exit 1; }
+          # not have. Libraries is 17.
           out=$(printf '14\n0\n0\n' | timeout 20 ./launcher)
+          echo "$out" | grep -q "SECURITY WITH PYTHON" || { echo "::error::launcher did not reach the Security course"; exit 1; }
+          out=$(printf '17\n0\n0\n' | timeout 20 ./launcher)
           echo "$out" | grep -q "LIBRARIES - A REFERENCE" || { echo "::error::launcher did not reach the Libraries reference"; exit 1; }
-          for entry in "5 ARDUINO" "4 RUST"; do
+          for entry in "5 ARDUINO" "4 RUST" "11 HTML" "12 CSS" "13 WEB JAVASCRIPT"; do
             number=${entry%% *}
             name=${entry#* }
             out=$(printf '%s\n0\n0\n' "$number" | timeout 20 ./launcher)
@@ -260,13 +278,16 @@ jobs:
         run: |
           set -euo pipefail
           out=codelearner-${{ matrix.name }}
-          mkdir -p "$out"/{launcher,c,cpp,gui,csharp,python/src,javascript/src,java/src,security/src}
+          mkdir -p "$out"/{launcher,c,cpp,gui,html,css,webjs,csharp,python/src,javascript/src,java/src,security/src}
 
           if [ "${{ runner.os }}" = "Windows" ]; then
             cp launcher/launcher.exe "$out/launcher/"
             cp c/c-course.exe "$out/c/"
             cp cpp/cpp-course.exe "$out/cpp/"
             cp gui/gui-course.exe "$out/gui/"
+            cp html/html-course.exe "$out/html/"
+            cp css/css-course.exe "$out/css/"
+            cp webjs/webjs-course.exe "$out/webjs/"
             cp java/run.bat "$out/java/"
             # The published binary is standalone (no .NET SDK/runtime
             # needed) -- unlike java/run.bat above, this wrapper does not
@@ -285,6 +306,9 @@ jobs:
             cp c/c-course "$out/c/"
             cp cpp/cpp-course "$out/cpp/"
             cp gui/gui-course "$out/gui/"
+            cp html/html-course "$out/html/"
+            cp css/css-course "$out/css/"
+            cp webjs/webjs-course "$out/webjs/"
             cp java/run "$out/java/"
             chmod +x "$out/java/run"
             # Same standalone-binary story as the Windows leg above.
@@ -422,7 +446,7 @@ jobs:
           #!/bin/sh
           cd /opt/codelearner/launcher && exec ./launcher
           EOF
-          chmod +x "$pkg/usr/bin/codelearner" "$pkg/opt/codelearner/launcher/launcher" "$pkg/opt/codelearner/gui/gui-course" "$pkg/opt/codelearner/assembly/asm-course" "$pkg/opt/codelearner/java/run" "$pkg/opt/codelearner/csharp/csharp" "$pkg/opt/codelearner/csharp/run" "$pkg/opt/codelearner/rust/rust-course" "$pkg/opt/codelearner/arduino/arduino-course" "$pkg/opt/codelearner/micropython/src/main.py" "$pkg/opt/codelearner/git/src/main.sh" "$pkg/opt/codelearner/libraries/libraries"
+          chmod +x "$pkg/usr/bin/codelearner" "$pkg/opt/codelearner/launcher/launcher" "$pkg/opt/codelearner/gui/gui-course" "$pkg/opt/codelearner/assembly/asm-course" "$pkg/opt/codelearner/java/run" "$pkg/opt/codelearner/csharp/csharp" "$pkg/opt/codelearner/csharp/run" "$pkg/opt/codelearner/rust/rust-course" "$pkg/opt/codelearner/arduino/arduino-course" "$pkg/opt/codelearner/micropython/src/main.py" "$pkg/opt/codelearner/git/src/main.sh" "$pkg/opt/codelearner/html/html-course" "$pkg/opt/codelearner/css/css-course" "$pkg/opt/codelearner/webjs/webjs-course" "$pkg/opt/codelearner/libraries/libraries"
           cat > "$pkg/DEBIAN/control" <<EOF
           Package: codelearner
           Version: $pkgver
@@ -483,6 +507,9 @@ jobs:
             install -Dm755 "\$startdir/payload/c/c-course" "\$pkgdir/opt/codelearner/c/c-course"
             install -Dm755 "\$startdir/payload/cpp/cpp-course" "\$pkgdir/opt/codelearner/cpp/cpp-course"
             install -Dm755 "\$startdir/payload/gui/gui-course" "\$pkgdir/opt/codelearner/gui/gui-course"
+            install -Dm755 "\$startdir/payload/html/html-course" "\$pkgdir/opt/codelearner/html/html-course"
+            install -Dm755 "\$startdir/payload/css/css-course" "\$pkgdir/opt/codelearner/css/css-course"
+            install -Dm755 "\$startdir/payload/webjs/webjs-course" "\$pkgdir/opt/codelearner/webjs/webjs-course"
             install -Dm755 "\$startdir/payload/assembly/asm-course" "\$pkgdir/opt/codelearner/assembly/asm-course"
             install -Dm755 "\$startdir/payload/java/run" "\$pkgdir/opt/codelearner/java/run"
             install -Dm755 "\$startdir/payload/csharp/csharp" "\$pkgdir/opt/codelearner/csharp/csharp"
@@ -551,7 +578,7 @@ jobs:
           HERE="$(dirname "$(readlink -f "$0")")"
           cd "$HERE/opt/launcher" && exec ./launcher
           EOF
-          chmod +x "$APPDIR/AppRun" "$APPDIR/opt/launcher/launcher" "$APPDIR/opt/csharp/csharp" "$APPDIR/opt/csharp/run" "$APPDIR/opt/java/run" "$APPDIR/opt/assembly/asm-course" "$APPDIR/opt/rust/rust-course" "$APPDIR/opt/arduino/arduino-course" "$APPDIR/opt/micropython/src/main.py" "$APPDIR/opt/git/src/main.sh" "$APPDIR/opt/libraries/libraries"
+          chmod +x "$APPDIR/AppRun" "$APPDIR/opt/launcher/launcher" "$APPDIR/opt/csharp/csharp" "$APPDIR/opt/csharp/run" "$APPDIR/opt/java/run" "$APPDIR/opt/assembly/asm-course" "$APPDIR/opt/rust/rust-course" "$APPDIR/opt/arduino/arduino-course" "$APPDIR/opt/micropython/src/main.py" "$APPDIR/opt/git/src/main.sh" "$APPDIR/opt/html/html-course" "$APPDIR/opt/css/css-course" "$APPDIR/opt/webjs/webjs-course" "$APPDIR/opt/libraries/libraries"
           wget -q https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage -O /tmp/appimagetool
           chmod +x /tmp/appimagetool
           ARCH=x86_64 /tmp/appimagetool --appimage-extract-and-run "$APPDIR" "codelearner-x86_64.AppImage"
@@ -619,6 +646,10 @@ jobs:
             assembly modules show a NASM example built with `nasm` in CI;
             rebuilding it yourself needs `nasm` (`make asm-demo`).
 
+            The HTML, CSS and Web JavaScript courses are bundled compiled on
+            both platforms. They are plain C programs and never open a
+            browser.
+
             The Libraries entry is a reference manual, not a course: man-page
             style pages for the C and Python libraries (including 21 C
             header pages), each example compiled or run live to show its
@@ -630,7 +661,7 @@ jobs:
             portable `.tar.gz`/`.zip` (run `./codelearner.sh`).
 
             **Just the C# course, standalone, no launcher and none of the
-            other twelve** -- a single self-contained executable, nothing else to
+            other fifteen** -- a single self-contained executable, nothing else to
             download: `codelearner-csharp-standalone-win-x64.exe` /
             `-linux-x86_64`. This is the one course where that's actually a
             single file; C, C++, GUI and Assembly need the rest of the

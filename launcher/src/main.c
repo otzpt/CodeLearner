@@ -89,6 +89,9 @@ struct Language {
 #define CSHARP_BIN "..\\csharp\\run.bat"
 #define RUST_BIN   "..\\rust\\rust-course.exe"
 #define SEC_PATH   "..\\security\\src\\main.py"
+#define HTML_BIN   "..\\html\\html-course.exe"
+#define CSS_BIN    "..\\css\\css-course.exe"
+#define WEBJS_BIN  "..\\webjs\\webjs-course.exe"
 #else
 #define C_BIN      "../c/c-course"
 #define CPP_BIN    "../cpp/cpp-course"
@@ -103,6 +106,9 @@ struct Language {
 #define MICROPY_PATH "../micropython/src/main.py"
 #define RUST_BIN   "../rust/rust-course"
 #define SEC_PATH   "../security/src/main.py"
+#define HTML_BIN   "../html/html-course"
+#define CSS_BIN    "../css/css-course"
+#define WEBJS_BIN  "../webjs/webjs-course"
 #define LIBRARIES_BIN "../libraries/libraries"
 #endif
 
@@ -156,6 +162,11 @@ static const struct Language LANGUAGES[] = {
      * itself, so unlike Python/JavaScript there's no Windows-vs-Linux
      * split to make explicit here -- the run/run.bat wrapper covers it. */
     { "C#",         CSHARP_BIN, CSHARP_BIN, NULL },
+    /* Plain C programs that teach these languages, the same arrangement as
+     * GUI (GTK) below. None of them opens a browser. */
+    { "HTML",       HTML_BIN, HTML_BIN, "WEB" },
+    { "CSS",        CSS_BIN,  CSS_BIN, "WEB" },
+    { "Web JavaScript", WEBJS_BIN, WEBJS_BIN, "WEB" },
     /* Topic course, not a language, implemented in Python -- registered the
      * same way Python's own entry is: a bare .py path on Linux (shebang +
      * execute bit), with the "python " prefix added on Windows where the

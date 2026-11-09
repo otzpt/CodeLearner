@@ -1,0 +1,85 @@
+/*
+ * Web JavaScript course - main menu.
+ *
+ * Same shape as every other course's main.c: a table of modules, a loop.
+ * Build:  make
+ * Run:    ./webjs-course
+ */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "lessons.h"
+#include "ui.h"
+
+/* `tier` files a module under one of the three menu bands. Display
+ * grouping only: the lesson functions never see it. */
+struct Module {
+    const char *title;
+    void (*run)(void);
+    const char *tier;
+};
+
+static const struct Module MODULES[] = {
+    { "The DOM", lesson_01_dom, "BASIC" },
+    { "Events", lesson_02_events, "BASIC" },
+    { "Forms and input", lesson_03_forms, "INTERMEDIATE" },
+    { "fetch and the network", lesson_04_fetch, "INTERMEDIATE" },
+    { "State, storage and a small app", lesson_05_state, "ADVANCED" },
+};
+
+#define MODULE_COUNT (int)(sizeof MODULES / sizeof MODULES[0])
+
+static void show_menu(void)
+{
+    clear_screen();
+    title("WEB JAVASCRIPT COURSE");
+    printf("  NO BROWSER -- this course is a CLI program, same as every\n");
+    printf("  other course here. It teaches Web JavaScript; it never opens a page.\n");
+
+    const char *shown_tier = "";
+    for (int i = 0; i < MODULE_COUNT; i++) {
+        if (strcmp(MODULES[i].tier, shown_tier) != 0) {
+            shown_tier = MODULES[i].tier;
+            printf("\n  -- %s --\n", shown_tier);
+        }
+        printf("   [%2d]  %s\n", i + 1, MODULES[i].title);
+    }
+
+    printf("\n   [ 0]  Quit\n");
+    rule();
+}
+
+int main(void)
+{
+    char choice[16];
+
+    for (;;) {
+        show_menu();
+        printf("\n  Pick a module: ");
+        fflush(stdout);
+
+        if (!read_line(choice, sizeof choice)) {
+            break;
+        }
+
+        if (strcmp(choice, "0") == 0) {
+            break;
+        }
+
+        char *end;
+        long n = strtol(choice, &end, 10);
+
+        if (*end == '\0' && n >= 1 && n <= MODULE_COUNT) {
+            clear_screen();
+            MODULES[n - 1].run();
+        } else {
+            printf("\n  Not a valid option.\n");
+            wait_enter();
+        }
+    }
+
+    printf("\n  See you next time.\n\n");
+    return 0;
+}

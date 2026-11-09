@@ -140,8 +140,8 @@ why the ecosystem library exists), not silently working around it.
   - Practical projects track. DOM/browser JavaScript is deliberately not
     in this arc: this course is a Node.js CLI program per the "no
     dependencies beyond the language's own toolchain" rule, and DOM APIs
-    need a browser, not a terminal — worth its own course or module
-    format if it's ever built, not squeezed into this one.
+    need a browser, not a terminal. The separate Web JavaScript course in
+    `webjs/` teaches them.
 - **C#**: fundamentals → nullable/IDisposable → LINQ → async/await →
   generics and interfaces in depth → delegates and events → practical
   projects. Deliberately built to sit next to Java's course rather than
@@ -250,6 +250,13 @@ else's network; the module says so and why (capturing other people's
 traffic without permission is illegal in most countries). It came from a real
 case: a school platform served its login page over HTTP only.
 
+## Web: three courses built
+
+`html/`, `css/` and `webjs/` are terminal programs in plain C, the same
+arrangement as `gui/`. None of them opens a browser. Five modules each: HTML (structure, forms, accessibility, metadata, practical pages), CSS
+(the box and normal flow, Flexbox, Grid, responsive design, modern CSS), and
+Web JavaScript (the DOM, events, forms, `fetch`, state and storage).
+
 ## Libraries: a reference manual, not a course
 
 [`libraries/`](libraries/) is a man-page style manual for C and Python, one
@@ -272,9 +279,6 @@ same module skeleton as C.
   projects.
 - **Bash** — shell basics → variables → pipes → scripting → automation →
   system administration.
-- **HTML** — semantic HTML → forms → accessibility → metadata → practical
-  pages.
-- **CSS** — layout → Flexbox → Grid → responsive design → modern CSS.
 - **SQL** — queries → joins → aggregation → subqueries → indexes →
   transactions.
 - **Lua** — syntax → tables → functions → modules → metatables → scripting

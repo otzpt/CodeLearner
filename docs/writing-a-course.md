@@ -274,6 +274,17 @@ runs to its SUMMARY), `check-solutions.py` (every challenge solution builds
 clean and prints what its challenge promises, read straight from the lesson
 source) and the target-specific ones above.
 
+## Courses about the web
+
+HTML, CSS and browser JavaScript are CLI programs like every other course,
+written in plain C the way `gui/` is, because neither HTML nor CSS can be the
+language of a terminal program. They never open a browser or embed one.
+
+A terminal cannot render a page, so apply the rule for hardware courses: do not
+claim what was not observed. Measure the result in a real browser and quote it,
+naming the browser. Anything C can work out for itself, such as form encoding
+or the arithmetic of a layout, it should compute when the lesson runs.
+
 ## Verifying before committing
 
 For the C course:

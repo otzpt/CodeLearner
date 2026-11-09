@@ -39,17 +39,22 @@ install options are under [Installing](#installing)):
    [9]  Java
    [10]  C#
 
+   -- WEB --
+   [11]  HTML
+   [12]  CSS
+   [13]  Web JavaScript
+
    -- SECURITY --
-   [11]  Security
+   [14]  Security
 
    -- GUI --
-   [12]  GUI (GTK)
+   [15]  GUI (GTK)
 
    -- TOOLING --
-   [13]  Git
+   [16]  Git
 
    -- REFERENCE --
-   [14]  Libraries
+   [17]  Libraries
 
    [u]  Check for updates
    [0]  Exit
@@ -76,6 +81,9 @@ for C and Python libraries, each with an example that runs on your machine.
 | Languages | JavaScript | 14: console.log() through modules and Node's own fs/process stdlib | [`javascript/`](javascript/) |
 | Languages | Java | 13: System.out through the Collections Framework, generics, and concurrency | [`java/`](java/) |
 | Languages | C# | 14: top-level statements through LINQ, async/await, and delegates/events | [`csharp/`](csharp/) |
+| Web | HTML | 5: structure, forms, accessibility, metadata, practical pages | [`html/`](html/) |
+| Web | CSS | 5: the box and normal flow, Flexbox, Grid, responsive design, modern CSS and the cascade | [`css/`](css/) |
+| Web | Web JavaScript | 5: the DOM, events, forms, `fetch`, state and storage | [`webjs/`](webjs/) |
 | Security | Security | 2 so far: a topic course in Python. HTTP requests, what a server's headers reveal, the urllib 4xx/5xx-raises trap, and why plain HTTP is readable on the wire | [`security/`](security/) |
 | GUI | GUI (GTK) | 1: your first window | [`gui/`](gui/) |
 | Tooling | Git | 10: what is git through GitHub Actions | [`git/`](git/) |
@@ -90,7 +98,7 @@ table (`MODULES` in `main.c`/`main.py`/`main.js`, or the equivalent),
 nothing else changes. GUI still has one module, filed under BASIC, with
 INTERMEDIATE and ADVANCED shown empty until it has enough content to split.
 
-Thirteen courses are covered. GUI, Assembly, Git and Security are not languages
+Sixteen courses are covered. GUI, Assembly, Git and Security are not languages
 in the same sense the others are, but all of them get the same treatment as one:
 their own directory, their own binary or script, their own entry in the
 launcher, rather than being folded into `c/`'s module list. Assembly goes
@@ -188,7 +196,7 @@ The `.deb` and Arch packages install to `/opt/codelearner` and put the same
 `codelearner` command on PATH system-wide. The AppImage does not touch PATH
 at all, which is the point of it.
 
-The C, C++, GUI, C# and Assembly courses are compiled into these, and so
+The C, C++, GUI, HTML, CSS, Web JavaScript, C# and Assembly courses are compiled into these, and so
 are Rust and Arduino on Linux. Python, JavaScript, Java, Security, MicroPython
 and Git ship as source and run through their own language's toolchain (see
 below). Assembly, Rust, Arduino, MicroPython, Git and Libraries are Linux
@@ -776,6 +784,22 @@ Linux PC: the `asm` blocks are compiled into the course, and the NASM file in
 each course's `asm/` folder is built with `make asm-demo` and its output shown
 in the lesson.
 
+## The web courses
+
+HTML, CSS and browser JavaScript are three terminal programs written in plain
+C, the same arrangement as the GUI course: [`html/`](html/), [`css/`](css/) and
+[`webjs/`](webjs/). None of them opens a browser or depends on one. The
+challenges are files you write yourself and open in whatever browser you use.
+
+A terminal cannot render a page, so where a result depends on a browser the
+lesson quotes what one did, measured in Chromium 152 while the modules were
+written. What C can compute for itself, it computes when the lesson runs: URL
+encoding a form, reading UTF-8 bytes as another charset, box and flex
+arithmetic, `clamp()`, specificity.
+
+The Web JavaScript course assumes the first modules of the terminal JavaScript
+course, and leaves Node behind for the DOM, events, forms, `fetch` and storage.
+
 ## The Libraries reference
 
 The launcher lists **Libraries** under **REFERENCE**, after the courses. It is a
@@ -1002,6 +1026,8 @@ assembly/                   x86-64 assembly course (NASM, Intel syntax): src/ ha
 git/                        Bash course: src/ has main.sh, ui.sh, lessons_*.sh
 security/                   Python topic course: src/ has main.py, ui.py,
                              lessons_basics.py (module 1), lessons_wire.py (module 2)
+html/ css/ webjs/           the web courses, plain C programs like gui/: src/ has
+                             main.c, ui.c and the lessons
 assets/                     the desktop entry and icon the Linux packages install
 rust/                       12 modules; check-course.py, check-embedded.py and
                              run-embedded.py (the Pico's Thumb code, in an emulator)
