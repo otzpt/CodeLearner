@@ -4,6 +4,9 @@
 c/c-course
 cpp/cpp-course
 gui/gui-course
+html/html-course
+css/css-course
+webjs/webjs-course
 assembly/asm-course
 assembly/os/**/*.bin
 assembly/os/**/*.elf

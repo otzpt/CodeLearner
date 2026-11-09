@@ -141,7 +141,7 @@ why the ecosystem library exists), not silently working around it.
     in this arc: this course is a Node.js CLI program per the "no
     dependencies beyond the language's own toolchain" rule, and DOM APIs
     need a browser, not a terminal. The separate Web JavaScript course in
-    `web/js/` covers them.
+    `webjs/` teaches them.
 - **C#**: fundamentals → nullable/IDisposable → LINQ → async/await →
   generics and interfaces in depth → delegates and events → practical
   projects. Deliberately built to sit next to Java's course rather than
@@ -252,9 +252,8 @@ case: a school platform served its login page over HTTP only.
 
 ## Web: three courses built
 
-`web/` holds HTML, CSS and browser JavaScript as static pages that open in a
-browser, the one exception to a course being a terminal program. Five modules
-each: HTML (structure, forms, accessibility, metadata, practical pages), CSS
+`html/`, `css/` and `webjs/` are terminal programs in plain C, the same
+arrangement as `gui/`. None of them opens a browser. Five modules each: HTML (structure, forms, accessibility, metadata, practical pages), CSS
 (the box and normal flow, Flexbox, Grid, responsive design, modern CSS), and
 Web JavaScript (the DOM, events, forms, `fetch`, state and storage).
 

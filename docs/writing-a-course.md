@@ -274,23 +274,16 @@ runs to its SUMMARY), `check-solutions.py` (every challenge solution builds
 clean and prints what its challenge promises, read straight from the lesson
 source) and the target-specific ones above.
 
-## Courses that run in a browser
+## Courses about the web
 
-HTML, CSS and browser JavaScript cannot be CLI programs: what they teach only
-exists in a page. They are the one exception to the "single self-contained CLI
-program" rule above. Each is a folder of static pages under `web/`, opened by
-`web/open` (`open.bat` on Windows), and the same rules apply otherwise:
+HTML, CSS and browser JavaScript are CLI programs like every other course,
+written in plain C the way `gui/` is, because neither HTML nor CSS can be the
+language of a terminal program. They never open a browser or embed one.
 
-- Each course is written in the language it teaches. The HTML and CSS courses
-  use no JavaScript: answers sit in `<details>` and demos in `<iframe srcdoc>`.
-- The module shape is the same: PARTs, an EXERCISE with a challenge stating
-  input and result, a SUMMARY. The `<!-- exercise N -->` and `<!-- summary -->`
-  comments are what `tools/check-teaching-order.py` looks for.
-- A demo's listing and the code that runs must be identical. `node
-  web/check-course.js` compares them.
-- Nothing is claimed without being run, in an actual browser. The checker
-  cannot see the screen, so open what you changed. A frame's own width is what
-  its media queries respond to, so measure at a realistic window size.
+A terminal cannot render a page, so apply the rule for hardware courses: do not
+claim what was not observed. Measure the result in a real browser and quote it,
+naming the browser. Anything C can work out for itself, such as form encoding
+or the arithmetic of a layout, it should compute when the lesson runs.
 
 ## Verifying before committing
 

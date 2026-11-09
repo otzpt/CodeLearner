@@ -459,30 +459,30 @@ COURSES = {
         # way the Python course's did, once a second module exists here.
         "first_taught": [],
     },
-    # The web courses are pages, so the markers are HTML comments and the
-    # constructs appear HTML-escaped in the exercise text.
+    # The web courses are C programs like gui/, so the markers are the same;
+    # what the tables match is the HTML, CSS or JavaScript in the exercises.
     "html": {
-        "dir": "web/html",
-        "glob": "0*.html",
-        "exercise_marker": r"<!-- exercise (\d+) -->",
-        "summary_marker": r"<!-- summary -->",
+        "dir": "html/src",
+        "glob": "lessons_*.c",
+        "exercise_marker": r'exercise\((\d+)\);',
+        "summary_marker": r'\n    wait_enter\(\);\n    clear_screen\(\);\n    heading\("SUMMARY',
         "first_taught": [
-            (2, r"&lt;form\b"),
-            (2, r"&lt;label\b"),
-            (2, r"&lt;input\b"),
-            (3, r"&lt;img\b"),
+            (2, r"<form\b"),
+            (2, r"<label\b"),
+            (2, r"<input\b"),
+            (3, r"<img\b"),
             (3, r"\baria-"),
-            (4, r"&lt;meta name="),
-            (5, r"&lt;table\b"),
-            (5, r"&lt;details\b"),
+            (4, r"<meta name="),
+            (5, r"<table\b"),
+            (5, r"<details\b"),
             (5, r"\bpopover\b"),
         ],
     },
     "css": {
-        "dir": "web/css",
-        "glob": "0*.html",
-        "exercise_marker": r"<!-- exercise (\d+) -->",
-        "summary_marker": r"<!-- summary -->",
+        "dir": "css/src",
+        "glob": "lessons_*.c",
+        "exercise_marker": r'exercise\((\d+)\);',
+        "summary_marker": r'\n    wait_enter\(\);\n    clear_screen\(\);\n    heading\("SUMMARY',
         "first_taught": [
             (2, r"display:\s*flex"),
             (2, r"justify-content"),
@@ -499,10 +499,10 @@ COURSES = {
         ],
     },
     "web-js": {
-        "dir": "web/js",
-        "glob": "0*.html",
-        "exercise_marker": r"<!-- exercise (\d+) -->",
-        "summary_marker": r"<!-- summary -->",
+        "dir": "webjs/src",
+        "glob": "lessons_*.c",
+        "exercise_marker": r'exercise\((\d+)\);',
+        "summary_marker": r'\n    wait_enter\(\);\n    clear_screen\(\);\n    heading\("SUMMARY',
         "first_taught": [
             (2, r"addEventListener"),
             (2, r"event\.target"),
