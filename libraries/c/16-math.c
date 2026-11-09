@@ -6,9 +6,12 @@
  * SUMMARY: math.h has the floating-point functions. On Linux they live in
  *   a separate library, libm, so the link needs -lm.
  * NOTES:
- *   - Forget -lm and the link fails with "undefined reference to `sqrt'"
- *     (the compiler sees the header, the linker cannot find the code).
- *     -lm goes AFTER the source file on the command line.
+ *   - Forget -lm and the link can fail with "undefined reference to
+ *     `sqrt'" (the compiler sees the header, the linker cannot find the
+ *     code). A call on a constant, like sqrt(144.0), is folded at compile
+ *     time and needs no library, so only a runtime value shows it.
+ *     Put -lm after the source file for portability (some toolchains
+ *     require that order; GCC 14.2.1 here did not).
  *   - Integer / integer is an integer: 7 / 2 is 3. Make one side a double
  *     first: 7 / 2.0 is 3.5.
  *   - round() rounds half away from zero; floor() always goes down.
@@ -26,7 +29,7 @@ int main(void)
     double used = 5368709120.0;   /* bytes */
     double total = 16106127360.0;
 
-    printf("sqrt(144)        = %.1f\n", sqrt(144.0));
+    printf("sqrt(used)       = %.1f\n", sqrt(used));
     printf("pow(2, 10)       = %.0f\n", pow(2.0, 10.0));
     printf("floor(2.7)       = %.0f, round(2.5) = %.0f, ceil(2.1) = %.0f\n",
            floor(2.7), round(2.5), ceil(2.1));

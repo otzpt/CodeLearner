@@ -1,9 +1,9 @@
 /*
  * ui.h - the pieces every lesson uses to draw the screen.
  *
- * Kept separate because clearing the screen is the only thing in this whole
- * program that differs between Windows and Linux. With it here, no lesson
- * needs to know which system it is running on.
+ * Kept separate because clearing the screen and making a scratch directory
+ * differ between Windows and Linux. With them here, no lesson needs to know
+ * which system it is running on.
  */
 
 #ifndef UI_H
@@ -11,6 +11,13 @@
 
 /* Clear the screen. */
 void clear_screen(void);
+
+/* Move into a new private directory for a module's scratch files, so nobody
+ * else on a shared machine can plant a file or symlink under a name the
+ * module is about to write and run. scratch_leave() moves back and removes
+ * the directory, which must be empty by then. */
+void scratch_enter(void);
+void scratch_leave(void);
 
 /* Wait for ENTER. Used between parts of a lesson, so nobody has to read
  * three screens at once. */

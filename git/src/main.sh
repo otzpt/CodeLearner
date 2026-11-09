@@ -80,9 +80,9 @@ main() {
         fi
         [[ "$choice" == "0" ]] && break
 
-        if [[ "$choice" =~ ^[0-9]+$ ]] && ((choice >= 1 && choice <= ${#MODULE_TITLES[@]})); then
+        if [[ "$choice" =~ ^[0-9]+$ ]] && ((10#$choice >= 1 && 10#$choice <= ${#MODULE_TITLES[@]})); then
             ui_clear_screen
-            "${MODULE_FUNCS[$((choice - 1))]}"
+            "${MODULE_FUNCS[$((10#$choice - 1))]}"
         else
             printf '\n  Not a valid option.\n'
             ui_wait_enter

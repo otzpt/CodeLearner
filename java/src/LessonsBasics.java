@@ -242,7 +242,7 @@ class LessonsBasics {
         System.out.println("  watch the name come back blank:");
         System.out.println();
         System.out.print("  Age: ");
-        int age = Ui.IN.nextInt();
+        int age = Ui.readInt();
         System.out.print("  Name: ");
         String brokenName = Ui.IN.nextLine();
         System.out.println("  Running: age=" + age + " name=[" + brokenName + "]");
@@ -260,7 +260,7 @@ class LessonsBasics {
         System.out.println("    String name = sc.nextLine();");
         System.out.println();
         System.out.print("  Age: ");
-        int age2 = Ui.IN.nextInt();
+        int age2 = Ui.readInt();
         Ui.IN.nextLine();
         System.out.print("  Name: ");
         String fixedName = Ui.IN.nextLine();

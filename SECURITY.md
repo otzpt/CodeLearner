@@ -2,10 +2,13 @@
 
 ## Scope
 
-CodeLearner is a set of offline command-line programs. Each course runs
-only the code it ships with -- there is no network access, no telemetry, no
-account system, and no data collected or transmitted. The realistic
-security surface is small:
+CodeLearner is a set of command-line programs. Each course runs only the
+code it ships with, and there is no telemetry and no account system. A few
+parts do make network requests: the launcher's `[u] Check for updates`
+(one request to the GitHub releases API, only when you pick it), the Python,
+JavaScript and Security modules that call a real web API or fetch
+`https://example.com`, and Security module 2, which opens servers on the
+loopback interface only. The realistic security surface is small:
 
 - A course running arbitrary input through `scanf`/`cin`/`input()`/
   `readline` in a way that could crash it or corrupt memory (relevant
@@ -16,8 +19,9 @@ security surface is small:
   tooling (`tools/check-teaching-order.py`) or a course's own `ui`
   module.
 
-None of this touches a network, a file outside the repository, or another
-user's data. There is no privileged operation anywhere in this codebase.
+None of this touches a file outside the repository or another user's data,
+and the only outbound requests are the ones listed above. There is no
+privileged operation anywhere in this codebase.
 
 ## What is not in scope
 

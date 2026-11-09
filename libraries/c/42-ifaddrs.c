@@ -1,6 +1,6 @@
 /*
  * TITLE: ifaddrs.h: network interfaces and addresses (getifaddrs)
- * GROUP: POSIX
+ * GROUP: Linux
  * USES: #include <ifaddrs.h>, <arpa/inet.h>, <net/if.h>
  * SUMMARY: getifaddrs() returns every address of every network interface in
  *   one linked list. inet_ntop turns a binary address into text.

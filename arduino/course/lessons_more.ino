@@ -362,7 +362,7 @@ void lesson_09_text()
     Serial.println("  Squeezing it into exactly five is refused:");
     Serial.println();
     Serial.println("    char word[5] = \"robot\";");
-    Serial.println("    error: initializer-string for 'char [5]' is too long");
+    Serial.println("    error: initializer-string for 'char [5]' is too long [-fpermissive]");
 
     wait_enter();
     clear_screen();

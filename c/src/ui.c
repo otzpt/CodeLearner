@@ -1,11 +1,56 @@
+/* -std=c11 hides mkdtemp without this. */
+#ifndef _WIN32
+#define _POSIX_C_SOURCE 200809L
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifndef _WIN32
+#include <unistd.h>
+#endif
 
 #include "ui.h"
 
 /* Inside width of the frame. Changing this changes every box in the course. */
 #define WIDTH 54
+
+#ifndef _WIN32
+static char scratch_dir[512];
+static char scratch_home[4096];
+#endif
+
+/* SIMPLIFICATION: on Windows the scratch files stay in the current directory,
+ * because MinGW has no mkdtemp and modules 16-18 need cc and a POSIX shell
+ * there anyway. A real Windows port would use _mktemp_s and _mkdir. */
+void scratch_enter(void)
+{
+#ifndef _WIN32
+    const char *base = getenv("TMPDIR");
+
+    snprintf(scratch_dir, sizeof scratch_dir, "%s/codelearner-XXXXXX",
+             base != NULL && base[0] != '\0' ? base : "/tmp");
+    if (getcwd(scratch_home, sizeof scratch_home) == NULL
+        || mkdtemp(scratch_dir) == NULL
+        || chdir(scratch_dir) != 0) {
+        scratch_dir[0] = '\0';
+        printf("  (could not make a private scratch directory, using this one)\n");
+    }
+#endif
+}
+
+void scratch_leave(void)
+{
+#ifndef _WIN32
+    if (scratch_dir[0] == '\0') {
+        return;
+    }
+    if (chdir(scratch_home) != 0 || rmdir(scratch_dir) != 0) {
+        printf("  (scratch files were left in %s)\n", scratch_dir);
+    }
+#endif
+}
 
 void clear_screen(void)
 {

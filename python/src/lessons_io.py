@@ -281,7 +281,7 @@ def lesson_13_apis():
             print(f"  Running: type(raw) is {type(raw).__name__}")
             post = json.loads(raw.decode("utf-8"))
             print(f'  Running: status {response.status}, title: "{post["title"]}"')
-    except urllib.error.URLError:
+    except (urllib.error.URLError, TimeoutError):
         print("  Couldn't reach the network just now -- here's what a")
         print("  successful call returns (a real response, captured while")
         print("  building this module, not invented):")
@@ -319,7 +319,7 @@ def lesson_13_apis():
         print(f"           e.code   = {e.code}")
         print(f"           e.reason = {e.reason!r}")
         print(f"           str(e)   = {e}")
-    except urllib.error.URLError:
+    except (urllib.error.URLError, TimeoutError):
         print("  Couldn't reach the network just now -- here's what the")
         print("  real 404 above raised while building this module:")
         print()
@@ -363,8 +363,9 @@ def lesson_13_apis():
         print("           is what the except clause above actually matches)")
 
     print()
-    print("  A timeout raises the same way -- urlopen wraps it in URLError")
-    print("  too, which is the whole reason every call above passed")
+    print("  A timeout while connecting is wrapped in URLError too; one")
+    print("  while waiting for the reply escapes as a bare TimeoutError,")
+    print("  so catch both. That is the reason every call above passed")
     print(f"  timeout={API_TIMEOUT_SECONDS}: a dead connection fails fast")
     print("  instead of hanging the lesson.")
 

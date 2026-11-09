@@ -9,7 +9,7 @@ NOTES:
   - $USER, $HOME and $SHELL are convenient but can be changed or missing (cron,
     sudo, containers). The pwd entry is the reliable answer.
   - pw_shell and $SHELL are the user's LOGIN shell. The shell you are typing in
-    right now may be different: see the shell and terminal page.
+    right now may be different.
   - getpass.getuser() checks the environment first and then pwd: fine for a
     display name.
   - os.getlogin() needs a controlling terminal and often raises OSError: avoid it.

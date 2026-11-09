@@ -21,11 +21,11 @@
  * PART 5 hits a related problem: this course's own binary is always started
  * from a menu with no command-line arguments of its own to show. It follows
  * module 16 and 17's own precedent instead of inventing a new one -- write a
- * second, real .c file to /tmp, compile it with cc, and run the resulting
- * binary with real arguments through system(), checking its exit status
+ * second, real .c file to its scratch directory, compile it with cc, and
+ * run the resulting binary with real arguments through system(), checking its exit status
  * honestly instead of assuming success.
  *
- * Every scratch file this module writes lives under /tmp with a
+ * Every scratch file this module writes lives in a private directory with a
  * codelearner_m18_ prefix and is removed again before the module returns,
  * the same cleanup discipline modules 16 and 17 use.
  */
@@ -52,15 +52,15 @@
 #define M18_CFLAGS "-std=c11 -Wall -Wextra"
 
 /* PART 1: a real file, and a real fopen failure. */
-#define P_NOTES            "/tmp/codelearner_m18_notes.txt"
-#define P_MISSING_DIR_FILE "/tmp/codelearner_m18_missing_dir/notes.txt"
+#define P_NOTES            "./codelearner_m18_notes.txt"
+#define P_MISSING_DIR_FILE "./codelearner_m18_missing_dir/notes.txt"
 
 /* PART 2 and PART 3 both read this same file back. */
-#define P_SCORES "/tmp/codelearner_m18_scores.txt"
+#define P_SCORES "./codelearner_m18_scores.txt"
 
 /* PART 5: a second real program, compiled and run for its argv. */
-#define P_ARGV_C   "/tmp/codelearner_m18_argv_demo.c"
-#define P_ARGV_BIN "/tmp/codelearner_m18_argv_demo"
+#define P_ARGV_C   "./codelearner_m18_argv_demo.c"
+#define P_ARGV_BIN "./codelearner_m18_argv_demo"
 
 /* P_MISSING_DIR_FILE is not created on purpose -- fopen() failing on it is
  * the whole point of PART 1 -- so it is not in this list. If that path
@@ -123,6 +123,7 @@ static int run_shell(const char *cmd)
 void lesson_18_file_io(void)
 {
     title("MODULE 18 - REAL INPUT/OUTPUT");
+    scratch_enter();
 
     heading("PART 1: FILE *, fopen, fclose -- and checking for NULL");
 
@@ -293,11 +294,14 @@ void lesson_18_file_io(void)
     printf("  A real re-prompt loop tries again instead of giving up on the\n");
     printf("  first bad line:\n\n");
 
-    printf("    int age, matched;\n");
+    printf("    int age, matched, c;\n");
     printf("    do {\n");
     printf("        printf(\"Age: \");\n");
     printf("        matched = scanf(\"%%d\", &age);\n");
-    printf("        while (getchar() != '\\n') { }   /* drain the bad line */\n");
+    printf("        if (matched == EOF) {\n");
+    printf("            break;                    /* input ended */\n");
+    printf("        }\n");
+    printf("        while ((c = getchar()) != '\\n' && c != EOF) { }\n");
     printf("    } while (matched != 1);\n\n");
 
     printf("  That drain line matters as much as the retry itself: a failed\n");
@@ -305,6 +309,10 @@ void lesson_18_file_io(void)
     printf("  UNREAD. Skip draining it and the next scanf call reads that\n");
     printf("  same leftover text again -- the loop never advances and\n");
     printf("  never ends.\n\n");
+
+    printf("  The EOF checks cover input that ends (Ctrl-D, or a pipe):\n");
+    printf("  getchar() then returns EOF forever, never '\\n', so a drain\n");
+    printf("  loop that only tests for '\\n' would spin without end.\n\n");
 
     printf("  This module cannot run that loop live -- it has no real\n");
     printf("  keyboard here to wait on, and a teaching module that might\n");
@@ -515,4 +523,5 @@ void lesson_18_file_io(void)
     for (size_t i = 0; i < sizeof M18_SCRATCH_FILES / sizeof M18_SCRATCH_FILES[0]; i++) {
         remove(M18_SCRATCH_FILES[i]);
     }
+    scratch_leave();
 }

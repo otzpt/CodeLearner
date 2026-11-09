@@ -9,7 +9,7 @@
  * It comes after module 11 (the final test) conceptually: everything it
  * needs -- functions, and nothing past them -- is already taught, and
  * "more than one file" is the thing this course has quietly relied on
- * the whole time (its own Makefile links six .c files) without ever
+ * the whole time (its own Makefile links nine .c files) without ever
  * explaining out loud.
  *
  * The centerpiece, PART 4, is a real linker error: an "undefined
@@ -21,10 +21,10 @@
  * index would be. What rule 3 forbids is running a broken program
  * afterwards, and linking failure means there is never anything to run.
  *
- * Every scratch file this module writes lives under /tmp with a
- * codelearner_m16_ prefix, and every one of them is removed again before
- * the module returns -- see the cleanup block at the end of
- * lesson_16_compilation.
+ * Every scratch file this module writes lives in a private directory (see
+ * scratch_enter in ui.h) with a codelearner_m16_ prefix, and every one of
+ * them is removed again before the module returns -- see the cleanup block
+ * at the end of lesson_16_compilation.
  */
 
 #include <stdio.h>
@@ -48,40 +48,40 @@
 #define M16_CFLAGS "-std=c11 -Wall -Wextra"
 
 /* PART 2: a header with no guard, and the fixed version. */
-#define P_SHAPE_H        "/tmp/codelearner_m16_shape.h"
-#define P_GUARD_BAD_C    "/tmp/codelearner_m16_guard_bad.c"
-#define P_SHAPE_FIXED_H  "/tmp/codelearner_m16_shape_fixed.h"
-#define P_GUARD_OK_C     "/tmp/codelearner_m16_guard_ok.c"
+#define P_SHAPE_H        "./codelearner_m16_shape.h"
+#define P_GUARD_BAD_C    "./codelearner_m16_guard_bad.c"
+#define P_SHAPE_FIXED_H  "./codelearner_m16_shape_fixed.h"
+#define P_GUARD_OK_C     "./codelearner_m16_guard_ok.c"
 
 /* PART 3: two files, compiled separately, then linked into one program. */
-#define P_UTIL_H         "/tmp/codelearner_m16_util.h"
-#define P_UTIL_C         "/tmp/codelearner_m16_util.c"
-#define P_UTIL_O         "/tmp/codelearner_m16_util.o"
-#define P_MAIN3_C        "/tmp/codelearner_m16_main3.c"
-#define P_MAIN3_O        "/tmp/codelearner_m16_main3.o"
-#define P_COMBINED       "/tmp/codelearner_m16_combined"
+#define P_UTIL_H         "./codelearner_m16_util.h"
+#define P_UTIL_C         "./codelearner_m16_util.c"
+#define P_UTIL_O         "./codelearner_m16_util.o"
+#define P_MAIN3_C        "./codelearner_m16_main3.c"
+#define P_MAIN3_O        "./codelearner_m16_main3.o"
+#define P_COMBINED       "./codelearner_m16_combined"
 
 /* PART 4: a header promising a function nobody ever defines. */
-#define P_CALC_H         "/tmp/codelearner_m16_calc.h"
-#define P_CALLER_C       "/tmp/codelearner_m16_caller.c"
-#define P_CALLER_O       "/tmp/codelearner_m16_caller.o"
-#define P_LINKED         "/tmp/codelearner_m16_linked"
+#define P_CALC_H         "./codelearner_m16_calc.h"
+#define P_CALLER_C       "./codelearner_m16_caller.c"
+#define P_CALLER_O       "./codelearner_m16_caller.o"
+#define P_LINKED         "./codelearner_m16_linked"
 
 /* PART 5: a real -Wall warning. */
-#define P_WARN_C         "/tmp/codelearner_m16_warn.c"
+#define P_WARN_C         "./codelearner_m16_warn.c"
 
 /* PART 6: util.c (PART 3) compiled once with -g and once without. */
-#define P_UTIL_G_O       "/tmp/codelearner_m16_util_g.o"
-#define P_UTIL_NOG_O     "/tmp/codelearner_m16_util_nog.o"
+#define P_UTIL_G_O       "./codelearner_m16_util_g.o"
+#define P_UTIL_NOG_O     "./codelearner_m16_util_nog.o"
 
 /* PART 8: util.o (PART 3) archived into a static library. The archive
  * itself has to be named libNAME.a for -lNAME to find it -- that naming
  * rule belongs to ar and the linker, not to this module's own scratch
  * prefix, so it is the one path here without codelearner_m16_ in it. */
-#define P_LIBRARY        "/tmp/libcodelearner_m16.a"
-#define P_STATIC_MAIN_C  "/tmp/codelearner_m16_static_main.c"
-#define P_STATIC_MAIN_O  "/tmp/codelearner_m16_static_main.o"
-#define P_STATIC_PROG    "/tmp/codelearner_m16_static_prog"
+#define P_LIBRARY        "./libcodelearner_m16.a"
+#define P_STATIC_MAIN_C  "./codelearner_m16_static_main.c"
+#define P_STATIC_MAIN_O  "./codelearner_m16_static_main.o"
+#define P_STATIC_PROG    "./codelearner_m16_static_prog"
 
 /* Every scratch path this module can create, for the cleanup block at the
  * end of lesson_16_compilation. remove() is plain stdio, already taught,
@@ -154,6 +154,7 @@ static int run_shell(const char *cmd)
 void lesson_16_compilation(void)
 {
     title("MODULE 16 - COMPILATION AND PROJECT STRUCTURE");
+    scratch_enter();
 
     heading("PART 1: .c and .h -- a promise, and its fulfillment");
 
@@ -202,10 +203,10 @@ void lesson_16_compilation(void)
     clear_screen();
     heading("PART 2: header guards -- what breaks without one");
 
-    printf("  This program writes its own scratch files under /tmp with a\n");
-    printf("  codelearner_m16_ prefix, so they can never collide with\n");
-    printf("  anything real on your machine, and deletes them again before\n");
-    printf("  this module ends. In your own code the names below would\n");
+    printf("  This program writes its own scratch files in a private\n");
+    printf("  directory it makes for this module, so they can never collide\n");
+    printf("  with anything real on your machine, and deletes them again\n");
+    printf("  before this module ends. In your own code the names below would\n");
     printf("  just be shape.h and main.c.\n\n");
 
     printf("  A header with no guard, defining a struct:\n\n");
@@ -247,7 +248,7 @@ void lesson_16_compilation(void)
         printf("  Point` got DEFINED twice in one translation unit, once\n");
         printf("  per #include. A function prototype can legally appear\n");
         printf("  more than once -- it is only a declaration. A struct\n");
-        printf("  body, a typedef, or a variable with an initializer\n");
+        printf("  body, a typedef of a struct body, or a variable with an initializer\n");
         printf("  cannot; the second copy is a redefinition.\n\n");
 
         printf("  The fix wraps the header so the second #include expands\n");
@@ -522,7 +523,7 @@ void lesson_16_compilation(void)
     clear_screen();
     heading("PART 7: Makefiles -- this course's own");
 
-    printf("  Typing the right cc command by hand for six source files,\n");
+    printf("  Typing the right cc command by hand for nine source files,\n");
     printf("  every time one of them changes, does not scale. `make`\n");
     printf("  reads a Makefile describing what depends on what, and only\n");
     printf("  rebuilds what actually needs it. This is not a toy example\n");
@@ -534,6 +535,7 @@ void lesson_16_compilation(void)
             "#\n"
             "#   make          builds ./c-course\n"
             "#   make run      builds and runs\n"
+            "#   make asm-demo builds and runs the NASM example in asm/ (needs nasm)\n"
             "#   make clean    removes build output\n"
             "#\n"
             "# -Wall -Wextra stay on always. In a C course a compiler warning is\n"
@@ -542,7 +544,7 @@ void lesson_16_compilation(void)
             "CC      = cc\n"
             "CFLAGS  = -std=c11 -Wall -Wextra -g\n"
             "TARGET  = c-course\n"
-            "SOURCES = src/main.c src/ui.c src/lessons_basics.c src/lessons_memory.c src/lessons_advanced.c src/lessons_tooling.c\n"
+            "SOURCES = src/main.c src/ui.c src/lessons_basics.c src/lessons_memory.c src/lessons_advanced.c src/lessons_tooling.c src/lessons_io.c src/lessons_lang_features.c src/lessons_assembly.c\n"
             "OBJECTS = $(SOURCES:.c=.o)\n"
             "\n"
             "$(TARGET): $(OBJECTS)\n"
@@ -556,10 +558,18 @@ void lesson_16_compilation(void)
             "run: $(TARGET)\n"
             "\t./$(TARGET)\n"
             "\n"
-            "clean:\n"
-            "\trm -f $(OBJECTS) $(TARGET)\n"
+            "# Module 20's NASM example. Separate from the course on purpose: the course\n"
+            "# builds with a C compiler alone, and only this target needs nasm. The course\n"
+            "# runs asm/use_asm itself, when it exists, to show its real output.\n"
+            "asm-demo:\n"
+            "\tnasm -f elf64 asm/add.asm -o asm/add.o\n"
+            "\t$(CC) -std=c11 -Wall -Wextra asm/use_asm.c asm/add.o -o asm/use_asm\n"
+            "\t./asm/use_asm\n"
             "\n"
-            ".PHONY: run clean\n";
+            "clean:\n"
+            "\trm -f $(OBJECTS) $(TARGET) asm/add.o asm/use_asm\n"
+            "\n"
+            ".PHONY: run asm-demo clean\n";
 
         print_code(makefile_text);
     }
@@ -626,7 +636,7 @@ void lesson_16_compilation(void)
         snprintf(cmd, sizeof cmd, "cc %s -c %s -o %s",
                  M16_CFLAGS, P_STATIC_MAIN_C, P_STATIC_MAIN_O);
         run_shell(cmd);
-        snprintf(cmd, sizeof cmd, "cc %s -L/tmp -lcodelearner_m16 -o %s",
+        snprintf(cmd, sizeof cmd, "cc %s -L. -lcodelearner_m16 -o %s",
                  P_STATIC_MAIN_O, P_STATIC_PROG);
         run_shell(cmd);
 
@@ -787,6 +797,7 @@ void lesson_16_compilation(void)
     for (size_t i = 0; i < sizeof M16_SCRATCH_FILES / sizeof M16_SCRATCH_FILES[0]; i++) {
         remove(M16_SCRATCH_FILES[i]);
     }
+    scratch_leave();
 }
 
 /*
@@ -812,9 +823,9 @@ void lesson_16_compilation(void)
  * compiled with AddressSanitizer from its very first build, every time,
  * and is never executed any other way.
  *
- * Every scratch file lives under /tmp with a codelearner_m17_ prefix and
- * is removed again at the end of lesson_17_debugging, the same discipline
- * module 16 uses -- write_file(), print_code() and run_shell() above are
+ * Every scratch file lives in a private directory with a codelearner_m17_
+ * prefix and is removed again at the end of lesson_17_debugging, the same
+ * discipline module 16 uses -- write_file(), print_code() and run_shell() above are
  * reused as-is, not reimplemented.
  */
 
@@ -827,20 +838,20 @@ void lesson_16_compilation(void)
 #define M17_GDB_QUIET "set debuginfod enabled off"
 
 /* PART 2: a breakpoint, stepping, and reading variables. */
-#define P_GDB_BASIC_C   "/tmp/codelearner_m17_gdb_basic.c"
-#define P_GDB_BASIC_BIN "/tmp/codelearner_m17_gdb_basic"
+#define P_GDB_BASIC_C   "./codelearner_m17_gdb_basic.c"
+#define P_GDB_BASIC_BIN "./codelearner_m17_gdb_basic"
 
 /* PART 3: a real NULL-pointer crash and its backtrace. */
-#define P_CRASH_C   "/tmp/codelearner_m17_crash.c"
-#define P_CRASH_BIN "/tmp/codelearner_m17_crash"
+#define P_CRASH_C   "./codelearner_m17_crash.c"
+#define P_CRASH_BIN "./codelearner_m17_crash"
 
 /* PART 4: module 9's use-after-free, compiled with ASan from the start. */
-#define P_UAF_C   "/tmp/codelearner_m17_uaf.c"
-#define P_UAF_BIN "/tmp/codelearner_m17_uaf"
+#define P_UAF_C   "./codelearner_m17_uaf.c"
+#define P_UAF_BIN "./codelearner_m17_uaf"
 
 /* PART 5: an out-of-bounds write on the student's own future code. */
-#define P_OOB_C   "/tmp/codelearner_m17_oob.c"
-#define P_OOB_BIN "/tmp/codelearner_m17_oob"
+#define P_OOB_C   "./codelearner_m17_oob.c"
+#define P_OOB_BIN "./codelearner_m17_oob"
 
 static const char *const M17_SCRATCH_FILES[] = {
     P_GDB_BASIC_C, P_GDB_BASIC_BIN,
@@ -852,6 +863,7 @@ static const char *const M17_SCRATCH_FILES[] = {
 void lesson_17_debugging(void)
 {
     title("MODULE 17 - DEBUGGING");
+    scratch_enter();
 
     heading("PART 1: same convention, one more reader");
 
@@ -941,7 +953,7 @@ void lesson_17_debugging(void)
 
             if (ok) {
                 printf("\n  'Breakpoint 1, square (n=5) at\n");
-                printf("  /tmp/codelearner_m17_gdb_basic.c:5' -- gdb already\n");
+                printf("  ...codelearner_m17_gdb_basic.c:5' -- gdb already\n");
                 printf("  knew n's value before a single print\n");
                 printf("  command ran, straight from the debug symbols -g\n");
                 printf("  wrote. print n and print result both read real\n");
@@ -1316,4 +1328,5 @@ void lesson_17_debugging(void)
     for (size_t i = 0; i < sizeof M17_SCRATCH_FILES / sizeof M17_SCRATCH_FILES[0]; i++) {
         remove(M17_SCRATCH_FILES[i]);
     }
+    scratch_leave();
 }

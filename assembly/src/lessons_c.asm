@@ -117,8 +117,8 @@ m9_p3:
     ln "  Built and run for this module (the files follow):"
     ln ""
     ln "    $ nasm -f elf64 start.asm -o start.o"
-    ln "    $ gcc -ffreestanding -nostdlib -static -fno-pie -no-pie -O2 \"
-    ln "          -c free.c -o free.o"
+    ln "    $ gcc -ffreestanding -fno-stack-protector -nostdlib -static -fno-pie \"
+    ln "          -no-pie -O2 -c free.c -o free.o"
     ln "    $ ld start.o free.o -o free"
     ln "    $ ./free; echo $?"
     ln "    hello from C, with no libc"
@@ -136,7 +136,8 @@ m9_p3c:
     ln ""
     ln "  The system call is inline assembly, the same instruction as in"
     ln "  module 1, with the registers named in the constraints. The"
-    ln "  finished program is 9128 bytes."
+    ln "  finished program was 9128 bytes when this module was built; the"
+    ln "  exact size depends on your linker's version and defaults."
     db 0
 
 m9_p4:

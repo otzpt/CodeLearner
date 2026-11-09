@@ -64,7 +64,7 @@ for C and Python libraries, each with an example that runs on your machine.
 | Rust | 12: `println!` through ownership, borrowing, structs, enums, `Result`, volatile registers for the Pico, and inline assembly with NASM | [`rust/`](rust/) |
 | MicroPython | 11: for the Raspberry Pi Pico: pins, PWM/ADC, interrupts, native/viper, `asm_thumb`, a robot | [`micropython/`](micropython/) |
 | Arduino | 13: `setup()`/`loop()` through registers, interrupts, AVR inline assembly, a robot (runs on a PC) | [`arduino/`](arduino/) |
-| Security | 1 so far — a topic course in Python: HTTP requests, what a server's headers reveal, and the urllib 4xx/5xx-raises trap | [`security/`](security/) |
+| Security | 2 so far: a topic course in Python. HTTP requests, what a server's headers reveal, the urllib 4xx/5xx-raises trap, and why plain HTTP is readable on the wire | [`security/`](security/) |
 | GUI (GTK) | 1 — your first window | [`gui/`](gui/) |
 | Libraries | a reference manual, not a course: man-page style pages for the C and Python libraries (standard C, POSIX, Linux, /proc and /sys, raylib), each example run live | [`libraries/`](libraries/) |
 | Assembly | 16 — registers and syscalls through memory, the stack, bits and strings, then C together with assembly, and a boot sector to an operating system kernel with interrupts, in NASM (Intel syntax) | [`assembly/`](assembly/README.md) |
@@ -79,8 +79,8 @@ table (`MODULES` in `main.c`/`main.py`/`main.js`, or the equivalent),
 nothing else changes. GUI still has one module, filed under BASIC, with
 INTERMEDIATE and ADVANCED shown empty until it has enough content to split.
 
-Twelve courses are covered. GUI, Assembly, and Git are not languages in the
-same sense the other nine are, but all three get the same treatment as one:
+Thirteen courses are covered. GUI, Assembly, Git and Security are not languages
+in the same sense the others are, but all of them get the same treatment as one:
 their own directory, their own binary or script, their own entry in the
 launcher, rather than being folded into `c/`'s module list. Assembly goes
 further than GUI does, though -- its own delivery program (`assembly/src/ui.asm`,
@@ -177,9 +177,11 @@ The `.deb` and Arch packages install to `/opt/codelearner` and put the same
 `codelearner` command on PATH system-wide. The AppImage does not touch PATH
 at all, which is the point of it.
 
-Only the C, C++, GUI, C# and Assembly courses are compiled into these;
-Python, JavaScript and Java ship as source and run through their own
-language's toolchain (see below). Want just one course, standalone, with no
+The C, C++, GUI, C# and Assembly courses are compiled into these, and so
+are Rust and Arduino on Linux. Python, JavaScript, Java, Security, MicroPython
+and Git ship as source and run through their own language's toolchain (see
+below). Assembly, Rust, Arduino, MicroPython, Git and Libraries are Linux
+only. Want just one course, standalone, with no
 launcher and none of the others? See
 [`docs/building-a-single-course.md`](docs/building-a-single-course.md).
 
@@ -266,7 +268,7 @@ On Debian or Ubuntu:
 sudo apt install build-essential
 ```
 
-You need a JDK for the Java course. On Arch:
+You need JDK 22 or newer for the Java course. On Arch:
 
 ```bash
 sudo pacman -S jdk-openjdk
@@ -277,6 +279,9 @@ On Debian or Ubuntu:
 ```bash
 sudo apt install default-jdk
 ```
+
+`default-jdk` can be older than 22, depending on the release. Check with
+`java -version`, and if it is, install a newer `openjdk-NN-jdk` package.
 
 You need the .NET SDK for the C# course. On Arch:
 
@@ -333,6 +338,7 @@ and the reason, which appears either way.
 | 17 | Debugging | ADVANCED | `gdb` in batch mode, a real NULL-deref backtrace, AddressSanitizer's use-after-free report |
 | 18 | Real input/output | ADVANCED | `fopen` returning `NULL`, checking `errno`, text vs binary compared with `memcmp`, `argc`/`argv` |
 | 19 | Function pointers, callbacks, and macros | ADVANCED | `(*fn)(args)`, a variadic `sum_ints`, the classic unparenthesized-macro trap, bit flags |
+| 20 | Inline assembly and NASM | ADVANCED | `__asm__` blocks with outputs, inputs and clobbers, then a separate NASM file linked into a C program |
 
 Module 9 is the longest on purpose: leaks, use-after-free, double free, and
 returning the address of a local array — each with what you actually see when
@@ -431,6 +437,7 @@ and where each stage picks up.
 | 10 | Maps and sets | `map`'s `[]` silently inserts a missing key; `find()` returns `end()`, not a null |
 | 11 | Templates | one function/class works for any type; a bad instantiation is a compile error, shown for real |
 | 12 | Modern C++ idioms | `unique_ptr`/`shared_ptr` replace module 9's `new`/`delete`; `std::move` measured with a copy/move counter, not asserted |
+| 13 | Inline assembly and NASM | `asm` blocks with outputs, inputs and clobbers, then a NASM file linked in through `extern "C"` |
 
 This course assumes nothing about the C course, but is written to be read
 right after it: every module is framed as *what changed, and what did not*.
@@ -660,7 +667,7 @@ than being folded into `c/`'s module list. That separation is real, not
 cosmetic: `gui-course` itself (the menu, this module's text) is plain C
 with no dependency beyond a compiler, same as every other course, but the
 GTK code it teaches needs GTK4's development files installed to actually
-compile and run — a dependency none of the five language courses have.
+compile and run, a dependency none of the original language courses have.
 `gui/src/lessons_gtk.c`'s own header comment has the exact verification:
 every example was compiled and run for real (`gcc -Wall -Wextra
 $(pkg-config --cflags gtk4) ... $(pkg-config --libs gtk4)`), and running it
@@ -876,7 +883,7 @@ from outside its class, an unhandled checked exception, `ArrayList<int>`,
 and the rest) — was produced by actually running `javac` against it, not
 recalled from documentation.
 
-`python3 tools/check-teaching-order.py` covers all nine language courses with a
+`python3 tools/check-teaching-order.py` covers all the language courses with a
 real teaching-order table (C, C++, Python, JavaScript, Java, C#, Rust,
 MicroPython, Arduino) in one run. GUI
 and Assembly are registered too, with empty tables. GUI's is empty because it
@@ -982,6 +989,9 @@ assembly/                   x86-64 assembly course (NASM, Intel syntax): src/ ha
                              the lessons print; os/ is the boot sector to kernel
                              source; check-course.py and check-os.py verify it (README.md)
 git/                        Bash course: src/ has main.sh, ui.sh, lessons_*.sh
+security/                   Python topic course: src/ has main.py, ui.py,
+                             lessons_basics.py (module 1), lessons_wire.py (module 2)
+assets/                     the desktop entry and icon the Linux packages install
 rust/                       12 modules; check-course.py, check-embedded.py and
                              run-embedded.py (the Pico's Thumb code, in an emulator)
 micropython/                11 modules; src/sim.py stands in for machine and time
@@ -1013,4 +1023,4 @@ for the design rules.
 ## License
 
 [MIT](LICENSE). The courses depend on nothing beyond each language's own
-toolchain — no packages to install, in any of the five.
+toolchain, no packages to install, in any of them.

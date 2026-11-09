@@ -1,31 +1,45 @@
 #include "update.h"
 
+#include <errno.h>
+#include <limits.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 int version_parse(const char *text, int out[3])
 {
-    int major, minor, patch;
-    int used = 0;
+    int parts[3];
 
     if (text[0] == 'v' || text[0] == 'V') {
         text++;
     }
-    /* %n records how much was read, so a fourth component can be refused
-     * below; the return value alone would accept "1.5.0.1". */
-    if (sscanf(text, "%d.%d.%d%n", &major, &minor, &patch, &used) != 3) {
-        return 0;
-    }
-    if (major < 0 || minor < 0 || patch < 0) {
-        return 0;
+    for (int i = 0; i < 3; i++) {
+        char *end;
+        long value;
+
+        /* strtol would skip leading blanks and accept a sign. */
+        if (text[0] < '0' || text[0] > '9') {
+            return 0;
+        }
+        errno = 0;
+        value = strtol(text, &end, 10);
+        if (errno == ERANGE || value > INT_MAX) {
+            return 0;
+        }
+        parts[i] = (int)value;
+        text = end;
+        if (i < 2) {
+            if (*text != '.') {
+                return 0;
+            }
+            text++;
+        }
     }
     /* Only an end of string or a "-ci1" / "+build" style suffix may follow. */
-    if (text[used] != '\0' && text[used] != '-' && text[used] != '+') {
+    if (*text != '\0' && *text != '-' && *text != '+') {
         return 0;
     }
-    out[0] = major;
-    out[1] = minor;
-    out[2] = patch;
+    memcpy(out, parts, sizeof parts);
     return 1;
 }
 

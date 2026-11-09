@@ -27,7 +27,8 @@
 /* Colour only for a person at a terminal who has not opted out. */
 static int use_colour(int force)
 {
-    if (getenv("NO_COLOR") != NULL) {
+    const char *no_color = getenv("NO_COLOR");
+    if (no_color != NULL && no_color[0] != '\0') {
         return 0;
     }
     return force || isatty(STDOUT_FILENO);

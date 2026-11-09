@@ -419,6 +419,10 @@ static void run_page(const struct Track *track, const struct Page *page)
 
     snprintf(scratch, sizeof scratch, "%s/codelearner-libraries-XXXXXX",
              getenv("TMPDIR") != NULL ? getenv("TMPDIR") : "/tmp");
+    if (!safe_path(scratch)) {
+        puts("    (not run: TMPDIR contains a quote)");
+        return;
+    }
     if (mkdtemp(scratch) == NULL) {
         puts("    (not run: could not make a scratch directory)");
         return;
@@ -655,8 +659,9 @@ int main(void)
             break;
         }
 
-        int n = atoi(choice);
-        if (n >= 1 && n <= TRACK_COUNT) {
+        char *end;
+        long n = strtol(choice, &end, 10);
+        if (*end == '\0' && n >= 1 && n <= TRACK_COUNT) {
             run_track(&TRACKS[n - 1]);
         }
     }

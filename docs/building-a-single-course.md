@@ -1,7 +1,7 @@
 # Building a single course, standalone
 
-The release on GitHub ships the universal launcher bundled with all five
-courses. If you only want one language -- no launcher, no other four courses
+The release on GitHub ships the universal launcher bundled with all the
+courses. If you only want one language -- no launcher, no other courses
 -- here's how to get just that one, and optionally turn it into a real
 standalone executable that needs nothing installed.
 
@@ -98,7 +98,7 @@ check `$JAVA_HOME/bin/` if they're not on PATH.
 ## Why this isn't automated in the release workflow
 
 Three different bundlers, each platform-specific, each with its own broken
-edge cases, for five courses that already work fine with their language
+edge cases, for courses that already work fine with their language
 installed -- that's a lot of CI surface for something most people don't need.
 If you build one of these routinely enough to want it automated, that's a
 real, reasonable thing to open an issue about.

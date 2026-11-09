@@ -85,14 +85,14 @@ async function lesson06Arrays() {
   await ui.question("What copies an array instead of aliasing it?", "[...a]", "The spread operator, or a.slice(), both make a real copy.");
   await ui.question(
     "[10, 9, 2].sort()  -- what order, by default?",
-    "2 10 9",
+    "10 2 9",
     'sort() compares elements as text by default: "10" sorts before "9".'
   );
 
   await ui.challenge(
     ["Given nums = [3, 1, 2], print a SORTED COPY numerically", "(nums itself must stay [3, 1, 2]), then print nums."],
     [],
-    ["[1, 2, 3]", "[3, 1, 2]"],
+    ["[ 1, 2, 3 ]", "[ 3, 1, 2 ]"],
     ["const nums = [3, 1, 2];", "console.log([...nums].sort((a, b) => a - b));", "console.log(nums);"]
   );
 
@@ -207,7 +207,7 @@ async function lesson07Functions() {
   await ui.challenge(
     ["Write swap(pair) that takes a two-element array and returns", "a new array with the elements reversed. Test it on [1, 2]."],
     [],
-    ["[2, 1]"],
+    ["[ 2, 1 ]"],
     ["function swap([a, b]) {", "    return [b, a];", "}", "", "console.log(swap([1, 2]));"]
   );
 

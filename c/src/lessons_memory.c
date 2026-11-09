@@ -862,8 +862,8 @@ void lesson_10_structs(void)
     printf("  Since nobody wants to write that, -> was invented.\n\n");
 
     printf("  Get it wrong and the compiler tells you:\n");
-    printf("    error: member reference type 'struct Student *' is a\n");
-    printf("           pointer; did you mean to use '->'?\n");
+    printf("    error: 'ptr' is a pointer; did you mean to use '->'?\n");
+    printf("  (gcc's wording; clang words it differently.)\n");
 
     wait_enter();
     clear_screen();

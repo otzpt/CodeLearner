@@ -1,7 +1,7 @@
 ; start.asm - the entry point of a program with no C runtime.
 ;
 ;   nasm -f elf64 start.asm -o start.o
-;   gcc -ffreestanding -nostdlib -static -fno-pie -no-pie -O2 -c free.c -o free.o
+;   gcc -ffreestanding -fno-stack-protector -nostdlib -static -fno-pie -no-pie -O2 -c free.c -o free.o
 ;   ld start.o free.o -o free
 ;
 ; The kernel starts the process at _start. There is no libc to set anything

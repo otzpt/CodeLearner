@@ -116,7 +116,8 @@ pub fn lesson_11_hardware() {
     say("  both, in order. It is the Rust spelling of the volatile you met in");
     say("  the Arduino course's interrupt module.");
     println!();
-    say("  And set_bit, compiled for the same CPU:");
+    say("  And set_bit, compiled for the same CPU (excerpt: the instructions that");
+    say("  build the 1 << bit mask are left out):");
     println!();
     say("      ldr  r2, [r0]        read the whole register");
     say("      orrs r2, r1          set the bit in the copy");

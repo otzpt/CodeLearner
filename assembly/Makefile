@@ -15,7 +15,7 @@ SOURCES  = src/ui.asm src/lessons_basics.asm src/lessons_flow.asm src/lessons_in
 OBJECTS  = $(SOURCES:.asm=.o)
 # The lessons print the real example files with incbin, so a change to one
 # of them has to rebuild the lesson that shows it.
-EXAMPLES = $(wildcard solutions/*.asm examples/*/* os/*.asm os/*/* os/kernel/*.asm os/kernel/*.c os/kernel/*.ld os/interrupts/*.asm os/interrupts/*.c os/interrupts/*.h)
+EXAMPLES = $(wildcard solutions/*.asm solutions/*.c examples/*/* os/*.asm os/*/* os/kernel/*.asm os/kernel/*.c os/kernel/*.ld os/interrupts/*.asm os/interrupts/*.c os/interrupts/*.h)
 
 $(TARGET): $(OBJECTS)
 	$(LD) $(OBJECTS) -o $@

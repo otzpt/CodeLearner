@@ -438,7 +438,7 @@ async function lesson13Modules() {
   console.log();
   console.log("  and, at the bottom, being required BY main.js in turn:");
   console.log();
-  console.log("    module.exports = { lesson11Promises, lesson12Apis, lesson13Modules };");
+  console.log("    module.exports = { lesson11Promises, lesson12Apis, lesson13Modules, lesson14NodeStdlib };");
   console.log();
   console.log("  CommonJS -- this require()/module.exports pair -- is not a");
   console.log("  topic being introduced now so much as named: it is what this");

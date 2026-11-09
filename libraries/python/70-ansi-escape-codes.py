@@ -29,7 +29,7 @@ ESC = "\033["
 
 def use_colour(force=False):
     """Colour only for a person at a terminal who has not opted out."""
-    if "NO_COLOR" in os.environ:
+    if os.environ.get("NO_COLOR"):
         return False
     return force or sys.stdout.isatty()
 

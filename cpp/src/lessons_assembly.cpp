@@ -55,7 +55,13 @@ void runNasmDemo() {
         say("  back to this module.");
         return;
     }
-    std::FILE *pipe = popen(demo.c_str(), "r");
+    // Single-quote the path for the shell; embed ' as '\\''.
+    std::string quoted = "'";
+    for (const char c : demo.string()) {
+        quoted += (c == '\'') ? std::string("'\\''") : std::string(1, c);
+    }
+    quoted += "'";
+    std::FILE *pipe = popen(quoted.c_str(), "r");
     if (pipe == nullptr) {
         say("  asm/use_asm could not be started.");
         return;
