@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 1: The DOM | Web JavaScript course</title>
+<link rel="stylesheet" href="course.css">
+<script src="course.js"></script>
+</head>
+<body>
+<nav class="top" aria-label="Course"><a href="index.html">Web JavaScript course</a><span>Module 1 of 5</span></nav>
+<main>
+<h1>Module 1: The DOM</h1>
+<p>The JavaScript course in this project runs in a terminal, under Node, where there is no page. This one is about the part only a browser has: the document, the events on it, and the network. It assumes you know variables, functions, arrays and <code>if</code>, which are modules 1 to 7 of the JavaScript course.</p>
+<p>Every code box runs, for real, when the page loads. In these boxes <code>print()</code> writes a line into the area under the code. In your own files, use <code>console.log()</code> and the browser's console.</p>
+<section>
+<h2>PART 1: finding an element</h2>
+<p>The browser turns your HTML into a tree of objects, the DOM. <code>document.querySelector</code> takes a CSS selector and returns the first match:</p>
+<figure class="demo">
+<pre><code>&lt;h3 id="title"&gt;Original text&lt;/h3&gt;</code></pre>
+<pre><code>const heading = document.querySelector("#title");
+print("Before:", heading.textContent);
+heading.textContent = "Changed by JavaScript";
+print("After:", heading.textContent);</code></pre>
+<div class="stage">
+<h3 id="title">Original text</h3>
+</div>
+<script>
+demo("d1", async function (print) {
+const heading = document.querySelector("#title");
+print("Before:", heading.textContent);
+heading.textContent = "Changed by JavaScript";
+print("After:", heading.textContent);
+});
+</script>
+<output id="d1" class="out"></output>
+</figure>
+<p>When nothing matches it returns <code>null</code>, not an error. The error comes one line later:</p>
+<figure class="demo">
+<pre><code>const missing = document.querySelector("#no-such-id");
+print("It returned:", missing);
+print(missing.textContent);</code></pre>
+<script>
+demo("d2", async function (print) {
+const missing = document.querySelector("#no-such-id");
+print("It returned:", missing);
+print(missing.textContent);
+});
+</script>
+<output id="d2" class="out"></output>
+</figure>
+</section>
+<section>
+<h2>PART 2: the script runs before the rest exists</h2>
+<p>The page is built from top to bottom, and a script runs at the moment the parser reaches it. An element further down does not exist yet:</p>
+<figure class="demo">
+<pre><code>&lt;p id="later"&gt;I come after the script above.&lt;/p&gt;</code></pre>
+<pre><code>print("Looking for #later:", document.querySelector("#later"));</code></pre>
+<script>
+demo("d3", async function (print) {
+print("Looking for #later:", document.querySelector("#later"));
+});
+</script>
+<div class="stage">
+<p id="later">I come after the script above.</p>
+</div>
+<output id="d3" class="out"></output>
+</figure>
+<p>The same search, from a script placed after that paragraph:</p>
+<figure class="demo">
+<pre><code>print("Looking for #later:", document.querySelector("#later").textContent);</code></pre>
+<script>
+demo("d4", async function (print) {
+print("Looking for #later:", document.querySelector("#later").textContent);
+});
+</script>
+<output id="d4" class="out"></output>
+</figure>
+<p>The usual fix is an external script with <code>defer</code>, which waits until the document has been parsed. This one is loaded above its target, and it finds it:</p>
+<figure class="demo">
+<pre><code>&lt;script defer src="demos/defer.js"&gt;&lt;/script&gt;
+&lt;p id="defer-target"&gt;Further down the page&lt;/p&gt;</code></pre>
+<script defer src="demos/defer.js"></script>
+<div class="stage"><p id="defer-target">Further down the page</p></div>
+<output id="defer-out" class="out"></output>
+</figure>
+</section>
+<section>
+<h2>PART 3: textContent and innerHTML are not interchangeable</h2>
+<p><code>textContent</code> treats a string as text. <code>innerHTML</code> treats it as HTML, and that includes anything a user typed:</p>
+<figure class="demo">
+<pre><code>&lt;div id="box"&gt;&lt;/div&gt;</code></pre>
+<pre><code>const box = document.querySelector("#box");
+const fromUser = '&lt;img src="x" onerror="this.alt = \'the handler ran\'"&gt;';
+
+box.textContent = fromUser;
+print("textContent made", box.children.length, "elements");
+
+box.innerHTML = fromUser;
+print("innerHTML made", box.children.length, "elements");
+
+await new Promise((done) =&gt; setTimeout(done, 500));
+print("alt is now:", box.firstChild.alt);</code></pre>
+<div class="stage">
+<div id="box"></div>
+</div>
+<script>
+demo("d5", async function (print) {
+const box = document.querySelector("#box");
+const fromUser = '<img src="x" onerror="this.alt = \'the handler ran\'">';
+
+box.textContent = fromUser;
+print("textContent made", box.children.length, "elements");
+
+box.innerHTML = fromUser;
+print("innerHTML made", box.children.length, "elements");
+
+await new Promise((done) => setTimeout(done, 500));
+print("alt is now:", box.firstChild.alt);
+});
+</script>
+<output id="d5" class="out"></output>
+</figure>
+<p>The harmless handler above ran because it was parsed as HTML. In a real site, that handler would be someone's code running with your user's session. This is cross-site scripting. Never pass user input to <code>innerHTML</code>.</p>
+</section>
+<section>
+<h2>PART 4: a list that updates itself, and one that does not</h2>
+<p><code>querySelectorAll</code> returns a snapshot. The older <code>getElementsByTagName</code> returns a live list, which changes as the page changes:</p>
+<figure class="demo">
+<pre><code>&lt;ul id="items"&gt;&lt;li&gt;one&lt;/li&gt;&lt;li&gt;two&lt;/li&gt;&lt;/ul&gt;</code></pre>
+<pre><code>const list = document.querySelector("#items");
+const live = list.getElementsByTagName("li");
+const snapshot = list.querySelectorAll("li");
+
+const item = document.createElement("li");
+item.textContent = "three";
+list.append(item);
+
+print("live:", live.length);
+print("snapshot:", snapshot.length);</code></pre>
+<div class="stage">
+<ul id="items"><li>one</li><li>two</li></ul>
+</div>
+<script>
+demo("d6", async function (print) {
+const list = document.querySelector("#items");
+const live = list.getElementsByTagName("li");
+const snapshot = list.querySelectorAll("li");
+
+const item = document.createElement("li");
+item.textContent = "three";
+list.append(item);
+
+print("live:", live.length);
+print("snapshot:", snapshot.length);
+});
+</script>
+<output id="d6" class="out"></output>
+</figure>
+</section>
+<!-- exercise 1 -->
+<section id="exercise">
+<h2>EXERCISE 1</h2>
+<form class="question" data-answer="null">
+<label>What does <code>querySelector</code> return when nothing matches? <input name="answer" autocomplete="off"></label>
+<button>Check</button>
+<p class="verdict" hidden></p>
+<p class="why" hidden>The crash comes when you use it.</p>
+</form>
+<form class="question" data-answer="textContent">
+<label>Which property is safe for text typed by a user, textContent or innerHTML? <input name="answer" autocomplete="off"></label>
+<button>Check</button>
+<p class="verdict" hidden></p>
+<p class="why" hidden>It never parses HTML.</p>
+</form>
+<form class="question" data-answer="defer">
+<label>Which script attribute makes it wait for the document to be parsed? <input name="answer" autocomplete="off"></label>
+<button>Check</button>
+<p class="verdict" hidden></p>
+<p class="why" hidden>It only works on external scripts.</p>
+</form>
+<h3>Challenge</h3>
+<p>Write a page with an empty <code>ul</code> whose list items are created by JavaScript from an array.</p>
+<p><strong>Input:</strong> the array <code>["milk", "eggs", "bread"</code>] in your script.</p>
+<p><strong>The result must be:</strong></p>
+<ul>
+<li>The page lists milk, eggs and bread, one per line.</li>
+<li>The script does not use <code>innerHTML</code>.</li>
+</ul>
+<details><summary>Example solution (one way of getting there)</summary>
+<pre><code>&lt;ul id="shopping"&gt;&lt;/ul&gt;
+&lt;script&gt;
+  const list = document.querySelector("#shopping");
+  for (const name of ["milk", "eggs", "bread"]) {
+    const item = document.createElement("li");
+    item.textContent = name;
+    list.append(item);
+  }
+&lt;/script&gt;</code></pre>
+</details>
+</section>
+<!-- summary -->
+<section>
+<h2>SUMMARY</h2>
+<ul>
+<li><code>querySelector</code> returns <code>null</code> for no match, so check before you use it.</li>
+<li>A script can only see what has already been parsed. Use <code>defer</code>.</li>
+<li><code>innerHTML</code> on user input is cross-site scripting.</li>
+<li><code>querySelectorAll</code> is a snapshot.</li>
+</ul>
+</section>
+</main>
+<nav class="bottom" aria-label="Modules"><span></span><a href="02-events.html">Next: Events</a></nav>
+</body>
+</html>

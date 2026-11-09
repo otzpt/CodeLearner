@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 3: Grid | CSS course</title>
+<link rel="stylesheet" href="course.css">
+</head>
+<body>
+<nav class="top" aria-label="Course"><a href="index.html">CSS course</a><span>Module 3 of 5</span></nav>
+<main>
+<h1>Module 3: Grid</h1>
+
+<section>
+<h2>PART 1: rows and columns</h2>
+<p>Flexbox arranges along one line. Grid sets out rows and columns together. The <code>fr</code> unit is a share of the free space:</p>
+<figure class="demo">
+<pre><code>&lt;style&gt;
+  .grid { display: grid; grid-template-columns: 1fr 2fr; gap: 8px; }
+  .grid div { background: khaki; padding: 8px; }
+&lt;/style&gt;
+&lt;div class="grid"&gt;&lt;div&gt;1fr&lt;/div&gt;&lt;div&gt;2fr&lt;/div&gt;&lt;div&gt;1fr&lt;/div&gt;&lt;div&gt;2fr&lt;/div&gt;&lt;/div&gt;</code></pre>
+<iframe title="1fr 2fr: the second column is twice as wide as the first." height="110" srcdoc="&lt;style&gt;
+  .grid { display: grid; grid-template-columns: 1fr 2fr; gap: 8px; }
+  .grid div { background: khaki; padding: 8px; }
+&lt;/style&gt;
+&lt;div class=&quot;grid&quot;&gt;&lt;div&gt;1fr&lt;/div&gt;&lt;div&gt;2fr&lt;/div&gt;&lt;div&gt;1fr&lt;/div&gt;&lt;div&gt;2fr&lt;/div&gt;&lt;/div&gt;"></iframe>
+<figcaption><code>1fr 2fr</code>: the second column is twice as wide as the first.</figcaption>
+</figure>
+</section>
+<section>
+<h2>PART 2: responsive with no media query</h2>
+<p><code>repeat(auto-fit, minmax(120px, 1fr))</code> means as many columns as fit, none under 120 pixels. The same CSS is shown at two widths:</p>
+<figure class="demo">
+<pre><code>&lt;style&gt;
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
+  .grid div { background: khaki; padding: 8px; }
+&lt;/style&gt;
+&lt;div class="grid"&gt;&lt;div&gt;1&lt;/div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;</code></pre>
+<iframe title="The same rule makes one column at 180 pixels. At 560 there is room for four, and the two items stretch across all of it." style="width: 180px" height="120" srcdoc="&lt;style&gt;
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
+  .grid div { background: khaki; padding: 8px; }
+&lt;/style&gt;
+&lt;div class=&quot;grid&quot;&gt;&lt;div&gt;1&lt;/div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;"></iframe>
+<iframe title="The same rule makes one column at 180 pixels. At 560 there is room for four, and the two items stretch across all of it." style="width: 560px" height="120" srcdoc="&lt;style&gt;
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
+  .grid div { background: khaki; padding: 8px; }
+&lt;/style&gt;
+&lt;div class=&quot;grid&quot;&gt;&lt;div&gt;1&lt;/div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;"></iframe>
+<figcaption>The same rule makes one column at 180 pixels. At 560 there is room for four, and the two items stretch across all of it.</figcaption>
+</figure>
+<p>With two items and room for four columns, <code>auto-fit</code> stretches the two across the whole width. Change it to <code>auto-fill</code> and the empty columns keep their space, so the items stay narrow.</p>
+<figure class="demo">
+<pre><code>&lt;style&gt;
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
+  .grid div { background: khaki; padding: 8px; }
+&lt;/style&gt;
+&lt;div class="grid"&gt;&lt;div&gt;1&lt;/div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;</code></pre>
+<iframe title="auto-fill keeps the empty tracks." height="100" srcdoc="&lt;style&gt;
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; }
+  .grid div { background: khaki; padding: 8px; }
+&lt;/style&gt;
+&lt;div class=&quot;grid&quot;&gt;&lt;div&gt;1&lt;/div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;"></iframe>
+<figcaption><code>auto-fill</code> keeps the empty tracks.</figcaption>
+</figure>
+</section>
+<section>
+<h2>PART 3: placing items</h2>
+<p>Lines are numbered from 1, and negative numbers count from the end, so <code>1 / -1</code> spans the whole row. Named areas read like a picture of the layout:</p>
+<figure class="demo">
+<pre><code>&lt;style&gt;
+  .page { display: grid; grid-template-columns: 100px 1fr; gap: 8px;
+          grid-template-areas: "head head" "side main"; }
+  .page div { background: khaki; padding: 8px; }
+  .a { grid-area: head; } .b { grid-area: side; } .c { grid-area: main; }
+&lt;/style&gt;
+&lt;div class="page"&gt;&lt;div class="a"&gt;head&lt;/div&gt;&lt;div class="b"&gt;side&lt;/div&gt;&lt;div class="c"&gt;main&lt;/div&gt;&lt;/div&gt;</code></pre>
+<iframe title="The strings in grid-template-areas are the layout." height="170" srcdoc="&lt;style&gt;
+  .page { display: grid; grid-template-columns: 100px 1fr; gap: 8px;
+          grid-template-areas: &quot;head head&quot; &quot;side main&quot;; }
+  .page div { background: khaki; padding: 8px; }
+  .a { grid-area: head; } .b { grid-area: side; } .c { grid-area: main; }
+&lt;/style&gt;
+&lt;div class=&quot;page&quot;&gt;&lt;div class=&quot;a&quot;&gt;head&lt;/div&gt;&lt;div class=&quot;b&quot;&gt;side&lt;/div&gt;&lt;div class=&quot;c&quot;&gt;main&lt;/div&gt;&lt;/div&gt;"></iframe>
+<figcaption>The strings in <code>grid-template-areas</code> are the layout.</figcaption>
+</figure>
+</section>
+<section>
+<h2>PART 4: 1fr can be forced wider than you asked</h2>
+<p>A <code>1fr</code> column will not go narrower than its content, the same rule as Flexbox. A long line of code is enough:</p>
+<figure class="demo">
+<pre><code>&lt;style&gt;
+  .grid { display: grid; gap: 8px; width: 300px; outline: 2px solid crimson; margin-bottom: 16px; }
+  .plain { grid-template-columns: 100px 1fr; }
+  .fixed { grid-template-columns: 100px minmax(0, 1fr); }
+  pre { margin: 0; background: khaki; }
+  .fixed pre { overflow: auto; }
+&lt;/style&gt;
+&lt;div class="grid plain"&gt;&lt;div&gt;side&lt;/div&gt;&lt;pre&gt;const aVeryLongLineOfCodeThatDoesNotWrap = 1;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class="grid fixed"&gt;&lt;div&gt;side&lt;/div&gt;&lt;pre&gt;const aVeryLongLineOfCodeThatDoesNotWrap = 1;&lt;/pre&gt;&lt;/div&gt;</code></pre>
+<iframe title="The first grid is wider than the red outline. In the second, minmax(0, 1fr) lets the column shrink and the code scrolls instead." height="170" srcdoc="&lt;style&gt;
+  .grid { display: grid; gap: 8px; width: 300px; outline: 2px solid crimson; margin-bottom: 16px; }
+  .plain { grid-template-columns: 100px 1fr; }
+  .fixed { grid-template-columns: 100px minmax(0, 1fr); }
+  pre { margin: 0; background: khaki; }
+  .fixed pre { overflow: auto; }
+&lt;/style&gt;
+&lt;div class=&quot;grid plain&quot;&gt;&lt;div&gt;side&lt;/div&gt;&lt;pre&gt;const aVeryLongLineOfCodeThatDoesNotWrap = 1;&lt;/pre&gt;&lt;/div&gt;
+&lt;div class=&quot;grid fixed&quot;&gt;&lt;div&gt;side&lt;/div&gt;&lt;pre&gt;const aVeryLongLineOfCodeThatDoesNotWrap = 1;&lt;/pre&gt;&lt;/div&gt;"></iframe>
+<figcaption>The first grid is wider than the red outline. In the second, <code>minmax(0, 1fr)</code> lets the column shrink and the code scrolls instead.</figcaption>
+</figure>
+</section>
+<!-- exercise 3 -->
+<section id="exercise">
+<h2>EXERCISE 3</h2>
+<div class="question">
+<p><code>grid-template-columns: 1fr 1fr 2fr</code> on a 400px grid with no gap. How wide is the last column?</p>
+<details><summary>Answer</summary><p><strong>200px</strong> It gets two of the four shares.</p></details>
+</div>
+<div class="question">
+<p>In <code>grid-column: 1 / -1</code>, what does <code>-1</code> mean?</p>
+<details><summary>Answer</summary><p><strong>The last line.</strong> So the item spans every column.</p></details>
+</div>
+<div class="question">
+<p>With few items, which keeps empty columns, auto-fit or auto-fill?</p>
+<details><summary>Answer</summary><p><strong>auto-fill</strong> <code>auto-fit</code> collapses them.</p></details>
+</div>
+<h3>Challenge</h3>
+<p>Build a photo gallery of six boxes with Grid, using no media query.</p>
+<p><strong>Input:</strong> nothing to type. Resize the window to test it.</p>
+<p><strong>The result must be:</strong></p>
+<ul>
+<li>Boxes are never narrower than 150 pixels.</li>
+<li>The number of columns changes as the window is resized.</li>
+<li>The first box spans the whole first row.</li>
+</ul>
+<details><summary>Example solution (one way of getting there)</summary>
+<pre><code>&lt;style&gt;
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 8px;
+  }
+  .gallery div { height: 100px; background: khaki; }
+  .gallery .wide { grid-column: 1 / -1; }
+&lt;/style&gt;
+&lt;div class="gallery"&gt;
+  &lt;div class="wide"&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;&lt;div&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+</details>
+</section>
+<!-- summary -->
+<section>
+<h2>SUMMARY</h2>
+<ul>
+<li><code>fr</code> is a share of the free space.</li>
+<li><code>repeat(auto-fit, minmax(...))</code> adapts with no media query.</li>
+<li><code>grid-template-areas</code> draws the layout in text.</li>
+<li><code>minmax(0, 1fr)</code> stops content forcing a column wider.</li>
+</ul>
+</section>
+</main>
+<nav class="bottom" aria-label="Modules"><a href="02-flexbox.html">Previous: Flexbox</a><a href="04-responsive.html">Next: Responsive design</a></nav>
+</body>
+</html>

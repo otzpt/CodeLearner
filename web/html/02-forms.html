@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 2: Forms | HTML course</title>
+<link rel="stylesheet" href="course.css">
+</head>
+<body>
+<nav class="top" aria-label="Course"><a href="index.html">HTML course</a><span>Module 2 of 5</span></nav>
+<main>
+<h1>Module 2: Forms</h1>
+
+<section>
+<h2>PART 1: a label is more than text next to a box</h2>
+<p>Click the words next to each checkbox:</p>
+<figure class="demo">
+<pre><code>&lt;p&gt;&lt;input type="checkbox" id="news"&gt; &lt;label for="news"&gt;With a label&lt;/label&gt;&lt;/p&gt;
+&lt;p&gt;&lt;input type="checkbox"&gt; Without a label, plain text&lt;/p&gt;</code></pre>
+<iframe title="Clicking the first label ticks its box. Clicking the second text does nothing." height="110" srcdoc="&lt;p&gt;&lt;input type=&quot;checkbox&quot; id=&quot;news&quot;&gt; &lt;label for=&quot;news&quot;&gt;With a label&lt;/label&gt;&lt;/p&gt;
+&lt;p&gt;&lt;input type=&quot;checkbox&quot;&gt; Without a label, plain text&lt;/p&gt;"></iframe>
+<figcaption>Clicking the first label ticks its box. Clicking the second text does nothing.</figcaption>
+</figure>
+<p>The <code>for</code> attribute has to equal the input's <code>id</code>. A screen reader also reads the label when the field gets focus. Without one, the field is announced with no name.</p>
+</section>
+<section>
+<h2>PART 2: a field with no name is not sent</h2>
+<p>Submit this form. It opens a new tab, and the address bar shows what was sent.</p>
+<figure class="demo">
+<pre><code>&lt;form action="demos/sent.html" method="get" target="_blank"&gt;
+  &lt;p&gt;&lt;label&gt;Email &lt;input name="email" value="ana@example.com"&gt;&lt;/label&gt;&lt;/p&gt;
+  &lt;p&gt;&lt;label&gt;Password &lt;input name="password" type="password" value="abc123"&gt;&lt;/label&gt;&lt;/p&gt;
+  &lt;p&gt;&lt;label&gt;Nickname &lt;input value="no name attribute"&gt;&lt;/label&gt;&lt;/p&gt;
+  &lt;button&gt;Send&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+<iframe title="Three fields are filled in. Only two appear in the address bar, and the password is one of them." height="170" srcdoc="&lt;form action=&quot;demos/sent.html&quot; method=&quot;get&quot; target=&quot;_blank&quot;&gt;
+  &lt;p&gt;&lt;label&gt;Email &lt;input name=&quot;email&quot; value=&quot;ana@example.com&quot;&gt;&lt;/label&gt;&lt;/p&gt;
+  &lt;p&gt;&lt;label&gt;Password &lt;input name=&quot;password&quot; type=&quot;password&quot; value=&quot;abc123&quot;&gt;&lt;/label&gt;&lt;/p&gt;
+  &lt;p&gt;&lt;label&gt;Nickname &lt;input value=&quot;no name attribute&quot;&gt;&lt;/label&gt;&lt;/p&gt;
+  &lt;button&gt;Send&lt;/button&gt;
+&lt;/form&gt;"></iframe>
+<figcaption>Three fields are filled in. Only two appear in the address bar, and the password is one of them.</figcaption>
+</figure>
+<p>That shows two traps at once. The field with no <code>name</code> vanished without any error. And <code>method="get"</code> put the password in the URL, where it stays in the browser history. Anything sensitive uses <code>method="post"</code>, and that still needs HTTPS.</p>
+</section>
+<section>
+<h2>PART 3: validation in the browser is a convenience</h2>
+<p>Press Submit with the field empty, then with <code>abc</code> in it:</p>
+<figure class="demo">
+<pre><code>&lt;form action="demos/sent.html" target="_blank"&gt;
+  &lt;p&gt;&lt;label&gt;Email &lt;input name="email" type="email" required&gt;&lt;/label&gt;&lt;/p&gt;
+  &lt;button&gt;Submit&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+<iframe title="The browser refuses until the field holds an email address." height="130" srcdoc="&lt;form action=&quot;demos/sent.html&quot; target=&quot;_blank&quot;&gt;
+  &lt;p&gt;&lt;label&gt;Email &lt;input name=&quot;email&quot; type=&quot;email&quot; required&gt;&lt;/label&gt;&lt;/p&gt;
+  &lt;button&gt;Submit&lt;/button&gt;
+&lt;/form&gt;"></iframe>
+<figcaption>The browser refuses until the field holds an email address.</figcaption>
+</figure>
+<p>Now the same form with one attribute added:</p>
+<figure class="demo">
+<pre><code>&lt;form action="demos/sent.html" target="_blank" novalidate&gt;
+  &lt;p&gt;&lt;label&gt;Email &lt;input name="email" type="email" required&gt;&lt;/label&gt;&lt;/p&gt;
+  &lt;button&gt;Submit&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+<iframe title="novalidate switches every check off. So can anyone editing the page in DevTools." height="130" srcdoc="&lt;form action=&quot;demos/sent.html&quot; target=&quot;_blank&quot; novalidate&gt;
+  &lt;p&gt;&lt;label&gt;Email &lt;input name=&quot;email&quot; type=&quot;email&quot; required&gt;&lt;/label&gt;&lt;/p&gt;
+  &lt;button&gt;Submit&lt;/button&gt;
+&lt;/form&gt;"></iframe>
+<figcaption><code>novalidate</code> switches every check off. So can anyone editing the page in DevTools.</figcaption>
+</figure>
+<p>Validation attributes help the person filling in the form. They protect nothing: a server has to check everything again.</p>
+</section>
+<section>
+<h2>PART 4: a button in a form submits it</h2>
+<p>Press each button:</p>
+<figure class="demo">
+<pre><code>&lt;form action="demos/sent.html" target="_blank"&gt;
+  &lt;button&gt;Show a hint&lt;/button&gt;
+  &lt;button type="button"&gt;Show a hint, safely&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+<iframe title="The first button submits the form and opens a tab, though nobody asked it to. The second does nothing." height="130" srcdoc="&lt;form action=&quot;demos/sent.html&quot; target=&quot;_blank&quot;&gt;
+  &lt;button&gt;Show a hint&lt;/button&gt;
+  &lt;button type=&quot;button&quot;&gt;Show a hint, safely&lt;/button&gt;
+&lt;/form&gt;"></iframe>
+<figcaption>The first button submits the form and opens a tab, though nobody asked it to. The second does nothing.</figcaption>
+</figure>
+<p>A <code>&lt;button&gt;</code> with no <code>type</code> inside a form is <code>type="submit"</code>. Write <code>type="button"</code> on every button that is not meant to send the form.</p>
+</section>
+<!-- exercise 2 -->
+<section id="exercise">
+<h2>EXERCISE 2</h2>
+<div class="question">
+<p>Which attribute on an input decides whether its value is sent at all?</p>
+<details><summary>Answer</summary><p><strong>name</strong> No name, no entry in what is sent.</p></details>
+</div>
+<div class="question">
+<p>Is <code>required</code> enough to guarantee a server receives a value?</p>
+<details><summary>Answer</summary><p><strong>No.</strong> It runs in the browser, and <code>novalidate</code> or DevTools removes it.</p></details>
+</div>
+<div class="question">
+<p>What type does a <code>&lt;button&gt;</code> inside a form have when none is written?</p>
+<details><summary>Answer</summary><p><strong>submit</strong> So it sends the form when pressed.</p></details>
+</div>
+<h3>Challenge</h3>
+<p>Write <code>signup.html</code> with a sign-up form. Use <code>action=""</code> and <code>method="get"</code> so the result shows in your own address bar.</p>
+<p><strong>Input:</strong> type an email and an age into your form, then submit.</p>
+<p><strong>The result must be:</strong></p>
+<ul>
+<li>Clicking the words <code>Email</code> or <code>Age</code> puts the cursor in that field.</li>
+<li>Submitting with the email empty is refused by the browser.</li>
+<li>An age of <code>200</code> is refused. The limit is 120.</li>
+<li>After a valid submit the address bar contains <code>email=</code> and <code>age=</code>.</li>
+</ul>
+<details><summary>Example solution (one way of getting there)</summary>
+<pre><code>&lt;!doctype html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="utf-8"&gt;
+  &lt;title&gt;Sign up&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;form action="" method="get"&gt;
+    &lt;p&gt;&lt;label for="email"&gt;Email&lt;/label&gt;
+       &lt;input id="email" name="email" type="email" required&gt;&lt;/p&gt;
+    &lt;p&gt;&lt;label for="age"&gt;Age&lt;/label&gt;
+       &lt;input id="age" name="age" type="number" min="0" max="120"&gt;&lt;/p&gt;
+    &lt;button&gt;Sign up&lt;/button&gt;
+  &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</details>
+</section>
+<!-- summary -->
+<section>
+<h2>SUMMARY</h2>
+<ul>
+<li><code>&lt;label for&gt;</code> makes the text clickable and names the field for screen readers.</li>
+<li>A field with no <code>name</code> is not sent, and nothing warns you.</li>
+<li><code>method="get"</code> puts values in the URL. Never use it for passwords.</li>
+<li>Browser validation is a convenience. The server decides.</li>
+<li>A button in a form submits it unless it says <code>type="button"</code>.</li>
+</ul>
+</section>
+</main>
+<nav class="bottom" aria-label="Modules"><a href="01-structure.html">Previous: Structure and meaning</a><a href="03-accessibility.html">Next: Accessibility</a></nav>
+</body>
+</html>

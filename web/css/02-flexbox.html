@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 2: Flexbox | CSS course</title>
+<link rel="stylesheet" href="course.css">
+</head>
+<body>
+<nav class="top" aria-label="Course"><a href="index.html">CSS course</a><span>Module 2 of 5</span></nav>
+<main>
+<h1>Module 2: Flexbox</h1>
+
+<section>
+<h2>PART 1: two axes, and they swap</h2>
+<p><code>justify-content</code> works along the main axis and <code>align-items</code> across it. Which is which depends on the direction, and that is the mistake everyone makes first:</p>
+<figure class="demo">
+<pre><code>&lt;style&gt;
+  .box { display: flex; justify-content: center; height: 80px; gap: 4px; background: khaki; margin-bottom: 8px; }
+  .column { flex-direction: column; }
+  .box div { background: steelblue; color: white; padding: 0 8px; }
+&lt;/style&gt;
+&lt;div class="box"&gt;&lt;div&gt;1&lt;/div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;
+&lt;div class="box column"&gt;&lt;div&gt;1&lt;/div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;</code></pre>
+<iframe title="The same justify-content: center centres left to right in a row, and top to bottom in a column." height="230" srcdoc="&lt;style&gt;
+  .box { display: flex; justify-content: center; height: 80px; gap: 4px; background: khaki; margin-bottom: 8px; }
+  .column { flex-direction: column; }
+  .box div { background: steelblue; color: white; padding: 0 8px; }
+&lt;/style&gt;
+&lt;div class=&quot;box&quot;&gt;&lt;div&gt;1&lt;/div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;box column&quot;&gt;&lt;div&gt;1&lt;/div&gt;&lt;div&gt;2&lt;/div&gt;&lt;/div&gt;"></iframe>
+<figcaption>The same <code>justify-content: center</code> centres left to right in a row, and top to bottom in a column.</figcaption>
+</figure>
+</section>
+<section>
+<h2>PART 2: sharing out the space</h2>
+<p><code>flex: 1</code> means take an equal share of what is left. <code>gap</code> puts space between items without any margin on the outer edges. <code>margin-left: auto</code> on one item pushes it away from the others:</p>
+<figure class="demo">
+<pre><code>&lt;style&gt;
+  .row { display: flex; gap: 8px; margin-bottom: 8px; }
+  .row div { background: khaki; padding: 4px 8px; }
+  .share div { flex: 1; }
+  .push { margin-left: auto; }
+&lt;/style&gt;
+&lt;div class="row share"&gt;&lt;div&gt;a&lt;/div&gt;&lt;div&gt;b&lt;/div&gt;&lt;div&gt;c&lt;/div&gt;&lt;/div&gt;
+&lt;div class="row"&gt;&lt;div&gt;Logo&lt;/div&gt;&lt;div&gt;Menu&lt;/div&gt;&lt;div class="push"&gt;Sign in&lt;/div&gt;&lt;/div&gt;</code></pre>
+<iframe title="The first row shares the width. In the second, margin-left: auto pushes the last item to the end." height="120" srcdoc="&lt;style&gt;
+  .row { display: flex; gap: 8px; margin-bottom: 8px; }
+  .row div { background: khaki; padding: 4px 8px; }
+  .share div { flex: 1; }
+  .push { margin-left: auto; }
+&lt;/style&gt;
+&lt;div class=&quot;row share&quot;&gt;&lt;div&gt;a&lt;/div&gt;&lt;div&gt;b&lt;/div&gt;&lt;div&gt;c&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;row&quot;&gt;&lt;div&gt;Logo&lt;/div&gt;&lt;div&gt;Menu&lt;/div&gt;&lt;div class=&quot;push&quot;&gt;Sign in&lt;/div&gt;&lt;/div&gt;"></iframe>
+<figcaption>The first row shares the width. In the second, <code>margin-left: auto</code> pushes the last item to the end.</figcaption>
+</figure>
+</section>
+<section>
+<h2>PART 3: the item that refuses to shrink</h2>
+<p>A flex item will not shrink below the size of its content, unless you say so. One long word is enough to break a layout. The red outline is the container:</p>
+<figure class="demo">
+<pre><code>&lt;style&gt;
+  .row { display: flex; gap: 8px; width: 300px; outline: 2px solid crimson; margin-bottom: 16px; }
+  .row div { flex: 1; background: khaki; }
+  .fixed div { min-width: 0; overflow-wrap: anywhere; }
+&lt;/style&gt;
+&lt;div class="row"&gt;&lt;div&gt;short&lt;/div&gt;&lt;div&gt;averyveryveryveryveryveryverylongwordwithnobreaks&lt;/div&gt;&lt;/div&gt;
+&lt;div class="row fixed"&gt;&lt;div&gt;short&lt;/div&gt;&lt;div&gt;averyveryveryveryveryveryverylongwordwithnobreaks&lt;/div&gt;&lt;/div&gt;</code></pre>
+<iframe title="The first row overflows its container. The second has min-width: 0, and the word wraps." height="150" srcdoc="&lt;style&gt;
+  .row { display: flex; gap: 8px; width: 300px; outline: 2px solid crimson; margin-bottom: 16px; }
+  .row div { flex: 1; background: khaki; }
+  .fixed div { min-width: 0; overflow-wrap: anywhere; }
+&lt;/style&gt;
+&lt;div class=&quot;row&quot;&gt;&lt;div&gt;short&lt;/div&gt;&lt;div&gt;averyveryveryveryveryveryverylongwordwithnobreaks&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;row fixed&quot;&gt;&lt;div&gt;short&lt;/div&gt;&lt;div&gt;averyveryveryveryveryveryverylongwordwithnobreaks&lt;/div&gt;&lt;/div&gt;"></iframe>
+<figcaption>The first row overflows its container. The second has <code>min-width: 0</code>, and the word wraps.</figcaption>
+</figure>
+<p>The default is <code>min-width: auto</code>, which for a flex item means no smaller than its content. This is the usual cause of a page that scrolls sideways for no visible reason.</p>
+</section>
+<section>
+<h2>PART 4: wrapping</h2>
+<p>Flex items stay on one line and squeeze, unless you allow wrapping:</p>
+<figure class="demo">
+<pre><code>&lt;style&gt;
+  .row { display: flex; gap: 4px; width: 300px; outline: 2px solid crimson; margin-bottom: 16px; }
+  .row div { width: 80px; background: khaki; }
+  .wrap { flex-wrap: wrap; }
+&lt;/style&gt;
+&lt;div class="row"&gt;&lt;div&gt;1&lt;/div&gt;&lt;div&gt;2&lt;/div&gt;&lt;div&gt;3&lt;/div&gt;&lt;div&gt;4&lt;/div&gt;&lt;div&gt;5&lt;/div&gt;&lt;div&gt;6&lt;/div&gt;&lt;/div&gt;
+&lt;div class="row wrap"&gt;&lt;div&gt;1&lt;/div&gt;&lt;div&gt;2&lt;/div&gt;&lt;div&gt;3&lt;/div&gt;&lt;div&gt;4&lt;/div&gt;&lt;div&gt;5&lt;/div&gt;&lt;div&gt;6&lt;/div&gt;&lt;/div&gt;</code></pre>
+<iframe title="Both rows have the same six items, each 80 pixels wide, in a 300 pixel container." height="150" srcdoc="&lt;style&gt;
+  .row { display: flex; gap: 4px; width: 300px; outline: 2px solid crimson; margin-bottom: 16px; }
+  .row div { width: 80px; background: khaki; }
+  .wrap { flex-wrap: wrap; }
+&lt;/style&gt;
+&lt;div class=&quot;row&quot;&gt;&lt;div&gt;1&lt;/div&gt;&lt;div&gt;2&lt;/div&gt;&lt;div&gt;3&lt;/div&gt;&lt;div&gt;4&lt;/div&gt;&lt;div&gt;5&lt;/div&gt;&lt;div&gt;6&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;row wrap&quot;&gt;&lt;div&gt;1&lt;/div&gt;&lt;div&gt;2&lt;/div&gt;&lt;div&gt;3&lt;/div&gt;&lt;div&gt;4&lt;/div&gt;&lt;div&gt;5&lt;/div&gt;&lt;div&gt;6&lt;/div&gt;&lt;/div&gt;"></iframe>
+<figcaption>Both rows have the same six items, each 80 pixels wide, in a 300 pixel container.</figcaption>
+</figure>
+</section>
+<!-- exercise 2 -->
+<section id="exercise">
+<h2>EXERCISE 2</h2>
+<div class="question">
+<p>With <code>flex-direction: column</code>, which property centres items horizontally?</p>
+<details><summary>Answer</summary><p><strong>align-items</strong> The axes swap with the direction.</p></details>
+</div>
+<div class="question">
+<p>What does <code>min-width</code> default to on a flex item?</p>
+<details><summary>Answer</summary><p><strong>auto</strong> It will not go below its content's size.</p></details>
+</div>
+<div class="question">
+<p>Which property adds space between items but not on the outer edges?</p>
+<details><summary>Answer</summary><p><strong>gap</strong> No margin arithmetic needed.</p></details>
+</div>
+<h3>Challenge</h3>
+<p>Build a navigation bar using Flexbox.</p>
+<p><strong>Input:</strong> nothing to type. Make the window narrower and wider to test it.</p>
+<p><strong>The result must be:</strong></p>
+<ul>
+<li>A logo on the left, two links after it, and a sign-in link at the far right.</li>
+<li>There is space between the items but none before the first.</li>
+<li>The logo is vertically centred against the links.</li>
+</ul>
+<details><summary>Example solution (one way of getting there)</summary>
+<pre><code>&lt;style&gt;
+  nav { display: flex; align-items: center; gap: 16px; }
+  .logo { font-size: 2rem; }
+  .signin { margin-left: auto; }
+&lt;/style&gt;
+&lt;nav&gt;
+  &lt;span class="logo"&gt;Logo&lt;/span&gt;
+  &lt;a href="#a"&gt;Home&lt;/a&gt;
+  &lt;a href="#b"&gt;About&lt;/a&gt;
+  &lt;a class="signin" href="#c"&gt;Sign in&lt;/a&gt;
+&lt;/nav&gt;</code></pre>
+</details>
+</section>
+<!-- summary -->
+<section>
+<h2>SUMMARY</h2>
+<ul>
+<li><code>justify-content</code> follows the main axis, and <code>flex-direction</code> decides which axis that is.</li>
+<li><code>flex: 1</code> shares the remaining space.</li>
+<li>Items refuse to shrink below their content until you set <code>min-width: 0</code>.</li>
+<li><code>flex-wrap: wrap</code> lets items move to a new line.</li>
+</ul>
+</section>
+</main>
+<nav class="bottom" aria-label="Modules"><a href="01-layout.html">Previous: The box and normal flow</a><a href="03-grid.html">Next: Grid</a></nav>
+</body>
+</html>

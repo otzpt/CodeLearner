@@ -39,17 +39,22 @@ install options are under [Installing](#installing)):
    [9]  Java
    [10]  C#
 
+   -- WEB --
+   [11]  HTML
+   [12]  CSS
+   [13]  Web JavaScript
+
    -- SECURITY --
-   [11]  Security
+   [14]  Security
 
    -- GUI --
-   [12]  GUI (GTK)
+   [15]  GUI (GTK)
 
    -- TOOLING --
-   [13]  Git
+   [16]  Git
 
    -- REFERENCE --
-   [14]  Libraries
+   [17]  Libraries
 
    [u]  Check for updates
    [0]  Exit
@@ -76,6 +81,9 @@ for C and Python libraries, each with an example that runs on your machine.
 | Languages | JavaScript | 14: console.log() through modules and Node's own fs/process stdlib | [`javascript/`](javascript/) |
 | Languages | Java | 13: System.out through the Collections Framework, generics, and concurrency | [`java/`](java/) |
 | Languages | C# | 14: top-level statements through LINQ, async/await, and delegates/events | [`csharp/`](csharp/) |
+| Web | HTML | 5, as pages in your browser: structure, forms, accessibility, metadata, practical pages | [`web/html/`](web/html/) |
+| Web | CSS | 5, as pages in your browser: the box and normal flow, Flexbox, Grid, responsive design, modern CSS and the cascade | [`web/css/`](web/css/) |
+| Web | Web JavaScript | 5, as pages in your browser: the DOM, events, forms, `fetch`, state and storage | [`web/js/`](web/js/) |
 | Security | Security | 2 so far: a topic course in Python. HTTP requests, what a server's headers reveal, the urllib 4xx/5xx-raises trap, and why plain HTTP is readable on the wire | [`security/`](security/) |
 | GUI | GUI (GTK) | 1: your first window | [`gui/`](gui/) |
 | Tooling | Git | 10: what is git through GitHub Actions | [`git/`](git/) |
@@ -90,7 +98,7 @@ table (`MODULES` in `main.c`/`main.py`/`main.js`, or the equivalent),
 nothing else changes. GUI still has one module, filed under BASIC, with
 INTERMEDIATE and ADVANCED shown empty until it has enough content to split.
 
-Thirteen courses are covered. GUI, Assembly, Git and Security are not languages
+Sixteen courses are covered. GUI, Assembly, Git and Security are not languages
 in the same sense the others are, but all of them get the same treatment as one:
 their own directory, their own binary or script, their own entry in the
 launcher, rather than being folded into `c/`'s module list. Assembly goes
@@ -776,6 +784,18 @@ Linux PC: the `asm` blocks are compiled into the course, and the NASM file in
 each course's `asm/` folder is built with `make asm-demo` and its output shown
 in the lesson.
 
+## The web courses
+
+HTML, CSS and browser JavaScript are the one exception to a course being a
+terminal program, because what they teach only exists in a browser. Each is a
+folder of static pages under [`web/`](web/). The launcher opens the first page
+in your default browser and nothing needs building or installing.
+
+The HTML and CSS courses contain no JavaScript at all. The browser JavaScript
+course assumes the first modules of the terminal JavaScript course, and leaves
+Node behind for the DOM, events, forms, `fetch` and storage. Every demo runs in
+the page, next to its own source. See [`web/README.md`](web/README.md).
+
 ## The Libraries reference
 
 The launcher lists **Libraries** under **REFERENCE**, after the courses. It is a
@@ -1002,6 +1022,8 @@ assembly/                   x86-64 assembly course (NASM, Intel syntax): src/ ha
 git/                        Bash course: src/ has main.sh, ui.sh, lessons_*.sh
 security/                   Python topic course: src/ has main.py, ui.py,
                              lessons_basics.py (module 1), lessons_wire.py (module 2)
+web/                        HTML, CSS and browser JavaScript courses as static pages;
+                             open(.bat) starts one, check-course.js checks them
 assets/                     the desktop entry and icon the Linux packages install
 rust/                       12 modules; check-course.py, check-embedded.py and
                              run-embedded.py (the Pico's Thumb code, in an emulator)

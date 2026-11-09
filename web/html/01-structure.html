@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 1: Structure and meaning | HTML course</title>
+<link rel="stylesheet" href="course.css">
+</head>
+<body>
+<nav class="top" aria-label="Course"><a href="index.html">HTML course</a><span>Module 1 of 5</span></nav>
+<main>
+<h1>Module 1: Structure and meaning</h1>
+
+<section>
+<h2>PART 1: the skeleton, and the line that picks a mode</h2>
+<p>Every page starts the same way:</p>
+<pre><code>&lt;!doctype html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="utf-8"&gt;
+  &lt;title&gt;My page&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;p&gt;Hello.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<p>The first line looks like decoration. It selects how the page is laid out. Without it the browser switches to <em>quirks mode</em>, which copies the bugs of browsers from the 1990s on purpose so that very old pages keep working.</p>
+<p>These two frames are the same page. Only the first line differs.</p>
+<pre data-file="demos/no-doctype.html"><code>&lt;body style="font-size: 28px"&gt;
+&lt;p&gt;Paragraph text&lt;/p&gt;
+&lt;table&gt;&lt;tr&gt;&lt;td&gt;Table text&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</code></pre>
+<figure class="demo">
+<iframe title="With &lt;!doctype html&gt;: the table text is as large as the paragraph." height="130" src="demos/with-doctype.html"></iframe>
+<figcaption>With <code>&lt;!doctype html&gt;</code>: the table text is as large as the paragraph.</figcaption>
+</figure>
+<figure class="demo">
+<iframe title="Without it: the table ignores the font size set on the body. No error is shown." height="130" src="demos/no-doctype.html"></iframe>
+<figcaption>Without it: the table ignores the font size set on the body. No error is shown.</figcaption>
+</figure>
+</section>
+<section>
+<h2>PART 2: HTML repairs mistakes instead of reporting them</h2>
+<p>A C compiler refuses a program it cannot parse. An HTML parser never refuses anything: the specification says exactly how to repair every mistake, and the page renders anyway. What you get is not always what you wrote.</p>
+<p>A paragraph can only hold inline content, so a <code>&lt;div&gt;</code> inside one cannot exist. The red outline below marks every real paragraph:</p>
+<figure class="demo">
+<pre><code>&lt;style&gt;p { outline: 2px solid crimson; }&lt;/style&gt;
+&lt;p&gt;First line
+&lt;div&gt;Is this div inside the paragraph?&lt;/div&gt;
+Last line&lt;/p&gt;</code></pre>
+<iframe title="Only the first line is outlined. The &lt;/p&gt; at the end has no paragraph left to close, so it creates a new empty one." height="170" srcdoc="&lt;style&gt;p { outline: 2px solid crimson; }&lt;/style&gt;
+&lt;p&gt;First line
+&lt;div&gt;Is this div inside the paragraph?&lt;/div&gt;
+Last line&lt;/p&gt;"></iframe>
+<figcaption>Only the first line is outlined. The <code>&lt;/p&gt;</code> at the end has no paragraph left to close, so it creates a new empty one.</figcaption>
+</figure>
+<p>To see the tree the browser really built, right-click the frame and choose Inspect. Reading that tree, rather than your own source, is how you debug HTML.</p>
+</section>
+<section>
+<h2>PART 3: elements say what something is</h2>
+<p>These elements describe the parts of a page: <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;aside&gt;</code>, <code>&lt;footer&gt;</code>.</p>
+<pre><code>&lt;body&gt;
+  &lt;header&gt;
+    &lt;h1&gt;Site name&lt;/h1&gt;
+    &lt;nav&gt;&lt;a href="/"&gt;Home&lt;/a&gt; &lt;a href="/about"&gt;About&lt;/a&gt;&lt;/nav&gt;
+  &lt;/header&gt;
+  &lt;main&gt;
+    &lt;article&gt;
+      &lt;h2&gt;A post&lt;/h2&gt;
+      &lt;p&gt;The text of the post.&lt;/p&gt;
+    &lt;/article&gt;
+  &lt;/main&gt;
+  &lt;footer&gt;Contact details&lt;/footer&gt;
+&lt;/body&gt;</code></pre>
+<p>On screen they look like nothing in particular:</p>
+<figure class="demo">
+<pre><code>&lt;main&gt;This line is in a main element.&lt;/main&gt;
+&lt;div&gt;This line is in a div.&lt;/div&gt;</code></pre>
+<iframe title="A &lt;main&gt; and a &lt;div&gt; render the same way. The difference is what they tell software." height="110" srcdoc="&lt;main&gt;This line is in a main element.&lt;/main&gt;
+&lt;div&gt;This line is in a div.&lt;/div&gt;"></iframe>
+<figcaption>A <code>&lt;main&gt;</code> and a <code>&lt;div&gt;</code> render the same way. The difference is what they tell software.</figcaption>
+</figure>
+<p>Open DevTools on that frame and look at the Accessibility pane: <code>main</code> is a landmark, and a screen reader can jump straight to it. The <code>div</code> is generic and has nothing to jump to.</p>
+<ul>
+<li>One visible <code>&lt;main&gt;</code> per page.</li>
+<li>Pick a heading level by its place in the outline, not by how big it looks. Size is CSS's job.</li>
+<li><code>&lt;strong&gt;</code> means important and <code>&lt;em&gt;</code> means stressed. <code>&lt;b&gt;</code> and <code>&lt;i&gt;</code> only change the look.</li>
+<li>Use <code>&lt;div&gt;</code> when there is no meaning to express, only something to style.</li>
+</ul>
+</section>
+<!-- exercise 1 -->
+<section id="exercise">
+<h2>EXERCISE 1</h2>
+<div class="question">
+<p>You write a <code>&lt;div&gt;</code> inside a <code>&lt;p&gt;</code>. How many elements end up inside the paragraph?</p>
+<details><summary>Answer</summary><p><strong>None.</strong> The parser closes the paragraph when it reaches the div, as the red outline showed.</p></details>
+</div>
+<div class="question">
+<p>Which single line keeps a page out of quirks mode?</p>
+<details><summary>Answer</summary><p><strong><code>&lt;!doctype html&gt;</code></strong> It has to be first in the file.</p></details>
+</div>
+<div class="question">
+<p>An <code>&lt;h2&gt;</code> looks too big, so you change it to <code>&lt;h4&gt;</code>. Good idea?</p>
+<details><summary>Answer</summary><p><strong>No.</strong> The level describes the outline. Change the size with CSS.</p></details>
+</div>
+<h3>Challenge</h3>
+<p>Write a file called <code>about.html</code> and open it in your browser.</p>
+<p><strong>Input:</strong> nothing to type, the file is the program.</p>
+<p><strong>The result must be:</strong></p>
+<ul>
+<li>The browser tab says <code>About me</code>.</li>
+<li>The page shows, in order: a main heading, a paragraph, a second-level heading <code>Hobbies</code>, a paragraph, and a footer line.</li>
+<li>Inspect shows <code>header</code>, <code>main</code> and <code>footer</code> elements, and the <code>html</code> element has a <code>lang</code> attribute.</li>
+</ul>
+<details><summary>Example solution (one way of getting there)</summary>
+<pre><code>&lt;!doctype html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="utf-8"&gt;
+  &lt;title&gt;About me&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;header&gt;
+    &lt;h1&gt;Ana Silva&lt;/h1&gt;
+  &lt;/header&gt;
+  &lt;main&gt;
+    &lt;p&gt;I am learning HTML.&lt;/p&gt;
+    &lt;section&gt;
+      &lt;h2&gt;Hobbies&lt;/h2&gt;
+      &lt;p&gt;Chess and cycling.&lt;/p&gt;
+    &lt;/section&gt;
+  &lt;/main&gt;
+  &lt;footer&gt;Written by hand.&lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</details>
+</section>
+<!-- summary -->
+<section>
+<h2>SUMMARY</h2>
+<ul>
+<li><code>&lt;!doctype html&gt;</code> selects standards mode. Forget it and the layout rules change silently.</li>
+<li>HTML never reports an error. It repairs, and the repair may not be what you meant.</li>
+<li>Inspect shows the tree the browser built, which is the one that counts.</li>
+<li>Elements describe meaning. Their look belongs to CSS.</li>
+</ul>
+</section>
+</main>
+<nav class="bottom" aria-label="Modules"><span></span><a href="02-forms.html">Next: Forms</a></nav>
+</body>
+</html>

@@ -89,6 +89,7 @@ struct Language {
 #define CSHARP_BIN "..\\csharp\\run.bat"
 #define RUST_BIN   "..\\rust\\rust-course.exe"
 #define SEC_PATH   "..\\security\\src\\main.py"
+#define WEB_OPEN   "..\\web\\open.bat"
 #else
 #define C_BIN      "../c/c-course"
 #define CPP_BIN    "../cpp/cpp-course"
@@ -103,6 +104,7 @@ struct Language {
 #define MICROPY_PATH "../micropython/src/main.py"
 #define RUST_BIN   "../rust/rust-course"
 #define SEC_PATH   "../security/src/main.py"
+#define WEB_OPEN   "../web/open"
 #define LIBRARIES_BIN "../libraries/libraries"
 #endif
 
@@ -156,6 +158,11 @@ static const struct Language LANGUAGES[] = {
      * itself, so unlike Python/JavaScript there's no Windows-vs-Linux
      * split to make explicit here -- the run/run.bat wrapper covers it. */
     { "C#",         CSHARP_BIN, CSHARP_BIN, NULL },
+    /* These courses are pages, not programs, so what the launcher starts is
+     * a small wrapper that opens one in the browser. The argument picks it. */
+    { "HTML",       WEB_OPEN, WEB_OPEN " html", "WEB" },
+    { "CSS",        WEB_OPEN, WEB_OPEN " css", "WEB" },
+    { "Web JavaScript", WEB_OPEN, WEB_OPEN " js", "WEB" },
     /* Topic course, not a language, implemented in Python -- registered the
      * same way Python's own entry is: a bare .py path on Linux (shebang +
      * execute bit), with the "python " prefix added on Windows where the

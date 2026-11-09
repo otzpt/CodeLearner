@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 5: Modern CSS and the cascade | CSS course</title>
+<link rel="stylesheet" href="course.css">
+</head>
+<body>
+<nav class="top" aria-label="Course"><a href="index.html">CSS course</a><span>Module 5 of 5</span></nav>
+<main>
+<h1>Module 5: Modern CSS and the cascade</h1>
+
+<section>
+<h2>PART 1: who wins</h2>
+<p>When rules conflict, the browser compares specificity first and source order after it. An id beats any number of classes:</p>
+<figure class="demo">
+<pre><code>&lt;style&gt;
+  #one { color: steelblue; }
+  .a.b.c.d.e.f.g.h.i.j.k { color: crimson; }
+&lt;/style&gt;
+&lt;p id="one" class="a b c d e f g h i j k"&gt;Which colour?&lt;/p&gt;</code></pre>
+<iframe title="Eleven classes lose to one id. Count columns, do not add them." height="70" srcdoc="&lt;style&gt;
+  #one { color: steelblue; }
+  .a.b.c.d.e.f.g.h.i.j.k { color: crimson; }
+&lt;/style&gt;
+&lt;p id=&quot;one&quot; class=&quot;a b c d e f g h i j k&quot;&gt;Which colour?&lt;/p&gt;"></iframe>
+<figcaption>Eleven classes lose to one id. Count columns, do not add them.</figcaption>
+</figure>
+</section>
+<section>
+<h2>PART 2: a custom property that is the wrong type</h2>
+<p>Custom properties are checked when they are used, not when they are declared. That removes the safety net you normally have:</p>
+<figure class="demo">
+<pre><code>&lt;style&gt;
+  body { color: steelblue; }
+  p { color: crimson; }
+  .plain { color: 20px; }
+  .variable { --size: 20px; color: var(--size); }
+&lt;/style&gt;
+&lt;p class="plain"&gt;color: 20px&lt;/p&gt;
+&lt;p class="variable"&gt;color: var(--size)&lt;/p&gt;</code></pre>
+<iframe title="A plainly invalid declaration is dropped, so the crimson stays. An invalid var() has already replaced it, and the text falls back to the inherited blue." height="110" srcdoc="&lt;style&gt;
+  body { color: steelblue; }
+  p { color: crimson; }
+  .plain { color: 20px; }
+  .variable { --size: 20px; color: var(--size); }
+&lt;/style&gt;
+&lt;p class=&quot;plain&quot;&gt;color: 20px&lt;/p&gt;
+&lt;p class=&quot;variable&quot;&gt;color: var(--size)&lt;/p&gt;"></iframe>
+<figcaption>A plainly invalid declaration is dropped, so the crimson stays. An invalid <code>var()</code> has already replaced it, and the text falls back to the inherited blue.</figcaption>
+</figure>
+</section>
+<section>
+<h2>PART 3: :is() and :where() look the same</h2>
+<p><code>:is()</code> takes the specificity of its most specific argument, even an argument that matches nothing. <code>:where()</code> always counts as zero:</p>
+<figure class="demo">
+<pre><code>&lt;style&gt;
+  :is(#never-used, p) { color: crimson; }
+  p.note { color: steelblue; }
+
+  :where(#never-used, h4) { color: crimson; }
+  h4.note { color: steelblue; }
+&lt;/style&gt;
+&lt;p class="note"&gt;:is() wins here&lt;/p&gt;
+&lt;h4 class="note"&gt;:where() loses here&lt;/h4&gt;</code></pre>
+<iframe title="An id that exists nowhere in the page still makes the first rule win." height="110" srcdoc="&lt;style&gt;
+  :is(#never-used, p) { color: crimson; }
+  p.note { color: steelblue; }
+
+  :where(#never-used, h4) { color: crimson; }
+  h4.note { color: steelblue; }
+&lt;/style&gt;
+&lt;p class=&quot;note&quot;&gt;:is() wins here&lt;/p&gt;
+&lt;h4 class=&quot;note&quot;&gt;:where() loses here&lt;/h4&gt;"></iframe>
+<figcaption>An id that exists nowhere in the page still makes the first rule win.</figcaption>
+</figure>
+</section>
+<section>
+<h2>PART 4: layers change the order of battle</h2>
+<p>Styles outside any layer beat styles inside one, whatever their specificity:</p>
+<figure class="demo">
+<pre><code>&lt;style&gt;
+  @layer base { p#x { color: crimson; } }
+  p { color: steelblue; }
+&lt;/style&gt;
+&lt;p id="x"&gt;Which colour?&lt;/p&gt;</code></pre>
+<iframe title="An id rule in a layer loses to a bare element selector outside it." height="70" srcdoc="&lt;style&gt;
+  @layer base { p#x { color: crimson; } }
+  p { color: steelblue; }
+&lt;/style&gt;
+&lt;p id=&quot;x&quot;&gt;Which colour?&lt;/p&gt;"></iframe>
+<figcaption>An id rule in a layer loses to a bare element selector outside it.</figcaption>
+</figure>
+</section>
+<section>
+<h2>PART 5: :has() and nesting</h2>
+<p><code>:has()</code> selects an element by what it contains. Tick the box:</p>
+<figure class="demo">
+<pre><code>&lt;style&gt;
+  label:has(input:checked) { background: khaki; }
+&lt;/style&gt;
+&lt;label&gt;&lt;input type="checkbox"&gt; Tick me&lt;/label&gt;</code></pre>
+<iframe title="No script: the label changes because it now has a checked input in it." height="80" srcdoc="&lt;style&gt;
+  label:has(input:checked) { background: khaki; }
+&lt;/style&gt;
+&lt;label&gt;&lt;input type=&quot;checkbox&quot;&gt; Tick me&lt;/label&gt;"></iframe>
+<figcaption>No script: the label changes because it now has a checked input in it.</figcaption>
+</figure>
+<p>Rules can now be nested the way preprocessors have allowed for years:</p>
+<figure class="demo">
+<pre><code>&lt;style&gt;
+  .card {
+    color: steelblue;
+    &amp; strong { color: crimson; }
+  }
+&lt;/style&gt;
+&lt;p class="card"&gt;Blue text with &lt;strong&gt;red inside&lt;/strong&gt;.&lt;/p&gt;</code></pre>
+<iframe title="The &amp; is the parent selector." height="90" srcdoc="&lt;style&gt;
+  .card {
+    color: steelblue;
+    &amp; strong { color: crimson; }
+  }
+&lt;/style&gt;
+&lt;p class=&quot;card&quot;&gt;Blue text with &lt;strong&gt;red inside&lt;/strong&gt;.&lt;/p&gt;"></iframe>
+<figcaption>The <code>&amp;</code> is the parent selector.</figcaption>
+</figure>
+</section>
+<!-- exercise 5 -->
+<section id="exercise">
+<h2>EXERCISE 5</h2>
+<div class="question">
+<p>One id against ten classes. Which wins?</p>
+<details><summary>Answer</summary><p><strong>The id.</strong> Specificity compares column by column.</p></details>
+</div>
+<div class="question">
+<p>What is the specificity of <code>:where(#a, .b)</code>?</p>
+<details><summary>Answer</summary><p><strong>Zero.</strong> That is the whole point of <code>:where()</code>.</p></details>
+</div>
+<div class="question">
+<p>An unlayered <code>p</code> against a layered <code>#x</code>. Which wins?</p>
+<details><summary>Answer</summary><p><strong>The unlayered p.</strong> Layer order comes before specificity.</p></details>
+</div>
+<h3>Challenge</h3>
+<p>Build a light and dark theme with custom properties, using no script.</p>
+<p><strong>Input:</strong> tick a checkbox on your page.</p>
+<p><strong>The result must be:</strong></p>
+<ul>
+<li>Colours are defined once, as custom properties.</li>
+<li>Ticking the box switches the whole page to dark colours.</li>
+<li>Unticking it switches back.</li>
+</ul>
+<details><summary>Example solution (one way of getting there)</summary>
+<pre><code>&lt;style&gt;
+  body { --bg: white; --text: black; background: var(--bg); color: var(--text); }
+  body:has(#dark:checked) { --bg: #222; --text: #eee; }
+&lt;/style&gt;
+&lt;label&gt;&lt;input type="checkbox" id="dark"&gt; Dark&lt;/label&gt;
+&lt;p&gt;Some text.&lt;/p&gt;</code></pre>
+</details>
+</section>
+<!-- summary -->
+<section>
+<h2>SUMMARY</h2>
+<ul>
+<li>Specificity is compared column by column, then source order decides.</li>
+<li>An invalid <code>var()</code> falls back to inherited or initial, not to the previous rule.</li>
+<li><code>:is()</code> takes its argument's weight. <code>:where()</code> weighs nothing.</li>
+<li>Unlayered styles beat layered ones.</li>
+<li><code>:has()</code> selects by contents, and rules can be nested with <code>&amp;</code>.</li>
+</ul>
+</section>
+</main>
+<nav class="bottom" aria-label="Modules"><a href="04-responsive.html">Previous: Responsive design</a><a href="index.html">Back to the module list</a></nav>
+</body>
+</html>

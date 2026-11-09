@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 2: Events | Web JavaScript course</title>
+<link rel="stylesheet" href="course.css">
+<script src="course.js"></script>
+</head>
+<body>
+<nav class="top" aria-label="Course"><a href="index.html">Web JavaScript course</a><span>Module 2 of 5</span></nav>
+<main>
+<h1>Module 2: Events</h1>
+
+<section>
+<h2>PART 1: pass the function, do not call it</h2>
+<p><code>addEventListener</code> wants a function to call later. Add parentheses and you call it now, and pass whatever it returns:</p>
+<figure class="demo">
+<pre><code>&lt;button id="b1"&gt;This button does nothing&lt;/button&gt;</code></pre>
+<pre><code>let calls = 0;
+function count() {
+  calls++;
+}
+document.querySelector("#b1").addEventListener("click", count());
+print("Calls before anyone has clicked:", calls);</code></pre>
+<div class="stage">
+<button id="b1">This button does nothing</button>
+</div>
+<script>
+demo("d7", async function (print) {
+let calls = 0;
+function count() {
+  calls++;
+}
+document.querySelector("#b1").addEventListener("click", count());
+print("Calls before anyone has clicked:", calls);
+});
+</script>
+<output id="d7" class="out"></output>
+</figure>
+<p>Without them, the function waits for the click:</p>
+<figure class="demo">
+<pre><code>&lt;button id="b2"&gt;Click me&lt;/button&gt;</code></pre>
+<pre><code>let calls = 0;
+document.querySelector("#b2").addEventListener("click", function () {
+  calls++;
+  print("Clicks:", calls);
+});</code></pre>
+<div class="stage">
+<button id="b2">Click me</button>
+</div>
+<script>
+demo("d8", async function (print) {
+let calls = 0;
+document.querySelector("#b2").addEventListener("click", function () {
+  calls++;
+  print("Clicks:", calls);
+});
+});
+</script>
+<output id="d8" class="out"></output>
+</figure>
+</section>
+<section>
+<h2>PART 2: an event travels up</h2>
+<p>A click on an element also fires on each of its ancestors. <code>event.target</code> is what was really clicked and <code>event.currentTarget</code> is the element whose listener is running. Click the word Inner:</p>
+<figure class="demo">
+<pre><code>&lt;div id="outer"&gt;Outer &lt;button id="inner"&gt;Inner&lt;/button&gt;&lt;/div&gt;</code></pre>
+<pre><code>for (const selector of ["#inner", "#outer"]) {
+  document.querySelector(selector).addEventListener("click", (event) =&gt; {
+    print("listener on", event.currentTarget.id, "- target is", event.target.id);
+  });
+}</code></pre>
+<div class="stage">
+<div id="outer">Outer <button id="inner">Inner</button></div>
+</div>
+<script>
+demo("d9", async function (print) {
+for (const selector of ["#inner", "#outer"]) {
+  document.querySelector(selector).addEventListener("click", (event) => {
+    print("listener on", event.currentTarget.id, "- target is", event.target.id);
+  });
+}
+});
+</script>
+<output id="d9" class="out"></output>
+</figure>
+</section>
+<section>
+<h2>PART 3: one listener instead of many</h2>
+<p>Elements added later have no listeners of their own, but their clicks still bubble up. So one listener on the parent covers children that do not exist yet:</p>
+<figure class="demo">
+<pre><code>&lt;ul id="tasks"&gt;&lt;li&gt;there from the start&lt;/li&gt;&lt;/ul&gt;&lt;button id="more"&gt;Add an item&lt;/button&gt;</code></pre>
+<pre><code>const list = document.querySelector("#tasks");
+list.addEventListener("click", (event) =&gt; {
+  if (event.target.matches("li")) {
+    print("Clicked:", event.target.textContent);
+  }
+});
+document.querySelector("#more").addEventListener("click", () =&gt; {
+  const item = document.createElement("li");
+  item.textContent = "added later";
+  list.append(item);
+});</code></pre>
+<div class="stage">
+<ul id="tasks"><li>there from the start</li></ul><button id="more">Add an item</button>
+</div>
+<script>
+demo("d10", async function (print) {
+const list = document.querySelector("#tasks");
+list.addEventListener("click", (event) => {
+  if (event.target.matches("li")) {
+    print("Clicked:", event.target.textContent);
+  }
+});
+document.querySelector("#more").addEventListener("click", () => {
+  const item = document.createElement("li");
+  item.textContent = "added later";
+  list.append(item);
+});
+});
+</script>
+<output id="d10" class="out"></output>
+</figure>
+<p>A delegated listener often needs to know which item it got. A <code>data-*</code> attribute carries a value on the element, and <code>dataset</code> reads it back, always as a string:</p>
+<figure class="demo">
+<pre><code>&lt;p id="price" data-cost="5"&gt;Five euros&lt;/p&gt;</code></pre>
+<pre><code>const item = document.querySelector("#price");
+print(item.dataset.cost, typeof item.dataset.cost);</code></pre>
+<div class="stage">
+<p id="price" data-cost="5">Five euros</p>
+</div>
+<script>
+demo("d11", async function (print) {
+const item = document.querySelector("#price");
+print(item.dataset.cost, typeof item.dataset.cost);
+});
+</script>
+<output id="d11" class="out"></output>
+</figure>
+</section>
+<section>
+<h2>PART 4: two ways to lose a listener</h2>
+<p><code>removeEventListener</code> needs the same function object. Two arrow functions that look the same are two different functions:</p>
+<figure class="demo">
+<pre><code>&lt;button id="b3"&gt;Click me&lt;/button&gt;</code></pre>
+<pre><code>const button = document.querySelector("#b3");
+button.addEventListener("click", () =&gt; print("still listening"));
+button.removeEventListener("click", () =&gt; print("still listening"));
+print("Removed? Click to find out.");</code></pre>
+<div class="stage">
+<button id="b3">Click me</button>
+</div>
+<script>
+demo("d12", async function (print) {
+const button = document.querySelector("#b3");
+button.addEventListener("click", () => print("still listening"));
+button.removeEventListener("click", () => print("still listening"));
+print("Removed? Click to find out.");
+});
+</script>
+<output id="d12" class="out"></output>
+</figure>
+<p>And <code>innerHTML +=</code> rebuilds everything inside the element from a string, so every listener in it is gone:</p>
+<figure class="demo">
+<pre><code>&lt;div id="area"&gt;&lt;button id="b4"&gt;Click me&lt;/button&gt;&lt;/div&gt;</code></pre>
+<pre><code>const area = document.querySelector("#area");
+const button = document.querySelector("#b4");
+button.addEventListener("click", () =&gt; print("clicked"));
+area.innerHTML += "&lt;p&gt;Added with innerHTML +=&lt;/p&gt;";
+print("Is the original button still in the page?", button.isConnected);
+print("The one you see is a copy with no listener, so clicking prints nothing.");</code></pre>
+<div class="stage">
+<div id="area"><button id="b4">Click me</button></div>
+</div>
+<script>
+demo("d13", async function (print) {
+const area = document.querySelector("#area");
+const button = document.querySelector("#b4");
+button.addEventListener("click", () => print("clicked"));
+area.innerHTML += "<p>Added with innerHTML +=</p>";
+print("Is the original button still in the page?", button.isConnected);
+print("The one you see is a copy with no listener, so clicking prints nothing.");
+});
+</script>
+<output id="d13" class="out"></output>
+</figure>
+</section>
+<!-- exercise 2 -->
+<section id="exercise">
+<h2>EXERCISE 2</h2>
+<form class="question" data-answer="Immediately.">
+<label><code>button.addEventListener("click", save())</code>: when does <code>save</code> run? <input name="answer" autocomplete="off"></label>
+<button>Check</button>
+<p class="verdict" hidden></p>
+<p class="why" hidden>The parentheses call it, once, while the listener is being added.</p>
+</form>
+<form class="question" data-answer="event.target">
+<label>Which property holds the element actually clicked? <input name="answer" autocomplete="off"></label>
+<button>Check</button>
+<p class="verdict" hidden></p>
+<p class="why" hidden><code>currentTarget</code> is the one whose listener is running.</p>
+</form>
+<form class="question" data-answer="Event delegation">
+<label>What is the name of putting one listener on a parent for all its children? <input name="answer" autocomplete="off"></label>
+<button>Check</button>
+<p class="verdict" hidden></p>
+<p class="why" hidden>It works because events bubble.</p>
+</form>
+<h3>Challenge</h3>
+<p>Write a page with a counter: a number and two buttons, plus and minus. Use one listener, on the element that contains both buttons.</p>
+<p><strong>Input:</strong> click plus three times, then minus once.</p>
+<p><strong>The result must be:</strong></p>
+<ul>
+<li>The number starts at 0.</li>
+<li>After those clicks it shows 2.</li>
+<li>There is exactly one <code>addEventListener</code> call.</li>
+</ul>
+<details><summary>Example solution (one way of getting there)</summary>
+<pre><code>&lt;div id="counter"&gt;
+  &lt;button data-step="1"&gt;+&lt;/button&gt;
+  &lt;span id="value"&gt;0&lt;/span&gt;
+  &lt;button data-step="-1"&gt;-&lt;/button&gt;
+&lt;/div&gt;
+&lt;script&gt;
+  let value = 0;
+  document.querySelector("#counter").addEventListener("click", (event) =&gt; {
+    if (event.target.matches("button")) {
+      value += Number(event.target.dataset.step);
+      document.querySelector("#value").textContent = value;
+    }
+  });
+&lt;/script&gt;</code></pre>
+</details>
+</section>
+<!-- summary -->
+<section>
+<h2>SUMMARY</h2>
+<ul>
+<li>Pass the function. <code>fn()</code> calls it at once.</li>
+<li>Events bubble. <code>target</code> is the origin and <code>currentTarget</code> is the listener's element.</li>
+<li>Delegation covers elements that do not exist yet.</li>
+<li>Removing a listener needs the same function object.</li>
+<li><code>innerHTML +=</code> destroys the listeners inside.</li>
+</ul>
+</section>
+</main>
+<nav class="bottom" aria-label="Modules"><a href="01-dom.html">Previous: The DOM</a><a href="03-forms.html">Next: Forms and input</a></nav>
+</body>
+</html>

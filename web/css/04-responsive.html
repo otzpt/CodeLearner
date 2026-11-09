@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 4: Responsive design | CSS course</title>
+<link rel="stylesheet" href="course.css">
+</head>
+<body>
+<nav class="top" aria-label="Course"><a href="index.html">CSS course</a><span>Module 4 of 5</span></nav>
+<main>
+<h1>Module 4: Responsive design</h1>
+
+<section>
+<h2>PART 1: em compounds and rem does not</h2>
+<p><code>em</code> is relative to the parent's font size, so nesting multiplies it. <code>rem</code> is relative to the root, so it does not:</p>
+<figure class="demo">
+<pre><code>&lt;style&gt;
+  .row { display: flex; gap: 32px; }
+  .em ul { font-size: 1.3em; }
+  .rem ul { font-size: 1.3rem; }
+&lt;/style&gt;
+&lt;div class="row"&gt;
+  &lt;div class="em"&gt;&lt;ul&gt;&lt;li&gt;em&lt;ul&gt;&lt;li&gt;em&lt;ul&gt;&lt;li&gt;em&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;
+  &lt;div class="rem"&gt;&lt;ul&gt;&lt;li&gt;rem&lt;ul&gt;&lt;li&gt;rem&lt;ul&gt;&lt;li&gt;rem&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+<iframe title="Same value, three levels deep. The first column keeps growing." height="170" srcdoc="&lt;style&gt;
+  .row { display: flex; gap: 32px; }
+  .em ul { font-size: 1.3em; }
+  .rem ul { font-size: 1.3rem; }
+&lt;/style&gt;
+&lt;div class=&quot;row&quot;&gt;
+  &lt;div class=&quot;em&quot;&gt;&lt;ul&gt;&lt;li&gt;em&lt;ul&gt;&lt;li&gt;em&lt;ul&gt;&lt;li&gt;em&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;
+  &lt;div class=&quot;rem&quot;&gt;&lt;ul&gt;&lt;li&gt;rem&lt;ul&gt;&lt;li&gt;rem&lt;ul&gt;&lt;li&gt;rem&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;
+&lt;/div&gt;"></iframe>
+<figcaption>Same value, three levels deep. The first column keeps growing.</figcaption>
+</figure>
+</section>
+<section>
+<h2>PART 2: media queries, and the order they go in</h2>
+<p>A frame has its own viewport, so one piece of CSS can be seen at two sizes here:</p>
+<figure class="demo">
+<pre><code>&lt;style&gt;
+  .layout { display: block; }
+  .layout div { background: khaki; margin: 4px; padding: 4px; }
+  @media (min-width: 400px) {
+    .layout { display: flex; }
+    .layout div { flex: 1; }
+  }
+&lt;/style&gt;
+&lt;div class="layout"&gt;&lt;div&gt;first&lt;/div&gt;&lt;div&gt;second&lt;/div&gt;&lt;/div&gt;</code></pre>
+<iframe title="The columns appear only when the frame is 400 pixels or wider." style="width: 240px" height="90" srcdoc="&lt;style&gt;
+  .layout { display: block; }
+  .layout div { background: khaki; margin: 4px; padding: 4px; }
+  @media (min-width: 400px) {
+    .layout { display: flex; }
+    .layout div { flex: 1; }
+  }
+&lt;/style&gt;
+&lt;div class=&quot;layout&quot;&gt;&lt;div&gt;first&lt;/div&gt;&lt;div&gt;second&lt;/div&gt;&lt;/div&gt;"></iframe>
+<iframe title="The columns appear only when the frame is 400 pixels or wider." style="width: 480px" height="90" srcdoc="&lt;style&gt;
+  .layout { display: block; }
+  .layout div { background: khaki; margin: 4px; padding: 4px; }
+  @media (min-width: 400px) {
+    .layout { display: flex; }
+    .layout div { flex: 1; }
+  }
+&lt;/style&gt;
+&lt;div class=&quot;layout&quot;&gt;&lt;div&gt;first&lt;/div&gt;&lt;div&gt;second&lt;/div&gt;&lt;/div&gt;"></iframe>
+<figcaption>The columns appear only when the frame is 400 pixels or wider.</figcaption>
+</figure>
+<p>A media query adds no specificity. If a plain rule comes after it, the plain rule wins even when the query matches:</p>
+<figure class="demo">
+<pre><code>&lt;style&gt;
+  @media (min-width: 100px) { p { color: crimson; } }
+  p { color: steelblue; }
+&lt;/style&gt;
+&lt;p&gt;This should be crimson, the author thought.&lt;/p&gt;</code></pre>
+<iframe title="The query matches, and the text is still blue. Put base rules first and queries after them." height="70" srcdoc="&lt;style&gt;
+  @media (min-width: 100px) { p { color: crimson; } }
+  p { color: steelblue; }
+&lt;/style&gt;
+&lt;p&gt;This should be crimson, the author thought.&lt;/p&gt;"></iframe>
+<figcaption>The query matches, and the text is still blue. Put base rules first and queries after them.</figcaption>
+</figure>
+</section>
+<section>
+<h2>PART 3: fluid values</h2>
+<p><code>clamp(min, preferred, max)</code> gives a value that follows the window between two limits:</p>
+<figure class="demo">
+<pre><code>&lt;style&gt;p { margin: 0; font-size: clamp(14px, 8vw, 40px); }&lt;/style&gt;
+&lt;p&gt;Fluid text&lt;/p&gt;</code></pre>
+<iframe title="The same clamp(14px, 8vw, 40px) at two frame widths." style="width: 200px" height="80" srcdoc="&lt;style&gt;p { margin: 0; font-size: clamp(14px, 8vw, 40px); }&lt;/style&gt;
+&lt;p&gt;Fluid text&lt;/p&gt;"></iframe>
+<iframe title="The same clamp(14px, 8vw, 40px) at two frame widths." style="width: 600px" height="80" srcdoc="&lt;style&gt;p { margin: 0; font-size: clamp(14px, 8vw, 40px); }&lt;/style&gt;
+&lt;p&gt;Fluid text&lt;/p&gt;"></iframe>
+<figcaption>The same <code>clamp(14px, 8vw, 40px)</code> at two frame widths.</figcaption>
+</figure>
+<p>An element wider than its container overflows, unless told otherwise:</p>
+<figure class="demo">
+<pre><code>&lt;style&gt;
+  svg { display: block; background: khaki; margin-bottom: 8px; }
+  .fit { max-width: 100%; }
+&lt;/style&gt;
+&lt;svg width="600" height="30"&gt;&lt;/svg&gt;
+&lt;svg class="fit" width="600" height="30"&gt;&lt;/svg&gt;</code></pre>
+<iframe title="Both are 600 pixels wide. The second has max-width: 100%." style="width: 260px" height="120" srcdoc="&lt;style&gt;
+  svg { display: block; background: khaki; margin-bottom: 8px; }
+  .fit { max-width: 100%; }
+&lt;/style&gt;
+&lt;svg width=&quot;600&quot; height=&quot;30&quot;&gt;&lt;/svg&gt;
+&lt;svg class=&quot;fit&quot; width=&quot;600&quot; height=&quot;30&quot;&gt;&lt;/svg&gt;"></iframe>
+<figcaption>Both are 600 pixels wide. The second has <code>max-width: 100%</code>.</figcaption>
+</figure>
+</section>
+<section>
+<h2>PART 4: ask the container, not the window</h2>
+<p>A media query knows the size of the window. A component does not care about the window, it cares how much room it was given. A container query asks exactly that:</p>
+<figure class="demo">
+<pre><code>&lt;style&gt;
+  .slot { container-type: inline-size; margin-bottom: 8px; }
+  .narrow { width: 200px; }
+  .card { display: block; }
+  .card div { background: khaki; margin: 2px; padding: 2px 8px; }
+  @container (min-width: 300px) {
+    .card { display: flex; }
+    .card div { flex: 1; }
+  }
+&lt;/style&gt;
+&lt;div class="slot narrow"&gt;&lt;div class="card"&gt;&lt;div&gt;a&lt;/div&gt;&lt;div&gt;b&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class="slot"&gt;&lt;div class="card"&gt;&lt;div&gt;a&lt;/div&gt;&lt;div&gt;b&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;</code></pre>
+<iframe title="The same component in a narrow and a wide container, in one window." height="150" srcdoc="&lt;style&gt;
+  .slot { container-type: inline-size; margin-bottom: 8px; }
+  .narrow { width: 200px; }
+  .card { display: block; }
+  .card div { background: khaki; margin: 2px; padding: 2px 8px; }
+  @container (min-width: 300px) {
+    .card { display: flex; }
+    .card div { flex: 1; }
+  }
+&lt;/style&gt;
+&lt;div class=&quot;slot narrow&quot;&gt;&lt;div class=&quot;card&quot;&gt;&lt;div&gt;a&lt;/div&gt;&lt;div&gt;b&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;slot&quot;&gt;&lt;div class=&quot;card&quot;&gt;&lt;div&gt;a&lt;/div&gt;&lt;div&gt;b&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;"></iframe>
+<figcaption>The same component in a narrow and a wide container, in one window.</figcaption>
+</figure>
+</section>
+<!-- exercise 4 -->
+<section id="exercise">
+<h2>EXERCISE 4</h2>
+<div class="question">
+<p><code>1.5em</code> inside <code>1.5em</code> on a 16px root. What font size results?</p>
+<details><summary>Answer</summary><p><strong>36px</strong> 16 times 1.5 times 1.5.</p></details>
+</div>
+<div class="question">
+<p>Does a media query add specificity?</p>
+<details><summary>Answer</summary><p><strong>No.</strong> A later plain rule still wins.</p></details>
+</div>
+<div class="question">
+<p>Which kind of query lets a component react to the space it was given?</p>
+<details><summary>Answer</summary><p><strong>A container query.</strong> <code>@container</code>, with <code>container-type</code> on the parent.</p></details>
+</div>
+<h3>Challenge</h3>
+<p>Write a page with a main area and a sidebar.</p>
+<p><strong>Input:</strong> nothing to type. Resize the window across 600 pixels.</p>
+<p><strong>The result must be:</strong></p>
+<ul>
+<li>Below 600 pixels the sidebar is under the main area, full width.</li>
+<li>From 600 pixels up they are side by side, and the sidebar is 200 pixels wide.</li>
+<li>The heading size changes smoothly with the window, between 24 and 48 pixels.</li>
+</ul>
+<details><summary>Example solution (one way of getting there)</summary>
+<pre><code>&lt;style&gt;
+  h1 { font-size: clamp(24px, 6vw, 48px); }
+  .page { display: block; }
+  @media (min-width: 600px) {
+    .page { display: grid; grid-template-columns: minmax(0, 1fr) 200px; }
+  }
+&lt;/style&gt;
+&lt;h1&gt;Title&lt;/h1&gt;
+&lt;div class="page"&gt;&lt;main&gt;Main&lt;/main&gt;&lt;aside&gt;Sidebar&lt;/aside&gt;&lt;/div&gt;</code></pre>
+</details>
+</section>
+<!-- summary -->
+<section>
+<h2>SUMMARY</h2>
+<ul>
+<li><code>em</code> multiplies when nested. <code>rem</code> does not.</li>
+<li>Base rules first, media queries after them.</li>
+<li><code>clamp()</code> gives a value limits on both sides.</li>
+<li><code>@container</code> responds to the available space, not the window.</li>
+</ul>
+</section>
+</main>
+<nav class="bottom" aria-label="Modules"><a href="03-grid.html">Previous: Grid</a><a href="05-modern.html">Next: Modern CSS and the cascade</a></nav>
+</body>
+</html>

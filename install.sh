@@ -143,7 +143,7 @@ for exe in launcher/launcher c/c-course cpp/cpp-course gui/gui-course \
            rust/rust-course arduino/arduino-course micropython/src/main.py \
            python/src/main.py javascript/src/main.js security/src/main.py \
            c/asm/use_asm cpp/asm/use_asm rust/asm/use_asm libraries/libraries \
-           git/src/main.sh; do
+           git/src/main.sh web/open; do
     [ -f "$SHARE_DIR/$exe" ] && chmod +x "$SHARE_DIR/$exe"
 done
 rm -f "$SHARE_DIR/codelearner.sh"     # the wrapper below replaces it

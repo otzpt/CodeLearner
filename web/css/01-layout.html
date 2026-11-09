@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 1: The box and normal flow | CSS course</title>
+<link rel="stylesheet" href="course.css">
+</head>
+<body>
+<nav class="top" aria-label="Course"><a href="index.html">CSS course</a><span>Module 1 of 5</span></nav>
+<main>
+<h1>Module 1: The box and normal flow</h1>
+
+<section>
+<h2>PART 1: width does not mean what you expect</h2>
+<p>By default <code>width</code> sets the width of the content only. Padding and border are added on top. The red bar below is 200 pixels long:</p>
+<figure class="demo">
+<pre><code>&lt;style&gt;
+  div { width: 200px; padding: 20px; border: 5px solid steelblue; margin-bottom: 8px; }
+  .fixed { box-sizing: border-box; }
+  .ruler { padding: 0; border: 0; height: 8px; background: crimson; }
+&lt;/style&gt;
+&lt;div&gt;content-box&lt;/div&gt;
+&lt;div class="fixed"&gt;border-box&lt;/div&gt;
+&lt;div class="ruler"&gt;&lt;/div&gt;</code></pre>
+<iframe title="Both boxes say width: 200px. Only the second is 200 pixels across." height="190" srcdoc="&lt;style&gt;
+  div { width: 200px; padding: 20px; border: 5px solid steelblue; margin-bottom: 8px; }
+  .fixed { box-sizing: border-box; }
+  .ruler { padding: 0; border: 0; height: 8px; background: crimson; }
+&lt;/style&gt;
+&lt;div&gt;content-box&lt;/div&gt;
+&lt;div class=&quot;fixed&quot;&gt;border-box&lt;/div&gt;
+&lt;div class=&quot;ruler&quot;&gt;&lt;/div&gt;"></iframe>
+<figcaption>Both boxes say <code>width: 200px</code>. Only the second is 200 pixels across.</figcaption>
+</figure>
+<p>Most stylesheets start by making every element behave like the second box: <code>* { box-sizing: border-box; }</code>.</p>
+</section>
+<section>
+<h2>PART 2: vertical margins collapse</h2>
+<p>The first paragraph has a bottom margin of 40 pixels and the second a top margin of 20. You might expect a gap of 60. The red bar is 40 pixels tall:</p>
+<figure class="demo">
+<pre><code>&lt;style&gt;
+  body { margin: 8px; }
+  p { margin: 0; line-height: 20px; background: khaki; }
+  .a { margin-bottom: 40px; }
+  .b { margin-top: 20px; }
+  .ruler { position: absolute; top: 28px; right: 8px; width: 16px; height: 40px; background: crimson; }
+&lt;/style&gt;
+&lt;p class="a"&gt;Margin below: 40px&lt;/p&gt;
+&lt;p class="b"&gt;Margin above: 20px&lt;/p&gt;
+&lt;div class="ruler"&gt;&lt;/div&gt;</code></pre>
+<iframe title="The gap is exactly as tall as the bar. Touching vertical margins merge, and the larger one wins." height="120" srcdoc="&lt;style&gt;
+  body { margin: 8px; }
+  p { margin: 0; line-height: 20px; background: khaki; }
+  .a { margin-bottom: 40px; }
+  .b { margin-top: 20px; }
+  .ruler { position: absolute; top: 28px; right: 8px; width: 16px; height: 40px; background: crimson; }
+&lt;/style&gt;
+&lt;p class=&quot;a&quot;&gt;Margin below: 40px&lt;/p&gt;
+&lt;p class=&quot;b&quot;&gt;Margin above: 20px&lt;/p&gt;
+&lt;div class=&quot;ruler&quot;&gt;&lt;/div&gt;"></iframe>
+<figcaption>The gap is exactly as tall as the bar. Touching vertical margins merge, and the larger one wins.</figcaption>
+</figure>
+<p>Horizontal margins never collapse, and neither do the margins of flex or grid items. That is often why a gap changes when the parent becomes <code>display: flex</code>.</p>
+</section>
+<section>
+<h2>PART 3: block and inline</h2>
+<p>A block takes the whole line and honours <code>width</code>. An inline element flows inside text and ignores it:</p>
+<figure class="demo">
+<pre><code>&lt;style&gt;
+  span { width: 300px; background: khaki; }
+  .box { display: inline-block; }
+&lt;/style&gt;
+&lt;p&gt;&lt;span&gt;inline&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span class="box"&gt;inline-block&lt;/span&gt;&lt;/p&gt;</code></pre>
+<iframe title="The width is the same on both. Only the inline-block one uses it." height="110" srcdoc="&lt;style&gt;
+  span { width: 300px; background: khaki; }
+  .box { display: inline-block; }
+&lt;/style&gt;
+&lt;p&gt;&lt;span&gt;inline&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span class=&quot;box&quot;&gt;inline-block&lt;/span&gt;&lt;/p&gt;"></iframe>
+<figcaption>The <code>width</code> is the same on both. Only the <code>inline-block</code> one uses it.</figcaption>
+</figure>
+</section>
+<section>
+<h2>PART 4: absolute is relative to something</h2>
+<p>An absolutely positioned element is placed against its nearest ancestor that has a <code>position</code> of its own. If there is none, it is placed against the whole page.</p>
+<figure class="demo">
+<pre><code>&lt;style&gt;
+  body { margin: 32px; }
+  .box { height: 48px; background: khaki; margin-bottom: 8px; }
+  .relative { position: relative; }
+  .badge { position: absolute; top: 0; right: 0; padding: 4px; background: crimson; color: white; }
+&lt;/style&gt;
+&lt;div class="box relative"&gt;position: relative&lt;span class="badge"&gt;A&lt;/span&gt;&lt;/div&gt;
+&lt;div class="box"&gt;position: static&lt;span class="badge"&gt;B&lt;/span&gt;&lt;/div&gt;</code></pre>
+<iframe title="Badge A sits in the corner of its box. Badge B has the same CSS and escaped to the corner of the frame." height="180" srcdoc="&lt;style&gt;
+  body { margin: 32px; }
+  .box { height: 48px; background: khaki; margin-bottom: 8px; }
+  .relative { position: relative; }
+  .badge { position: absolute; top: 0; right: 0; padding: 4px; background: crimson; color: white; }
+&lt;/style&gt;
+&lt;div class=&quot;box relative&quot;&gt;position: relative&lt;span class=&quot;badge&quot;&gt;A&lt;/span&gt;&lt;/div&gt;
+&lt;div class=&quot;box&quot;&gt;position: static&lt;span class=&quot;badge&quot;&gt;B&lt;/span&gt;&lt;/div&gt;"></iframe>
+<figcaption>Badge A sits in the corner of its box. Badge B has the same CSS and escaped to the corner of the frame.</figcaption>
+</figure>
+<p><code>z-index</code> has a similar condition: it does nothing on an element with no <code>position</code>. The khaki box below has the higher number in both rows:</p>
+<figure class="demo">
+<pre><code>&lt;style&gt;
+  .a, .b { width: 120px; height: 48px; }
+  .a { background: khaki; z-index: 99; }
+  .b { background: steelblue; margin: -24px 0 16px 32px; position: relative; }
+  .on { position: relative; }
+&lt;/style&gt;
+&lt;div class="a"&gt;static&lt;/div&gt;&lt;div class="b"&gt;&lt;/div&gt;
+&lt;div class="a on"&gt;relative&lt;/div&gt;&lt;div class="b"&gt;&lt;/div&gt;</code></pre>
+<iframe title="In the first pair z-index: 99 is ignored. In the second it works." height="200" srcdoc="&lt;style&gt;
+  .a, .b { width: 120px; height: 48px; }
+  .a { background: khaki; z-index: 99; }
+  .b { background: steelblue; margin: -24px 0 16px 32px; position: relative; }
+  .on { position: relative; }
+&lt;/style&gt;
+&lt;div class=&quot;a&quot;&gt;static&lt;/div&gt;&lt;div class=&quot;b&quot;&gt;&lt;/div&gt;
+&lt;div class=&quot;a on&quot;&gt;relative&lt;/div&gt;&lt;div class=&quot;b&quot;&gt;&lt;/div&gt;"></iframe>
+<figcaption>In the first pair <code>z-index: 99</code> is ignored. In the second it works.</figcaption>
+</figure>
+</section>
+<!-- exercise 1 -->
+<section id="exercise">
+<h2>EXERCISE 1</h2>
+<div class="question">
+<p><code>width: 100px; padding: 10px;</code> with the default box-sizing. How many pixels across is the box?</p>
+<details><summary>Answer</summary><p><strong>120</strong> Padding is added on both sides.</p></details>
+</div>
+<div class="question">
+<p>Margins of 30px and 10px meet vertically. How big is the gap?</p>
+<details><summary>Answer</summary><p><strong>30px</strong> They collapse, and the larger one wins.</p></details>
+</div>
+<div class="question">
+<p>Which property has to be set on a parent so that an absolute child is placed inside it?</p>
+<details><summary>Answer</summary><p><strong>position</strong> Usually <code>position: relative</code>.</p></details>
+</div>
+<h3>Challenge</h3>
+<p>Make a file with one box that has a 4 pixel border and 16 pixels of padding.</p>
+<p><strong>Input:</strong> nothing to type.</p>
+<p><strong>The result must be:</strong></p>
+<ul>
+<li>The whole box, border included, is exactly 300 pixels across. Check it in DevTools.</li>
+<li>A small label sits in its top-right corner, inside the box.</li>
+</ul>
+<details><summary>Example solution (one way of getting there)</summary>
+<pre><code>&lt;style&gt;
+  .card {
+    box-sizing: border-box;
+    width: 300px;
+    padding: 16px;
+    border: 4px solid steelblue;
+    position: relative;
+  }
+  .label { position: absolute; top: 0; right: 0; }
+&lt;/style&gt;
+&lt;div class="card"&gt;Content&lt;span class="label"&gt;new&lt;/span&gt;&lt;/div&gt;</code></pre>
+</details>
+</section>
+<!-- summary -->
+<section>
+<h2>SUMMARY</h2>
+<ul>
+<li><code>box-sizing: border-box</code> makes <code>width</code> mean what you expect.</li>
+<li>Vertical margins collapse. Horizontal ones and flex items do not.</li>
+<li>Inline elements ignore <code>width</code>.</li>
+<li><code>position: absolute</code> needs a positioned ancestor, and <code>z-index</code> needs a position.</li>
+</ul>
+</section>
+</main>
+<nav class="bottom" aria-label="Modules"><span></span><a href="02-flexbox.html">Next: Flexbox</a></nav>
+</body>
+</html>

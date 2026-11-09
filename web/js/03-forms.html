@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 3: Forms and input | Web JavaScript course</title>
+<link rel="stylesheet" href="course.css">
+<script src="course.js"></script>
+</head>
+<body>
+<nav class="top" aria-label="Course"><a href="index.html">Web JavaScript course</a><span>Module 3 of 5</span></nav>
+<main>
+<h1>Module 3: Forms and input</h1>
+
+<section>
+<h2>PART 1: every value is a string</h2>
+<p><code>.value</code> is a string, even on <code>type="number"</code>:</p>
+<figure class="demo">
+<pre><code>&lt;input id="a" type="number" value="5"&gt; &lt;input id="b" type="number" value="3"&gt;</code></pre>
+<pre><code>const a = document.querySelector("#a");
+const b = document.querySelector("#b");
+print("value + value:", a.value + b.value);
+print("typeof a.value:", typeof a.value);
+print("valueAsNumber:", a.valueAsNumber + b.valueAsNumber);</code></pre>
+<div class="stage">
+<input id="a" type="number" value="5"> <input id="b" type="number" value="3">
+</div>
+<script>
+demo("d14", async function (print) {
+const a = document.querySelector("#a");
+const b = document.querySelector("#b");
+print("value + value:", a.value + b.value);
+print("typeof a.value:", typeof a.value);
+print("valueAsNumber:", a.valueAsNumber + b.valueAsNumber);
+});
+</script>
+<output id="d14" class="out"></output>
+</figure>
+</section>
+<section>
+<h2>PART 2: a checkbox's value is not its state</h2>
+<p>A checkbox's <code>.value</code> is the text <code>on</code> whether it is ticked or not. <code>.checked</code> is the state:</p>
+<figure class="demo">
+<pre><code>&lt;input id="c1" type="checkbox"&gt;</code></pre>
+<pre><code>const box = document.querySelector("#c1");
+print("value:", box.value, " checked:", box.checked);
+box.checked = true;
+print("value:", box.value, " checked:", box.checked);</code></pre>
+<div class="stage">
+<input id="c1" type="checkbox">
+</div>
+<script>
+demo("d15", async function (print) {
+const box = document.querySelector("#c1");
+print("value:", box.value, " checked:", box.checked);
+box.checked = true;
+print("value:", box.value, " checked:", box.checked);
+});
+</script>
+<output id="d15" class="out"></output>
+</figure>
+</section>
+<section>
+<h2>PART 3: submit, without leaving the page</h2>
+<p>A form navigates when it is submitted. <code>event.preventDefault()</code> stops that. <code>FormData</code> then reads what would have been sent, with the same rules: no name means not included, and an unticked box is simply absent.</p>
+<figure class="demo">
+<pre><code>&lt;form id="f1"&gt;
+  &lt;input name="email" value="ana@example.com"&gt;
+  &lt;input value="no name"&gt;
+  &lt;label&gt;&lt;input type="checkbox" name="news"&gt; News&lt;/label&gt;
+  &lt;button&gt;Send&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+<pre><code>document.querySelector("#f1").addEventListener("submit", (event) =&gt; {
+  event.preventDefault();
+  const data = new FormData(event.target);
+  print(Object.fromEntries(data));
+});</code></pre>
+<div class="stage">
+<form id="f1">
+  <input name="email" value="ana@example.com">
+  <input value="no name">
+  <label><input type="checkbox" name="news"> News</label>
+  <button>Send</button>
+</form>
+</div>
+<script>
+demo("d16", async function (print) {
+document.querySelector("#f1").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const data = new FormData(event.target);
+  print(Object.fromEntries(data));
+});
+});
+</script>
+<output id="d16" class="out"></output>
+</figure>
+</section>
+<section>
+<h2>PART 4: checking validity from a script</h2>
+<p><code>checkValidity()</code> asks whether a form would pass the browser's own checks, without submitting anything:</p>
+<figure class="demo">
+<pre><code>&lt;form id="f2"&gt;&lt;input name="age" type="number" required&gt;&lt;/form&gt;</code></pre>
+<pre><code>const form = document.querySelector("#f2");
+print("checkValidity():", form.checkValidity());
+form.elements.age.value = 30;
+print("after setting age:", form.checkValidity());</code></pre>
+<div class="stage">
+<form id="f2"><input name="age" type="number" required></form>
+</div>
+<script>
+demo("d17", async function (print) {
+const form = document.querySelector("#f2");
+print("checkValidity():", form.checkValidity());
+form.elements.age.value = 30;
+print("after setting age:", form.checkValidity());
+});
+</script>
+<output id="d17" class="out"></output>
+</figure>
+</section>
+<!-- exercise 3 -->
+<section id="exercise">
+<h2>EXERCISE 3</h2>
+<form class="question" data-answer="string">
+<label>What is the type of <code>input.value</code> on <code>type="number"</code>? <input name="answer" autocomplete="off"></label>
+<button>Check</button>
+<p class="verdict" hidden></p>
+<p class="why" hidden><code>valueAsNumber</code> gives a number.</p>
+</form>
+<form class="question" data-answer="checked">
+<label>Which property tells you whether a checkbox is ticked? <input name="answer" autocomplete="off"></label>
+<button>Check</button>
+<p class="verdict" hidden></p>
+<p class="why" hidden><code>value</code> is <code>on</code> either way.</p>
+</form>
+<form class="question" data-answer="preventDefault">
+<label>Which call stops a form from navigating away? <input name="answer" autocomplete="off"></label>
+<button>Check</button>
+<p class="verdict" hidden></p>
+<p class="why" hidden>Called on the submit event.</p>
+</form>
+<h3>Challenge</h3>
+<p>Write a form with two number fields and a button. On submit, show their sum in the page, without the page reloading.</p>
+<p><strong>Input:</strong> the numbers 5 and 3, then press the button.</p>
+<p><strong>The result must be:</strong></p>
+<ul>
+<li>The page shows 8, not 53.</li>
+<li>The page does not reload.</li>
+</ul>
+<details><summary>Example solution (one way of getting there)</summary>
+<pre><code>&lt;form id="sum"&gt;
+  &lt;input name="a" type="number" required&gt;
+  &lt;input name="b" type="number" required&gt;
+  &lt;button&gt;Add&lt;/button&gt;
+&lt;/form&gt;
+&lt;p id="result"&gt;&lt;/p&gt;
+&lt;script&gt;
+  document.querySelector("#sum").addEventListener("submit", (event) =&gt; {
+    event.preventDefault();
+    const { a, b } = event.target.elements;
+    document.querySelector("#result").textContent = a.valueAsNumber + b.valueAsNumber;
+  });
+&lt;/script&gt;</code></pre>
+</details>
+</section>
+<!-- summary -->
+<section>
+<h2>SUMMARY</h2>
+<ul>
+<li><code>.value</code> is always a string.</li>
+<li><code>.checked</code> is the state of a checkbox.</li>
+<li><code>preventDefault()</code> keeps you on the page.</li>
+<li><code>FormData</code> follows the same rules as a real submission.</li>
+</ul>
+</section>
+</main>
+<nav class="bottom" aria-label="Modules"><a href="02-events.html">Previous: Events</a><a href="04-fetch.html">Next: fetch and the network</a></nav>
+</body>
+</html>

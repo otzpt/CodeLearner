@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 5: State, storage and a small app | Web JavaScript course</title>
+<link rel="stylesheet" href="course.css">
+<script src="course.js"></script>
+</head>
+<body>
+<nav class="top" aria-label="Course"><a href="index.html">Web JavaScript course</a><span>Module 5 of 5</span></nav>
+<main>
+<h1>Module 5: State, storage and a small app</h1>
+
+<section>
+<h2>PART 1: localStorage stores strings</h2>
+<p><code>localStorage</code> keeps data after the tab is closed, and everything it stores is turned into a string first:</p>
+<figure class="demo">
+<pre><code>localStorage.setItem("codelearner-demo", 5);
+const value = localStorage.getItem("codelearner-demo");
+print(value, typeof value);
+print("value + 1 =", value + 1);
+
+localStorage.setItem("codelearner-demo", { name: "Ana" });
+print(localStorage.getItem("codelearner-demo"));
+localStorage.removeItem("codelearner-demo");</code></pre>
+<script>
+demo("d22", async function (print) {
+localStorage.setItem("codelearner-demo", 5);
+const value = localStorage.getItem("codelearner-demo");
+print(value, typeof value);
+print("value + 1 =", value + 1);
+
+localStorage.setItem("codelearner-demo", { name: "Ana" });
+print(localStorage.getItem("codelearner-demo"));
+localStorage.removeItem("codelearner-demo");
+});
+</script>
+<output id="d22" class="out"></output>
+</figure>
+<p>An object becomes the useless text <code>[object Object</code>]. Use <code>JSON.stringify</code> on the way in and <code>JSON.parse</code> on the way out:</p>
+<figure class="demo">
+<pre><code>localStorage.setItem("codelearner-demo", JSON.stringify({ name: "Ana", age: 30 }));
+const person = JSON.parse(localStorage.getItem("codelearner-demo"));
+print(person.name, typeof person.age);
+localStorage.removeItem("codelearner-demo");</code></pre>
+<script>
+demo("d23", async function (print) {
+localStorage.setItem("codelearner-demo", JSON.stringify({ name: "Ana", age: 30 }));
+const person = JSON.parse(localStorage.getItem("codelearner-demo"));
+print(person.name, typeof person.age);
+localStorage.removeItem("codelearner-demo");
+});
+</script>
+<output id="d23" class="out"></output>
+</figure>
+</section>
+<section>
+<h2>PART 2: keep the state in one place</h2>
+<p>If the page is the only record of the data, every change means reading the page back. Keep the data in a variable, change only that, and redraw from it. This to-do list is built that way. Add some items, tick them, and reload the page:</p>
+<figure class="demo">
+<pre><code>&lt;form id="todo-form"&gt;
+  &lt;input name="text" required aria-label="New item"&gt;
+  &lt;button&gt;Add&lt;/button&gt;
+&lt;/form&gt;
+&lt;ul id="todo-list"&gt;&lt;/ul&gt;</code></pre>
+<pre><code>const KEY = "codelearner-todos";
+const list = document.querySelector("#todo-list");
+let todos = JSON.parse(localStorage.getItem(KEY)) ?? [];
+
+function draw() {
+  list.replaceChildren(...todos.map((todo, index) =&gt; {
+    const item = document.createElement("li");
+    const box = document.createElement("input");
+    box.type = "checkbox";
+    box.checked = todo.done;
+    box.dataset.index = index;
+    const label = document.createElement("label");
+    label.append(box, " " + todo.text);
+    item.append(label);
+    return item;
+  }));
+  localStorage.setItem(KEY, JSON.stringify(todos));
+}
+
+document.querySelector("#todo-form").addEventListener("submit", (event) =&gt; {
+  event.preventDefault();
+  const field = event.target.elements.text;
+  todos.push({ text: field.value, done: false });
+  field.value = "";
+  draw();
+});
+
+list.addEventListener("change", (event) =&gt; {
+  todos[event.target.dataset.index].done = event.target.checked;
+  draw();
+});
+
+draw();
+print("Loaded", todos.length, "saved items");</code></pre>
+<div class="stage">
+<form id="todo-form">
+  <input name="text" required aria-label="New item">
+  <button>Add</button>
+</form>
+<ul id="todo-list"></ul>
+</div>
+<script>
+demo("d24", async function (print) {
+const KEY = "codelearner-todos";
+const list = document.querySelector("#todo-list");
+let todos = JSON.parse(localStorage.getItem(KEY)) ?? [];
+
+function draw() {
+  list.replaceChildren(...todos.map((todo, index) => {
+    const item = document.createElement("li");
+    const box = document.createElement("input");
+    box.type = "checkbox";
+    box.checked = todo.done;
+    box.dataset.index = index;
+    const label = document.createElement("label");
+    label.append(box, " " + todo.text);
+    item.append(label);
+    return item;
+  }));
+  localStorage.setItem(KEY, JSON.stringify(todos));
+}
+
+document.querySelector("#todo-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const field = event.target.elements.text;
+  todos.push({ text: field.value, done: false });
+  field.value = "";
+  draw();
+});
+
+list.addEventListener("change", (event) => {
+  todos[event.target.dataset.index].done = event.target.checked;
+  draw();
+});
+
+draw();
+print("Loaded", todos.length, "saved items");
+});
+</script>
+<output id="d24" class="out"></output>
+</figure>
+<p>Every part of it has come up in this course: a form with <code>preventDefault</code>, one delegated listener, elements built with <code>createElement</code> so that user text is never parsed as HTML, and JSON in storage.</p>
+</section>
+<!-- exercise 5 -->
+<section id="exercise">
+<h2>EXERCISE 5</h2>
+<form class="question" data-answer="The string 5">
+<label>What does <code>localStorage.setItem("n", 5)</code> store? <input name="answer" autocomplete="off"></label>
+<button>Check</button>
+<p class="verdict" hidden></p>
+<p class="why" hidden>Everything becomes a string.</p>
+</form>
+<form class="question" data-answer="JSON.stringify">
+<label>Which call turns an object into text that can be restored? <input name="answer" autocomplete="off"></label>
+<button>Check</button>
+<p class="verdict" hidden></p>
+<p class="why" hidden><code>JSON.parse</code> restores it.</p>
+</form>
+<form class="question" data-answer="The data">
+<label>In a state-driven page, what do you change first, the data or the DOM? <input name="answer" autocomplete="off"></label>
+<button>Check</button>
+<p class="verdict" hidden></p>
+<p class="why" hidden>Then draw from it.</p>
+</form>
+<h3>Challenge</h3>
+<p>Write the counter from module 2 again, so that it survives a page reload.</p>
+<p><strong>Input:</strong> click plus twice, then reload the page.</p>
+<p><strong>The result must be:</strong></p>
+<ul>
+<li>After the reload the counter still shows 2.</li>
+<li>The value is held in a variable and drawn from it.</li>
+<li>A first visit, with nothing saved, shows 0.</li>
+</ul>
+<details><summary>Example solution (one way of getting there)</summary>
+<pre><code>&lt;div id="counter"&gt;
+  &lt;button data-step="1"&gt;+&lt;/button&gt;
+  &lt;span id="value"&gt;&lt;/span&gt;
+  &lt;button data-step="-1"&gt;-&lt;/button&gt;
+&lt;/div&gt;
+&lt;script&gt;
+  let value = Number(localStorage.getItem("count") ?? 0);
+
+  function draw() {
+    document.querySelector("#value").textContent = value;
+    localStorage.setItem("count", value);
+  }
+
+  document.querySelector("#counter").addEventListener("click", (event) =&gt; {
+    if (event.target.matches("button")) {
+      value += Number(event.target.dataset.step);
+      draw();
+    }
+  });
+
+  draw();
+&lt;/script&gt;</code></pre>
+</details>
+</section>
+<!-- summary -->
+<section>
+<h2>SUMMARY</h2>
+<ul>
+<li><code>localStorage</code> stores strings, so use JSON for anything else.</li>
+<li>Keep state in variables and draw the page from it.</li>
+<li>Build user content with <code>createElement</code> and <code>textContent</code>.</li>
+</ul>
+</section>
+</main>
+<nav class="bottom" aria-label="Modules"><a href="04-fetch.html">Previous: fetch and the network</a><a href="index.html">Back to the module list</a></nav>
+</body>
+</html>
