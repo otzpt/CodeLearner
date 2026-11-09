@@ -14,7 +14,7 @@ NOTES:
     strict  -std=c11  the POSIX names are hidden unless you put
     #define _POSIX_C_SOURCE 200809L before the first include.
   - libc is linked automatically. A page whose SYNOPSIS says "Link with" needs
-    those flags after the source file (math.h needs -lm).
+    those flags after the source file for portability (math.h needs -lm).
   - Where a call can fail, the page shows how: the return value to test and
     the errno to read (see errno.h).
   - Type a word at the page list to search every page, including the code.
@@ -28,8 +28,9 @@ SEE: man 7 standards, man 7 feature_test_macros, man 7 libc
                                 locale.h, wchar.h
   POSIX                         unistd.h, sys/types.h, sys/stat.h, fcntl.h,
                                 dirent.h, pwd.h, sys/utsname.h, sys/statvfs.h,
-                                signal.h, termios.h, sys/ioctl.h, ifaddrs.h
-  Linux                         sys/sysinfo.h, clock_gettime(2), getloadavg(3)
+                                signal.h, termios.h, sys/ioctl.h
+  Linux                         sys/sysinfo.h, clock_gettime(2), getloadavg(3),
+                                ifaddrs.h
   Files: /proc, /sys and /etc   os-release(5), /proc/cpuinfo, /proc/meminfo,
                                 /sys/devices/virtual/dmi/id, /sys/class/drm,
                                 /sys/class/power_supply

@@ -188,7 +188,7 @@ def lesson_01_first_request():
             "    with urllib.request.urlopen(url, timeout=5) as response:",
             "        hsts = response.headers.get(\"Strict-Transport-Security\")",
             "    print(\"has-hsts:\", \"yes\" if hsts else \"no\")",
-            "except urllib.error.URLError:",
+            "except (urllib.error.URLError, TimeoutError):",
             "    print(\"network error\")",
         ],
     )
@@ -231,7 +231,7 @@ def _live_request():
         # like the host being down.
         print(f"  Running: server answered {e.code} {e.reason}")
         return e.headers
-    except urllib.error.URLError:
+    except (urllib.error.URLError, TimeoutError):
         print("  Couldn't reach the network just now -- here's a run")
         print("  captured while building this module (real output):")
         print()

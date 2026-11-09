@@ -91,7 +91,7 @@ void lesson_11_final_test(void)
     printf("  srand() reseeds it. Seeding with the current time means a\n");
     printf("  different sequence each run, because the time is different.\n\n");
 
-    printf("  rand() %% 100 gives 0..99. The %%1 shifts it to 1..100. This\n");
+    printf("  rand() %% 100 gives 0..99. The +1 shifts it to 1..100. This\n");
     printf("  is the same modulo trick as any other range conversion.\n\n");
 
     srand((unsigned) time(NULL));
@@ -883,7 +883,9 @@ void lesson_14_stacks_queues(void)
             "",
             "void push(struct Stack *s, char c)",
             "{",
-            "    s->items[s->top] = c;",
+            "    if (s->top < CAP) {",
+            "        s->items[s->top] = c;",
+            "    }",
             "    s->top++;",
             "}",
             "",
@@ -935,7 +937,8 @@ void lesson_14_stacks_queues(void)
             "though both are \"open\" brackets. s.top != 0 at the end",
             "means something opened was never closed.",
         };
-        challenge(task, 4, input, 1, expected, 2, solution, 60);
+        challenge(task, 4, input, 1, expected, 2, solution,
+                  (int)(sizeof solution / sizeof solution[0]));
     }
 
     wait_enter();

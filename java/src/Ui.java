@@ -33,7 +33,21 @@ public final class Ui {
     public static void waitEnter() {
         System.out.print("\n  Press ENTER to continue...");
         System.out.flush();
-        IN.nextLine();
+        // At EOF there is nothing to wait for; do not throw out of the
+        // handler in Main that calls this.
+        if (IN.hasNextLine()) {
+            IN.nextLine();
+        }
+    }
+
+    // Reads an int, discarding any non-numeric line and asking again.
+    public static int readInt() {
+        while (!IN.hasNextInt()) {
+            IN.nextLine();
+            System.out.print("  Not a number, try again: ");
+            System.out.flush();
+        }
+        return IN.nextInt();
     }
 
     public static void rule() {

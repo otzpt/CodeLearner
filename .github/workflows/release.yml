@@ -303,6 +303,10 @@ jobs:
             cp -r arduino/shim arduino/course "$out/arduino/"
             cp micropython/src/*.py "$out/micropython/src/"
             chmod +x "$out/rust/rust-course" "$out/arduino/arduino-course" "$out/micropython/src/main.py"
+            # Git is a Bash course: nothing to build, the scripts are the course.
+            mkdir -p "$out/git/src"
+            cp git/src/*.sh "$out/git/src/"
+            chmod +x "$out/git/src/main.sh"
             # Libraries: the browser, and the pages it compiles and runs on
             # demand (it finds them next to itself).
             mkdir -p "$out/libraries/c" "$out/libraries/python"
@@ -414,7 +418,7 @@ jobs:
           #!/bin/sh
           cd /opt/codelearner/launcher && exec ./launcher
           EOF
-          chmod +x "$pkg/usr/bin/codelearner" "$pkg/opt/codelearner/launcher/launcher" "$pkg/opt/codelearner/gui/gui-course" "$pkg/opt/codelearner/assembly/asm-course" "$pkg/opt/codelearner/java/run" "$pkg/opt/codelearner/csharp/csharp" "$pkg/opt/codelearner/csharp/run" "$pkg/opt/codelearner/rust/rust-course" "$pkg/opt/codelearner/arduino/arduino-course" "$pkg/opt/codelearner/micropython/src/main.py" "$pkg/opt/codelearner/libraries/libraries"
+          chmod +x "$pkg/usr/bin/codelearner" "$pkg/opt/codelearner/launcher/launcher" "$pkg/opt/codelearner/gui/gui-course" "$pkg/opt/codelearner/assembly/asm-course" "$pkg/opt/codelearner/java/run" "$pkg/opt/codelearner/csharp/csharp" "$pkg/opt/codelearner/csharp/run" "$pkg/opt/codelearner/rust/rust-course" "$pkg/opt/codelearner/arduino/arduino-course" "$pkg/opt/codelearner/micropython/src/main.py" "$pkg/opt/codelearner/git/src/main.sh" "$pkg/opt/codelearner/libraries/libraries"
           cat > "$pkg/DEBIAN/control" <<EOF
           Package: codelearner
           Version: $pkgver
@@ -483,11 +487,11 @@ jobs:
             install -Dm755 "\$startdir/payload/arduino/arduino-course" "\$pkgdir/opt/codelearner/arduino/arduino-course"
             install -Dm644 "\$startdir/payload/arduino/Makefile" "\$pkgdir/opt/codelearner/arduino/Makefile"
             install -Dm755 "\$startdir/payload/libraries/libraries" "\$pkgdir/opt/codelearner/libraries/libraries"
-            for dir in arduino/shim arduino/course micropython/src c/asm cpp/asm rust/asm libraries/c libraries/python; do
+            for dir in arduino/shim arduino/course micropython/src c/asm cpp/asm rust/asm libraries/c libraries/python git/src; do
               mkdir -p "\$pkgdir/opt/codelearner/\$dir"
               cp -r "\$startdir/payload/\$dir/." "\$pkgdir/opt/codelearner/\$dir/"
             done
-            chmod 755 "\$pkgdir/opt/codelearner/micropython/src/main.py" "\$pkgdir/opt/codelearner/c/asm/use_asm" "\$pkgdir/opt/codelearner/cpp/asm/use_asm" "\$pkgdir/opt/codelearner/rust/asm/use_asm"
+            chmod 755 "\$pkgdir/opt/codelearner/micropython/src/main.py" "\$pkgdir/opt/codelearner/git/src/main.sh" "\$pkgdir/opt/codelearner/c/asm/use_asm" "\$pkgdir/opt/codelearner/cpp/asm/use_asm" "\$pkgdir/opt/codelearner/rust/asm/use_asm"
             for f in "\$startdir/payload/python/src"/*.py; do
               install -Dm644 "\$f" "\$pkgdir/opt/codelearner/python/src/\$(basename "\$f")"
             done
@@ -543,7 +547,7 @@ jobs:
           HERE="$(dirname "$(readlink -f "$0")")"
           cd "$HERE/opt/launcher" && exec ./launcher
           EOF
-          chmod +x "$APPDIR/AppRun" "$APPDIR/opt/launcher/launcher" "$APPDIR/opt/csharp/csharp" "$APPDIR/opt/csharp/run" "$APPDIR/opt/java/run" "$APPDIR/opt/assembly/asm-course" "$APPDIR/opt/rust/rust-course" "$APPDIR/opt/arduino/arduino-course" "$APPDIR/opt/micropython/src/main.py" "$APPDIR/opt/libraries/libraries"
+          chmod +x "$APPDIR/AppRun" "$APPDIR/opt/launcher/launcher" "$APPDIR/opt/csharp/csharp" "$APPDIR/opt/csharp/run" "$APPDIR/opt/java/run" "$APPDIR/opt/assembly/asm-course" "$APPDIR/opt/rust/rust-course" "$APPDIR/opt/arduino/arduino-course" "$APPDIR/opt/micropython/src/main.py" "$APPDIR/opt/git/src/main.sh" "$APPDIR/opt/libraries/libraries"
           wget -q https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage -O /tmp/appimagetool
           chmod +x /tmp/appimagetool
           ARCH=x86_64 /tmp/appimagetool --appimage-extract-and-run "$APPDIR" "codelearner-x86_64.AppImage"
@@ -581,7 +585,7 @@ jobs:
           generate_release_notes: true
           fail_on_unmatched_files: false
           body: |
-            CodeLearner universal launcher — Windows and Linux.
+            CodeLearner universal launcher, Windows and Linux.
 
             Bundles the launcher with the compiled C, C++, GUI and C#
             courses -- all four run standalone, no toolchain needed.
@@ -602,7 +606,9 @@ jobs:
             The Rust and Arduino courses are bundled compiled, also Linux
             only (the Arduino one simulates the board on the PC through
             `poll()`). MicroPython is included as source, needs
-            `micropython` on PATH, and is Linux only. The C, C++ and Rust
+            `micropython` on PATH, and is Linux only. Security (Python)
+            is included as source on both platforms; Git (Bash) is
+            included as source on Linux only. The C, C++ and Rust
             assembly modules show a NASM example built with `nasm` in CI;
             rebuilding it yourself needs `nasm` (`make asm-demo`).
 
@@ -616,8 +622,8 @@ jobs:
             **Linux:** `.deb`, Arch `.pkg.tar.zst`, `.AppImage`, or the
             portable `.tar.gz`/`.zip` (run `./codelearner.sh`).
 
-            **Just the C# course, standalone, no launcher and no other
-            seven** -- a single self-contained executable, nothing else to
+            **Just the C# course, standalone, no launcher and none of the
+            other twelve** -- a single self-contained executable, nothing else to
             download: `codelearner-csharp-standalone-win-x64.exe` /
             `-linux-x86_64`. This is the one course where that's actually a
             single file; C, C++, GUI and Assembly need the rest of the

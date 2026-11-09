@@ -128,7 +128,7 @@ void lesson_19_advanced(void)
     printf("  row in MODULES fills it with a different lesson function,\n");
     printf("  and MODULES[n - 1].run() calls whichever one that row holds.\n");
     printf("  That is what lets the whole menu be a table instead of an\n");
-    printf("  18-case switch.\n\n");
+    printf("  20-case switch.\n\n");
 
     printf("  The same idea, smaller:\n\n");
     printf("    int (*op)(int, int) = add;\n\n");

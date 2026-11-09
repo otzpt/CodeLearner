@@ -13,4 +13,10 @@
 # docs/writing-a-course.md and this course's own module 1 for the two-step
 # javac-then-java model this shortcut sits on top of.
 cd "$(dirname "$0")/src" || exit 1
+# Multi-file source launch needs JDK 22+ (JEP 458); Main.java uses records (16+).
+v=$(java -version 2>&1 | sed -n '1s/[^"]*"\([0-9]*\).*/\1/p')
+if [ "${v:-0}" -lt 22 ]; then
+    echo "The Java course needs JDK 22 or newer (found: ${v:-none})." >&2
+    exit 1
+fi
 exec java Main.java

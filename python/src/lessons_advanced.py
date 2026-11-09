@@ -5,6 +5,8 @@ this module is about the seam between files -- what a module actually is,
 and the one line (`if __name__ == "__main__":`) that lets a file be both
 a runnable script and something another file imports without side effects.
 """
+import sys
+
 import ui
 
 
@@ -74,7 +76,8 @@ def lesson_11_modules():
     print("  runs -- `python3 main.py` -- gets one special value no matter")
     print("  what it's called:")
     print()
-    print(f"    Running right now, inside this program: __name__ is {__name__!r}")
+    entry = sys.modules["__main__"].__name__
+    print(f"    Running right now, in the file Python started: __name__ is {entry!r}")
     print()
     print("  This course's own main.py ends with exactly this guard (its")
     print('  real last lines, module 1 onward has been running under it):')

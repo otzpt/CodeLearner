@@ -5,12 +5,13 @@ implemented in Python. The language courses are written in the language they
 teach; this one is written in Python because that is its implementation
 language, and every lesson's code is readable, runnable example code.
 
-One module so far (BASIC). INTERMEDIATE and ADVANCED are printed empty in the
+Two modules so far (BASIC). INTERMEDIATE and ADVANCED are printed empty in the
 menu, the way the GUI course does, so the planned arc stays visible.
 
 | # | Module | Teaches |
 | --- | --- | --- |
 | 1 | Your first request | HTTP request/response, the Server header as information disclosure, missing security headers as a finding, and the urllib 4xx/5xx-raises trap |
+| 2 | Plain HTTP is readable on the wire | The same login over HTTP and HTTPS through a loopback tap: the password in the capture as text, then absent, and the server name still visible in the handshake |
 
 ## Running
 
@@ -36,7 +37,7 @@ module rather than adding a dependency.
 cd security/src
 python3 -c "import ast; ast.parse(open('lessons_basics.py').read())"
 python3 main.py                       # walk module 1 to its SUMMARY
-python3 ../tools/check-teaching-order.py
+python3 ../../tools/check-teaching-order.py
 ```
 
 The offline fallback in `lessons_basics.py` (`_CAPTURED_FALLBACK`) must be a

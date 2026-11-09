@@ -419,6 +419,10 @@ static void run_page(const struct Track *track, const struct Page *page)
 
     snprintf(scratch, sizeof scratch, "%s/codelearner-libraries-XXXXXX",
              getenv("TMPDIR") != NULL ? getenv("TMPDIR") : "/tmp");
+    if (!safe_path(scratch)) {
+        puts("    (not run: TMPDIR contains a quote)");
+        return;
+    }
     if (mkdtemp(scratch) == NULL) {
         puts("    (not run: could not make a scratch directory)");
         return;

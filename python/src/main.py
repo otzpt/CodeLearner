@@ -85,12 +85,20 @@ def main():
             # prints something and returns to this menu.
             try:
                 MODULES[n - 1]["run"]()
+            except EOFError:
+                break
             except Exception as e:
                 print(f"\n  Something went wrong: {e}")
-                ui.wait_enter()
+                try:
+                    ui.wait_enter()
+                except EOFError:
+                    break
         else:
             print("\n  Not a valid option.")
-            ui.wait_enter()
+            try:
+                ui.wait_enter()
+            except EOFError:
+                break
 
     print("\n  See you next time.\n")
 

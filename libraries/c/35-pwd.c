@@ -19,7 +19,7 @@
  *   - $USER, $HOME and $SHELL are convenient but can be changed or missing
  *     (cron, sudo, containers). getpwuid is the reliable answer.
  *   - pw_shell and $SHELL are the user's LOGIN shell. The shell you are
- *     typing in right now may be another one: see the terminal and shell page.
+ *     typing in right now may be another one.
  *   - Use the _r function; the plain getpwuid returns a pointer to static
  *     memory that the next call overwrites.
  *   - The _r functions return 0 even when the user does not exist: look at

@@ -292,8 +292,8 @@ class LessonsMore {
         }
         System.out.println();
         System.out.println("  The same enhanced for from module 5, over an ArrayList");
-        System.out.println("  instead of an array -- it works on anything Java calls");
-        System.out.println("  Iterable, which ArrayList is and a plain array also counts as.");
+        System.out.println("  instead of an array -- it works on arrays and, separately, on");
+        System.out.println("  anything Java calls Iterable, which ArrayList is.");
 
         Ui.waitEnter();
         Ui.clearScreen();

@@ -293,11 +293,14 @@ void lesson_18_file_io(void)
     printf("  A real re-prompt loop tries again instead of giving up on the\n");
     printf("  first bad line:\n\n");
 
-    printf("    int age, matched;\n");
+    printf("    int age, matched, c;\n");
     printf("    do {\n");
     printf("        printf(\"Age: \");\n");
     printf("        matched = scanf(\"%%d\", &age);\n");
-    printf("        while (getchar() != '\\n') { }   /* drain the bad line */\n");
+    printf("        if (matched == EOF) {\n");
+    printf("            break;                    /* input ended */\n");
+    printf("        }\n");
+    printf("        while ((c = getchar()) != '\\n' && c != EOF) { }\n");
     printf("    } while (matched != 1);\n\n");
 
     printf("  That drain line matters as much as the retry itself: a failed\n");
@@ -305,6 +308,10 @@ void lesson_18_file_io(void)
     printf("  UNREAD. Skip draining it and the next scanf call reads that\n");
     printf("  same leftover text again -- the loop never advances and\n");
     printf("  never ends.\n\n");
+
+    printf("  The EOF checks cover input that ends (Ctrl-D, or a pipe):\n");
+    printf("  getchar() then returns EOF forever, never '\\n', so a drain\n");
+    printf("  loop that only tests for '\\n' would spin without end.\n\n");
 
     printf("  This module cannot run that loop live -- it has no real\n");
     printf("  keyboard here to wait on, and a teaching module that might\n");

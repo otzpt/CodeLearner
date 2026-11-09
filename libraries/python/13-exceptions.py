@@ -19,14 +19,15 @@ SEE: https://docs.python.org/3/library/exceptions.html
 import errno
 
 try:
-    open("/sys/class/power_supply/BAT0/capacity", encoding="utf-8")
-    print("this machine has a battery")
+    with open("/sys/class/power_supply/BAT0/capacity", encoding="utf-8"):
+        print("this machine has a battery")
 except FileNotFoundError as error:
     print(f"FileNotFoundError: errno {error.errno} = {error.strerror}")
     print("ENOENT means 'not available here':", error.errno == errno.ENOENT)
 
 try:
-    open("/etc/shadow", encoding="utf-8")
+    with open("/etc/shadow", encoding="utf-8"):
+        pass
 except PermissionError as error:
     print("/etc/shadow:", error.strerror)
 

@@ -34,7 +34,12 @@ while [ $# -gt 0 ]; do
             shift
             ;;
         -h|--help)
-            sed -n '2,18p' "$0" | sed 's/^# \{0,1\}//'
+            cat <<'USAGE'
+CodeLearner installer -- any Linux distribution, x86-64.
+
+  --uninstall        remove it again
+  --prefix DIR       install somewhere else (default: ~/.local)
+USAGE
             exit 0
             ;;
         *) echo "install.sh: unknown option: $1" >&2; exit 1 ;;
@@ -142,6 +147,16 @@ if [ -f "$SHARE_DIR/desktop/$APP_ID.desktop" ]; then
         esac
     done < "$SHARE_DIR/desktop/$APP_ID.desktop" > "$APPS_DIR/$APP_ID.desktop"
     cp "$SHARE_DIR/desktop/$APP_ID.png" "$ICON_DIR/$APP_ID.png"
+
+    # GTK trusts an existing icon-theme.cache and does not see an icon added
+    # after it was written, so the menu entry shows no logo. Only a cache that
+    # is already there is refreshed: without one GTK scans the directories.
+    # -t because a user-level hicolor has no index.theme of its own.
+    ICON_ROOT="${PREFIX}/share/icons/hicolor"
+    if [ -f "$ICON_ROOT/icon-theme.cache" ] && command -v gtk-update-icon-cache >/dev/null 2>&1; then
+        gtk-update-icon-cache -q -f -t "$ICON_ROOT" ||
+            echo "install.sh: could not refresh the icon cache, the menu icon may be missing." >&2
+    fi
 fi
 
 echo

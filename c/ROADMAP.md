@@ -28,8 +28,7 @@ belongs with content already there):
 - `switch` — a PART in module 4 (Conditions).
 - `do`/`while` — a PART in module 5 (Loops).
 - Scope and lifetime (block scope, when a local variable's storage
-  actually exists) — a PART in module 2 (Variables and types), since it's
-  inseparable from what a variable *is*.
+  actually exists): a PART in module 7 (Functions), PART 4.
 
 ## 2. Functions — mostly covered
 
@@ -42,9 +41,9 @@ directly rather than starting something new:
 - Local vs. global variables (their own PART, distinct from scope/lifetime
   above, which is about a single variable's existence; this is about two
   places a name can live and which one wins).
-- Recursion (a base case, a recursive case, and a real stack-depth
-  failure shown — not simulated — the same way module 9 shows real leak
-  output rather than describing one).
+- Recursion (a base case, a recursive case, and and the stack-depth
+  failure described, not run (module 7 PART 5 prints the typed error and
+  says why it is not run here).
 
 Organizing a program into multiple `.c` files belongs with module 16
 (compilation and project structure) — it is inseparable from linking and
@@ -68,8 +67,8 @@ The course's own stance already matches the request that this not be
 arrays and strings, pointers to structs, `.` vs `->`, pointers to
 pointers: modules 8 and 12. `const` with pointers is the one real gap —
 folded into module 8 as a new PART (`const int *`, `int *const`, and the
-difference, with a compiler warning shown for getting it backwards, per
-the course's "warnings are teaching material" rule). Function pointers as
+difference, with the compiler error for getting it backwards shown as
+typed text, not run (module 8 PART 4)). Function pointers as
 *taught content* (not just the menu-table mechanism `main.c` already uses)
 is covered separately in module 19 (advanced C), since they depend on
 nothing pointers-specific beyond what module 8 already gives and are more
@@ -92,7 +91,8 @@ its own module rather than another PART bolted onto module 10.
 ways to get it wrong (leak, use-after-free, double-free, returning the
 address of a local array) are module 9 — the longest module on purpose.
 Module 12 goes further: a dynamically-sized 2D grid and growing an array
-with `realloc`, each shown broken first so the fix means something. Buffer
+with `realloc`; the broken versions are described, not run (module 12
+never runs them). Buffer
 overflows specifically (as distinct from the four ways module 9 already
 names) are the one gap — worth a PART in module 9 if it's ever revisited,
 not urgent enough for a new module on their own.

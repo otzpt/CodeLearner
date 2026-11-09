@@ -30,8 +30,8 @@
  *     check that write returns -1 with errno EPIPE.
  *   - A signal can interrupt a slow call: read() may return -1 with errno
  *     EINTR. SA_RESTART restarts most calls for you.
- *   - SIGKILL numbers and SIGUSR1's number differ between architectures: use
- *     the names.
+ *   - SIGUSR1 and several other signals have different numbers on Alpha,
+ *     SPARC and MIPS (SIGKILL is 9 everywhere): use the names.
  * USEDFOR:
  *   - SIGINT: reset colours and show the cursor before exiting.
  *   - SIGWINCH: re-read the terminal size and redraw, in a live mode.

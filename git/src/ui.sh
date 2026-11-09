@@ -81,8 +81,8 @@ ui_question() {
     local text=$1 correct=$2 why=$3 answer norm_answer norm_correct
     printf '\n  %s\n  Your answer: ' "$text"
     read -r answer
-    norm_answer=$(echo "$answer" | tr '[:upper:]' '[:lower:]' | xargs)
-    norm_correct=$(echo "$correct" | tr '[:upper:]' '[:lower:]' | xargs)
+    norm_answer=$(printf '%s\n' "$answer" | tr '[:upper:]' '[:lower:]' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+    norm_correct=$(printf '%s\n' "$correct" | tr '[:upper:]' '[:lower:]' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
     if [[ "$norm_answer" == "$norm_correct" ]]; then
         printf '\n  CORRECT.  %s\n' "$why"
     else

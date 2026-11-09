@@ -18,6 +18,7 @@ import sys
 
 import ui
 from lessons_basics import lesson_01_first_request
+from lessons_wire import lesson_02_plain_http
 
 # "tier" files a module under one of the three menu bands, display grouping
 # only -- the lesson functions never see it. Only the BASIC band has a
@@ -25,6 +26,7 @@ from lessons_basics import lesson_01_first_request
 # GUI course does, so the arc the course is headed toward stays visible.
 MODULES = [
     {"title": "Your first request", "run": lesson_01_first_request, "tier": "BASIC"},
+    {"title": "Plain HTTP is readable on the wire", "run": lesson_02_plain_http, "tier": "BASIC"},
 ]
 
 TIERS = ["BASIC", "INTERMEDIATE", "ADVANCED"]
@@ -66,12 +68,20 @@ def main():
             # prints something and returns to this menu.
             try:
                 MODULES[n - 1]["run"]()
+            except EOFError:
+                break
             except Exception as e:
                 print(f"\n  Something went wrong: {e}")
-                ui.wait_enter()
+                try:
+                    ui.wait_enter()
+                except EOFError:
+                    break
         else:
             print("\n  Not a valid option.")
-            ui.wait_enter()
+            try:
+                ui.wait_enter()
+            except EOFError:
+                break
 
     print("\n  See you next time.\n")
 

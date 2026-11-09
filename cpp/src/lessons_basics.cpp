@@ -321,9 +321,9 @@ void lesson04Conditions() {
 
     bool passed = score >= 70;
     std::cout << "    bool passed = score >= 70;\n";
-    std::cout << "    std::cout << passed;                    -> " << passed << "\n";
+    std::cout << "    std::cout << passed;                    -> " << std::noboolalpha << passed << "\n";
     std::cout << "    std::cout << std::boolalpha << passed;  -> " << std::boolalpha << passed
-              << "\n\n";
+              << std::noboolalpha << "\n\n";
 
     std::cout << "  Printed raw, a bool is still 1 or 0 -- the type is real,\n";
     std::cout << "  but cout's default formatting was not changed to match.\n";
@@ -433,10 +433,8 @@ void lesson05Loops() {
 
     std::cout << "  Without the &, each n is a fresh copy of that element --\n";
     std::cout << "  the same pass-by-value rule from C's functions, just\n";
-    std::cout << "  appearing inside a loop instead. g++ even flags the\n";
-    std::cout << "  pointless version on its own:\n\n";
-    std::cout << "    warning: variable 'n' set but not used\n";
-    std::cout << "             [-Wunused-but-set-variable=]\n\n";
+    std::cout << "  appearing inside a loop instead. g++ does not warn\n";
+    std::cout << "  about the pointless version, so the & is on you.\n\n";
 
     std::vector<int> nums = {1, 2, 3};
     for (auto &n : nums) {

@@ -241,7 +241,7 @@ EOF
         ui_run "git merge feature-x" git merge feature-x
         ui_run "cat notes.txt" cat notes.txt
     )
-    ui_sandbox_cleanup "$repo"
+    ui_sandbox_cleanup "$(dirname "$repo")"
 
     ui_wait_enter
     ui_clear_screen
@@ -265,7 +265,7 @@ EOF
         git -c user.name=Student -c user.email=student@example.com \
             -c commit.gpgsign=false commit --quiet -am "Change from main"
 
-        ui_run "git merge feature-a" git merge feature-a
+        ui_run "git merge feature-a" git -c user.name=Student -c user.email=student@example.com merge feature-a
         ui_run "cat notes.txt" cat notes.txt
 
         printf 'first line\nmerged: kept both\n' >notes.txt
@@ -275,7 +275,7 @@ EOF
             -c commit.gpgsign=false commit --no-edit
         ui_run "git log --oneline --graph --all" git log --oneline --graph --all
     )
-    ui_sandbox_cleanup "$repo"
+    ui_sandbox_cleanup "$(dirname "$repo")"
 
     ui_wait_enter
     ui_clear_screen
@@ -337,14 +337,14 @@ EOF
         ui_run "git tag v0.1-notes" git tag v0.1-notes
         ui_run "git tag -a v1.0.0 -m 'First release'" \
             git -c user.name=Student -c user.email=student@example.com \
-            -c commit.gpgsign=false tag -a v1.0.0 -m "First release"
+            -c commit.gpgsign=false -c tag.gpgSign=false -c tag.forceSignAnnotated=false tag -a v1.0.0 -m "First release"
         ui_run "git tag -n" git tag -n
 
         printf '\n  The difference is not cosmetic, ask git what kind of object each is:\n'
         ui_run "git cat-file -t v0.1-notes" git cat-file -t v0.1-notes
         ui_run "git cat-file -t v1.0.0" git cat-file -t v1.0.0
     )
-    ui_sandbox_cleanup "$repo"
+    ui_sandbox_cleanup "$(dirname "$repo")"
 
     cat <<'EOF'
 
@@ -368,7 +368,7 @@ EOF
     (
         cd "$clone" || exit 1
         git -c user.name=Student -c user.email=student@example.com \
-            -c commit.gpgsign=false tag -a v1.0.0 -m "First release" >/dev/null
+            -c commit.gpgsign=false -c tag.gpgSign=false -c tag.forceSignAnnotated=false tag -a v1.0.0 -m "First release" >/dev/null
         ui_run "git push origin v1.0.0" git push origin v1.0.0
     )
     ui_sandbox_cleanup "$sandbox"
@@ -474,13 +474,13 @@ YAML
             -c commit.gpgsign=false commit -m "Add CI workflow"
         ui_run "cat .github/workflows/tests.yml" cat .github/workflows/tests.yml
     )
-    ui_sandbox_cleanup "$repo"
+    ui_sandbox_cleanup "$(dirname "$repo")"
 
     ui_wait_enter
     ui_clear_screen
     ui_heading "PART 2: reading it, and what fires it"
     cat <<'EOF'
-  Four things matter in that file:
+  Five things matter in that file:
 
     on:        what triggers a run, here, a push to main, or any pull
                request. A release workflow commonly triggers on a tag
@@ -494,8 +494,8 @@ YAML
                it, the runner starts with nothing).
     run:       runs a real shell command, same as typing it locally.
 
-  Push a commit matching `on:`, and GitHub schedules that job automatically
- , no separate trigger command, no polling. Every run and its full log
+  Push a commit matching `on:`, and GitHub schedules that job automatically,
+  no separate trigger command, no polling. Every run and its full log
   appears under the repository's own Actions tab.
 EOF
 

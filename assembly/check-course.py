@@ -124,7 +124,7 @@ EXAMPLES = [
          run="{w}/hello", expect="the answer is 42\n", exit=0),
     dict(module=9, name="start.asm + free.c",
          build=[["nasm", "-f", "elf64", "examples/09/start.asm", "-o", "{w}/start.o"],
-                ["gcc", "-Wall", "-Wextra", "-ffreestanding", "-nostdlib", "-static", "-fno-pie",
+                ["gcc", "-Wall", "-Wextra", "-ffreestanding", "-fno-stack-protector", "-nostdlib", "-static", "-fno-pie",
                  "-no-pie", "-O2", "-c", "examples/09/free.c", "-o", "{w}/free.o"],
                 ["ld", "{w}/start.o", "{w}/free.o", "-o", "{w}/free"]],
          run="{w}/free", expect="hello from C, with no libc\n", exit=7),

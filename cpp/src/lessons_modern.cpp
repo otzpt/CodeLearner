@@ -22,6 +22,9 @@
 // thing.
 
 #include <algorithm>
+#ifndef _WIN32
+#include <unistd.h>
+#endif
 #include <cstdio>
 #include <cstdlib>
 #include <filesystem>
@@ -59,7 +62,7 @@ void lesson06Strings() {
 
     std::cout << "    std::string a = \"hi\";\n";
     std::cout << "    std::string b = \"hi\";\n";
-    std::cout << "    a == b   -> " << std::boolalpha << (a == b) << "\n\n";
+    std::cout << "    a == b   -> " << std::boolalpha << (a == b) << std::noboolalpha << "\n\n";
 
     std::cout << "  In C this was strcmp(a, b) == 0, because == compared\n";
     std::cout << "  addresses. std::string overloads == to compare\n";
@@ -150,9 +153,9 @@ void lesson06Strings() {
          "    std::cin >> word;", "",
          "    std::string reversed(word.rbegin(), word.rend());",
          "    std::cout << reversed << \"\\n\";", "    return 0;", "}", "",
-         "rbegin()/rend() walk the string back to front; building a new",
-         "string from that range does the reversal in one line. A loop",
-         "indexing from the end, like the C version did, also works."});
+         "// rbegin()/rend() walk the string back to front; building a new",
+         "// string from that range does the reversal in one line. A loop",
+         "// indexing from the end, like the C version did, also works."});
 
     waitEnter();
     clearScreen();
@@ -234,11 +237,15 @@ void lesson07Functions() {
 
     auto addInt = [](int a, int b) { return a + b; };
     auto addDouble = [](double a, double b) { return a + b; };
+    auto addDefault = [](int a, int b = 0) { return a + b; };
     std::cout << "    add(2, 3)     -> " << addInt(2, 3) << "\n";
     std::cout << "    add(2.5, 3.5) -> " << addDouble(2.5, 3.5) << "\n\n";
 
-    std::cout << "  Default arguments work exactly as in the C course's\n";
-    std::cout << "  power(base, exp = 2) -- nothing new there.\n";
+    std::cout << "  A default argument fills in a parameter the caller left\n";
+    std::cout << "  out. C has no such feature:\n\n";
+    std::cout << "    int add(int a, int b = 0) { return a + b; }\n";
+    std::cout << "    add(5)     -> " << addDefault(5) << "\n";
+    std::cout << "    add(5, 3)  -> " << addDefault(5, 3) << "\n";
 
     waitEnter();
     clearScreen();
@@ -328,8 +335,9 @@ void lesson08Vectors() {
 
     std::cout << "  v[100] on a 4-element vector is undefined behaviour --\n";
     std::cout << "  the language makes no promise at all about what\n";
-    std::cout << "  happens. On this compiler, right now, it aborts with an\n";
-    std::cout << "  assertion:\n\n";
+    std::cout << "  happens. With this course's Makefile flags it does not\n";
+    std::cout << "  abort: it silently reads past the end. Only a build with\n";
+    std::cout << "  -D_GLIBCXX_ASSERTIONS aborts, with:\n\n";
     std::cout << "    Assertion '__n < this->size()' failed.\n\n";
 
     std::cout << "  That is an OBSERVED result on this toolchain, not a\n";
@@ -800,11 +808,23 @@ void lesson11Templates() {
     std::cout << "  compiling it for real, right now:\n\n";
 
     const std::string tmpDir = std::filesystem::temp_directory_path().string();
-    const std::string srcPath = tmpDir + "/codelearner_m11_test.cpp";
-    const std::string binPath = tmpDir + "/codelearner_m11_test";
+    // A fixed name in a shared temp directory can be pre-created as a
+    // symlink by another user, so work inside a private mkdtemp directory.
+    std::string workDir = tmpDir;
+#ifndef _WIN32
+    std::string workTemplate = tmpDir + "/codelearner_m11_XXXXXX";
+    const bool haveWorkDir = mkdtemp(&workTemplate[0]) != nullptr;
+    if (haveWorkDir) {
+        workDir = workTemplate;
+    }
+#else
+    const bool haveWorkDir = true;
+#endif
+    const std::string srcPath = workDir + "/codelearner_m11_test.cpp";
+    const std::string binPath = workDir + "/codelearner_m11_test";
 
     bool wroteSource = false;
-    {
+    if (haveWorkDir) {
         std::ofstream out(srcPath);
         if (out) {
             out << "template<typename T>\n"
@@ -835,6 +855,11 @@ void lesson11Templates() {
 
     std::remove(srcPath.c_str());
     std::remove(binPath.c_str());
+#ifndef _WIN32
+    if (haveWorkDir) {
+        rmdir(workDir.c_str());
+    }
+#endif
 
     // g++ actually running and rejecting Point's missing operator+ exits 1.
     // Anything else -- no source written, g++ missing from PATH (the shell's

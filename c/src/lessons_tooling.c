@@ -9,7 +9,7 @@
  * It comes after module 11 (the final test) conceptually: everything it
  * needs -- functions, and nothing past them -- is already taught, and
  * "more than one file" is the thing this course has quietly relied on
- * the whole time (its own Makefile links six .c files) without ever
+ * the whole time (its own Makefile links nine .c files) without ever
  * explaining out loud.
  *
  * The centerpiece, PART 4, is a real linker error: an "undefined
@@ -247,7 +247,7 @@ void lesson_16_compilation(void)
         printf("  Point` got DEFINED twice in one translation unit, once\n");
         printf("  per #include. A function prototype can legally appear\n");
         printf("  more than once -- it is only a declaration. A struct\n");
-        printf("  body, a typedef, or a variable with an initializer\n");
+        printf("  body, a typedef of a struct body, or a variable with an initializer\n");
         printf("  cannot; the second copy is a redefinition.\n\n");
 
         printf("  The fix wraps the header so the second #include expands\n");
@@ -522,7 +522,7 @@ void lesson_16_compilation(void)
     clear_screen();
     heading("PART 7: Makefiles -- this course's own");
 
-    printf("  Typing the right cc command by hand for six source files,\n");
+    printf("  Typing the right cc command by hand for nine source files,\n");
     printf("  every time one of them changes, does not scale. `make`\n");
     printf("  reads a Makefile describing what depends on what, and only\n");
     printf("  rebuilds what actually needs it. This is not a toy example\n");
@@ -534,6 +534,7 @@ void lesson_16_compilation(void)
             "#\n"
             "#   make          builds ./c-course\n"
             "#   make run      builds and runs\n"
+            "#   make asm-demo builds and runs the NASM example in asm/ (needs nasm)\n"
             "#   make clean    removes build output\n"
             "#\n"
             "# -Wall -Wextra stay on always. In a C course a compiler warning is\n"
@@ -542,7 +543,7 @@ void lesson_16_compilation(void)
             "CC      = cc\n"
             "CFLAGS  = -std=c11 -Wall -Wextra -g\n"
             "TARGET  = c-course\n"
-            "SOURCES = src/main.c src/ui.c src/lessons_basics.c src/lessons_memory.c src/lessons_advanced.c src/lessons_tooling.c\n"
+            "SOURCES = src/main.c src/ui.c src/lessons_basics.c src/lessons_memory.c src/lessons_advanced.c src/lessons_tooling.c src/lessons_io.c src/lessons_lang_features.c src/lessons_assembly.c\n"
             "OBJECTS = $(SOURCES:.c=.o)\n"
             "\n"
             "$(TARGET): $(OBJECTS)\n"
@@ -556,10 +557,18 @@ void lesson_16_compilation(void)
             "run: $(TARGET)\n"
             "\t./$(TARGET)\n"
             "\n"
-            "clean:\n"
-            "\trm -f $(OBJECTS) $(TARGET)\n"
+            "# Module 20's NASM example. Separate from the course on purpose: the course\n"
+            "# builds with a C compiler alone, and only this target needs nasm. The course\n"
+            "# runs asm/use_asm itself, when it exists, to show its real output.\n"
+            "asm-demo:\n"
+            "\tnasm -f elf64 asm/add.asm -o asm/add.o\n"
+            "\t$(CC) -std=c11 -Wall -Wextra asm/use_asm.c asm/add.o -o asm/use_asm\n"
+            "\t./asm/use_asm\n"
             "\n"
-            ".PHONY: run clean\n";
+            "clean:\n"
+            "\trm -f $(OBJECTS) $(TARGET) asm/add.o asm/use_asm\n"
+            "\n"
+            ".PHONY: run asm-demo clean\n";
 
         print_code(makefile_text);
     }
