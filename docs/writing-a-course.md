@@ -213,7 +213,8 @@ matters, and the duplication is a menu loop.
 
 Once the course builds -- or, for an interpreted language, once its entry
 script exists and is runnable -- register it in `launcher/src/main.c`: change
-its `LANGUAGES` entry from `NULL` to the relative path. Nothing else changes
+its `LANGUAGES` entry from `NULL` to the relative path, next to the other rows
+of its menu group (the last field, `NULL` for LANGUAGES). Nothing else changes
 — the launcher checks the path exists and runs it with `system()`. It does
 not need to know the course's module count, its language, or whether that
 path is a compiled binary or a script. Python's and JavaScript's entries are

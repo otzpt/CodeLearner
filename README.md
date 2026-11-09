@@ -25,22 +25,30 @@ install options are under [Installing](#installing)):
   +======================================================+
   version 1.5.1
 
-   -- LANGUAGES --
+   -- LOW-LEVEL AND SYSTEMS --
    [1]  C
    [2]  C++
-   [3]  Python
-   [4]  JavaScript
-   [5]  Java
-   [6]  C#
-   [7]  GUI (GTK)
-   [8]  Assembly
-   [9]  Git
-   [10]  Arduino
-   [11]  Rust
-   [12]  Security
-   [13]  MicroPython
+   [3]  Assembly
+   [4]  Rust
+   [5]  Arduino
+   [6]  MicroPython
 
-   -- LIBRARIES --
+   -- LANGUAGES --
+   [7]  Python
+   [8]  JavaScript
+   [9]  Java
+   [10]  C#
+
+   -- SECURITY --
+   [11]  Security
+
+   -- GUI --
+   [12]  GUI (GTK)
+
+   -- TOOLING --
+   [13]  Git
+
+   -- REFERENCE --
    [14]  Libraries
 
    [u]  Check for updates
@@ -48,28 +56,31 @@ install options are under [Installing](#installing)):
   ------------------------------------------------------
 ```
 
+Entries are numbered in menu order, so adding or moving a course renumbers
+what comes after it. Go by the name, not a number you remember.
+
 The Libraries entry is a reference manual, not a course: man-page style pages
 for C and Python libraries, each with an example that runs on your machine.
 
 ## Status
 
-| Language | Modules | Where |
-| --- | --- | --- |
-| C | 20: first program through file I/O, debugging, function pointers/macros, and inline assembly with NASM | [`c/`](c/) |
-| C++ | 13: cout through templates and modern idioms, then inline assembly and `extern "C"` | [`cpp/`](cpp/) |
-| Python | 13 — print() through files/context managers and working with a real API | [`python/`](python/) |
-| JavaScript | 14 — console.log() through modules and Node's own fs/process stdlib | [`javascript/`](javascript/) |
-| Java | 13 — System.out through the Collections Framework, generics, and concurrency | [`java/`](java/) |
-| C# | 14 — top-level statements through LINQ, async/await, and delegates/events | [`csharp/`](csharp/) |
-| Rust | 12: `println!` through ownership, borrowing, structs, enums, `Result`, volatile registers for the Pico, and inline assembly with NASM | [`rust/`](rust/) |
-| MicroPython | 11: for the Raspberry Pi Pico: pins, PWM/ADC, interrupts, native/viper, `asm_thumb`, a robot | [`micropython/`](micropython/) |
-| Arduino | 13: `setup()`/`loop()` through registers, interrupts, AVR inline assembly, a robot (runs on a PC) | [`arduino/`](arduino/) |
-| Security | 2 so far: a topic course in Python. HTTP requests, what a server's headers reveal, the urllib 4xx/5xx-raises trap, and why plain HTTP is readable on the wire | [`security/`](security/) |
-| GUI (GTK) | 1 — your first window | [`gui/`](gui/) |
-| Libraries | a reference manual, not a course: man-page style pages for the C and Python libraries (standard C, POSIX, Linux, /proc and /sys, raylib), each example run live | [`libraries/`](libraries/) |
-| Assembly | 16 — registers and syscalls through memory, the stack, bits and strings, then C together with assembly, and a boot sector to an operating system kernel with interrupts, in NASM (Intel syntax) | [`assembly/`](assembly/README.md) |
-| Git | 10 — what is git through GitHub Actions | [`git/`](git/) |
-| Launcher | done — pick a language, open its course | [`launcher/`](launcher/) |
+| Group | Language | Modules | Where |
+| --- | --- | --- | --- |
+| Low-level and systems | C | 20: first program through file I/O, debugging, function pointers/macros, and inline assembly with NASM | [`c/`](c/) |
+| Low-level and systems | C++ | 13: cout through templates and modern idioms, then inline assembly and `extern "C"` | [`cpp/`](cpp/) |
+| Low-level and systems | Assembly | 16: registers and syscalls through memory, the stack, bits and strings, then C together with assembly, and a boot sector to an operating system kernel with interrupts, in NASM (Intel syntax) | [`assembly/`](assembly/README.md) |
+| Low-level and systems | Rust | 12: `println!` through ownership, borrowing, structs, enums, `Result`, volatile registers for the Pico, and inline assembly with NASM | [`rust/`](rust/) |
+| Low-level and systems | Arduino | 13: `setup()`/`loop()` through registers, interrupts, AVR inline assembly, a robot (runs on a PC) | [`arduino/`](arduino/) |
+| Low-level and systems | MicroPython | 11: for the Raspberry Pi Pico: pins, PWM/ADC, interrupts, native/viper, `asm_thumb`, a robot | [`micropython/`](micropython/) |
+| Languages | Python | 13: print() through files/context managers and working with a real API | [`python/`](python/) |
+| Languages | JavaScript | 14: console.log() through modules and Node's own fs/process stdlib | [`javascript/`](javascript/) |
+| Languages | Java | 13: System.out through the Collections Framework, generics, and concurrency | [`java/`](java/) |
+| Languages | C# | 14: top-level statements through LINQ, async/await, and delegates/events | [`csharp/`](csharp/) |
+| Security | Security | 2 so far: a topic course in Python. HTTP requests, what a server's headers reveal, the urllib 4xx/5xx-raises trap, and why plain HTTP is readable on the wire | [`security/`](security/) |
+| GUI | GUI (GTK) | 1: your first window | [`gui/`](gui/) |
+| Tooling | Git | 10: what is git through GitHub Actions | [`git/`](git/) |
+| Reference | Libraries | a reference manual, not a course: man-page style pages for the C and Python libraries (standard C, POSIX, Linux, /proc and /sys, raylib), each example run live | [`libraries/`](libraries/) |
+| | Launcher | done: pick a language, open its course | [`launcher/`](launcher/) |
 
 Every course's menu groups its modules under three bands, BASIC,
 INTERMEDIATE, and ADVANCED — a display grouping only, printed as section
@@ -767,7 +778,7 @@ in the lesson.
 
 ## The Libraries reference
 
-The launcher has a second tab, **LIBRARIES**, below the languages. It is a
+The launcher lists **Libraries** under **REFERENCE**, after the courses. It is a
 reference manual, not a course: pick C or Python, then a page. Each page is
 laid out like a man page (NAME, SYNOPSIS, DESCRIPTION, STANDARDS, NOTES,
 APPLICATION USAGE, EXAMPLE, SEE ALSO) and runs its example on your machine.
