@@ -131,192 +131,192 @@ summaries:
     dq summary_16
 
 summary_1:
-    db db "   - sintaxe Intel: destino primeiro, depois origem: mov dst, src;", 10
-    db db "     a ordem AT&T que gcc -S mostra por omissão é a inversa", 10
-    db db "   - os seis primeiros argumentos inteiros/apontadores vão em rdi,", 10
-    db db "     rsi, rdx, rcx, r8, r9: não na pilha, só a partir do 7.o", 10
-    db db "   - um syscall é um número em rax mais os argumentos nos mesmos", 10
-    db db "     registos de uma chamada de função, depois a instrução", 10
-    db db "     syscall: sem precisar de libc para nada disto", 10
-    db db "   - a saída -O0 de um compilador não é uma caixa negra: push rbp /", 10
-    db db "     mov rbp, rsp é o mesmo stack frame que o ui.asm deste curso", 10
-    db db "     escreve à mão", 10
-    db db 10
-    db db "  Não é fluência: é o suficiente para reconhecer no que o teu C", 10
-    db db "  compilado se transforma, e para que objdump -d num programa", 10
-    db db "  teu seja legível em vez de ruído.", 10
+    db"   - sintaxe Intel: destino primeiro, depois origem: mov dst, src;", 10
+    db"     a ordem AT&T que gcc -S mostra por omissão é a inversa", 10
+    db"   - os seis primeiros argumentos inteiros/apontadores vão em rdi,", 10
+    db"     rsi, rdx, rcx, r8, r9: não na pilha, só a partir do 7.o", 10
+    db"   - um syscall é um número em rax mais os argumentos nos mesmos", 10
+    db"     registos de uma chamada de função, depois a instrução", 10
+    db"     syscall: sem precisar de libc para nada disto", 10
+    db"   - a saída -O0 de um compilador não é uma caixa negra: push rbp /", 10
+    db"     mov rbp, rsp é o mesmo stack frame que o ui.asm deste curso", 10
+    db"     escreve à mão", 10
+    db10
+    db"  Não é fluência: é o suficiente para reconhecer no que o teu C", 10
+    db"  compilado se transforma, e para que objdump -d num programa", 10
+    db"  teu seja legível em vez de ruído.", 10
     db 0
 
 summary_2:
-    db db "   - cmp calcula uma subtração e guarda só as flags; o salto a", 10
-    db db "     seguir é que as lê", 10
-    db db "   - cmp rax, 10 é rax - 10, não 10 - rax: o primeiro operando é o comparado", 10
-    db db "   - jl/jg têm sinal, jb/ja não têm; o assembler não te diz qual", 10
-    db db "     delas o valor no registo queria", 10
-    db db "   - um if é um salto na condição INVERTIDA, mais um jmp no fim", 10
-    db db "     do corpo do if para não cair no do else", 10
-    db db "   - test rax, rax é a forma idiomática de perguntar ", 34, "é zero?", 34, 10
+    db"   - cmp calcula uma subtração e guarda só as flags; o salto a", 10
+    db"     seguir é que as lê", 10
+    db"   - cmp rax, 10 é rax - 10, não 10 - rax: o primeiro operando é o comparado", 10
+    db"   - jl/jg têm sinal, jb/ja não têm; o assembler não te diz qual", 10
+    db"     delas o valor no registo queria", 10
+    db"   - um if é um salto na condição INVERTIDA, mais um jmp no fim", 10
+    db"     do corpo do if para não cair no do else", 10
+    db"   - test rax, rax é a forma idiomática de perguntar ", 34, "é zero?", 34, 10
     db 0
 
 summary_3:
-    db db "   - um ciclo é uma etiqueta, um corpo e um salto condicional de volta", 10
-    db db "   - testado em cima corre o corpo zero vezes com contagem zero;", 10
-    db db "     testado em baixo corre sempre pelo menos uma, com um salto a menos", 10
-    db db "   - dec define ZF, por isso contar até zero não precisa de cmp", 10
-    db db "   - a instrução loop é mais lenta do que dec/jnz e fixa rcx, que", 10
-    db db "     qualquer call no corpo pode destruir", 10
-    db db "   - um contador que sobrevive a um call vai em rbx ou r12-r15", 10
-    db db "   - (base, índice, escala) indexa um array num só operando", 10
+    db"   - um ciclo é uma etiqueta, um corpo e um salto condicional de volta", 10
+    db"   - testado em cima corre o corpo zero vezes com contagem zero;", 10
+    db"     testado em baixo corre sempre pelo menos uma, com um salto a menos", 10
+    db"   - dec define ZF, por isso contar até zero não precisa de cmp", 10
+    db"   - a instrução loop é mais lenta do que dec/jnz e fixa rcx, que", 10
+    db"     qualquer call no corpo pode destruir", 10
+    db"   - um contador que sobrevive a um call vai em rbx ou r12-r15", 10
+    db"   - (base, índice, escala) indexa um array num só operando", 10
     db 0
 
 summary_4:
-    db db "   - read é o syscall 0 no fd 0, e rax volta com uma contagem, 0", 10
-    db db "     em EOF, ou um errno negativo", 10
-    db db "   - read não escreve terminador e mantém o fim de linha; pedir", 10
-    db db "     tamanho - 1 deixa espaço para terminar com segurança", 10
-    db db "   - os dígitos são bytes: subtrai '0' para ter o valor, soma '0'", 10
-    db db "     para voltar ao carácter", 10
-    db db "   - n = n * 10 + dígito, parando no primeiro byte fora de '0'-'9'", 10
-    db db "   - xor rdx, rdx antes de cada div, ou um #DE mata o processo", 10
-    db db "   - valores que sobrevivem a um syscall vão em r12-r15, não em rcx", 10
+    db"   - read é o syscall 0 no fd 0, e rax volta com uma contagem, 0", 10
+    db"     em EOF, ou um errno negativo", 10
+    db"   - read não escreve terminador e mantém o fim de linha; pedir", 10
+    db"     tamanho - 1 deixa espaço para terminar com segurança", 10
+    db"   - os dígitos são bytes: subtrai '0' para ter o valor, soma '0'", 10
+    db"     para voltar ao carácter", 10
+    db"   - n = n * 10 + dígito, parando no primeiro byte fora de '0'-'9'", 10
+    db"   - xor rdx, rdx antes de cada div, ou um #DE mata o processo", 10
+    db"   - valores que sobrevivem a um syscall vão em r12-r15, não em rcx", 10
     db 0
 
 summary_5:
-    db db "   - uma etiqueta é um endereço: mov rax, etiqueta carrega-o, mov rax,", 10
-    db db "     [etiqueta] carrega o que lá está", 10
-    db db "   - .text corre, .rodata é só de leitura, .data e .bss escrevem-se;", 10
-    db db "     .bss vem a zeros e não ocupa espaço no ficheiro", 10
-    db db "   - guardar um número em memória precisa de indicar o tamanho: sem", 10
-    db db "     isso o NASM 3.01 guarda um único byte", 10
-    db db "   - escrever em eax limpa a metade de cima de rax; escrever em ax", 10
-    db db "     ou al não toca no resto", 10
-    db db "   - [base + índice*escala + deslocamento] com escala 1, 2, 4 ou 8;", 10
-    db db "     lea calcula o endereço e não carrega nada", 10
-    db db "   - x86 é little-endian: o byte baixo fica no endereço mais baixo", 10
+    db"   - uma etiqueta é um endereço: mov rax, etiqueta carrega-o, mov rax,", 10
+    db"     [etiqueta] carrega o que lá está", 10
+    db"   - .text corre, .rodata é só de leitura, .data e .bss escrevem-se;", 10
+    db"     .bss vem a zeros e não ocupa espaço no ficheiro", 10
+    db"   - guardar um número em memória precisa de indicar o tamanho: sem", 10
+    db"     isso o NASM 3.01 guarda um único byte", 10
+    db"   - escrever em eax limpa a metade de cima de rax; escrever em ax", 10
+    db"     ou al não toca no resto", 10
+    db"   - [base + índice*escala + deslocamento] com escala 1, 2, 4 ou 8;", 10
+    db"     lea calcula o endereço e não carrega nada", 10
+    db"   - x86 é little-endian: o byte baixo fica no endereço mais baixo", 10
     db 0
 
 summary_6:
-    db db "   - push subtrai 8 a rsp e guarda; pop carrega e soma 8; a pilha", 10
-    db db "     cresce para endereços mais baixos e pop não apaga nada", 10
-    db db "   - call empilha o endereço de retorno e salta; ret tira-o para rip;", 10
-    db db "     um push ou pop a mais faz o ret ir para onde não devia", 10
-    db db "   - rsp é múltiplo de 16 num call, por isso fica desfasado 8 lá dentro", 10
-    db db "   - um frame é push rbp / mov rbp, rsp / sub rsp, N ... leave / ret;", 10
-    db db "     os locais são [rbp-8].., o 7.o argumento é [rbp+16]", 10
-    db db "   - rbx, rbp, r12-r15 são callee-saved: repõe-nos. Tudo o resto um", 10
-    db db "     call pode destruir, e syscall destrói rcx e r11", 10
-    db db "   - a pilha tem tamanho fixo; a recursão precisa de um caso base", 10
+    db"   - push subtrai 8 a rsp e guarda; pop carrega e soma 8; a pilha", 10
+    db"     cresce para endereços mais baixos e pop não apaga nada", 10
+    db"   - call empilha o endereço de retorno e salta; ret tira-o para rip;", 10
+    db"     um push ou pop a mais faz o ret ir para onde não devia", 10
+    db"   - rsp é múltiplo de 16 num call, por isso fica desfasado 8 lá dentro", 10
+    db"   - um frame é push rbp / mov rbp, rsp / sub rsp, N ... leave / ret;", 10
+    db"     os locais são [rbp-8].., o 7.o argumento é [rbp+16]", 10
+    db"   - rbx, rbp, r12-r15 são callee-saved: repõe-nos. Tudo o resto um", 10
+    db"     call pode destruir, e syscall destrói rcx e r11", 10
+    db"   - a pilha tem tamanho fixo; a recursão precisa de um caso base", 10
     db 0
 
 summary_7:
-    db db "   - and desliga, or liga, xor inverte, test só lê: tudo com uma máscara", 10
-    db db "   - shl multiplica por 2^n; shr divide sem sinal, sar com sinal;", 10
-    db db "     o shift errado para a direita faz de -16 / 4 um número enorme", 10
-    db db "   - CF é overflow sem sinal, OF com sinal; o CPU define ambos e o", 10
-    db db "     teu salto escolhe qual conta", 10
-    db db "   - idiv precisa de cqo, div de xor rdx; idiv trunca para zero", 10
-    db db "   - movzx alarga dados sem sinal, movsx com sinal", 10
-    db db "   - as tabelas do hardware são campos de bits: mascarar, deslocar, or", 10
+    db"   - and desliga, or liga, xor inverte, test só lê: tudo com uma máscara", 10
+    db"   - shl multiplica por 2^n; shr divide sem sinal, sar com sinal;", 10
+    db"     o shift errado para a direita faz de -16 / 4 um número enorme", 10
+    db"   - CF é overflow sem sinal, OF com sinal; o CPU define ambos e o", 10
+    db"     teu salto escolhe qual conta", 10
+    db"   - idiv precisa de cqo, div de xor rdx; idiv trunca para zero", 10
+    db"   - movzx alarga dados sem sinal, movsx com sinal", 10
+    db"   - as tabelas do hardware são campos de bits: mascarar, deslocar, or", 10
     db 0
 
 summary_8:
-    db db "   - movs/stos/lods/scas/cmps usam rsi, rdi, al/rax e rcx como", 10
-    db db "     operandos fixos; rep repete rcx vezes, repe/repne vigiam ZF", 10
-    db db "   - rep movsb é memcpy, rep stosb é memset, repne scasb é strlen", 10
-    db db "   - depois de uma diferença em repe cmpsb, rsi/rdi ficam um à frente", 10
-    db db "   - DF escolhe o sentido; std numa cópia sobreposta para um endereço", 10
-    db db "     mais alto, e sempre cld antes de correr mais alguma coisa", 10
-    db db "   - rep movsb avança rdi: um memcpy que devolve dest guarda-o primeiro", 10
+    db"   - movs/stos/lods/scas/cmps usam rsi, rdi, al/rax e rcx como", 10
+    db"     operandos fixos; rep repete rcx vezes, repe/repne vigiam ZF", 10
+    db"   - rep movsb é memcpy, rep stosb é memset, repne scasb é strlen", 10
+    db"   - depois de uma diferença em repe cmpsb, rsi/rdi ficam um à frente", 10
+    db"   - DF escolhe o sentido; std numa cópia sobreposta para um endereço", 10
+    db"     mais alto, e sempre cld antes de correr mais alguma coisa", 10
+    db"   - rep movsb avança rdi: um memcpy que devolve dest guarda-o primeiro", 10
     db 0
 
 summary_9:
-    db db "   - a convenção System V é a interface toda: registos à entrada, rax", 10
-    db db "     à saída, rbx/rbp/r12-r15 mantidos, rsp múltiplo de 16 num call", 10
-    db db "   - asm chamado de C precisa de global e de uma declaração igual;", 10
-    db db "     C chamado de asm precisa de alinhamento, al definido em varargs,", 10
-    db db "     e wrt ..plt (ou -no-pie) no PIE predefinido do gcc", 10
-    db db "   - C freestanding precisa de um ponto de entrada em assembly e do", 10
-    db db "     seu memcpy/memset: o compilador chama-os sem lhe pedirem", 10
-    db db "   - o código do kernel compila com -mno-red-zone porque as", 10
-    db db "     interrupções usam a pilha abaixo de rsp", 10
-    db db "   - as disposições de hardware precisam de structs packed e de um", 10
-    db db "     assert do tamanho; a memória de ecrã precisa de volatile", 10
+    db"   - a convenção System V é a interface toda: registos à entrada, rax", 10
+    db"     à saída, rbx/rbp/r12-r15 mantidos, rsp múltiplo de 16 num call", 10
+    db"   - asm chamado de C precisa de global e de uma declaração igual;", 10
+    db"     C chamado de asm precisa de alinhamento, al definido em varargs,", 10
+    db"     e wrt ..plt (ou -no-pie) no PIE predefinido do gcc", 10
+    db"   - C freestanding precisa de um ponto de entrada em assembly e do", 10
+    db"     seu memcpy/memset: o compilador chama-os sem lhe pedirem", 10
+    db"   - o código do kernel compila com -mno-red-zone porque as", 10
+    db"     interrupções usam a pilha abaixo de rsp", 10
+    db"   - as disposições de hardware precisam de structs packed e de um", 10
+    db"     assert do tamanho; a memória de ecrã precisa de volatile", 10
     db 0
 
 summary_10:
-    db db "   - a BIOS carrega o setor 0 para 0x7C00, quer 0x55 0xAA no fim, e", 10
-    db db "     salta para lá em modo real de 16 bits sem nada preparado", 10
-    db db "   - endereço = segmento * 16 + offset, um megabyte, 64 KiB de cada vez", 10
-    db db "   - org 0x7C00 diz ao NASM onde o código fica; sem isso todas as", 10
-    db db "     etiquetas erram; times 510 - ($ - $$) db 0 e dw 0xAA55 terminam", 10
-    db db "   - define primeiro ds, es, ss e sp; hlt num ciclo no fim", 10
-    db db "   - int 0x10/0x13/0x15/0x16 são serviços da BIOS que só existem aqui", 10
+    db"   - a BIOS carrega o setor 0 para 0x7C00, quer 0x55 0xAA no fim, e", 10
+    db"     salta para lá em modo real de 16 bits sem nada preparado", 10
+    db"   - endereço = segmento * 16 + offset, um megabyte, 64 KiB de cada vez", 10
+    db"   - org 0x7C00 diz ao NASM onde o código fica; sem isso todas as", 10
+    db"     etiquetas erram; times 510 - ($ - $$) db 0 e dw 0xAA55 terminam", 10
+    db"   - define primeiro ds, es, ss e sp; hlt num ciclo no fim", 10
+    db"   - int 0x10/0x13/0x15/0x16 são serviços da BIOS que só existem aqui", 10
     db 0
 
 summary_11:
-    db db "   - out/in falam com portas de E/S; COM1 é 0x3F8, estado em 0x3FD bit 5", 10
-    db db "   - a porta série é a primeira saída de depuração de um SO, e o QEMU", 10
-    db db "     pode enviá-la para o teu terminal", 10
-    db db "   - o ecrã de texto é memória em 0xB8000: byte de carácter, byte de", 10
-    db db "     atributo, linha * 80 + coluna células; o atributo 0 é invisível", 10
-    db db "   - em modo real um registo de segmento guarda o endereço a dividir", 10
-    db db "     por 16, por isso o ecrã é es = 0xB800, não 0xB8000", 10
-    db db "   - int 0x16 dá um carácter e um scan code; a BIOS faz o trabalho do", 10
-    db db "     teclado que farás tu a partir do módulo 16", 10
+    db"   - out/in falam com portas de E/S; COM1 é 0x3F8, estado em 0x3FD bit 5", 10
+    db"   - a porta série é a primeira saída de depuração de um SO, e o QEMU", 10
+    db"     pode enviá-la para o teu terminal", 10
+    db"   - o ecrã de texto é memória em 0xB8000: byte de carácter, byte de", 10
+    db"     atributo, linha * 80 + coluna células; o atributo 0 é invisível", 10
+    db"   - em modo real um registo de segmento guarda o endereço a dividir", 10
+    db"     por 16, por isso o ecrã é es = 0xB800, não 0xB8000", 10
+    db"   - int 0x16 dá um carácter e um scan code; a BIOS faz o trabalho do", 10
+    db"     teclado que farás tu a partir do módulo 16", 10
     db 0
 
 summary_12:
-    db db "   - a fase 1 lê setores com int 0x13 função 0x42 (leitura LBA) e", 10
-    db db "     salta para a fase 2; a BIOS dá o disco de arranque em dl, e a", 10
-    db db "     fase 1 tem de o guardar antes de usar dl para outra coisa", 10
-    db db "   - cat junta as fases numa imagem de disco; as contagens de setores", 10
-    db db "     combinam-se por constante, e times mantém a fase 2 no tamanho lido", 10
-    db db "   - A20 tem de estar ligado acima de 1 MiB: testa por aliasing, abre", 10
-    db db "     pela porta 0x92, e nunca escrevas 1 no bit 0 dessa porta", 10
-    db db "   - int 0x15 eax=0xE820 lista intervalos e tipos de memória; pergunta,", 10
-    db db "     não assumas", 10
+    db"   - a fase 1 lê setores com int 0x13 função 0x42 (leitura LBA) e", 10
+    db"     salta para a fase 2; a BIOS dá o disco de arranque em dl, e a", 10
+    db"     fase 1 tem de o guardar antes de usar dl para outra coisa", 10
+    db"   - cat junta as fases numa imagem de disco; as contagens de setores", 10
+    db"     combinam-se por constante, e times mantém a fase 2 no tamanho lido", 10
+    db"   - A20 tem de estar ligado acima de 1 MiB: testa por aliasing, abre", 10
+    db"     pela porta 0x92, e nunca escrevas 1 no bit 0 dessa porta", 10
+    db"   - int 0x15 eax=0xE820 lista intervalos e tipos de memória; pergunta,", 10
+    db"     não assumas", 10
     db 0
 
 summary_13:
-    db db "   - modo protegido: 32 bits, 4 GiB, anéis de privilégio, e sem BIOS", 10
-    db db "   - um registo de segmento guarda um seletor: a posição de um descritor", 10
-    db db "     na GDT; código 0x08, dados 0x10 depois do descritor nulo", 10
-    db db "   - o apontador que lgdt lê é limite = tamanho - 1, e depois uma base de 32 bits", 10
-    db db "   - cli, lgdt, liga o bit 0 de cr0, salto FAR, depois recarrega os outros segmentos", 10
-    db db "   - um passo errado costuma ser um triple fault: a máquina reinicia, e o", 10
-    db db "     registo -d int do QEMU mostra a cadeia que lá levou", 10
+    db"   - modo protegido: 32 bits, 4 GiB, anéis de privilégio, e sem BIOS", 10
+    db"   - um registo de segmento guarda um seletor: a posição de um descritor", 10
+    db"     na GDT; código 0x08, dados 0x10 depois do descritor nulo", 10
+    db"   - o apontador que lgdt lê é limite = tamanho - 1, e depois uma base de 32 bits", 10
+    db"   - cli, lgdt, liga o bit 0 de cr0, salto FAR, depois recarrega os outros segmentos", 10
+    db"   - um passo errado costuma ser um triple fault: a máquina reinicia, e o", 10
+    db"     registo -d int do QEMU mostra a cadeia que lá levou", 10
     db 0
 
 summary_14:
-    db db "   - o modo longo precisa de paginação; dos segmentos só fica o bit L do de código", 10
-    db db "   - verifica primeiro CPUID 0x80000001 edx bit 29", 10
-    db db "   - um endereço virtual são quatro índices de 9 bits e um offset de 12;", 10
-    db db "     uma entrada PD com o bit 7 ligado mapeia 2 MiB diretamente", 10
-    db db "   - ordem: tabelas, cr3, PAE, EFER.LME, cr0.PG, salto far para um segmento", 10
-    db db "     de código de 64 bits; o código a correr tem de estar em identity map", 10
-    db db "   - LME é o pedido, LMA o resultado; EFER 0x500 significa ambos", 10
-    db db "   - um emulador pode perdoar o que o hardware real não perdoaria", 10
+    db"   - o modo longo precisa de paginação; dos segmentos só fica o bit L do de código", 10
+    db"   - verifica primeiro CPUID 0x80000001 edx bit 29", 10
+    db"   - um endereço virtual são quatro índices de 9 bits e um offset de 12;", 10
+    db"     uma entrada PD com o bit 7 ligado mapeia 2 MiB diretamente", 10
+    db"   - ordem: tabelas, cr3, PAE, EFER.LME, cr0.PG, salto far para um segmento", 10
+    db"     de código de 64 bits; o código a correr tem de estar em identity map", 10
+    db"   - LME é o pedido, LMA o resultado; EFER 0x500 significa ambos", 10
+    db"   - um emulador pode perdoar o que o hardware real não perdoaria", 10
     db 0
 
 summary_15:
-    db db "   - lê o kernel com a BIOS em modo real; depois o disco fica fora de alcance", 10
-    db db "   - o papel do assembly à entrada: uma pilha, .bss a zeros, call kmain", 10
-    db db "   - um script de linker define o endereço e a ordem; objcopy -O binary", 10
-    db db "     faz uma imagem sem cabeçalho cujo primeiro byte é _start", 10
-    db db "   - memória de ecrã e portas passam por volatile, ou as escritas desaparecem", 10
-    db db "   - -mgeneral-regs-only até o SSE estar ligado; -mno-red-zone; as outras", 10
-    db db "     opções existem porque faltam a libc e um carregador", 10
+    db"   - lê o kernel com a BIOS em modo real; depois o disco fica fora de alcance", 10
+    db"   - o papel do assembly à entrada: uma pilha, .bss a zeros, call kmain", 10
+    db"   - um script de linker define o endereço e a ordem; objcopy -O binary", 10
+    db"     faz uma imagem sem cabeçalho cujo primeiro byte é _start", 10
+    db"   - memória de ecrã e portas passam por volatile, ou as escritas desaparecem", 10
+    db"   - -mgeneral-regs-only até o SSE estar ligado; -mno-red-zone; as outras", 10
+    db"     opções existem porque faltam a libc e um carregador", 10
     db 0
 
 summary_16:
-    db db "   - uma interrupção: procura o vetor na IDT, empilha cinco registos,", 10
-    db db "     corre o handler, iretq; a gate tem 16 bytes e lidt recebe 10", 10
-    db db "   - um stub por vetor, um código de erro falso para o frame ficar", 10
-    db db "     uniforme, registos guardados, um handler em C", 10
-    db db "   - remapeia o PIC para longe dos vetores de exceção; envia EOI a", 10
-    db db "     cada IRQ que tratares", 10
-    db db "   - o seletor da gate tem de ser o segmento de código de 64 bits", 10
-    db db "   - os handlers correm na pilha interrompida: -mno-red-zone, e curtos", 10
+    db"   - uma interrupção: procura o vetor na IDT, empilha cinco registos,", 10
+    db"     corre o handler, iretq; a gate tem 16 bytes e lidt recebe 10", 10
+    db"   - um stub por vetor, um código de erro falso para o frame ficar", 10
+    db"     uniforme, registos guardados, um handler em C", 10
+    db"   - remapeia o PIC para longe dos vetores de exceção; envia EOI a", 10
+    db"     cada IRQ que tratares", 10
+    db"   - o seletor da gate tem de ser o segmento de código de 64 bits", 10
+    db"   - os handlers correm na pilha interrompida: -mno-red-zone, e curtos", 10
     db 0
 
 section .bss
