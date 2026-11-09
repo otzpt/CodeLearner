@@ -212,19 +212,19 @@ jobs:
           # invocation verification in csharp/src's own history), confirms
           # the launcher's csharp/run wrapper -> dotnet run path resolves
           # and the course reaches its own SUMMARY, not just that it starts.
-          cs_output=$(printf '6\n1\n\n\n\n\n\n\n\n\nn\nn\n\n\n0\n0\n' | timeout 20 ./launcher)
+          cs_output=$(printf '10\n1\n\n\n\n\n\n\n\n\nn\nn\n\n\n0\n0\n' | timeout 20 ./launcher)
           echo "$cs_output" | grep -q "C# COURSE" || { echo "::error::launcher did not reach the C# course"; exit 1; }
           echo "$cs_output" | grep -q "See you next time" || { echo "::error::launcher did not exit cleanly after C#"; exit 1; }
 
-          # Arduino (10), Rust (11) and Security (12): pick the course, quit
-          # it, quit the launcher. MicroPython (13) is source like Python and
+          # Arduino (5), Rust (4) and Security (11): pick the course, quit
+          # it, quit the launcher. MicroPython (6) is source like Python and
           # JavaScript and needs `micropython` on PATH, which this runner does
           # not have. Libraries is 14.
-          out=$(printf '12\n0\n0\n' | timeout 20 ./launcher)
+          out=$(printf '11\n0\n0\n' | timeout 20 ./launcher)
           echo "$out" | grep -q "SECURITY WITH PYTHON" || { echo "::error::launcher did not reach the Security course"; exit 1; }
           out=$(printf '14\n0\n0\n' | timeout 20 ./launcher)
           echo "$out" | grep -q "LIBRARIES - A REFERENCE" || { echo "::error::launcher did not reach the Libraries reference"; exit 1; }
-          for entry in "10 ARDUINO" "11 RUST"; do
+          for entry in "5 ARDUINO" "4 RUST"; do
             number=${entry%% *}
             name=${entry#* }
             out=$(printf '%s\n0\n0\n' "$number" | timeout 20 ./launcher)
@@ -619,7 +619,7 @@ jobs:
             assembly modules show a NASM example built with `nasm` in CI;
             rebuilding it yourself needs `nasm` (`make asm-demo`).
 
-            The Libraries tab is a reference manual, not a course: man-page
+            The Libraries entry is a reference manual, not a course: man-page
             style pages for the C and Python libraries (including 21 C
             header pages), each example compiled or run live to show its
             real output. It is bundled on Linux only, since the pages read

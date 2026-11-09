@@ -73,9 +73,9 @@ struct Language {
     const char *name;
     const char *path;
     const char *run_command;
-    /* The tab of the menu this entry is listed under ("LANGUAGES",
-     * "LIBRARIES"). Left out (NULL), an entry is a language. A heading is
-     * printed whenever the tab changes, so a new tab is one field on its row. */
+    /* The group of the menu this entry is listed under. Left out (NULL), an
+     * entry is in LANGUAGES. A heading is printed whenever the group changes,
+     * so the rows of one group have to be next to each other. */
     const char *section;
 };
 
@@ -106,9 +106,39 @@ struct Language {
 #define LIBRARIES_BIN "../libraries/libraries"
 #endif
 
+#define GROUP_SYSTEMS "LOW-LEVEL AND SYSTEMS"
+
 static const struct Language LANGUAGES[] = {
-    { "C",          C_BIN,    C_BIN, NULL },
-    { "C++",        CPP_BIN,  CPP_BIN, NULL },
+    { "C",          C_BIN,    C_BIN, GROUP_SYSTEMS },
+    { "C++",        CPP_BIN,  CPP_BIN, GROUP_SYSTEMS },
+#ifdef _WIN32
+    /* Genuinely not "coming soon later" the way an unbuilt language is --
+     * this course makes raw Linux syscalls directly (syscall + Linux
+     * syscall numbers), which have no Windows equivalent to translate to.
+     * A Windows build would need its own real implementation against a
+     * completely different ABI, not a path change. */
+    { "Assembly",   NULL, NULL, GROUP_SYSTEMS },
+#else
+    { "Assembly",   ASM_BIN, ASM_BIN, GROUP_SYSTEMS },
+#endif
+    { "Rust",       RUST_BIN, RUST_BIN, GROUP_SYSTEMS },
+#ifdef _WIN32
+    /* arduino/shim/Arduino.h reads Serial input with poll() and read() from
+     * <poll.h>/<unistd.h>, which Windows does not have. Not a path change:
+     * the stand-in for the Arduino core would need a Windows port. */
+    { "Arduino",    NULL, NULL, GROUP_SYSTEMS },
+#else
+    { "Arduino",    ARDUINO_BIN, ARDUINO_BIN, GROUP_SYSTEMS },
+#endif
+#ifdef _WIN32
+    /* The course runs on the unix port of MicroPython, which is not shipped
+     * for Windows (and has no shebang story there either). */
+    { "MicroPython", NULL, NULL, GROUP_SYSTEMS },
+#else
+    /* A script with a `#!/usr/bin/env micropython` shebang, like Python's
+     * and JavaScript's entries: no build step, needs `micropython` on PATH. */
+    { "MicroPython", MICROPY_PATH, MICROPY_PATH, GROUP_SYSTEMS },
+#endif
 #ifdef _WIN32
     /* On Linux these two are unchanged: a shebang line plus the execute bit
      * (chmod +x) already picks the right interpreter, the same guarantee
@@ -126,20 +156,19 @@ static const struct Language LANGUAGES[] = {
      * itself, so unlike Python/JavaScript there's no Windows-vs-Linux
      * split to make explicit here -- the run/run.bat wrapper covers it. */
     { "C#",         CSHARP_BIN, CSHARP_BIN, NULL },
+    /* Topic course, not a language, implemented in Python -- registered the
+     * same way Python's own entry is: a bare .py path on Linux (shebang +
+     * execute bit), with the "python " prefix added on Windows where the
+     * extension association is what makes the path runnable. */
+#ifdef _WIN32
+    { "Security",   SEC_PATH, "python " SEC_PATH, "SECURITY" },
+#else
+    { "Security",   SEC_PATH, SEC_PATH, "SECURITY" },
+#endif
     /* Not a language -- GTK, a C library -- but treated as a peer entry
      * here on purpose, the same way it gets its own top-level course
      * directory instead of living inside c/'s module list. */
-    { "GUI (GTK)",  GUI_BIN,  GUI_BIN, NULL },
-#ifdef _WIN32
-    /* Genuinely not "coming soon later" the way an unbuilt language is --
-     * this course makes raw Linux syscalls directly (syscall + Linux
-     * syscall numbers), which have no Windows equivalent to translate to.
-     * A Windows build would need its own real implementation against a
-     * completely different ABI, not a path change. */
-    { "Assembly",   NULL, NULL, NULL },
-#else
-    { "Assembly",   ASM_BIN, ASM_BIN, NULL },
-#endif
+    { "GUI (GTK)",  GUI_BIN,  GUI_BIN, "GUI" },
 #ifdef _WIN32
     /* Same reasoning as Python/JavaScript's own installer story, the
      * other way around: python.org's and Node's installers are what
@@ -147,43 +176,16 @@ static const struct Language LANGUAGES[] = {
      * comment above this struct. Bash has no equivalent guaranteed
      * install on a stock Windows machine -- Git for Windows and WSL both
      * ship one, but neither is assumed here the way a JDK is for Java. */
-    { "Git",        NULL, NULL, NULL },
+    { "Git",        NULL, NULL, "TOOLING" },
 #else
-    { "Git",        GIT_PATH, GIT_PATH, NULL },
-#endif
-#ifdef _WIN32
-    /* arduino/shim/Arduino.h reads Serial input with poll() and read() from
-     * <poll.h>/<unistd.h>, which Windows does not have. Not a path change:
-     * the stand-in for the Arduino core would need a Windows port. */
-    { "Arduino",    NULL, NULL, NULL },
-#else
-    { "Arduino",    ARDUINO_BIN, ARDUINO_BIN, NULL },
-#endif
-    { "Rust",       RUST_BIN, RUST_BIN, NULL },
-    /* Topic course, not a language, implemented in Python -- registered the
-     * same way Python's own entry is: a bare .py path on Linux (shebang +
-     * execute bit), with the "python " prefix added on Windows where the
-     * extension association is what makes the path runnable. */
-#ifdef _WIN32
-    { "Security",   SEC_PATH, "python " SEC_PATH, NULL },
-#else
-    { "Security",   SEC_PATH, SEC_PATH, NULL },
-#endif
-#ifdef _WIN32
-    /* The course runs on the unix port of MicroPython, which is not shipped
-     * for Windows (and has no shebang story there either). */
-    { "MicroPython", NULL, NULL, NULL },
-#else
-    /* A script with a `#!/usr/bin/env micropython` shebang, like Python's
-     * and JavaScript's entries: no build step, needs `micropython` on PATH. */
-    { "MicroPython", MICROPY_PATH, MICROPY_PATH, NULL },
+    { "Git",        GIT_PATH, GIT_PATH, "TOOLING" },
 #endif
 #ifdef _WIN32
     /* Not a course: a man-page style reference manual for the C and Python
      * libraries. Some pages read /proc and /sys, which Windows does not have. */
-    { "Libraries",  NULL, NULL, "LIBRARIES" },
+    { "Libraries",  NULL, NULL, "REFERENCE" },
 #else
-    { "Libraries",  LIBRARIES_BIN, LIBRARIES_BIN, "LIBRARIES" },
+    { "Libraries",  LIBRARIES_BIN, LIBRARIES_BIN, "REFERENCE" },
 #endif
 };
 

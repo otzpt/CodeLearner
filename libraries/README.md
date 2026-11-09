@@ -21,7 +21,7 @@ where each C header comes from (ISO C, POSIX or Linux).
 ```bash
 cd libraries
 make
-./libraries            # or pick "Libraries" in the launcher, under its own tab
+./libraries            # or pick "Libraries" in the launcher, under REFERENCE
 ```
 
 Needs `cc` (for the C pages) and `python3` (for the Python pages). The raylib
