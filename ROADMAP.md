@@ -259,9 +259,10 @@ Web JavaScript (the DOM, events, forms, `fetch`, state and storage).
 
 ## Libraries: a reference manual, not a course
 
-[`libraries/`](libraries/) is a man-page style manual for C and Python, one
-page per header, function family, module or system file, with an example run
-on this machine. It answers "which library, call or file does this, and how
+[`libraries/`](libraries/) is a man-page style manual for C and Python, opening
+with common tasks and then one page per header, function family, module or
+system file, each giving the signature, parameters, return value and errors,
+with an example run on this machine. It answers "which library, call or file does this, and how
 do I use it" the way official documentation would, and has no lessons or
 exercises on purpose. The C track includes a reference page for each of 21
 headers (`stdio.h` to `termios.h`). Further languages are one folder of

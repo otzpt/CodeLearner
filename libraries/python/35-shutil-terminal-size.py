@@ -5,6 +5,17 @@ USES: import shutil, os, fcntl, termios, struct
 SUMMARY: shutil.get_terminal_size() answers in one call. Underneath it is the
   TIOCGWINSZ ioctl, which asks the terminal how many columns and rows it has.
   sys.stdout.isatty() says whether output is a terminal at all.
+SIGNATURE:
+  shutil.get_terminal_size(fallback=(80, 24))
+  os.get_terminal_size(fd=1)
+  sys.stdout.isatty()
+PARAMETERS:
+  - fallback: the size to use when none can be found.
+  - fd: which descriptor to ask.
+RETURNS: A named tuple of columns and lines. isatty: a bool.
+ERRORS:
+  - get_terminal_size in shutil never raises.
+  - os.get_terminal_size raises OSError when fd is not a terminal.
 NOTES:
   - shutil.get_terminal_size() looks at $COLUMNS and $LINES first, then asks
     the terminal behind stdout, then falls back to (80, 24).

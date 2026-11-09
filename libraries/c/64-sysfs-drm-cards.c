@@ -6,6 +6,15 @@
  *   device/ folder has the PCI vendor and device ids as hex numbers, and a
  *   symlink to the kernel driver. The ids become names through the pci.ids
  *   database.
+ * SIGNATURE:
+ *   DIR *opendir("/sys/class/drm")
+ *   FILE *fopen("<card>/device/vendor", "r")
+ * PARAMETERS:
+ *   - card: a cardN folder with no dash in its name.
+ * RETURNS: vendor and device are "0x" and hex digits. device/driver is a
+ *   symlink.
+ * ERRORS:
+ *   - ENOENT over ssh, in containers, or when no GPU driver is loaded.
  * NOTES:
  *   - Only list cardN, not cardN-HDMI-A-1 (those are the connectors, see the
  *     display page): skip names containing a '-'.

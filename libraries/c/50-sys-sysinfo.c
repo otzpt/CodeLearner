@@ -17,6 +17,11 @@
  *     unsigned int mem_unit        size in bytes of the units above
  *   int get_nprocs(void), get_nprocs_conf(void)   online and configured CPUs
  *   long get_phys_pages(void), get_avphys_pages(void)
+ * PARAMETERS:
+ *   - info: a struct sysinfo to fill.
+ * RETURNS: 0 on success, -1 on failure.
+ * ERRORS:
+ *   - EFAULT: info is not a valid pointer.
  * NOTES:
  *   - The memory fields are counted in units of mem_unit BYTES, not in bytes
  *     or kilobytes: bytes = totalram * mem_unit. On current kernels mem_unit

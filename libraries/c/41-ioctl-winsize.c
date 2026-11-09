@@ -4,6 +4,17 @@
  * USES: #include <sys/ioctl.h>, <unistd.h>, <fcntl.h>
  * SUMMARY: ioctl(fd, TIOCGWINSZ, &size) asks the terminal how many columns and
  *   rows it has. isatty(fd) says whether a file descriptor is a terminal at all.
+ * SIGNATURE:
+ *   int ioctl(int fd, TIOCGWINSZ, struct winsize *size)
+ *   int isatty(int fd)
+ * PARAMETERS:
+ *   - fd: usually STDOUT_FILENO, or a descriptor for /dev/tty.
+ *   - size: filled with ws_row and ws_col.
+ * RETURNS: ioctl: 0 on success, -1 on failure. isatty: 1 for a terminal, 0
+ *   otherwise.
+ * ERRORS:
+ *   - ENOTTY: fd is a pipe or a file. This is normal when output is
+ *     redirected.
  * NOTES:
  *   - When output is piped or redirected (`prog | less`, `prog > file`),
  *     stdout is not a terminal and the ioctl fails. Try stdin and stderr, then

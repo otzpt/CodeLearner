@@ -17,6 +17,16 @@
  *   SIG_IGN (ignore), SIG_DFL (default action)
  *   const char *strsignal(int sig)  a description (string.h)
  *   int sigprocmask / pthread_sigmask(...)   block signals for a while
+ * PARAMETERS:
+ *   - sig: a signal such as SIGINT.
+ *   - new: what to do from now on, NULL to only ask.
+ *   - old: receives the previous action, or NULL.
+ *   - pid: who to send a signal to.
+ * RETURNS: sigaction, raise, kill: 0, or -1 (raise returns non-zero on
+ *   failure).
+ * ERRORS:
+ *   - EINVAL: not a valid signal, or an attempt to catch SIGKILL or SIGSTOP.
+ *   - ESRCH from kill: no such process. EPERM: not allowed to signal it.
  * NOTES:
  *   - Use sigaction, not signal(): signal() has different meanings on different
  *     systems (whether the handler stays installed, whether calls restart).

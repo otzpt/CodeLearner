@@ -18,6 +18,16 @@
  *                 ISIG (Ctrl-C raises SIGINT)
  *   c_cc[VMIN], c_cc[VTIME]     how many characters / how long a read waits
  *   speed_t cfgetospeed(const struct termios *); int tcflush(fd, queue)
+ * PARAMETERS:
+ *   - fd: a descriptor that is a terminal.
+ *   - when: TCSANOW, TCSADRAIN or TCSAFLUSH.
+ *   - struct termios *: the settings to read or apply.
+ * RETURNS: 0 on success, -1 on failure.
+ * ERRORS:
+ *   - ENOTTY: fd is not a terminal.
+ *   - EBADF: fd is not open.
+ *   - tcsetattr returns 0 if any change was made, so read the settings back
+ *     to be sure.
  * NOTES:
  *   - ALWAYS save the original settings with tcgetattr, and restore them with
  *     tcsetattr on every way out: normal exit, error, and signals (SIGINT,

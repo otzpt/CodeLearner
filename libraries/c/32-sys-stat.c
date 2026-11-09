@@ -15,6 +15,17 @@
  *   S_ISREG(m), S_ISDIR(m), S_ISLNK(m), S_ISCHR(m), S_ISBLK(m), S_ISSOCK(m)
  *   S_IRUSR, S_IWUSR, S_IXUSR, S_IRGRP, S_IROTH ...  permission bits
  *   int mkdir(path, mode); int chmod(path, mode); mode_t umask(mode_t)
+ * PARAMETERS:
+ *   - path or fd: the file to describe.
+ *   - struct stat *: filled in by the call.
+ *   - mode: permission bits, usually in octal such as 0755.
+ * RETURNS: 0 on success, -1 on failure. umask returns the previous mask and
+ *   cannot fail.
+ * ERRORS:
+ *   - ENOENT: the file does not exist.
+ *   - EACCES: a directory on the way cannot be searched.
+ *   - ENOTDIR: a part of the path is not a directory.
+ *   - EEXIST: mkdir on something that already exists.
  * NOTES:
  *   - Every function returns 0 on success and -1 on failure with errno set:
  *     ENOENT (missing), EACCES (a directory on the way is not searchable).

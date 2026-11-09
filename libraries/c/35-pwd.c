@@ -15,6 +15,16 @@
  *   struct passwd *getpwuid(uid), getpwnam(name)        simple but not thread-safe
  *   setpwent(), getpwent(), endpwent()    walk all accounts
  *   uid_t getuid(void), geteuid(void)    (unistd.h)
+ * PARAMETERS:
+ *   - uid or name: who to look up.
+ *   - pwd, buf, buflen: storage for the answer.
+ *   - result: set to pwd if found, NULL if not.
+ * RETURNS: The _r functions: 0, or an error number. The plain functions: a
+ *   pointer to static memory, or NULL.
+ * ERRORS:
+ *   - ERANGE from the _r functions: the buffer is too small, so grow it.
+ *   - A user who does not exist is not an error: result is NULL and the
+ *     return is 0.
  * NOTES:
  *   - $USER, $HOME and $SHELL are convenient but can be changed or missing
  *     (cron, sudo, containers). getpwuid is the reliable answer.

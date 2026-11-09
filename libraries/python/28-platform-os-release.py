@@ -5,6 +5,14 @@ USES: import platform  (platform.freedesktop_os_release, Python 3.10+)
 SUMMARY: platform.freedesktop_os_release() reads /etc/os-release (falling back
   to /usr/lib/os-release) and returns its KEY=value lines as a dict. This is
   where "Ubuntu 26.04 LTS" comes from.
+SIGNATURE:
+  platform.freedesktop_os_release()
+PARAMETERS:
+  - None.
+RETURNS: A dict of the file's keys and values. It always has NAME, ID and
+  PRETTY_NAME, filled with defaults if the file lacks them.
+ERRORS:
+  - OSError when neither file exists.
 NOTES:
   - Keys you will want: PRETTY_NAME (display name), NAME, ID (short, lower-case,
     like ubuntu), ID_LIKE (what it derives from), VERSION_ID, VERSION_CODENAME

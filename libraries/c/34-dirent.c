@@ -15,6 +15,16 @@
  *                  DT_UNKNOWN), d_ino (inode number)
  *   int scandir(path, &list, filter, compare)   all entries, sorted, in one call
  *   int alphasort(const struct dirent **, const struct dirent **)
+ * PARAMETERS:
+ *   - path: the directory.
+ *   - d: what opendir returned.
+ *   - filter, compare: optional functions for scandir, such as alphasort.
+ * RETURNS: opendir: a DIR pointer, or NULL. readdir: the next entry, or
+ *   NULL. closedir: 0, or -1. scandir: the number of entries, or -1.
+ * ERRORS:
+ *   - opendir: ENOENT, EACCES, ENOTDIR.
+ *   - readdir returns NULL for the end and for an error. Set errno = 0 first
+ *     to tell them apart.
  * NOTES:
  *   - Every directory yields "." and ".." first; skip them.
  *   - Entries come in no particular order. Sort them if order matters

@@ -5,6 +5,16 @@ USES: import socket, fcntl, struct; read /proc/net/route
 SUMMARY: The standard library has no getifaddrs. The classic way is to list
   the interface names with socket.if_nameindex() and ask the kernel for each
   one's IPv4 address with an ioctl.
+SIGNATURE:
+  socket.if_nameindex()
+  fcntl.ioctl(fd, request, arg)
+PARAMETERS:
+  - fd: an open socket, or its fileno().
+  - request: such as 0x8915 for SIOCGIFADDR.
+  - arg: a bytes buffer holding the interface name.
+RETURNS: if_nameindex: a list of (index, name). ioctl: the filled buffer.
+ERRORS:
+  - OSError from ioctl for an interface with no IPv4 address.
 NOTES:
   - SIOCGIFADDR (0x8915) returns an interface's IPv4 address, SIOCGIFNETMASK
     (0x891b) its mask. An interface with no IPv4 address raises OSError: skip it.

@@ -4,6 +4,18 @@ GROUP: Standard library
 USES: import argparse
 SUMMARY: argparse reads --options and arguments, checks them, and writes the
   --help text for you.
+SIGNATURE:
+  argparse.ArgumentParser(description=None)
+  parser.add_argument(name, action=, type=, default=, help=)
+  parser.parse_args(args=None)
+PARAMETERS:
+  - name: "--width" for an option, "path" for a positional argument.
+  - action: "store_true" makes it a flag.
+  - type: a function that converts the text, such as int.
+  - args: a list to parse instead of sys.argv[1:].
+RETURNS: parse_args: a Namespace with one attribute per argument.
+ERRORS:
+  - Bad input prints a usage message and raises SystemExit with status 2.
 NOTES:
   - add_argument("--quiet", action="store_true") is a flag;
     add_argument("--width", type=int, default=80) takes a value.

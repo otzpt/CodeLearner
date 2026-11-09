@@ -22,6 +22,18 @@
  *   int isatty(fd)                         1 if fd is a terminal
  *   STDIN_FILENO, STDOUT_FILENO, STDERR_FILENO   0, 1, 2
  *   pid_t fork(void); int execvp(...), pipe(fd[2]), dup2(old, new); _exit(status)
+ * PARAMETERS:
+ *   - fd: a file descriptor.
+ *   - buf, size or count: destination and its size.
+ *   - path: a file.
+ *   - name: a _SC_ constant for sysconf.
+ *   - mode: R_OK, W_OK, X_OK or F_OK.
+ * RETURNS: Most return 0, or -1 on failure. read and write: bytes moved, 0
+ *   at end of file for read. getcwd: buf or NULL. sysconf: the value, or -1.
+ *   isatty: 1 or 0. fork: 0 in the child and the child's id in the parent.
+ * ERRORS:
+ *   - The failing call sets errno: ENOENT, EACCES, EINVAL, EBADF, EINTR.
+ *   - isatty sets ENOTTY when the answer is no.
  * NOTES:
  *   - Under -std=c11 this fails: "implicit declaration of function
  *     'readlink'". Fix with  #define _POSIX_C_SOURCE 200809L  as the very first

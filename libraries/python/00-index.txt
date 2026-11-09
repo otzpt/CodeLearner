@@ -1,10 +1,10 @@
 TITLE: intro: how this manual is organised
 GROUP: Introduction
 USES: every page after this one
-SUMMARY: One page per built-in, module or system file, laid out like a man
-  page: NAME, SYNOPSIS, DESCRIPTION, NOTES, then an EXAMPLE that is run on
-  this machine, and SEE ALSO. The output shown is what this machine printed,
-  not a copy.
+SUMMARY: One page per task, built-in, module or system file: NAME, SYNOPSIS,
+  DESCRIPTION, PARAMETERS, RETURN VALUE, ERRORS, NOTES, then an EXAMPLE that
+  is run on this machine, and SEE ALSO. The output shown is what this
+  machine printed.
 NOTES:
   - Every module here is in the standard library: nothing to install.
   - The examples run with  python3 -W error page.py , so a deprecated call
@@ -17,10 +17,11 @@ SEE: https://docs.python.org/3/library/, pydoc <module>
 ---
   Part                          Pages
   ----------------------------  ------------------------------------------------
-  Built-ins                     print() and f-strings, open() and pathlib,
-                                str methods, exceptions
+  Common tasks                  reading a file, parsing text, sorting,
+                                timeouts, running another program
+  Built-ins                     print() and f-strings, exceptions
   Standard library              os, sys, os.scandir, math, statistics, time,
-                                datetime, collections, json, subprocess, re,
+                                datetime, collections, json, re,
                                 argparse, platform, socket, pwd, getpass,
                                 shutil, locale, unicodedata
   Files: /proc and /sys         /proc/cpuinfo, /proc/meminfo,

@@ -15,6 +15,19 @@
  *                             F_GETFD / F_SETFD (FD_CLOEXEC), F_DUPFD_CLOEXEC
  *   int openat(dirfd, path, flags)   relative to an open directory
  *   Linux: O_PATH, O_TMPFILE
+ * PARAMETERS:
+ *   - path: the file.
+ *   - flags: exactly one of O_RDONLY, O_WRONLY, O_RDWR, joined with other O_
+ *     flags by |.
+ *   - mode: permissions for a new file, required with O_CREAT.
+ *   - fd, cmd: a descriptor and an F_ command.
+ * RETURNS: open and openat: a new descriptor, or -1. fcntl: depends on cmd,
+ *   -1 on failure.
+ * ERRORS:
+ *   - ENOENT: no such file, and no O_CREAT.
+ *   - EACCES: forbidden.
+ *   - EEXIST: O_CREAT | O_EXCL and it already exists.
+ *   - EISDIR: opening a directory for writing.
  * NOTES:
  *   - open returns a small integer (0, 1 and 2 are stdin, stdout, stderr), or
  *     -1 with errno set. A leaked descriptor is never reclaimed until exit.

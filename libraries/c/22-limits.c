@@ -13,6 +13,12 @@
  *   SHRT_MAX, SCHAR_MAX, UCHAR_MAX                small types
  *   POSIX: PATH_MAX (4096 on Linux), NAME_MAX (255), HOST_NAME_MAX (64),
  *          LOGIN_NAME_MAX (256), SSIZE_MAX, IOV_MAX
+ * PARAMETERS:
+ *   - None: this page is about types and macros, not functions.
+ * RETURNS: Not applicable: nothing here is called.
+ * ERRORS:
+ *   - A POSIX limit may be undefined when the system does not fix it. Ask
+ *     sysconf or pathconf at run time.
  * NOTES:
  *   - For fixed-width types use stdint.h (INT32_MAX, UINT64_MAX): INT_MAX
  *     changes between machines, INT32_MAX does not.

@@ -5,6 +5,17 @@
  * SUMMARY: Seconds since boot come from clock_gettime(CLOCK_BOOTTIME),
  *   sysinfo(), or the first number in /proc/uptime. getloadavg() gives the
  *   1, 5 and 15 minute load.
+ * SIGNATURE:
+ *   int clock_gettime(clockid_t clock, struct timespec *out)
+ *   int getloadavg(double loads[], int count)
+ * PARAMETERS:
+ *   - clock: such as CLOCK_BOOTTIME.
+ *   - out: receives seconds and nanoseconds.
+ *   - loads, count: an array and how many of the three averages to fill.
+ * RETURNS: clock_gettime: 0, or -1. getloadavg: how many values it stored,
+ *   or -1.
+ * ERRORS:
+ *   - EINVAL: this system does not have that clock.
  * NOTES:
  *   - CLOCK_BOOTTIME keeps counting while the machine is suspended;
  *     CLOCK_MONOTONIC does not. Use BOOTTIME for "up for".

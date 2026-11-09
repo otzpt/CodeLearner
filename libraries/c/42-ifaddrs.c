@@ -4,6 +4,20 @@
  * USES: #include <ifaddrs.h>, <arpa/inet.h>, <net/if.h>
  * SUMMARY: getifaddrs() returns every address of every network interface in
  *   one linked list. inet_ntop turns a binary address into text.
+ * SIGNATURE:
+ *   int getifaddrs(struct ifaddrs **list)
+ *   void freeifaddrs(struct ifaddrs *list)
+ *   const char *inet_ntop(int family, const void *addr, char *buf, socklen_t size)
+ * PARAMETERS:
+ *   - list: receives the head of the linked list.
+ *   - family: AF_INET or AF_INET6.
+ *   - addr: the binary address.
+ *   - buf, size: where the text goes.
+ * RETURNS: getifaddrs: 0, or -1. inet_ntop: buf, or NULL.
+ * ERRORS:
+ *   - getifaddrs: errno from the socket and memory calls it makes.
+ *   - inet_ntop: ENOSPC when buf is too small, EAFNOSUPPORT for a bad
+ *     family.
  * NOTES:
  *   - The list has one entry per address, so an interface with an IPv4 and an
  *     IPv6 address appears twice. Check ifa_addr->sa_family (AF_INET or

@@ -16,6 +16,11 @@
  *     char machine[]     "x86_64", "aarch64", "riscv64"
  *     char domainname[]  NIS domain, usually "(none)" (needs _GNU_SOURCE)
  *   int gethostname(char *name, size_t size)    (unistd.h) same name as nodename
+ * PARAMETERS:
+ *   - name: a struct utsname to fill.
+ * RETURNS: 0 on success, -1 on failure.
+ * ERRORS:
+ *   - EFAULT: name is not a valid pointer.
  * NOTES:
  *   - The strings are fixed-size arrays inside the struct (65 bytes each on
  *     Linux); copy them, do not keep a pointer past the struct's lifetime.

@@ -5,6 +5,15 @@ USES: import os; read /proc/cpuinfo and /sys/devices/system/cpu
 SUMMARY: The model name is a line in /proc/cpuinfo. os.cpu_count() gives the
   number of logical processors. The top speed is a file under
   /sys/devices/system/cpu.
+SIGNATURE:
+  open("/proc/cpuinfo", encoding="utf-8")
+  os.cpu_count()
+PARAMETERS:
+  - None: the paths are fixed.
+RETURNS: One block of "key : value" lines per logical processor. cpu_count:
+  an int, or None.
+ERRORS:
+  - FileNotFoundError for the cpufreq files in virtual machines.
 NOTES:
   - /proc/cpuinfo repeats one block per logical processor. "model name" appears
     in every block; the first is enough.

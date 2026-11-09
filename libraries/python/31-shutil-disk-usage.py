@@ -4,6 +4,15 @@ GROUP: Standard library
 USES: import shutil, os; read /proc/self/mounts
 SUMMARY: shutil.disk_usage(path) returns total, used and free bytes of the
   filesystem holding a path. /proc/self/mounts lists what is mounted where.
+SIGNATURE:
+  shutil.disk_usage(path)
+  os.statvfs(path)
+PARAMETERS:
+  - path: anything on the filesystem to measure.
+RETURNS: disk_usage: a named tuple of total, used and free, in bytes.
+  statvfs: the raw fields.
+ERRORS:
+  - FileNotFoundError, PermissionError, both OSError.
 NOTES:
   - disk_usage wraps statvfs. Its "free" is what an ordinary user can use
     (f_bavail), and "used" is total minus the free blocks INCLUDING the part

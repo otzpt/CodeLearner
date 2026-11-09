@@ -1,10 +1,10 @@
 TITLE: intro: how this manual is organised
 GROUP: Introduction
 USES: every page after this one
-SUMMARY: One page per header, function family or system file, laid out like
-  a man page: NAME, SYNOPSIS, DESCRIPTION, STANDARDS, NOTES, APPLICATION
-  USAGE, then an EXAMPLE that is compiled and run on this machine, and SEE
-  ALSO. The output shown is what this machine printed, not a copy.
+SUMMARY: One page per task, header, function family or system file: NAME,
+  SYNOPSIS, DESCRIPTION, PARAMETERS, RETURN VALUE, ERRORS, STANDARDS, NOTES,
+  APPLICATION USAGE, then an EXAMPLE that is compiled and run on this
+  machine, and SEE ALSO. The output shown is what this machine printed.
 NOTES:
   - Standard C (ISO C) is the same everywhere a C compiler exists. POSIX is the
     Unix standard: Linux, macOS and the BSDs have it, Windows does not. Linux-
@@ -22,7 +22,9 @@ SEE: man 7 standards, man 7 feature_test_macros, man 7 libc
 ---
   Part                          Pages
   ----------------------------  ------------------------------------------------
-  Standard C library            stdio.h, printf(3), fopen(3), sscanf(3),
+  Common tasks                  reading a file, parsing text, sorting,
+                                timeouts, running another program
+  Standard C library            stdio.h, printf(3),
                                 string.h, stdlib.h, math.h, time.h, errno.h,
                                 stdint.h, ctype.h, stdbool.h, limits.h,
                                 locale.h, wchar.h

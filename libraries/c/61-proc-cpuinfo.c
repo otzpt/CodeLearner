@@ -5,6 +5,16 @@
  * SUMMARY: The model name is a line in /proc/cpuinfo. The number of logical
  *   processors is one sysconf() call. The top speed is a file under
  *   /sys/devices/system/cpu.
+ * SIGNATURE:
+ *   FILE *fopen("/proc/cpuinfo", "r")
+ *   long sysconf(_SC_NPROCESSORS_ONLN)
+ * PARAMETERS:
+ *   - None: the paths are fixed.
+ * RETURNS: One block of "key : value" lines per logical processor. sysconf:
+ *   the count, or -1.
+ * ERRORS:
+ *   - ENOENT for the cpufreq files in virtual machines, where they are
+ *     absent.
  * NOTES:
  *   - /proc/cpuinfo repeats one block per logical processor. "model name"
  *     appears in every block; the first is enough.

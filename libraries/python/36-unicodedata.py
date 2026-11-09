@@ -6,6 +6,15 @@ SUMMARY: str.ljust and f-string padding count CHARACTERS. Colour escape codes
   take characters but no screen space, and East Asian characters or emoji take
   two columns each, so a column of such text misaligns. Pad by VISIBLE width
   instead.
+SIGNATURE:
+  unicodedata.east_asian_width(chr)
+  unicodedata.combining(chr)
+PARAMETERS:
+  - chr: exactly one character.
+RETURNS: east_asian_width: a code such as "W" or "F" for wide. combining: 0,
+  or a class number for an accent.
+ERRORS:
+  - TypeError when the argument is not a single character.
 NOTES:
   - Remove escape codes with the regular expression ESC [ digits/semicolons m,
     then measure what is left.

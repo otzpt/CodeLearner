@@ -17,6 +17,15 @@
  *               network interface address, mask, MAC address, flags (also need
  *               struct ifreq from <net/if.h>)
  *   TIOCGPGRP, TIOCSCTTY ...   process groups and controlling terminals
+ * PARAMETERS:
+ *   - fd: the device.
+ *   - request: a code such as TIOCGWINSZ.
+ *   - ...: a pointer whose type the request decides.
+ * RETURNS: Usually 0, sometimes a value that depends on the request. -1 on
+ *   failure.
+ * ERRORS:
+ *   - ENOTTY: fd is not the kind of device this request is for.
+ *   - EBADF, EFAULT, EINVAL for a bad descriptor, pointer or request.
  * NOTES:
  *   - The request decides what the third argument must be (a pointer to a
  *     struct winsize, to an int, to a struct ifreq). Passing the wrong type

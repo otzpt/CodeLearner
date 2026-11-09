@@ -4,6 +4,20 @@
  * USES: #include <stdio.h>
  * SUMMARY: printf writes formatted text to the terminal. snprintf writes it
  *   into a buffer you give it, and never past the end of that buffer.
+ * SIGNATURE:
+ *   int printf(const char *format, ...)
+ *   int snprintf(char *buf, size_t size, const char *format, ...)
+ * PARAMETERS:
+ *   - format: text with conversions such as %d and %s.
+ *   - ...: one value for each conversion, of the type it names.
+ *   - buf, size: the destination and its whole size, including the zero
+ *     byte.
+ * RETURNS: The number of characters written, not counting the zero byte.
+ *   snprintf returns the length the whole text would have had.
+ * ERRORS:
+ *   - A negative number on an output error.
+ *   - A conversion that does not match its argument's type is undefined
+ *     behaviour. -Wall warns about it.
  * NOTES:
  *   - Use snprintf, not sprintf: sprintf cannot be told how big the buffer is.
  *   - snprintf returns the length the text WOULD have had. If that is not

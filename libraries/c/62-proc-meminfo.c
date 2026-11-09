@@ -4,6 +4,14 @@
  * USES: read /proc/meminfo; or #include <sys/sysinfo.h> (sysinfo)
  * SUMMARY: /proc/meminfo lists memory in kB. "Used" is MemTotal minus
  *   MemAvailable, which is how free and htop count it.
+ * SIGNATURE:
+ *   FILE *fopen("/proc/meminfo", "r")
+ *   int sysinfo(struct sysinfo *info)
+ * PARAMETERS:
+ *   - None: the path is fixed.
+ * RETURNS: "Key:   value kB" lines. Which keys exist depends on the kernel.
+ * ERRORS:
+ *   - ENOENT only when /proc is not mounted.
  * NOTES:
  *   - Values are in kB but mean KiB (1024 bytes). 16384000 kB is 15.6 GiB.
  *   - MemFree is memory nothing uses at all. Linux fills spare memory with

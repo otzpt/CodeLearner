@@ -16,6 +16,13 @@
  *     unsigned long f_namemax, f_flag    longest file name, mount flags (ST_RDONLY)
  *   int fstatvfs(fd, ...)                for an open file
  *   struct mntent *getmntent(FILE *)     (mntent.h) parse the mounts file
+ * PARAMETERS:
+ *   - path or fd: anything on the filesystem you want to measure.
+ *   - out: a struct statvfs to fill.
+ * RETURNS: 0 on success, -1 on failure.
+ * ERRORS:
+ *   - ENOENT, EACCES, ENOTDIR for the path.
+ *   - EOVERFLOW: a value does not fit the struct.
  * NOTES:
  *   - Multiply block counts by f_frsize (the fragment size), not f_bsize.
  *   - f_bfree is free space including the part reserved for root. f_bavail is

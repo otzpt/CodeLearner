@@ -6,6 +6,15 @@ SUMMARY: Each GPU the kernel drives appears as /sys/class/drm/cardN. Its
   device/ folder has the PCI vendor and device ids as hex numbers, and a
   symlink to the kernel driver. The ids become names through the pci.ids
   database.
+SIGNATURE:
+  pathlib.Path("/sys/class/drm").glob("card*")
+  pathlib.Path(card, "device/vendor").read_text()
+PARAMETERS:
+  - card: a cardN folder with no dash in its name.
+RETURNS: vendor and device are "0x" and hex digits. device/driver is a
+  symlink.
+ERRORS:
+  - FileNotFoundError over ssh, in containers, or with no GPU driver.
 NOTES:
   - Only list cardN, not cardN-HDMI-A-1 (those are the connectors, see the
     monitors page): skip names containing a dash.

@@ -13,6 +13,12 @@
  *   mode_t    file permission bits          dev_t, ino_t   device, inode ids
  *   size_t    object size, unsigned         time_t         seconds since 1970
  *   key_t, id_t, blksize_t, blkcnt_t, nlink_t, useconds_t
+ * PARAMETERS:
+ *   - None: this page is about types and macros, not functions.
+ * RETURNS: Not applicable: nothing here is called.
+ * ERRORS:
+ *   - Storing the -1 from read in a size_t turns it into a huge positive
+ *     number. Use ssize_t.
  * NOTES:
  *   - Do not assume pid_t is int. To print one, cast to a type that is certain
  *     to be wide enough: printf("%d", (int) pid) is fine for pids on Linux;

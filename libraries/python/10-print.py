@@ -4,6 +4,19 @@ GROUP: Built-ins
 USES: built-in print(), f-strings, str.format
 SUMMARY: print() writes to the terminal. f-strings put values inside text and
   the format spec after the colon controls width, alignment and decimals.
+SIGNATURE:
+  print(*objects, sep=" ", end=<newline>, file=sys.stdout, flush=False)
+  f"{value:spec}"
+PARAMETERS:
+  - objects: anything, converted with str().
+  - sep, end: what goes between them and after them.
+  - file: where to write.
+  - flush: push the text out immediately.
+  - spec: width, alignment and precision, as in the notes.
+RETURNS: None. An f-string evaluates to a str.
+ERRORS:
+  - UnicodeEncodeError when the output encoding cannot represent a character.
+  - BrokenPipeError when the reader of a pipe has gone.
 NOTES:
   - f"{value:>8}" right-aligns in 8 columns, "<8" left, "^8" centres.
   - f"{x:.2f}" two decimals, f"{n:,}" thousands separators, f"{n:08b}" binary.

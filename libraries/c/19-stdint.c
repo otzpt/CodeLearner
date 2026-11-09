@@ -15,6 +15,12 @@
  *   int_least32_t, int_fast32_t             at least / fastest with 32 bits
  *   INT32_MAX, INT32_MIN, UINT64_MAX, SIZE_MAX     limits as macros
  *   inttypes.h: PRId32, PRIu64, PRIx64 (printf) and SCNu64, SCNd32 (scanf)
+ * PARAMETERS:
+ *   - None: this page is about types and macros, not functions.
+ * RETURNS: Not applicable: nothing here is called.
+ * ERRORS:
+ *   - Assigning a value that does not fit an unsigned type wraps around
+ *     silently. Overflowing a signed type is undefined behaviour.
  * NOTES:
  *   - Memory sizes from /proc are in kB and can pass 4 billion in bytes:
  *     keep byte counts in uint64_t, not int or unsigned.

@@ -4,6 +4,14 @@
  * USES: read the files in /sys/devices/virtual/dmi/id/ (or /proc/device-tree/model)
  * SUMMARY: On PCs the firmware describes the machine in DMI tables, and the
  *   kernel exposes them as small text files.
+ * SIGNATURE:
+ *   FILE *fopen("/sys/devices/virtual/dmi/id/<name>", "r")
+ * PARAMETERS:
+ *   - name: a file such as product_name or bios_version.
+ * RETURNS: One line of text, ending in a newline.
+ * ERRORS:
+ *   - ENOENT on machines with no DMI, such as ARM boards.
+ *   - EACCES for the serial number files, which need root.
  * NOTES:
  *   - Readable by everyone: sys_vendor, product_name, product_version,
  *     board_vendor, board_name, bios_vendor, bios_version.

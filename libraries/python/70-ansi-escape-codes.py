@@ -5,6 +5,14 @@ USES: print escape sequences; no library
 SUMMARY: A terminal changes colour when it reads ESC [ code m. ESC is the
   character number 27, written as an escape in a Python string. The reset code
   0 undoes everything.
+SIGNATURE:
+  print(ESC + "[" + code + "m")   where ESC is the character 27
+PARAMETERS:
+  - code: one of the numbers in the notes, or several joined by semicolons.
+RETURNS: Nothing: the terminal changes what it draws next.
+ERRORS:
+  - A terminal that does not know a code ignores it, and a file or pipe gets
+    the characters as they are.
 NOTES:
   - Styles: 1 bold, 2 dim, 3 italic, 4 underline, 7 reverse.
   - Colours: 30-37 text (black red green yellow blue magenta cyan white), 40-47

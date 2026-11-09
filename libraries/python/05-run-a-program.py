@@ -1,9 +1,24 @@
 """
 TITLE: subprocess, shutil.which: running another program
-GROUP: Standard library
+GROUP: Common tasks
 USES: import subprocess, shutil
 SUMMARY: subprocess.run() starts a program, waits, and gives you its output.
   It is the way to use a command line tool (lspci, ip, xrandr) from Python.
+SIGNATURE:
+  subprocess.run(args, capture_output=False, text=False, timeout=None, check=False)
+  shutil.which(cmd)
+PARAMETERS:
+  - args: a list, the program and then its arguments.
+  - capture_output: keep stdout and stderr instead of showing them.
+  - text: give str instead of bytes.
+  - timeout: seconds to wait.
+  - check: raise an exception on a non-zero exit status.
+RETURNS: run: a CompletedProcess with returncode, stdout and stderr. which:
+  the path, or None.
+ERRORS:
+  - FileNotFoundError: no such program.
+  - subprocess.TimeoutExpired: it took too long, and it has been killed.
+  - subprocess.CalledProcessError: with check=True, it exited non-zero.
 NOTES:
   - Pass the command as a LIST: ["ip", "-br", "addr"]. Do not build a string
     and use shell=True with user input: that is how injection happens.

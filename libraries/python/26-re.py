@@ -5,6 +5,21 @@ USES: import re
 SUMMARY: re.search finds a pattern in text; groups (parentheses) pull the
   pieces out. Use it when a line's shape varies; use str methods when it is
   fixed.
+SIGNATURE:
+  re.search(pattern, string, flags=0)
+  re.match(pattern, string, flags=0)
+  re.findall(pattern, string, flags=0)
+  re.sub(pattern, repl, string, count=0, flags=0)
+PARAMETERS:
+  - pattern: the regular expression, as a raw string.
+  - string: the text.
+  - repl: what to put in place of each match.
+  - count: the most replacements, 0 for all.
+  - flags: such as re.IGNORECASE.
+RETURNS: search, match: a Match, or None. findall: a list. sub: a new str.
+ERRORS:
+  - re.error for a malformed pattern.
+  - AttributeError from calling .group() on the None of a failed match.
 NOTES:
   - Write patterns as raw strings (a leading r) so that backslashes reach re
     unchanged: r"digits" style patterns are in the code below.

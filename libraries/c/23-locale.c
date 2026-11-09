@@ -5,6 +5,18 @@
  * SUMMARY: The locale decides the language, date formats and the character
  *   encoding. It comes from the environment (LC_ALL, then LC_*, then LANG).
  *   setlocale(LC_ALL, "") adopts it.
+ * SIGNATURE:
+ *   char *setlocale(int category, const char *locale)
+ *   char *nl_langinfo(nl_item item)
+ * PARAMETERS:
+ *   - category: LC_ALL, or one part such as LC_TIME.
+ *   - locale: a name, "" for the environment's, NULL to only ask.
+ *   - item: what to ask, such as CODESET.
+ * RETURNS: setlocale: the locale now in effect. nl_langinfo: a string, never
+ *   NULL.
+ * ERRORS:
+ *   - setlocale returns NULL and changes nothing when the locale is not
+ *     installed.
  * NOTES:
  *   - A program starts in the "C" locale until it calls setlocale(LC_ALL, "").
  *   - nl_langinfo(CODESET) is the encoding. If it is "UTF-8" you can print
