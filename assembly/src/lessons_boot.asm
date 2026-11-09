@@ -578,7 +578,7 @@ lesson_10_boot:
     challenge m10_challenge, m10_solution
 
     ; summary(10)
-    summary m10_summary_hdr, m10_summary
+    summary m10_summary_hdr, m10_summary, 10
     pop rbx
     ret
 
@@ -601,7 +601,7 @@ lesson_11_hardware:
     challenge m11_challenge, m11_solution
 
     ; summary(11)
-    summary m11_summary_hdr, m11_summary
+    summary m11_summary_hdr, m11_summary, 11
     ret
 
 lesson_12_loader:
@@ -623,7 +623,7 @@ lesson_12_loader:
     challenge m12_challenge, m12_solution
 
     ; summary(12)
-    summary m12_summary_hdr, m12_summary
+    summary m12_summary_hdr, m12_summary, 12
     ret
 
 ; Tells the linker this object does not need an executable stack.

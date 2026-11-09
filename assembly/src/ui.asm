@@ -20,6 +20,8 @@
 
 default rel                     ; [label] means rip-relative, as in 64-bit code generally
 
+extern print_tr
+
 global print
 global print_cstr
 global print_paged
@@ -474,7 +476,7 @@ heading:
 
 wait_enter:
     mov rdi, wait_prompt
-    call print_cstr
+    call print_tr
     mov rdi, discard_buf
     mov rsi, 256
     call read_line
@@ -490,7 +492,7 @@ ask_yes:
     mov rdi, newline_str
     call print_cstr
     mov rdi, [rbp-8]
-    call print_cstr
+    call print_tr
     mov rdi, yes_prompt_suffix
     call print_cstr
 
@@ -554,7 +556,7 @@ question:
     call print_cstr
 
     mov rdi, your_answer_prompt
-    call print_cstr
+    call print_tr
 
     mov rdi, answer_buf
     mov rsi, 256
@@ -571,7 +573,7 @@ question:
     je .right
 
     mov rdi, wrong_prefix
-    call print_cstr
+    call print_tr
     mov rdi, [rbp-16]
     call print_cstr
     mov rdi, why_prefix
@@ -585,7 +587,7 @@ question:
 
 .right:
     mov rdi, correct_prefix
-    call print_cstr
+    call print_tr
     mov rdi, [rbp-24]
     call print_cstr
     mov rdi, newline_str

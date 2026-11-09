@@ -89,13 +89,15 @@ EOF
     ui_wait_enter
     ui_clear_screen
     ui_heading "SUMMARY"
-    cat <<'EOF'
+    if ! ui_summary_pt 1; then
+        cat <<'EOF'
   - A change moves working directory -> staging -> repository.
   - `git init` creates .git/. It does not track anything by itself.
   - `git status` tells you which of the three areas everything is in.
   - This course pins -b main everywhere, since the real default depends
     on your git version and config, not on git's own behavior.
 EOF
+    fi
     ui_wait_enter
 }
 
@@ -175,12 +177,14 @@ EOF
     ui_wait_enter
     ui_clear_screen
     ui_heading "SUMMARY"
-    cat <<'EOF'
+    if ! ui_summary_pt 2; then
+        cat <<'EOF'
   - clone copies the whole history, not just the latest files.
   - It always creates a new folder; it never merges into an existing one.
   - The remote it came from is named origin, by convention, automatically.
   - `git remote -v` shows what origin actually points at.
 EOF
+    fi
     ui_wait_enter
 }
 
@@ -264,13 +268,15 @@ EOF
     ui_wait_enter
     ui_clear_screen
     ui_heading "SUMMARY"
-    cat <<'EOF'
+    if ! ui_summary_pt 3; then
+        cat <<'EOF'
   - status never changes anything, it only reports.
   - An untracked file, a staged change, and an unstaged change are three
     different sections of the same output. Read the section, not just
     the filename.
   - Staging is a snapshot, taken once, at the moment you run `git add`.
 EOF
+    fi
     ui_wait_enter
 }
 
@@ -359,13 +365,15 @@ EOF
     ui_wait_enter
     ui_clear_screen
     ui_heading "SUMMARY"
-    cat <<'EOF'
+    if ! ui_summary_pt 4; then
+        cat <<'EOF'
   - `git add <path>` stages one file or folder; `git add .` stages
     everything under the current directory.
   - Staging copies content at that instant. Editing after adding does
     not update the staged snapshot.
   - `git restore --staged <file>` unstages without touching the file.
 EOF
+    fi
     ui_wait_enter
 }
 
@@ -446,11 +454,13 @@ EOF
     ui_wait_enter
     ui_clear_screen
     ui_heading "SUMMARY"
-    cat <<'EOF'
+    if ! ui_summary_pt 5; then
+        cat <<'EOF'
   - A commit permanently saves whatever is currently staged.
   - git refuses to commit when nothing is staged. That is not a bug.
   - `-a` auto-stages changes to already-tracked files only, never new ones.
   - `git log --oneline` is the fast way to see the history you're building.
 EOF
+    fi
     ui_wait_enter
 }

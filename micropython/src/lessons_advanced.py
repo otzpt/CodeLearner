@@ -192,12 +192,13 @@ def lesson_09_speed():
     ui.clear_screen()
     ui.heading("SUMMARY")
 
-    print("   - @native and @viper compile to machine code; both run on this PC")
-    print("   - viper needs types and gives ptr8 access, with no bounds check")
-    print("   - allocation in a loop is the usual hidden cost: floats, strings, lists")
-    print("   - const() costs no RAM; gc.collect() before a timing-sensitive loop")
-    print()
-    print("  Module 10: assembly language, for the Pico's own chip.")
+    if not ui.print_summary_pt(9):
+        print("   - @native and @viper compile to machine code; both run on this PC")
+        print("   - viper needs types and gives ptr8 access, with no bounds check")
+        print("   - allocation in a loop is the usual hidden cost: floats, strings, lists")
+        print("   - const() costs no RAM; gc.collect() before a timing-sensitive loop")
+        print()
+        print("  Module 10: assembly language, for the Pico's own chip.")
     ui.wait_enter()
 
 
@@ -384,12 +385,13 @@ def lesson_10_assembly():
     ui.clear_screen()
     ui.heading("SUMMARY")
 
-    print("   - @micropython.asm_thumb assembles Cortex-M0+ code; up to 4 args, r0 returns")
-    print("   - r0-r7 are free; r8-r12 must be restored")
-    print("   - this PC cannot run it; the listings were assembled with mpy-cross")
-    print("   - PIO is a separate, hardware assembly for timing-exact signals")
-    print()
-    print("  Module 11: everything together, in a robot.")
+    if not ui.print_summary_pt(10):
+        print("   - @micropython.asm_thumb assembles Cortex-M0+ code; up to 4 args, r0 returns")
+        print("   - r0-r7 are free; r8-r12 must be restored")
+        print("   - this PC cannot run it; the listings were assembled with mpy-cross")
+        print("   - PIO is a separate, hardware assembly for timing-exact signals")
+        print()
+        print("  Module 11: everything together, in a robot.")
     ui.wait_enter()
 
 
@@ -597,11 +599,12 @@ def lesson_11_robot():
     ui.clear_screen()
     ui.heading("SUMMARY")
 
-    print("   - split the problem: read the sensor, decide, drive")
-    print("   - a mode plus ticks_ms is a state machine that never blocks")
-    print("   - a negative time_pulse_us means no echo: far away, not zero")
-    print("   - small pure functions like choose_speed are easy to test")
-    print()
-    print("  That is the course. The Arduino course has the same ideas in")
-    print("  C++, down to the registers.")
+    if not ui.print_summary_pt(11):
+        print("   - split the problem: read the sensor, decide, drive")
+        print("   - a mode plus ticks_ms is a state machine that never blocks")
+        print("   - a negative time_pulse_us means no echo: far away, not zero")
+        print("   - small pure functions like choose_speed are easy to test")
+        print()
+        print("  That is the course. The Arduino course has the same ideas in")
+        print("  C++, down to the registers.")
     ui.wait_enter()

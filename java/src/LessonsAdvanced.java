@@ -159,17 +159,19 @@ class LessonsAdvanced {
         Ui.clearScreen();
         Ui.heading("SUMMARY");
 
-        System.out.println("   - List, Map, and Set are interfaces; ArrayList/HashMap/HashSet");
-        System.out.println("     are implementations of them");
-        System.out.println("   - Map.get() on a missing key returns null, not an exception");
-        System.out.println("     and not an inserted default -- getOrDefault() avoids the");
-        System.out.println("     NullPointerException that null causes later");
-        System.out.println("   - Set.add() returns false, not an exception, when the value");
-        System.out.println("     was already present");
-        System.out.println();
-        System.out.println("  Module 12 is generics: the mechanism that lets List<String>");
-        System.out.println("  and List<Integer> both exist from one class, ArrayList's own,");
-        System.out.println("  not one written per type.");
+        if (!Strings.printSummaryPt(11)) {
+            System.out.println("   - List, Map, and Set are interfaces; ArrayList/HashMap/HashSet");
+            System.out.println("     are implementations of them");
+            System.out.println("   - Map.get() on a missing key returns null, not an exception");
+            System.out.println("     and not an inserted default -- getOrDefault() avoids the");
+            System.out.println("     NullPointerException that null causes later");
+            System.out.println("   - Set.add() returns false, not an exception, when the value");
+            System.out.println("     was already present");
+            System.out.println();
+            System.out.println("  Module 12 is generics: the mechanism that lets List<String>");
+            System.out.println("  and List<Integer> both exist from one class, ArrayList's own,");
+            System.out.println("  not one written per type.");
+        }
         Ui.waitEnter();
     }
 
@@ -365,15 +367,17 @@ class LessonsAdvanced {
         Ui.clearScreen();
         Ui.heading("SUMMARY");
 
-        System.out.println("   - a container typed as Object needs a cast on every read, and the wrong");
-        System.out.println("     cast is a runtime ClassCastException, not a compile error");
-        System.out.println("   - a generic class (Box<T>) or method (<T> firstOf(List<T>)) gives the");
-        System.out.println("     compiler that type information back -- wrong types are caught before");
-        System.out.println("     the program ever runs, instead of three calls deep at runtime");
-        System.out.println("   - a bounded type parameter (<T extends Comparable<T>>) is how a generic");
-        System.out.println("     method promises the compiler that T supports a specific method");
-        System.out.println("   - type erasure means generics are compile-time only -- ArrayList<String>");
-        System.out.println("     and ArrayList<Integer> are the identical class at runtime");
+        if (!Strings.printSummaryPt(12)) {
+            System.out.println("   - a container typed as Object needs a cast on every read, and the wrong");
+            System.out.println("     cast is a runtime ClassCastException, not a compile error");
+            System.out.println("   - a generic class (Box<T>) or method (<T> firstOf(List<T>)) gives the");
+            System.out.println("     compiler that type information back -- wrong types are caught before");
+            System.out.println("     the program ever runs, instead of three calls deep at runtime");
+            System.out.println("   - a bounded type parameter (<T extends Comparable<T>>) is how a generic");
+            System.out.println("     method promises the compiler that T supports a specific method");
+            System.out.println("   - type erasure means generics are compile-time only -- ArrayList<String>");
+            System.out.println("     and ArrayList<Integer> are the identical class at runtime");
+        }
         Ui.waitEnter();
     }
 
@@ -666,20 +670,22 @@ class LessonsAdvanced {
         Ui.clearScreen();
         Ui.heading("SUMMARY");
 
-        System.out.println("   - new Thread(runnable).start() runs concurrently, on a new thread;");
-        System.out.println("     calling .run() directly is an ordinary call on the current one");
-        System.out.println("   - two threads sharing a plain field with no protection can each");
-        System.out.println("     read the same value before either writes back -- a lost update,");
-        System.out.println("     the textbook shape of a data race");
-        System.out.println("   - synchronized fixes it by letting only one thread execute the");
-        System.out.println("     critical section at a time -- it guarantees mutual exclusion,");
-        System.out.println("     not which thread goes first");
-        System.out.println("   - a Java data race on a plain field is not undefined behavior the");
-        System.out.println("     way it would be in C -- no corruption, no crash -- but it is a");
-        System.out.println("     real bug: lost updates and stale reads, a different class of bug,");
-        System.out.println("     not a safe one");
-        System.out.println("   - join() blocks the calling thread until the target finishes;");
-        System.out.println("     without it, a result read after start() may not be finished yet");
+        if (!Strings.printSummaryPt(13)) {
+            System.out.println("   - new Thread(runnable).start() runs concurrently, on a new thread;");
+            System.out.println("     calling .run() directly is an ordinary call on the current one");
+            System.out.println("   - two threads sharing a plain field with no protection can each");
+            System.out.println("     read the same value before either writes back -- a lost update,");
+            System.out.println("     the textbook shape of a data race");
+            System.out.println("   - synchronized fixes it by letting only one thread execute the");
+            System.out.println("     critical section at a time -- it guarantees mutual exclusion,");
+            System.out.println("     not which thread goes first");
+            System.out.println("   - a Java data race on a plain field is not undefined behavior the");
+            System.out.println("     way it would be in C -- no corruption, no crash -- but it is a");
+            System.out.println("     real bug: lost updates and stale reads, a different class of bug,");
+            System.out.println("     not a safe one");
+            System.out.println("   - join() blocks the calling thread until the target finishes;");
+            System.out.println("     without it, a result read after start() may not be finished yet");
+        }
         Ui.waitEnter();
     }
 

@@ -176,15 +176,17 @@ async function lesson11Promises() {
   ui.clearScreen();
   ui.heading("SUMMARY");
 
-  console.log("   - a Promise is pending, then settles once, to fulfilled or rejected");
-  console.log("   - await is unwrapping that same object -- .then()/.catch() is the");
-  console.log("     older syntax for the identical thing");
-  console.log("   - an awaited rejection throws, catchable with ordinary try/catch");
-  console.log("   - Promise.all runs independent awaits concurrently instead of");
-  console.log("     one after another");
-  console.log();
-  console.log("  Module 12 is working with a real API: fetch and JSON, both");
-  console.log("  already usable with everything covered here.");
+  if (!ui.printSummaryPt(11)) {
+    console.log("   - a Promise is pending, then settles once, to fulfilled or rejected");
+    console.log("   - await is unwrapping that same object -- .then()/.catch() is the");
+    console.log("     older syntax for the identical thing");
+    console.log("   - an awaited rejection throws, catchable with ordinary try/catch");
+    console.log("   - Promise.all runs independent awaits concurrently instead of");
+    console.log("     one after another");
+    console.log();
+    console.log("  Module 12 is working with a real API: fetch and JSON, both");
+    console.log("  already usable with everything covered here.");
+  }
   await ui.waitEnter();
 }
 
@@ -355,14 +357,16 @@ async function lesson12Apis() {
   ui.clearScreen();
   ui.heading("SUMMARY");
 
-  console.log("   - fetch(url) resolves to a Response, not the parsed body --");
-  console.log("     response.json() is a second, separate Promise");
-  console.log("   - fetch rejects only on a genuine network failure (DNS,");
-  console.log("     connection refused, timeout) -- never on a 404 or a 500");
-  console.log("   - a 404/500 is a completed, successful exchange; checking");
-  console.log("     response.ok or response.status is the caller's job");
-  console.log("   - try/catch (module 10) still catches the failures that");
-  console.log("     really are rejections -- no new mechanism, same as always");
+  if (!ui.printSummaryPt(12)) {
+    console.log("   - fetch(url) resolves to a Response, not the parsed body --");
+    console.log("     response.json() is a second, separate Promise");
+    console.log("   - fetch rejects only on a genuine network failure (DNS,");
+    console.log("     connection refused, timeout) -- never on a 404 or a 500");
+    console.log("   - a 404/500 is a completed, successful exchange; checking");
+    console.log("     response.ok or response.status is the caller's job");
+    console.log("   - try/catch (module 10) still catches the failures that");
+    console.log("     really are rejections -- no new mechanism, same as always");
+  }
   await ui.waitEnter();
 }
 
@@ -685,15 +689,17 @@ async function lesson13Modules() {
   ui.clearScreen();
   ui.heading("SUMMARY");
 
-  console.log("   - require(path) runs that file once and returns whatever it assigned");
-  console.log("     to module.exports -- this course's own ui.js, and every");
-  console.log("     lessons_*.js file, already work exactly this way");
-  console.log("   - a bare require() name looks up an installed package; your own files");
-  console.log("     need an explicit ./ or ../ path");
-  console.log("   - import/export is a second, standardized module system Node also");
-  console.log('     supports -- a .mjs file (or "type": "module" in package.json) is ESM');
-  console.log("   - the two do not mix inside one file: one import statement makes Node");
-  console.log("     treat the WHOLE file as ESM, where require is not defined at all");
+  if (!ui.printSummaryPt(13)) {
+    console.log("   - require(path) runs that file once and returns whatever it assigned");
+    console.log("     to module.exports -- this course's own ui.js, and every");
+    console.log("     lessons_*.js file, already work exactly this way");
+    console.log("   - a bare require() name looks up an installed package; your own files");
+    console.log("     need an explicit ./ or ../ path");
+    console.log("   - import/export is a second, standardized module system Node also");
+    console.log('     supports -- a .mjs file (or "type": "module" in package.json) is ESM');
+    console.log("   - the two do not mix inside one file: one import statement makes Node");
+    console.log("     treat the WHOLE file as ESM, where require is not defined at all");
+  }
   await ui.waitEnter();
 }
 
@@ -924,14 +930,16 @@ async function lesson14NodeStdlib() {
   ui.clearScreen();
   ui.heading("SUMMARY");
 
-  console.log("   - fs.readFileSync/writeFileSync block the process until they finish --");
-  console.log("     fine for a short CLI tool, not for anything else with work to do");
-  console.log("   - fs.promises.readFile/writeFile return Promises instead, the same");
-  console.log("     await pattern modules 11 and 12 already taught");
-  console.log("   - process.argv[0] is the node executable, [1] is the script, and your");
-  console.log("     own arguments start at index 2");
-  console.log("   - direct filesystem access and the process object are both things a");
-  console.log("     browser's JavaScript never gets");
+  if (!ui.printSummaryPt(14)) {
+    console.log("   - fs.readFileSync/writeFileSync block the process until they finish --");
+    console.log("     fine for a short CLI tool, not for anything else with work to do");
+    console.log("   - fs.promises.readFile/writeFile return Promises instead, the same");
+    console.log("     await pattern modules 11 and 12 already taught");
+    console.log("   - process.argv[0] is the node executable, [1] is the script, and your");
+    console.log("     own arguments start at index 2");
+    console.log("   - direct filesystem access and the process object are both things a");
+    console.log("     browser's JavaScript never gets");
+  }
   await ui.waitEnter();
 }
 

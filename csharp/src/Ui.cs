@@ -19,7 +19,7 @@ static class Ui
 
     public static void WaitEnter()
     {
-        Console.Write("\n  Press ENTER to continue...");
+        Console.Write("\n  " + Strings.Tr("Press ENTER to continue..."));
         Console.ReadLine();
     }
 
@@ -46,7 +46,7 @@ static class Ui
 
     public static void Heading(string text)
     {
-        Console.WriteLine($"\n  {text}");
+        Console.WriteLine($"\n  {Strings.Tr(text)}");
         Rule();
     }
 
@@ -59,24 +59,24 @@ static class Ui
 
     public static void Exercise(int number)
     {
-        Console.WriteLine($"\n  >> EXERCISE - MODULE {number}");
+        Console.WriteLine($"\n  {Strings.Tr(">> EXERCISE - MODULE")} {number}");
         Rule();
     }
 
     public static bool Question(string text, string correct, string why)
     {
         Console.WriteLine($"\n  {text}");
-        Console.Write("  Your answer: ");
+        Console.Write("  " + Strings.Tr("Your answer:") + " ");
         string? answer = Console.ReadLine();
 
         bool right = string.Equals(answer?.Trim(), correct.Trim(), StringComparison.OrdinalIgnoreCase);
         if (right)
         {
-            Console.WriteLine($"\n  CORRECT.  {why}");
+            Console.WriteLine($"\n  {Strings.Tr("CORRECT.")}  {why}");
         }
         else
         {
-            Console.WriteLine($"\n  NOT QUITE. The answer is: {correct}");
+            Console.WriteLine($"\n  {Strings.Tr("NOT QUITE. The answer is:")} {correct}");
             Console.WriteLine($"             {why}");
         }
         return right;
@@ -91,7 +91,7 @@ static class Ui
     // one way of getting there and appears only after a confirmation.
     public static void Challenge(string[] task, string[] input, string[] expected, string[] solution)
     {
-        Console.WriteLine("\n  >> WRITE THIS YOURSELF, in a real file");
+        Console.WriteLine("\n  " + Strings.Tr(">> WRITE THIS YOURSELF, in a real file"));
         Rule();
 
         foreach (string line in task)
@@ -101,7 +101,7 @@ static class Ui
 
         if (input.Length > 0)
         {
-            Console.WriteLine("\n  Try it with this input:\n");
+            Console.WriteLine("\n  " + Strings.Tr("Try it with this input:") + "\n");
             foreach (string line in input)
             {
                 Console.WriteLine($"      {line}");
@@ -110,19 +110,19 @@ static class Ui
 
         if (expected.Length > 0)
         {
-            Console.WriteLine("\n  It must print:\n");
+            Console.WriteLine("\n  " + Strings.Tr("It must print:") + "\n");
             foreach (string line in expected)
             {
                 Console.WriteLine($"      {line}");
             }
-            Console.WriteLine("\n  That output is the whole specification. Any code that");
-            Console.WriteLine("  produces it is correct.");
+            Console.WriteLine("\n  " + Strings.Tr("That output is the whole specification. Any code that"));
+            Console.WriteLine("  " + Strings.Tr("produces it is correct."));
         }
 
-        Console.WriteLine("\n  Try it first. Run with:");
+        Console.WriteLine("\n  " + Strings.Tr("Try it first. Run with:"));
         Console.WriteLine("    dotnet run");
 
-        if (!AskYes("Want to see example code?"))
+        if (!AskYes(Strings.Tr("Want to see example code?")))
         {
             return;
         }
@@ -134,8 +134,8 @@ static class Ui
             Console.WriteLine($"  {line}");
         }
         Rule();
-        Console.WriteLine("  This is EXAMPLE CODE, not the answer. It is one way to get");
-        Console.WriteLine("  that output; yours may look nothing like it and still be");
-        Console.WriteLine("  right -- or better. Compare the output, not the code.");
+        Console.WriteLine("  " + Strings.Tr("This is EXAMPLE CODE, not the answer. It is one way to get"));
+        Console.WriteLine("  " + Strings.Tr("that output; yours may look nothing like it and still be"));
+        Console.WriteLine("  " + Strings.Tr("right -- or better. Compare the output, not the code."));
     }
 }

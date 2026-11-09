@@ -201,7 +201,7 @@ lesson_04_input:
     challenge m4_challenge, m4_solution
 
     ; summary(4)
-    summary m4_summary_hdr, m4_summary
+    summary m4_summary_hdr, m4_summary, 4
     ret
 
 ; Tells the linker this object does not need an executable stack.

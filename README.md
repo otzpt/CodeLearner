@@ -800,6 +800,19 @@ arithmetic, `clamp()`, specificity.
 The Web JavaScript course assumes the first modules of the terminal JavaScript
 course, and leaves Node behind for the DOM, events, forms, `fetch` and storage.
 
+## Portuguese
+
+The menus, prompts and module summaries are also available in European
+Portuguese. Press `l` in the launcher to switch, and every course started from
+it follows. To run a course directly, set the variable yourself:
+
+```bash
+CODELEARNER_LANG=pt-pt ./c-course
+```
+
+The lessons themselves are still in English, and so are the answers to their
+questions. Each course keeps its Portuguese text in its own `strings_pt` file.
+
 ## The Libraries reference
 
 The launcher lists **Libraries** under **REFERENCE**, after the courses. It is a

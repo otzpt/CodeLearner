@@ -201,6 +201,44 @@ jobs:
             -p:IncludeAllContentForSelfExtract=true \
             -o csharp-publish
 
+      # CODELEARNER_LANG=pt-pt: the menu and a module's summary come out in
+      # Portuguese, for everything this runner can run. Arduino's walk is left
+      # out for the reason given above, so only its menu is checked.
+      - name: Check the Portuguese mode (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -euo pipefail
+          javac -d "$RUNNER_TEMP/java" java/src/*.java
+          check() {
+            local name=$1 out
+            shift
+            out=$({ printf '1\n'; printf '\n%.0s' $(seq 200); } | CODELEARNER_LANG=pt-pt timeout 30 "$@")
+            grep -q "Sair" <<<"$out" || { echo "::error::$name has no Portuguese menu"; exit 1; }
+            grep -q "RESUMO" <<<"$out" || { echo "::error::$name has no Portuguese summary"; exit 1; }
+          }
+          check C c/c-course
+          check C++ cpp/cpp-course
+          check GUI gui/gui-course
+          check HTML html/html-course
+          check CSS css/css-course
+          check "Web JavaScript" webjs/webjs-course
+          check Assembly assembly/asm-course
+          check Rust rust/rust-course
+          check Python python3 python/src/main.py
+          check Security python3 security/src/main.py
+          check JavaScript node javascript/src/main.js
+          check Git bash git/src/main.sh
+          check "C#" csharp-publish/csharp
+          check Java java -cp "$RUNNER_TEMP/java" Main
+
+          out=$(printf '0\n' | CODELEARNER_LANG=pt-pt timeout 20 arduino/arduino-course)
+          grep -q "Sair" <<<"$out" || { echo "::error::Arduino has no Portuguese menu"; exit 1; }
+          out=$(printf '0\n' | CODELEARNER_LANG=pt-pt timeout 20 libraries/libraries)
+          grep -q "BIBLIOTECAS" <<<"$out" || { echo "::error::Libraries has no Portuguese menu"; exit 1; }
+          out=$(cd launcher && printf 'l\n0\n' | timeout 20 ./launcher)
+          grep -q "BAIXO NIVEL" <<<"$out" || { echo "::error::the launcher did not switch to Portuguese"; exit 1; }
+
       - name: Smoke-test the launcher (Linux)
         if: runner.os == 'Linux'
         shell: bash

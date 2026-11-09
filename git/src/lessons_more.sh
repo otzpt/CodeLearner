@@ -93,12 +93,14 @@ EOF
     ui_wait_enter
     ui_clear_screen
     ui_heading "SUMMARY"
-    cat <<'EOF'
+    if ! ui_summary_pt 6; then
+        cat <<'EOF'
   - Commits are local until pushed.
   - push is rejected, not merged, when the remote has commits you don't.
   - The safe response to a rejected push is pull, not --force.
   - --force replaces remote history with yours. It can erase real work.
 EOF
+    fi
     ui_wait_enter
 }
 
@@ -206,7 +208,8 @@ EOF
     ui_wait_enter
     ui_clear_screen
     ui_heading "SUMMARY"
-    cat <<'EOF'
+    if ! ui_summary_pt 7; then
+        cat <<'EOF'
   - pull = fetch + merge in one command.
   - No overlap -> the merge is automatic and silent.
   - Overlapping lines -> git leaves <<<<<<< / ======= / >>>>>>> markers
@@ -214,6 +217,7 @@ EOF
   - Resolve by editing the file, then add, then commit: the same two
     commands as any other change.
 EOF
+    fi
     ui_wait_enter
 }
 
@@ -311,13 +315,15 @@ EOF
     ui_wait_enter
     ui_clear_screen
     ui_heading "SUMMARY"
-    cat <<'EOF'
+    if ! ui_summary_pt 8; then
+        cat <<'EOF'
   - A branch is a movable pointer to a commit, creating one is instant.
   - `git switch -c <name>` creates and moves to a branch in one step.
   - No new commits on the target -> fast-forward, no merge commit.
   - Both sides changed -> a real merge, and possibly the same conflict
     markers and add/commit resolution module 7 already covered.
 EOF
+    fi
     ui_wait_enter
 }
 
@@ -419,7 +425,8 @@ EOF
     ui_wait_enter
     ui_clear_screen
     ui_heading "SUMMARY"
-    cat <<'EOF'
+    if ! ui_summary_pt 9; then
+        cat <<'EOF'
   - A tag names one exact commit, permanently; a branch keeps moving.
   - Lightweight = a bare pointer. Annotated (-a -m) = a real object with
     a message and tagger, use annotated for releases.
@@ -428,6 +435,7 @@ EOF
   - A GitHub Release is a tag plus notes and attachments layered on top
     by GitHub, not something git itself stores.
 EOF
+    fi
     ui_wait_enter
 }
 
@@ -535,7 +543,8 @@ EOF
     ui_wait_enter
     ui_clear_screen
     ui_heading "SUMMARY"
-    cat <<'EOF'
+    if ! ui_summary_pt 10; then
+        cat <<'EOF'
   - A workflow is just a .yml file under .github/workflows/, committed
     and pushed like any other file, nothing git-specific about it.
   - on: decides what triggers it: a push, a pull request, a tag matching
@@ -544,5 +553,6 @@ EOF
   - It runs on GitHub's servers the moment a matching push lands, there
     is no separate command to fire it.
 EOF
+    fi
     ui_wait_enter
 }

@@ -100,11 +100,14 @@ static class LessonsBasics
         Ui.WaitEnter();
         Ui.ClearScreen();
         Ui.Heading("SUMMARY");
-        Console.WriteLine("  - Top-level statements are sugar over class Program { static");
-        Console.WriteLine("    void Main(...) }, not a different execution model.");
-        Console.WriteLine("  - dotnet run = dotnet build (source -> IL in a .dll) + launch");
-        Console.WriteLine("    through the runtime, in one command.");
-        Console.WriteLine("  - Write doesn't add a newline; WriteLine does.");
+        if (!Strings.PrintSummaryPt(1))
+        {
+            Console.WriteLine("  - Top-level statements are sugar over class Program { static");
+            Console.WriteLine("    void Main(...) }, not a different execution model.");
+            Console.WriteLine("  - dotnet run = dotnet build (source -> IL in a .dll) + launch");
+            Console.WriteLine("    through the runtime, in one command.");
+            Console.WriteLine("  - Write doesn't add a newline; WriteLine does.");
+        }
         Ui.WaitEnter();
     }
 
@@ -189,11 +192,14 @@ static class LessonsBasics
         Ui.WaitEnter();
         Ui.ClearScreen();
         Ui.Heading("SUMMARY");
-        Console.WriteLine("  - var infers a real, fixed type -- it is not dynamic typing.");
-        Console.WriteLine("  - int / int truncates; make one side a double first.");
-        Console.WriteLine("  - Value types (int, struct) ARE their data; reference types");
-        Console.WriteLine("    (string, class) hold a pointer to it. Module 8 shows why");
-        Console.WriteLine("    that difference matters.");
+        if (!Strings.PrintSummaryPt(2))
+        {
+            Console.WriteLine("  - var infers a real, fixed type -- it is not dynamic typing.");
+            Console.WriteLine("  - int / int truncates; make one side a double first.");
+            Console.WriteLine("  - Value types (int, struct) ARE their data; reference types");
+            Console.WriteLine("    (string, class) hold a pointer to it. Module 8 shows why");
+            Console.WriteLine("    that difference matters.");
+        }
         Ui.WaitEnter();
     }
 
@@ -282,11 +288,14 @@ static class LessonsBasics
         Ui.WaitEnter();
         Ui.ClearScreen();
         Ui.Heading("SUMMARY");
-        Console.WriteLine("  - Console.ReadLine() returns string?, not string -- it can");
-        Console.WriteLine("    be null at end-of-input.");
-        Console.WriteLine("  - ?? supplies a fallback for the null case.");
-        Console.WriteLine("  - int.TryParse returns bool and an out parameter -- no");
-        Console.WriteLine("    exception for input that's simply not a number.");
+        if (!Strings.PrintSummaryPt(3))
+        {
+            Console.WriteLine("  - Console.ReadLine() returns string?, not string -- it can");
+            Console.WriteLine("    be null at end-of-input.");
+            Console.WriteLine("  - ?? supplies a fallback for the null case.");
+            Console.WriteLine("  - int.TryParse returns bool and an out parameter -- no");
+            Console.WriteLine("    exception for input that's simply not a number.");
+        }
         Ui.WaitEnter();
     }
 
@@ -383,10 +392,13 @@ static class LessonsBasics
         Ui.WaitEnter();
         Ui.ClearScreen();
         Ui.Heading("SUMMARY");
-        Console.WriteLine("  - A condition must be bool -- if (x = 5) does not compile.");
-        Console.WriteLine("  - switch expressions evaluate to a value; _ is the catch-all.");
-        Console.WriteLine("  - `is` checks a type and binds a variable in one step, no");
-        Console.WriteLine("    throwing cast required.");
+        if (!Strings.PrintSummaryPt(4))
+        {
+            Console.WriteLine("  - A condition must be bool -- if (x = 5) does not compile.");
+            Console.WriteLine("  - switch expressions evaluate to a value; _ is the catch-all.");
+            Console.WriteLine("  - `is` checks a type and binds a variable in one step, no");
+            Console.WriteLine("    throwing cast required.");
+        }
         Ui.WaitEnter();
 
         static string Grade(int score) => score switch
@@ -485,12 +497,15 @@ static class LessonsBasics
         Ui.WaitEnter();
         Ui.ClearScreen();
         Ui.Heading("SUMMARY");
-        Console.WriteLine("  - <= runs one more iteration than < -- read the condition,");
-        Console.WriteLine("    don't count by eye.");
-        Console.WriteLine("  - foreach reads a sequence; the range operator (1..4) slices,");
-        Console.WriteLine("    it isn't itself foreach-able.");
-        Console.WriteLine("  - foreach's iteration variable is read-only; use an indexed");
-        Console.WriteLine("    for loop to mutate elements.");
+        if (!Strings.PrintSummaryPt(5))
+        {
+            Console.WriteLine("  - <= runs one more iteration than < -- read the condition,");
+            Console.WriteLine("    don't count by eye.");
+            Console.WriteLine("  - foreach reads a sequence; the range operator (1..4) slices,");
+            Console.WriteLine("    it isn't itself foreach-able.");
+            Console.WriteLine("  - foreach's iteration variable is read-only; use an indexed");
+            Console.WriteLine("    for loop to mutate elements.");
+        }
         Ui.WaitEnter();
     }
 }

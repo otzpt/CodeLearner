@@ -611,7 +611,7 @@ lesson_07_bits:
     challenge m7_challenge, m7_solution
 
     ; summary(7)
-    summary m7_summary_hdr, m7_summary
+    summary m7_summary_hdr, m7_summary, 7
     add rsp, 8
     pop r12
     pop rbx
@@ -778,7 +778,7 @@ lesson_08_strings:
     challenge m8_challenge, m8_solution
 
     ; summary(8)
-    summary m8_summary_hdr, m8_summary
+    summary m8_summary_hdr, m8_summary, 8
     add rsp, 8
     pop r12
     pop rbx

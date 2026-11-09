@@ -120,12 +120,14 @@ pub fn lesson_01_println() {
     clear_screen();
     heading("SUMMARY");
 
-    say("   - rustc file.rs builds a native program; fn main() starts it");
-    say("   - println! is a macro; its format string is checked at compile time");
-    say("   - {} for display, {:?} for debug, {:>6} {:06} {:.2} {:x} {:b} for layout");
-    say("   - {name} reads a variable; {{ }} prints braces");
-    println!();
-    say("  Module 2: variables, and what Rust refuses to let you change.");
+    if !crate::strings_pt::print_summary_pt(1) {
+        say("   - rustc file.rs builds a native program; fn main() starts it");
+        say("   - println! is a macro; its format string is checked at compile time");
+        say("   - {} for display, {:?} for debug, {:>6} {:06} {:.2} {:x} {:b} for layout");
+        say("   - {name} reads a variable; {{ }} prints braces");
+        println!();
+        say("  Module 2: variables, and what Rust refuses to let you change.");
+    }
     wait_enter();
 }
 
@@ -252,12 +254,14 @@ pub fn lesson_02_variables() {
     clear_screen();
     heading("SUMMARY");
 
-    say("   - let is immutable; mut allows change; shadowing makes a new variable");
-    say("   - integer types name their size; overflow panics in a debug build");
-    say("   - checked_, wrapping_, saturating_ say what to do at the edge");
-    say("   - no implicit number conversion; as converts and may lose data");
-    println!();
-    say("  Module 3: making decisions and repeating.");
+    if !crate::strings_pt::print_summary_pt(2) {
+        say("   - let is immutable; mut allows change; shadowing makes a new variable");
+        say("   - integer types name their size; overflow panics in a debug build");
+        say("   - checked_, wrapping_, saturating_ say what to do at the edge");
+        say("   - no implicit number conversion; as converts and may lose data");
+        println!();
+        say("  Module 3: making decisions and repeating.");
+    }
     wait_enter();
 }
 
@@ -388,11 +392,13 @@ pub fn lesson_03_control_flow() {
     clear_screen();
     heading("SUMMARY");
 
-    say("   - if is an expression; its condition must be a bool");
-    say("   - for over ranges (1..4, 1..=4), while, and loop with break value");
-    say("   - match must cover every case; _ is 'anything else'");
-    println!();
-    say("  Module 4: functions.");
+    if !crate::strings_pt::print_summary_pt(3) {
+        say("   - if is an expression; its condition must be a bool");
+        say("   - for over ranges (1..4, 1..=4), while, and loop with break value");
+        say("   - match must cover every case; _ is 'anything else'");
+        println!();
+        say("  Module 4: functions.");
+    }
     wait_enter();
 }
 
@@ -522,11 +528,13 @@ pub fn lesson_04_functions() {
     clear_screen();
     heading("SUMMARY");
 
-    say("   - fn name(param: Type) -> Type; the last expression is the result");
-    say("   - a stray semicolon on that last line breaks the return type");
-    say("   - tuples return several values; () is 'nothing'");
-    say("   - const for a value fixed at compile time");
-    println!();
-    say("  Module 5: ownership, the idea the rest of Rust is built on.");
+    if !crate::strings_pt::print_summary_pt(4) {
+        say("   - fn name(param: Type) -> Type; the last expression is the result");
+        say("   - a stray semicolon on that last line breaks the return type");
+        say("   - tuples return several values; () is 'nothing'");
+        say("   - const for a value fixed at compile time");
+        println!();
+        say("  Module 5: ownership, the idea the rest of Rust is built on.");
+    }
     wait_enter();
 }

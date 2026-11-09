@@ -149,12 +149,13 @@ def lesson_05_pins():
     ui.clear_screen()
     ui.heading("SUMMARY")
 
-    print("   - Pin(n, Pin.OUT) drives; Pin(n, Pin.IN, Pin.PULL_UP) reads")
-    print("   - Pico logic is 3.3 V; GP25 is the LED on a Pico, Pin('LED') on a Pico W")
-    print("   - a pulled-up button reads 0 when pressed")
-    print("   - real buttons bounce: ignore edges that follow too soon")
-    print()
-    print("  Module 6: analog values, and PWM.")
+    if not ui.print_summary_pt(5):
+        print("   - Pin(n, Pin.OUT) drives; Pin(n, Pin.IN, Pin.PULL_UP) reads")
+        print("   - Pico logic is 3.3 V; GP25 is the LED on a Pico, Pin('LED') on a Pico W")
+        print("   - a pulled-up button reads 0 when pressed")
+        print("   - real buttons bounce: ignore edges that follow too soon")
+        print()
+        print("  Module 6: analog values, and PWM.")
     ui.wait_enter()
 
 
@@ -286,11 +287,12 @@ def lesson_06_pwm_adc():
     ui.clear_screen()
     ui.heading("SUMMARY")
 
-    print("   - ADC(Pin(26)).read_u16() is 0-65535 for 0-3.3 V")
-    print("   - PWM(Pin(n)): freq() and duty_u16(0-65535)")
-    print("   - write your own map: use // and clamp the result")
-    print()
-    print("  Module 7: waiting without freezing the board.")
+    if not ui.print_summary_pt(6):
+        print("   - ADC(Pin(26)).read_u16() is 0-65535 for 0-3.3 V")
+        print("   - PWM(Pin(n)): freq() and duty_u16(0-65535)")
+        print("   - write your own map: use // and clamp the result")
+        print()
+        print("  Module 7: waiting without freezing the board.")
     ui.wait_enter()
 
 
@@ -441,11 +443,12 @@ def lesson_07_time():
     ui.clear_screen()
     ui.heading("SUMMARY")
 
-    print("   - sleep makes the chip deaf; ticks_ms lets it keep working")
-    print("   - if ticks_diff(ticks_ms(), last) >= period: last = ticks_add(last, period)")
-    print("   - the counter wraps; the period is port-specific, so never compare with <")
-    print()
-    print("  Module 8: code that runs the instant something happens.")
+    if not ui.print_summary_pt(7):
+        print("   - sleep makes the chip deaf; ticks_ms lets it keep working")
+        print("   - if ticks_diff(ticks_ms(), last) >= period: last = ticks_add(last, period)")
+        print("   - the counter wraps; the period is port-specific, so never compare with <")
+        print()
+        print("  Module 8: code that runs the instant something happens.")
     ui.wait_enter()
 
 
@@ -610,9 +613,10 @@ def lesson_08_interrupts():
     ui.clear_screen()
     ui.heading("SUMMARY")
 
-    print("   - pin.irq(handler=f, trigger=Pin.IRQ_FALLING) runs f on the event")
-    print("   - a handler is short and allocates nothing; use micropython.schedule")
-    print("   - guard multi-step shared data with disable_irq / enable_irq")
-    print()
-    print("  Module 9: making code fast, with real native compilation.")
+    if not ui.print_summary_pt(8):
+        print("   - pin.irq(handler=f, trigger=Pin.IRQ_FALLING) runs f on the event")
+        print("   - a handler is short and allocates nothing; use micropython.schedule")
+        print("   - guard multi-step shared data with disable_irq / enable_irq")
+        print()
+        print("  Module 9: making code fast, with real native compilation.")
     ui.wait_enter()

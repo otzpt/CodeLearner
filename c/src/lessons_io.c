@@ -501,21 +501,23 @@ void lesson_18_file_io(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - fopen returns NULL on failure; check it before using the\n");
-    printf("     FILE * for anything, the same discipline module 9 taught\n");
-    printf("     for malloc\n");
-    printf("   - fprintf writes to a file the way printf writes to the\n");
-    printf("     screen; fgets reads a file back the way it reads the\n");
-    printf("     keyboard -- both return NULL/stop at end of input\n");
-    printf("   - \"r\" and \"rb\" open identically on Linux, verified above --\n");
-    printf("     the difference is real and only shows up on Windows's\n");
-    printf("     \\r\\n translation\n");
-    printf("   - checking scanf's return value catches bad input scanf\n");
-    printf("     itself already saw; a real re-prompt loop also has to\n");
-    printf("     drain the leftover bad text, or it repeats forever\n");
-    printf("   - int main(int argc, char *argv[]) is why two main\n");
-    printf("     signatures are legal C; argc counts argv[0], the\n");
-    printf("     program's own name, and argv[argc] is always NULL\n");
+    if (!print_summary_pt(18)) {
+        printf("   - fopen returns NULL on failure; check it before using the\n");
+        printf("     FILE * for anything, the same discipline module 9 taught\n");
+        printf("     for malloc\n");
+        printf("   - fprintf writes to a file the way printf writes to the\n");
+        printf("     screen; fgets reads a file back the way it reads the\n");
+        printf("     keyboard -- both return NULL/stop at end of input\n");
+        printf("   - \"r\" and \"rb\" open identically on Linux, verified above --\n");
+        printf("     the difference is real and only shows up on Windows's\n");
+        printf("     \\r\\n translation\n");
+        printf("   - checking scanf's return value catches bad input scanf\n");
+        printf("     itself already saw; a real re-prompt loop also has to\n");
+        printf("     drain the leftover bad text, or it repeats forever\n");
+        printf("   - int main(int argc, char *argv[]) is why two main\n");
+        printf("     signatures are legal C; argc counts argv[0], the\n");
+        printf("     program's own name, and argv[argc] is always NULL\n");
+    }
     wait_enter();
 
     /* Single cleanup block, reached whether every step above succeeded or

@@ -99,13 +99,16 @@ static class LessonsMore
         Ui.WaitEnter();
         Ui.ClearScreen();
         Ui.Heading("SUMMARY");
-        Console.WriteLine("  - Arrays are fixed-size; List<T> grows. Reach for List<T> by");
-        Console.WriteLine("    default.");
-        Console.WriteLine("  - .Length is always a property here, on arrays and string");
-        Console.WriteLine("    alike -- no parentheses, unlike Java's String.length().");
-        Console.WriteLine("  - Arrays compare by reference (== is false for equal");
-        Console.WriteLine("    contents); string overloads == to compare content instead");
-        Console.WriteLine("    -- opposite defaults from the same == operator.");
+        if (!Strings.PrintSummaryPt(6))
+        {
+            Console.WriteLine("  - Arrays are fixed-size; List<T> grows. Reach for List<T> by");
+            Console.WriteLine("    default.");
+            Console.WriteLine("  - .Length is always a property here, on arrays and string");
+            Console.WriteLine("    alike -- no parentheses, unlike Java's String.length().");
+            Console.WriteLine("  - Arrays compare by reference (== is false for equal");
+            Console.WriteLine("    contents); string overloads == to compare content instead");
+            Console.WriteLine("    -- opposite defaults from the same == operator.");
+        }
         Ui.WaitEnter();
     }
 
@@ -202,10 +205,13 @@ static class LessonsMore
         Ui.WaitEnter();
         Ui.ClearScreen();
         Ui.Heading("SUMMARY");
-        Console.WriteLine("  - C# has default parameter values; Java's module 7 uses");
-        Console.WriteLine("    overloading for the same job because it has to.");
-        Console.WriteLine("  - Overloading is resolved by parameter types at compile time.");
-        Console.WriteLine("  - name: at a call site lets arguments arrive out of order.");
+        if (!Strings.PrintSummaryPt(7))
+        {
+            Console.WriteLine("  - C# has default parameter values; Java's module 7 uses");
+            Console.WriteLine("    overloading for the same job because it has to.");
+            Console.WriteLine("  - Overloading is resolved by parameter types at compile time.");
+            Console.WriteLine("  - name: at a call site lets arguments arrive out of order.");
+        }
         Ui.WaitEnter();
 
         static void Greet(string name, string greeting = "Hello") =>
@@ -334,12 +340,15 @@ static class LessonsMore
         Ui.WaitEnter();
         Ui.ClearScreen();
         Ui.Heading("SUMMARY");
-        Console.WriteLine("  - Assigning a struct copies the value; assigning a class");
-        Console.WriteLine("    copies the reference. This is module 2's split made real.");
-        Console.WriteLine("  - record is a reference type with compiler-generated value");
-        Console.WriteLine("    equality; a plain class needs that written by hand.");
-        Console.WriteLine("  - private is compiler-enforced, same as Java, unlike");
-        Console.WriteLine("    Python's naming convention.");
+        if (!Strings.PrintSummaryPt(8))
+        {
+            Console.WriteLine("  - Assigning a struct copies the value; assigning a class");
+            Console.WriteLine("    copies the reference. This is module 2's split made real.");
+            Console.WriteLine("  - record is a reference type with compiler-generated value");
+            Console.WriteLine("    equality; a plain class needs that written by hand.");
+            Console.WriteLine("  - private is compiler-enforced, same as Java, unlike");
+            Console.WriteLine("    Python's naming convention.");
+        }
         Ui.WaitEnter();
     }
 
@@ -446,12 +455,15 @@ static class LessonsMore
         Ui.WaitEnter();
         Ui.ClearScreen();
         Ui.Heading("SUMMARY");
-        Console.WriteLine("  - string means non-nullable by convention; string? means it");
-        Console.WriteLine("    can genuinely be null -- enforced at compile time only.");
-        Console.WriteLine("  - ?. short-circuits to null instead of throwing; ?? supplies");
-        Console.WriteLine("    a fallback for that null case.");
-        Console.WriteLine("  - ! silences the warning without checking anything -- it can");
-        Console.WriteLine("    still throw at runtime if you were wrong.");
+        if (!Strings.PrintSummaryPt(9))
+        {
+            Console.WriteLine("  - string means non-nullable by convention; string? means it");
+            Console.WriteLine("    can genuinely be null -- enforced at compile time only.");
+            Console.WriteLine("  - ?. short-circuits to null instead of throwing; ?? supplies");
+            Console.WriteLine("    a fallback for that null case.");
+            Console.WriteLine("  - ! silences the warning without checking anything -- it can");
+            Console.WriteLine("    still throw at runtime if you were wrong.");
+        }
         Ui.WaitEnter();
     }
 
@@ -564,12 +576,15 @@ static class LessonsMore
         Ui.WaitEnter();
         Ui.ClearScreen();
         Ui.Heading("SUMMARY");
-        Console.WriteLine("  - C# has no checked exceptions -- every exception behaves");
-        Console.WriteLine("    like Java's unchecked RuntimeException.");
-        Console.WriteLine("  - Parse throws on bad input; TryParse reports it as a bool.");
-        Console.WriteLine("    Pick based on whether that input is exceptional or routine.");
-        Console.WriteLine("  - using guarantees Dispose() runs deterministically when the");
-        Console.WriteLine("    block exits -- not whenever the GC happens to run.");
+        if (!Strings.PrintSummaryPt(10))
+        {
+            Console.WriteLine("  - C# has no checked exceptions -- every exception behaves");
+            Console.WriteLine("    like Java's unchecked RuntimeException.");
+            Console.WriteLine("  - Parse throws on bad input; TryParse reports it as a bool.");
+            Console.WriteLine("    Pick based on whether that input is exceptional or routine.");
+            Console.WriteLine("  - using guarantees Dispose() runs deterministically when the");
+            Console.WriteLine("    block exits -- not whenever the GC happens to run.");
+        }
         Ui.WaitEnter();
 
         Console.WriteLine();

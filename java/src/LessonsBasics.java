@@ -100,9 +100,11 @@ class LessonsBasics {
         Ui.clearScreen();
         Ui.heading("SUMMARY");
 
-        System.out.println("   - javac compiles to bytecode; java runs it on the JVM -- two steps");
-        System.out.println("   - a public class's name must match its file name, exactly");
-        System.out.println("   - print writes nothing extra; println adds the line break");
+        if (!Strings.printSummaryPt(1)) {
+            System.out.println("   - javac compiles to bytecode; java runs it on the JVM -- two steps");
+            System.out.println("   - a public class's name must match its file name, exactly");
+            System.out.println("   - print writes nothing extra; println adds the line break");
+        }
         Ui.waitEnter();
     }
 
@@ -207,9 +209,11 @@ class LessonsBasics {
         Ui.clearScreen();
         Ui.heading("SUMMARY");
 
-        System.out.println("   - primitives (int, double, boolean, ...) hold values directly");
-        System.out.println("   - int / int truncates toward zero -- cast before dividing, not after");
-        System.out.println("   - boxed Integer == compares identity, not value -- cached only for -128..127");
+        if (!Strings.printSummaryPt(2)) {
+            System.out.println("   - primitives (int, double, boolean, ...) hold values directly");
+            System.out.println("   - int / int truncates toward zero -- cast before dividing, not after");
+            System.out.println("   - boxed Integer == compares identity, not value -- cached only for -128..127");
+        }
         Ui.waitEnter();
     }
 
@@ -302,9 +306,11 @@ class LessonsBasics {
         Ui.clearScreen();
         Ui.heading("SUMMARY");
 
-        System.out.println("   - Scanner reads input; nextLine() reads a whole line, nextInt() a number");
-        System.out.println("   - nextInt() leaves the newline behind -- the next nextLine() reads it as empty");
-        System.out.println("   - an extra sc.nextLine() to consume that newline is the fix");
+        if (!Strings.printSummaryPt(3)) {
+            System.out.println("   - Scanner reads input; nextLine() reads a whole line, nextInt() a number");
+            System.out.println("   - nextInt() leaves the newline behind -- the next nextLine() reads it as empty");
+            System.out.println("   - an extra sc.nextLine() to consume that newline is the fix");
+        }
         Ui.waitEnter();
     }
 
@@ -396,9 +402,11 @@ class LessonsBasics {
         Ui.clearScreen();
         Ui.heading("SUMMARY");
 
-        System.out.println("   - if / else if / else, same shape as every C-family language");
-        System.out.println("   - a condition must be boolean -- no truthy ints, no exceptions");
-        System.out.println("   - if (x = 5) is a compile error here, not a runtime typo like C/C++");
+        if (!Strings.printSummaryPt(4)) {
+            System.out.println("   - if / else if / else, same shape as every C-family language");
+            System.out.println("   - a condition must be boolean -- no truthy ints, no exceptions");
+            System.out.println("   - if (x = 5) is a compile error here, not a runtime typo like C/C++");
+        }
         Ui.waitEnter();
     }
 
@@ -510,9 +518,11 @@ class LessonsBasics {
         Ui.clearScreen();
         Ui.heading("SUMMARY");
 
-        System.out.println("   - while and for work the same as every C-family language here");
-        System.out.println("   - a for loop's counter is scoped to the loop, not usable after it");
-        System.out.println("   - for (T x : collection) gives values, no index to manage");
+        if (!Strings.printSummaryPt(5)) {
+            System.out.println("   - while and for work the same as every C-family language here");
+            System.out.println("   - a for loop's counter is scoped to the loop, not usable after it");
+            System.out.println("   - for (T x : collection) gives values, no index to manage");
+        }
         Ui.waitEnter();
     }
 }

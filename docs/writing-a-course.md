@@ -274,6 +274,14 @@ runs to its SUMMARY), `check-solutions.py` (every challenge solution builds
 clean and prints what its challenge promises, read straight from the lesson
 source) and the target-specific ones above.
 
+## The Portuguese text
+
+Each course has its own `strings_pt` file, holding the Portuguese for its menu
+and its module summaries. A new module needs its title and summary added there.
+Translate what the text says and leave every command, identifier and piece of
+output exactly as it is. `CODELEARNER_LANG=pt-pt` turns it on. With the variable
+unset, nothing a course prints changes.
+
 ## Courses about the web
 
 HTML, CSS and browser JavaScript are CLI programs like every other course,

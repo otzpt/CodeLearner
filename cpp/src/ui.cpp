@@ -53,7 +53,7 @@ void clearScreen() {
 }
 
 void waitEnter() {
-    std::cout << "\n  Press ENTER to continue...";
+    std::cout << "\n  " << tr("Press ENTER to continue...");
     std::cout.flush();
     // Consume to the end of the line, the same way the C course does with
     // getchar() in a loop -- cin.get() one character at a time, in case a
@@ -81,7 +81,7 @@ void title(const std::string &text) {
 }
 
 void heading(const std::string &text) {
-    std::cout << "\n  " << text << "\n";
+    std::cout << "\n  " << tr(text.c_str()) << "\n";
     rule();
 }
 
@@ -95,13 +95,13 @@ bool askYes(const std::string &questionText) {
 }
 
 void exercise(int number) {
-    std::cout << "\n  >> EXERCISE - MODULE " << number << "\n";
+    std::cout << "\n  " << tr(">> EXERCISE - MODULE") << " " << number << "\n";
     rule();
 }
 
 bool question(const std::string &text, const std::string &correct, const std::string &why) {
     std::cout << "\n  " << text << "\n";
-    std::cout << "  Your answer: ";
+    std::cout << "  " << tr("Your answer:") << " ";
     std::cout.flush();
 
     std::string answer;
@@ -109,9 +109,9 @@ bool question(const std::string &text, const std::string &correct, const std::st
 
     bool right = normalise(answer) == normalise(correct);
     if (right) {
-        std::cout << "\n  CORRECT.  " << why << "\n";
+        std::cout << "\n  " << tr("CORRECT.") << "  " << why << "\n";
     } else {
-        std::cout << "\n  NOT QUITE. The answer is: " << correct << "\n";
+        std::cout << "\n  " << tr("NOT QUITE. The answer is:") << " " << correct << "\n";
         std::cout << "             " << why << "\n";
     }
     return right;
@@ -121,7 +121,7 @@ void challenge(const std::vector<std::string> &task,
                const std::vector<std::string> &input,
                const std::vector<std::string> &expected,
                const std::vector<std::string> &solution) {
-    std::cout << "\n  >> WRITE THIS YOURSELF, in a real file\n";
+    std::cout << "\n  " << tr(">> WRITE THIS YOURSELF, in a real file") << "\n";
     rule();
 
     for (const auto &line : task) {
@@ -129,25 +129,25 @@ void challenge(const std::vector<std::string> &task,
     }
 
     if (!input.empty()) {
-        std::cout << "\n  Try it with this input:\n\n";
+        std::cout << "\n  " << tr("Try it with this input:") << "\n\n";
         for (const auto &line : input) {
             std::cout << "      " << line << "\n";
         }
     }
 
     if (!expected.empty()) {
-        std::cout << "\n  It must print:\n\n";
+        std::cout << "\n  " << tr("It must print:") << "\n\n";
         for (const auto &line : expected) {
             std::cout << "      " << line << "\n";
         }
-        std::cout << "\n  That output is the whole specification. Any code\n";
-        std::cout << "  that produces it is correct.\n";
+        std::cout << "\n  " << tr("That output is the whole specification. Any code") << "\n";
+        std::cout << "  " << tr("that produces it is correct.") << "\n";
     }
 
-    std::cout << "\n  Try it first. Compile with:\n";
+    std::cout << "\n  " << tr("Try it first. Compile with:") << "\n";
     std::cout << "    g++ -std=c++20 -Wall -Wextra test.cpp -o test && ./test\n";
 
-    if (!askYes("Want to see example code?")) {
+    if (!askYes(tr("Want to see example code?"))) {
         return;
     }
 
@@ -157,8 +157,8 @@ void challenge(const std::vector<std::string> &task,
         std::cout << "  " << line << "\n";
     }
     rule();
-    std::cout << "  This is EXAMPLE CODE, not the answer. It is one way to\n";
-    std::cout << "  get that output; yours may look nothing like it and\n";
-    std::cout << "  still be right -- or better. Compare the output, not\n";
-    std::cout << "  the code.\n";
+    std::cout << "  " << tr("This is EXAMPLE CODE, not the answer. It is one way to") << "\n";
+    std::cout << "  " << tr("get that output; yours may look nothing like it and") << "\n";
+    std::cout << "  " << tr("still be right -- or better. Compare the output, not") << "\n";
+    std::cout << "  " << tr("the code.") << "\n";
 }

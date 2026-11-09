@@ -271,9 +271,10 @@ def lesson_02_plain_http():
     ui.clear_screen()
     ui.heading("SUMMARY")
 
-    print("   - every machine on the path receives the bytes you send")
-    print("   - over plain HTTP those bytes include the password, as text")
-    print("   - over HTTPS the capture holds neither the password nor the path")
-    print("   - the server name is still visible in the TLS handshake")
-    print("   - capture only your own traffic, on your own machine")
+    if not ui.print_summary_pt(2):
+        print("   - every machine on the path receives the bytes you send")
+        print("   - over plain HTTP those bytes include the password, as text")
+        print("   - over HTTPS the capture holds neither the password nor the path")
+        print("   - the server name is still visible in the TLS handshake")
+        print("   - capture only your own traffic, on your own machine")
     ui.wait_enter()

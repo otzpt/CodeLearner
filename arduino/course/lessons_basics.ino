@@ -121,12 +121,14 @@ void lesson_01_sketch()
     clear_screen();
     heading("SUMMARY");
 
-    Serial.println("   - a sketch has setup() (once) and loop() (forever), no main()");
-    Serial.println("   - Serial.print stays on the line, Serial.println ends it");
-    Serial.println("   - Serial.println(x, 4) sets the decimals; (x, BIN) the base");
-    Serial.println("   - 'A' and 65 are different things to Serial");
-    Serial.println();
-    Serial.println("  Module 2: how big a number is on a chip this small.");
+    if (!print_summary_pt(1)) {
+        Serial.println("   - a sketch has setup() (once) and loop() (forever), no main()");
+        Serial.println("   - Serial.print stays on the line, Serial.println ends it");
+        Serial.println("   - Serial.println(x, 4) sets the decimals; (x, BIN) the base");
+        Serial.println("   - 'A' and 65 are different things to Serial");
+        Serial.println();
+        Serial.println("  Module 2: how big a number is on a chip this small.");
+    }
     wait_enter();
 }
 
@@ -263,13 +265,15 @@ void lesson_02_types()
     clear_screen();
     heading("SUMMARY");
 
-    Serial.println("   - an int is 2 bytes on an Uno, 4 on this PC: name the size");
-    Serial.println("     with uint8_t, int16_t, uint32_t when it matters");
-    Serial.println("   - unsigned numbers wrap to 0; signed overflow is undefined");
-    Serial.println("   - int / int drops the fraction; cast one side FIRST");
-    Serial.println("   - a float keeps about 7 digits");
-    Serial.println();
-    Serial.println("  Module 3: making decisions, and repeating.");
+    if (!print_summary_pt(2)) {
+        Serial.println("   - an int is 2 bytes on an Uno, 4 on this PC: name the size");
+        Serial.println("     with uint8_t, int16_t, uint32_t when it matters");
+        Serial.println("   - unsigned numbers wrap to 0; signed overflow is undefined");
+        Serial.println("   - int / int drops the fraction; cast one side FIRST");
+        Serial.println("   - a float keeps about 7 digits");
+        Serial.println();
+        Serial.println("  Module 3: making decisions, and repeating.");
+    }
     wait_enter();
 }
 
@@ -401,12 +405,14 @@ void lesson_03_decisions()
     clear_screen();
     heading("SUMMARY");
 
-    Serial.println("   - if / else decides; == compares, = assigns");
-    Serial.println("   - for(start; keep going?; step) and while(keep going?)");
-    Serial.println("   - i < 4 gives four passes, 0 to 3");
-    Serial.println("   - && || !  and  break");
-    Serial.println();
-    Serial.println("  Module 4: functions and arrays.");
+    if (!print_summary_pt(3)) {
+        Serial.println("   - if / else decides; == compares, = assigns");
+        Serial.println("   - for(start; keep going?; step) and while(keep going?)");
+        Serial.println("   - i < 4 gives four passes, 0 to 3");
+        Serial.println("   - && || !  and  break");
+        Serial.println();
+        Serial.println("  Module 4: functions and arrays.");
+    }
     wait_enter();
 }
 
@@ -554,13 +560,15 @@ void lesson_04_functions()
     clear_screen();
     heading("SUMMARY");
 
-    Serial.println("   - a function gets copies of its arguments");
-    Serial.println("   - arrays count from 0; nothing stops an index past the end");
-    Serial.println("   - sizeof(a) / sizeof(a[0]) counts elements, but only where");
-    Serial.println("     the array is declared");
-    Serial.println("   - pass the count along with the array");
-    Serial.println();
-    Serial.println("  Module 5: the first real hardware idea -- pins.");
+    if (!print_summary_pt(4)) {
+        Serial.println("   - a function gets copies of its arguments");
+        Serial.println("   - arrays count from 0; nothing stops an index past the end");
+        Serial.println("   - sizeof(a) / sizeof(a[0]) counts elements, but only where");
+        Serial.println("     the array is declared");
+        Serial.println("   - pass the count along with the array");
+        Serial.println();
+        Serial.println("  Module 5: the first real hardware idea -- pins.");
+    }
     wait_enter();
 }
 
@@ -716,13 +724,15 @@ void lesson_05_pins()
     clear_screen();
     heading("SUMMARY");
 
-    Serial.println("   - pinMode first (OUTPUT, INPUT or INPUT_PULLUP), then use it");
-    Serial.println("   - HIGH is 1 and LOW is 0; LED_BUILTIN is pin 13 on an Uno");
-    Serial.println("   - INPUT_PULLUP inverts a button: pressed reads LOW");
-    Serial.println("   - digitalWrite on an INPUT pin sets its pull-up");
-    Serial.println("   - delay() freezes everything else");
-    Serial.println();
-    Serial.println("  Module 6: talking back -- reading Serial input.");
+    if (!print_summary_pt(5)) {
+        Serial.println("   - pinMode first (OUTPUT, INPUT or INPUT_PULLUP), then use it");
+        Serial.println("   - HIGH is 1 and LOW is 0; LED_BUILTIN is pin 13 on an Uno");
+        Serial.println("   - INPUT_PULLUP inverts a button: pressed reads LOW");
+        Serial.println("   - digitalWrite on an INPUT pin sets its pull-up");
+        Serial.println("   - delay() freezes everything else");
+        Serial.println();
+        Serial.println("  Module 6: talking back -- reading Serial input.");
+    }
     wait_enter();
 }
 
@@ -850,12 +860,14 @@ void lesson_06_serial_input()
     clear_screen();
     heading("SUMMARY");
 
-    Serial.println("   - Serial.available() then Serial.read(): one character, -1");
-    Serial.println("     when there is none");
-    Serial.println("   - ENTER is a character (10); a monitor may add 13 as well");
-    Serial.println("   - parseInt() returns 0 for 'no number', same as a real 0");
-    Serial.println("   - always handle the command you did not expect");
-    Serial.println();
-    Serial.println("  Module 7: analog values, and turning one range into another.");
+    if (!print_summary_pt(6)) {
+        Serial.println("   - Serial.available() then Serial.read(): one character, -1");
+        Serial.println("     when there is none");
+        Serial.println("   - ENTER is a character (10); a monitor may add 13 as well");
+        Serial.println("   - parseInt() returns 0 for 'no number', same as a real 0");
+        Serial.println("   - always handle the command you did not expect");
+        Serial.println();
+        Serial.println("  Module 7: analog values, and turning one range into another.");
+    }
     wait_enter();
 }

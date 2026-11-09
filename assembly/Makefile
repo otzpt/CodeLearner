@@ -11,7 +11,7 @@
 NASM     = nasm
 LD       = ld
 TARGET   = asm-course
-SOURCES  = src/ui.asm src/lessons_basics.asm src/lessons_flow.asm src/lessons_input.asm src/lessons_memory.asm src/lessons_bits.asm src/lessons_c.asm src/lessons_boot.asm src/lessons_kernel.asm src/main.asm
+SOURCES  = src/strings_pt.asm src/ui.asm src/lessons_basics.asm src/lessons_flow.asm src/lessons_input.asm src/lessons_memory.asm src/lessons_bits.asm src/lessons_c.asm src/lessons_boot.asm src/lessons_kernel.asm src/main.asm
 OBJECTS  = $(SOURCES:.asm=.o)
 # The lessons print the real example files with incbin, so a change to one
 # of them has to rebuild the lesson that shows it.

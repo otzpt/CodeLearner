@@ -9,6 +9,8 @@
 #ifndef UI_H
 #define UI_H
 
+#include "strings_pt.h"
+
 #include <string>
 #include <vector>
 

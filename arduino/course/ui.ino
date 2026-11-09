@@ -46,7 +46,7 @@ void drain_input()
 
 void wait_enter()
 {
-    Serial.print("\n  Press ENTER to continue...");
+    Serial.print("\n  "); Serial.print(tr("Press ENTER to continue..."));
     read_line();
 }
 
@@ -83,7 +83,7 @@ void title(const char *text)
 void heading(const char *text)
 {
     Serial.print("\n  ");
-    Serial.println(text);
+    Serial.println(tr(text));
     rule();
 }
 
@@ -98,7 +98,7 @@ bool ask_yes(const char *question_text)
 
 void exercise(int number)
 {
-    Serial.print("\n  >> EXERCISE - MODULE ");
+    Serial.print("\n  "); Serial.print(tr(">> EXERCISE - MODULE")); Serial.print(" ");
     Serial.println(number);
     rule();
 }
@@ -109,7 +109,7 @@ bool question(const char *text, const char *correct, const char *why)
 {
     Serial.print("\n  ");
     Serial.println(text);
-    Serial.print("  Your answer: ");
+    Serial.print("  "); Serial.print(tr("Your answer:")); Serial.print(" ");
 
     String answer = read_line();
     answer.trim();
@@ -120,10 +120,10 @@ bool question(const char *text, const char *correct, const char *why)
 
     bool right = answer == expected;
     if (right) {
-        Serial.print("\n  CORRECT.  ");
+        Serial.print("\n  "); Serial.print(tr("CORRECT.")); Serial.print("  ");
         Serial.println(why);
     } else {
-        Serial.print("\n  NOT QUITE. The answer is: ");
+        Serial.print("\n  "); Serial.print(tr("NOT QUITE. The answer is:")); Serial.print(" ");
         Serial.println(correct);
         Serial.print("             ");
         Serial.println(why);
@@ -148,7 +148,7 @@ void challenge(const char *task[], int task_lines,
                const char *expected[], int expected_lines,
                const char *solution[], int solution_lines)
 {
-    Serial.println("\n  >> WRITE THIS YOURSELF, in a real file");
+    Serial.print("\n  "); Serial.println(tr(">> WRITE THIS YOURSELF, in a real file"));
     rule();
 
     for (int i = 0; i < task_lines; i++) {
@@ -157,7 +157,7 @@ void challenge(const char *task[], int task_lines,
     }
 
     if (input_lines > 0) {
-        Serial.println("\n  Try it with this input:\n");
+        Serial.print("\n  "); Serial.print(tr("Try it with this input:")); Serial.println("\n");
         for (int i = 0; i < input_lines; i++) {
             Serial.print("      ");
             Serial.println(input[i]);
@@ -165,20 +165,20 @@ void challenge(const char *task[], int task_lines,
     }
 
     if (expected_lines > 0) {
-        Serial.println("\n  It must print:\n");
+        Serial.print("\n  "); Serial.print(tr("It must print:")); Serial.println("\n");
         for (int i = 0; i < expected_lines; i++) {
             Serial.print("      ");
             Serial.println(expected[i]);
         }
-        Serial.println("\n  That output is the whole specification. Any code that");
-        Serial.println("  produces it is correct.");
+        Serial.print("\n  "); Serial.println(tr("That output is the whole specification. Any code that"));
+        Serial.print("  "); Serial.println(tr("produces it is correct."));
     }
 
     Serial.println("\n  Try it first. Save it as test.ino and, from the arduino/");
     Serial.println("  folder, run:");
     Serial.println("    make try FILE=test.ino");
 
-    if (!ask_yes("Want to see example code?")) {
+    if (!ask_yes(tr("Want to see example code?"))) {
         return;
     }
 
@@ -189,7 +189,7 @@ void challenge(const char *task[], int task_lines,
         Serial.println(solution[i]);
     }
     rule();
-    Serial.println("  This is EXAMPLE CODE, not the answer. It is one way to get");
-    Serial.println("  that output; yours may look nothing like it and still be");
-    Serial.println("  right -- or better. Compare the output, not the code.");
+    Serial.print("  "); Serial.println(tr("This is EXAMPLE CODE, not the answer. It is one way to get"));
+    Serial.print("  "); Serial.println(tr("that output; yours may look nothing like it and still be"));
+    Serial.print("  "); Serial.println(tr("right -- or better. Compare the output, not the code."));
 }

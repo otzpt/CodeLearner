@@ -33,17 +33,17 @@ public class Main {
 
     private static void showMenu() {
         Ui.clearScreen();
-        Ui.title("JAVA COURSE - FROM CLASS Main TO CHECKED EXCEPTIONS");
+        Ui.title(Strings.tr("JAVA COURSE - FROM CLASS Main TO CHECKED EXCEPTIONS"));
 
         String shownTier = "";
         for (int i = 0; i < MODULES.length; i++) {
             if (!MODULES[i].tier().equals(shownTier)) {
                 shownTier = MODULES[i].tier();
-                System.out.printf("%n  -- %s --%n", shownTier);
+                System.out.printf("%n  -- %s --%n", Strings.tr(shownTier));
             }
-            System.out.printf("   [%2d]  %s%n", i + 1, MODULES[i].title());
+            System.out.printf("   [%2d]  %s%n", i + 1, Strings.tr(MODULES[i].title()));
         }
-        System.out.println("\n   [ 0]  Quit");
+        System.out.println("\n   [ 0]  " + Strings.tr("Quit"));
         Ui.rule();
     }
 
@@ -52,7 +52,7 @@ public class Main {
 
         while (true) {
             showMenu();
-            System.out.print("\n  Pick a module: ");
+            System.out.print("\n  " + Strings.tr("Pick a module:") + " ");
             System.out.flush();
 
             if (!sc.hasNextLine()) {
@@ -79,15 +79,15 @@ public class Main {
                 try {
                     MODULES[n - 1].action().run();
                 } catch (RuntimeException e) {
-                    System.out.println("\n  Something went wrong: " + e.getMessage());
+                    System.out.println("\n  " + Strings.tr("Something went wrong:") + " " + e.getMessage());
                     Ui.waitEnter();
                 }
             } else {
-                System.out.println("\n  Not a valid option.");
+                System.out.println("\n  " + Strings.tr("Not a valid option."));
                 Ui.waitEnter();
             }
         }
 
-        System.out.println("\n  See you next time.\n");
+        System.out.println("\n  " + Strings.tr("See you next time.") + "\n");
     }
 }

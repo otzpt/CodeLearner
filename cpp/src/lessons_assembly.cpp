@@ -220,10 +220,12 @@ void lesson13Assembly() {
     clearScreen();
     heading("SUMMARY");
 
-    std::cout << "   - extended asm is identical to C's; look for std:: or a builtin first\n";
-    std::cout << "   - an asm statement cannot be evaluated in a constexpr function\n";
-    std::cout << "   - NASM functions need extern \"C\" or the linker looks for a mangled name\n";
-    std::cout << "   - the System V ABI: arguments in rdi, rsi, rdx, rcx, r8, r9; result in rax\n\n";
-    std::cout << "  That is the whole course, down to the instruction.\n";
+    if (!print_summary_pt(13)) {
+        std::cout << "   - extended asm is identical to C's; look for std:: or a builtin first\n";
+        std::cout << "   - an asm statement cannot be evaluated in a constexpr function\n";
+        std::cout << "   - NASM functions need extern \"C\" or the linker looks for a mangled name\n";
+        std::cout << "   - the System V ABI: arguments in rdi, rsi, rdx, rcx, r8, r9; result in rax\n\n";
+        std::cout << "  That is the whole course, down to the instruction.\n";
+    }
     waitEnter();
 }

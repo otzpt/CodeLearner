@@ -50,15 +50,15 @@ MODULES = [
 
 def show_menu():
     ui.clear_screen()
-    ui.title("PYTHON COURSE - FROM ZERO TO CLASSES")
+    ui.title(ui.tr("PYTHON COURSE - FROM ZERO TO CLASSES"))
 
     shown_tier = None
     for i, module in enumerate(MODULES, start=1):
         if module["tier"] != shown_tier:
             shown_tier = module["tier"]
-            print(f"\n  -- {shown_tier} --")
-        print(f"   [{i:2d}]  {module['title']}")
-    print("\n   [ 0]  Quit")
+            print(f"\n  -- {ui.tr(shown_tier)} --")
+        print(f"   [{i:2d}]  {ui.tr(module['title'])}")
+    print("\n   [ 0]  " + ui.tr("Quit"))
     ui.rule()
 
 
@@ -66,7 +66,7 @@ def main():
     while True:
         show_menu()
         try:
-            choice = input("\n  Pick a module: ").strip()
+            choice = input("\n  " + ui.tr("Pick a module:") + " ").strip()
         except EOFError:
             break
 
@@ -88,24 +88,24 @@ def main():
             except EOFError:
                 break
             except Exception as e:
-                print(f"\n  Something went wrong: {e}")
+                print(f"\n  {ui.tr('Something went wrong:')} {e}")
                 try:
                     ui.wait_enter()
                 except EOFError:
                     break
         else:
-            print("\n  Not a valid option.")
+            print("\n  " + ui.tr("Not a valid option."))
             try:
                 ui.wait_enter()
             except EOFError:
                 break
 
-    print("\n  See you next time.\n")
+    print("\n  " + ui.tr("See you next time.") + "\n")
 
 
 if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("\n  See you next time.\n")
+        print("\n  " + ui.tr("See you next time.") + "\n")
         sys.exit(0)

@@ -14,6 +14,8 @@
 #ifndef UI_H
 #define UI_H
 
+#include "strings_pt.h"
+
 /* Clear the screen. */
 void clear_screen(void);
 

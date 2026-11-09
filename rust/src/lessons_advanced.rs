@@ -232,12 +232,14 @@ pub fn lesson_12_assembly() {
     clear_screen();
     heading("SUMMARY");
 
-    say("   - asm! sits in unsafe; in / out / inout name the Rust variables");
-    say("   - Intel syntax by default on x86; options say what the asm avoids");
-    say("   - nothing checks a pointer or an unlisted clobber but you");
-    say("   - NASM files link in through extern \"C\" and the System V ABI");
-    println!();
-    say("  That is the course so far. The ROADMAP lists lifetimes, traits,");
-    say("  generics and async as the next modules.");
+    if !crate::strings_pt::print_summary_pt(12) {
+        say("   - asm! sits in unsafe; in / out / inout name the Rust variables");
+        say("   - Intel syntax by default on x86; options say what the asm avoids");
+        say("   - nothing checks a pointer or an unlisted clobber but you");
+        say("   - NASM files link in through extern \"C\" and the System V ABI");
+        println!();
+        say("  That is the course so far. The ROADMAP lists lifetimes, traits,");
+        say("  generics and async as the next modules.");
+    }
     wait_enter();
 }

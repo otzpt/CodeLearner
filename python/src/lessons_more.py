@@ -118,9 +118,10 @@ def lesson_06_lists():
     ui.clear_screen()
     ui.heading("SUMMARY")
 
-    print("   - b = a aliases; a[:] / list(a) / a.copy() actually copy")
-    print("   - slice ends are exclusive, same rule as range()")
-    print("   - sort() returns None; sorted() returns a new list")
+    if not ui.print_summary_pt(6):
+        print("   - b = a aliases; a[:] / list(a) / a.copy() actually copy")
+        print("   - slice ends are exclusive, same rule as range()")
+        print("   - sort() returns None; sorted() returns a new list")
     ui.wait_enter()
 
 
@@ -250,9 +251,10 @@ def lesson_07_functions():
     ui.clear_screen()
     ui.heading("SUMMARY")
 
-    print("   - a default value is computed once, at definition time")
-    print("   - never default to a mutable value; default to None and build it inside")
-    print("   - *args -> tuple of extras, **kwargs -> dict of extras")
+    if not ui.print_summary_pt(7):
+        print("   - a default value is computed once, at definition time")
+        print("   - never default to a mutable value; default to None and build it inside")
+        print("   - *args -> tuple of extras, **kwargs -> dict of extras")
     ui.wait_enter()
 
 
@@ -360,9 +362,10 @@ def lesson_08_dicts():
     ui.clear_screen()
     ui.heading("SUMMARY")
 
-    print("   - [] raises KeyError; .get(key, default) never does")
-    print("   - insertion order is kept, since 3.7 -- still not sorted")
-    print("   - setdefault(key, []).append(x) is the standard grouping idiom")
+    if not ui.print_summary_pt(8):
+        print("   - [] raises KeyError; .get(key, default) never does")
+        print("   - insertion order is kept, since 3.7 -- still not sorted")
+        print("   - setdefault(key, []).append(x) is the standard grouping idiom")
     ui.wait_enter()
 
 
@@ -507,9 +510,10 @@ def lesson_09_classes():
     ui.clear_screen()
     ui.heading("SUMMARY")
 
-    print("   - self is explicit; __init__ is the constructor")
-    print("   - no enforced privacy -- a leading _ is a convention, not a lock")
-    print("   - no guaranteed destructor timing -- use `with` for deterministic cleanup")
+    if not ui.print_summary_pt(9):
+        print("   - self is explicit; __init__ is the constructor")
+        print("   - no enforced privacy -- a leading _ is a convention, not a lock")
+        print("   - no guaranteed destructor timing -- use `with` for deterministic cleanup")
     ui.wait_enter()
 
 
@@ -655,14 +659,15 @@ def lesson_10_exceptions():
     ui.clear_screen()
     ui.heading("SUMMARY")
 
-    print("   - raise to signal a problem; try/except to handle it; finally always runs")
-    print("   - catch a specific type; a bare except hides bugs, including your own")
-    print("   - ValueError, TypeError, KeyError, IndexError -- know what each one means")
-    print()
-    print("  That covers one running program. What C needed manual memory")
-    print("  for, and what C++ ties to scope, Python leaves to the garbage")
-    print("  collector -- and hands you exceptions and `with` instead.")
-    print()
-    print("  Module 11 covers the other half: working across more than")
-    print("  one file.")
+    if not ui.print_summary_pt(10):
+        print("   - raise to signal a problem; try/except to handle it; finally always runs")
+        print("   - catch a specific type; a bare except hides bugs, including your own")
+        print("   - ValueError, TypeError, KeyError, IndexError -- know what each one means")
+        print()
+        print("  That covers one running program. What C needed manual memory")
+        print("  for, and what C++ ties to scope, Python leaves to the garbage")
+        print("  collector -- and hands you exceptions and `with` instead.")
+        print()
+        print("  Module 11 covers the other half: working across more than")
+        print("  one file.")
     ui.wait_enter()

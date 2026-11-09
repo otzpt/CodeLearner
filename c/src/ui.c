@@ -74,7 +74,7 @@ void clear_screen(void)
 
 void wait_enter(void)
 {
-    printf("\n  Press ENTER to continue...");
+    printf("\n  %s", tr("Press ENTER to continue..."));
     fflush(stdout);
 
     /* Consume to the end of the line. Without this, a newline left behind by
@@ -126,7 +126,7 @@ void title(const char *text)
 
 void heading(const char *text)
 {
-    printf("\n  %s\n", text);
+    printf("\n  %s\n", tr(text));
     rule();
 }
 
@@ -157,7 +157,7 @@ int ask_yes(const char *question_text)
 
 void exercise(int number)
 {
-    printf("\n  >> EXERCISE - MODULE %d\n", number);
+    printf("\n  %s %d\n", tr(">> EXERCISE - MODULE"), number);
     rule();
 }
 
@@ -190,7 +190,7 @@ int question(const char *text, const char *correct, const char *why)
     char expected[64];
 
     printf("\n  %s\n", text);
-    printf("  Your answer: ");
+    printf("  %s ", tr("Your answer:"));
     fflush(stdout);
 
     if (!read_line(answer, sizeof answer)) {
@@ -203,9 +203,9 @@ int question(const char *text, const char *correct, const char *why)
     int right = strcmp(cleaned, expected) == 0;
 
     if (right) {
-        printf("\n  CORRECT.  %s\n", why);
+        printf("\n  %s  %s\n", tr("CORRECT."), why);
     } else {
-        printf("\n  NOT QUITE. The answer is: %s\n", correct);
+        printf("\n  %s %s\n", tr("NOT QUITE. The answer is:"), correct);
         printf("             %s\n", why);
     }
     return right;
@@ -216,7 +216,7 @@ void challenge(const char *task[], int task_lines,
                const char *expected[], int expected_lines,
                const char *solution[], int solution_lines)
 {
-    printf("\n  >> WRITE THIS YOURSELF, in a real file\n");
+    printf("\n  %s\n", tr(">> WRITE THIS YOURSELF, in a real file"));
     rule();
 
     for (int i = 0; i < task_lines; i++) {
@@ -224,25 +224,25 @@ void challenge(const char *task[], int task_lines,
     }
 
     if (input_lines > 0) {
-        printf("\n  Try it with this input:\n\n");
+        printf("\n  %s\n\n", tr("Try it with this input:"));
         for (int i = 0; i < input_lines; i++) {
             printf("      %s\n", input[i]);
         }
     }
 
     if (expected_lines > 0) {
-        printf("\n  It must print:\n\n");
+        printf("\n  %s\n\n", tr("It must print:"));
         for (int i = 0; i < expected_lines; i++) {
             printf("      %s\n", expected[i]);
         }
-        printf("\n  That output is the whole specification. Any code that\n");
-        printf("  produces it is correct.\n");
+        printf("\n  %s\n", tr("That output is the whole specification. Any code that"));
+        printf("  %s\n", tr("produces it is correct."));
     }
 
-    printf("\n  Try it first. Compile with:\n");
+    printf("\n  %s\n", tr("Try it first. Compile with:"));
     printf("    gcc -Wall -Wextra test.c -o test && ./test\n");
 
-    if (!ask_yes("Want to see example code?")) {
+    if (!ask_yes(tr("Want to see example code?"))) {
         return;
     }
 
@@ -252,7 +252,7 @@ void challenge(const char *task[], int task_lines,
         printf("  %s\n", solution[i]);
     }
     rule();
-    printf("  This is EXAMPLE CODE, not the answer. It is one way to get\n");
-    printf("  that output; yours may look nothing like it and still be\n");
-    printf("  right -- or better. Compare the output, not the code.\n");
+    printf("  %s\n", tr("This is EXAMPLE CODE, not the answer. It is one way to get"));
+    printf("  %s\n", tr("that output; yours may look nothing like it and still be"));
+    printf("  %s\n", tr("right -- or better. Compare the output, not the code."));
 }

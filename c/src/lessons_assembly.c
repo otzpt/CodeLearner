@@ -261,11 +261,13 @@ void lesson_20_assembly(void)
     clear_screen();
     heading("SUMMARY");
 
-    puts("   - __asm__(template : outputs : inputs : clobbers), AT&T by default");
-    puts("   - r / m / i say what an operand may be; = writes, + reads and writes");
-    puts("   - an output written early needs &; undeclared changes need clobbers");
-    puts("   - NASM files use Intel syntax and link in through the System V ABI\n");
-    puts("  The next step would be reading what the compiler writes itself:");
-    puts("  gcc -S -O2 file.c, and compare it with what you would have written.");
+    if (!print_summary_pt(20)) {
+        puts("   - __asm__(template : outputs : inputs : clobbers), AT&T by default");
+        puts("   - r / m / i say what an operand may be; = writes, + reads and writes");
+        puts("   - an output written early needs &; undeclared changes need clobbers");
+        puts("   - NASM files use Intel syntax and link in through the System V ABI\n");
+        puts("  The next step would be reading what the compiler writes itself:");
+        puts("  gcc -S -O2 file.c, and compare it with what you would have written.");
+    }
     wait_enter();
 }

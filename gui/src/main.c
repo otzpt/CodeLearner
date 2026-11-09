@@ -34,23 +34,23 @@ static const char *const EMPTY_TIERS[] = { "INTERMEDIATE", "ADVANCED" };
 static void show_menu(void)
 {
     clear_screen();
-    title("GUI COURSE - GTK");
-    printf("  NO GUI -- this course is a CLI program, same as every other\n");
-    printf("  course here. It teaches GTK; it does not open a window itself.\n");
+    title(tr("GUI COURSE - GTK"));
+    printf("  %s\n", tr("NO GUI -- this course is a CLI program, same as every other"));
+    printf("  %s\n", tr("course here. It teaches GTK; it does not open a window itself."));
 
     const char *shown_tier = "";
     for (int i = 0; i < MODULE_COUNT; i++) {
         if (strcmp(MODULES[i].tier, shown_tier) != 0) {
             shown_tier = MODULES[i].tier;
-            printf("\n  -- %s --\n", shown_tier);
+            printf("\n  -- %s --\n", tr(shown_tier));
         }
-        printf("   [%2d]  %s\n", i + 1, MODULES[i].title);
+        printf("   [%2d]  %s\n", i + 1, tr(MODULES[i].title));
     }
     for (size_t i = 0; i < sizeof EMPTY_TIERS / sizeof EMPTY_TIERS[0]; i++) {
-        printf("\n  -- %s -- (coming soon)\n", EMPTY_TIERS[i]);
+        printf("\n  -- %s -- (coming soon)\n", tr(EMPTY_TIERS[i]));
     }
 
-    printf("\n   [ 0]  Quit\n");
+    printf("\n   [ 0]  %s\n", tr("Quit"));
     rule();
 }
 
@@ -60,7 +60,7 @@ int main(void)
 
     for (;;) {
         show_menu();
-        printf("\n  Pick a module: ");
+        printf("\n  %s ", tr("Pick a module:"));
         fflush(stdout);
 
         if (!read_line(choice, sizeof choice)) {
@@ -78,11 +78,11 @@ int main(void)
             clear_screen();
             MODULES[n - 1].run();
         } else {
-            printf("\n  Not a valid option.\n");
+            printf("\n  %s\n", tr("Not a valid option."));
             wait_enter();
         }
     }
 
-    printf("\n  See you next time.\n\n");
+    printf("\n  %s\n\n", tr("See you next time."));
     return 0;
 }

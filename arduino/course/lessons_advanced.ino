@@ -173,14 +173,16 @@ void lesson_10_memory()
     clear_screen();
     heading("SUMMARY");
 
-    Serial.println("   - flash holds the program, SRAM the variables (only 2 KB),");
-    Serial.println("     EEPROM a few saved settings");
-    Serial.println("   - F() and PROGMEM keep text and tables out of SRAM");
-    Serial.println("   - |= sets, &= ~ clears, ^= flips, (x >> n) & 1 tests a bit;");
-    Serial.println("     put parentheses around & and | tests");
-    Serial.println("   - DDRx, PORTx, PINx are the pins; use |= and &= on them");
-    Serial.println();
-    Serial.println("  Module 11: code that runs the instant something happens.");
+    if (!print_summary_pt(10)) {
+        Serial.println("   - flash holds the program, SRAM the variables (only 2 KB),");
+        Serial.println("     EEPROM a few saved settings");
+        Serial.println("   - F() and PROGMEM keep text and tables out of SRAM");
+        Serial.println("   - |= sets, &= ~ clears, ^= flips, (x >> n) & 1 tests a bit;");
+        Serial.println("     put parentheses around & and | tests");
+        Serial.println("   - DDRx, PORTx, PINx are the pins; use |= and &= on them");
+        Serial.println();
+        Serial.println("  Module 11: code that runs the instant something happens.");
+    }
     wait_enter();
 }
 
@@ -322,12 +324,14 @@ void lesson_11_interrupts()
     clear_screen();
     heading("SUMMARY");
 
-    Serial.println("   - an ISR runs at once on a pin event; keep it tiny");
-    Serial.println("   - variables shared with an ISR must be volatile");
-    Serial.println("   - copy multi-byte shared variables with interrupts off");
-    Serial.println("   - events during noInterrupts() collapse into one");
-    Serial.println();
-    Serial.println("  Module 12: writing instructions by hand inside C++.");
+    if (!print_summary_pt(11)) {
+        Serial.println("   - an ISR runs at once on a pin event; keep it tiny");
+        Serial.println("   - variables shared with an ISR must be volatile");
+        Serial.println("   - copy multi-byte shared variables with interrupts off");
+        Serial.println("   - events during noInterrupts() collapse into one");
+        Serial.println();
+        Serial.println("  Module 12: writing instructions by hand inside C++.");
+    }
     wait_enter();
 }
 
@@ -511,13 +515,15 @@ void lesson_12_assembly()
     clear_screen();
     heading("SUMMARY");
 
-    Serial.println("   - look at the compiler's listing before writing assembly");
-    Serial.println("   - asm volatile(\"nop\") is one cycle: 62.5 ns at 16 MHz");
-    Serial.println("   - extended asm: template, outputs, inputs, clobbers; r, d, I, M");
-    Serial.println("   - save and restore SREG around a critical section");
-    Serial.println("   - a .S file in the sketch folder is a whole assembly function");
-    Serial.println();
-    Serial.println("  Module 13: everything together, in a robot.");
+    if (!print_summary_pt(12)) {
+        Serial.println("   - look at the compiler's listing before writing assembly");
+        Serial.println("   - asm volatile(\"nop\") is one cycle: 62.5 ns at 16 MHz");
+        Serial.println("   - extended asm: template, outputs, inputs, clobbers; r, d, I, M");
+        Serial.println("   - save and restore SREG around a critical section");
+        Serial.println("   - a .S file in the sketch folder is a whole assembly function");
+        Serial.println();
+        Serial.println("  Module 13: everything together, in a robot.");
+    }
     wait_enter();
 }
 
@@ -771,13 +777,15 @@ void lesson_13_robot()
     clear_screen();
     heading("SUMMARY");
 
-    Serial.println("   - split the problem: read the sensor, decide, drive");
-    Serial.println("   - a mode variable plus millis() is a state machine that never");
-    Serial.println("     blocks");
-    Serial.println("   - treat 'no echo' as far away, not as zero");
-    Serial.println("   - small pure functions like choose_speed are easy to test");
-    Serial.println();
-    Serial.println("  That is the course. The MicroPython course covers the same");
-    Serial.println("  ideas in Python for the Raspberry Pi Pico.");
+    if (!print_summary_pt(13)) {
+        Serial.println("   - split the problem: read the sensor, decide, drive");
+        Serial.println("   - a mode variable plus millis() is a state machine that never");
+        Serial.println("     blocks");
+        Serial.println("   - treat 'no echo' as far away, not as zero");
+        Serial.println("   - small pure functions like choose_speed are easy to test");
+        Serial.println();
+        Serial.println("  That is the course. The MicroPython course covers the same");
+        Serial.println("  ideas in Python for the Raspberry Pi Pico.");
+    }
     wait_enter();
 }

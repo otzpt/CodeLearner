@@ -161,9 +161,11 @@ void lesson06Strings() {
     clearScreen();
     heading("SUMMARY");
 
-    std::cout << "   - == compares contents; + concatenates; no \\0 to manage\n";
-    std::cout << "   - find returns std::string::npos, not -1, when nothing matches\n";
-    std::cout << "   - [] is unchecked like C; at() checks and throws\n";
+    if (!print_summary_pt(6)) {
+        std::cout << "   - == compares contents; + concatenates; no \\0 to manage\n";
+        std::cout << "   - find returns std::string::npos, not -1, when nothing matches\n";
+        std::cout << "   - [] is unchecked like C; at() checks and throws\n";
+    }
     waitEnter();
 }
 
@@ -282,10 +284,12 @@ void lesson07Functions() {
     clearScreen();
     heading("SUMMARY");
 
-    std::cout << "   - plain parameters are still copies\n";
-    std::cout << "   - & makes a parameter an alias -- no & needed to call\n";
-    std::cout << "   - const & passes big types without copying and without risk\n";
-    std::cout << "   - overloading picks a function by its argument types\n";
+    if (!print_summary_pt(7)) {
+        std::cout << "   - plain parameters are still copies\n";
+        std::cout << "   - & makes a parameter an alias -- no & needed to call\n";
+        std::cout << "   - const & passes big types without copying and without risk\n";
+        std::cout << "   - overloading picks a function by its argument types\n";
+    }
     waitEnter();
 }
 
@@ -390,12 +394,14 @@ void lesson08Vectors() {
     clearScreen();
     heading("SUMMARY");
 
-    std::cout << "   - push_back grows the vector; size() is always accurate\n";
-    std::cout << "   - std::sort(v.begin(), v.end()) sorts the whole thing\n";
-    std::cout << "   - [] is unchecked, at() throws -- same rule as std::string\n\n";
+    if (!print_summary_pt(8)) {
+        std::cout << "   - push_back grows the vector; size() is always accurate\n";
+        std::cout << "   - std::sort(v.begin(), v.end()) sorts the whole thing\n";
+        std::cout << "   - [] is unchecked, at() throws -- same rule as std::string\n\n";
 
-    std::cout << "  Module 9 closes the loop C's module 9 opened: memory\n";
-    std::cout << "  that frees itself, correctly, on its own.\n";
+        std::cout << "  Module 9 closes the loop C's module 9 opened: memory\n";
+        std::cout << "  that frees itself, correctly, on its own.\n";
+    }
     waitEnter();
 }
 
@@ -535,17 +541,19 @@ void lesson09Classes() {
     clearScreen();
     heading("SUMMARY");
 
-    std::cout << "   - class adds methods and private/public to struct\n";
-    std::cout << "   - constructor runs on creation, destructor at scope end\n";
-    std::cout << "   - RAII: resources tied to object lifetime, freed automatically\n";
-    std::cout << "   - new/delete are still malloc/free -- still leak if unmatched\n\n";
+    if (!print_summary_pt(9)) {
+        std::cout << "   - class adds methods and private/public to struct\n";
+        std::cout << "   - constructor runs on creation, destructor at scope end\n";
+        std::cout << "   - RAII: resources tied to object lifetime, freed automatically\n";
+        std::cout << "   - new/delete are still malloc/free -- still leak if unmatched\n\n";
 
-    std::cout << "  That covers the core course. std::string, std::vector and\n";
-    std::cout << "  your own classes cover the overwhelming majority of what\n";
-    std::cout << "  C needed manual memory management for.\n\n";
+        std::cout << "  That covers the core course. std::string, std::vector and\n";
+        std::cout << "  your own classes cover the overwhelming majority of what\n";
+        std::cout << "  C needed manual memory management for.\n\n";
 
-    std::cout << "  Module 10 rounds out the STL with the two containers\n";
-    std::cout << "  vector doesn't replace: std::map and std::set.\n";
+        std::cout << "  Module 10 rounds out the STL with the two containers\n";
+        std::cout << "  vector doesn't replace: std::map and std::set.\n";
+    }
     waitEnter();
 }
 
@@ -681,16 +689,18 @@ void lesson10Containers() {
     clearScreen();
     heading("SUMMARY");
 
-    std::cout << "   - std::map<K, V>: key to value, sorted by key\n";
-    std::cout << "   - map's [] inserts a default value on a missing key --\n";
-    std::cout << "     use .count() to check without inserting\n";
-    std::cout << "   - std::set<T>: each value at most once, sorted\n";
-    std::cout << "   - std::find returns end() on a container when the\n";
-    std::cout << "     value is not found\n\n";
+    if (!print_summary_pt(10)) {
+        std::cout << "   - std::map<K, V>: key to value, sorted by key\n";
+        std::cout << "   - map's [] inserts a default value on a missing key --\n";
+        std::cout << "     use .count() to check without inserting\n";
+        std::cout << "   - std::set<T>: each value at most once, sorted\n";
+        std::cout << "   - std::find returns end() on a container when the\n";
+        std::cout << "     value is not found\n\n";
 
-    std::cout << "  Module 11 is templates: the mechanism that lets\n";
-    std::cout << "  std::vector<int> and std::vector<std::string> both\n";
-    std::cout << "  exist from one piece of code, not one written per type.\n";
+        std::cout << "  Module 11 is templates: the mechanism that lets\n";
+        std::cout << "  std::vector<int> and std::vector<std::string> both\n";
+        std::cout << "  exist from one piece of code, not one written per type.\n";
+    }
     waitEnter();
 }
 
@@ -944,18 +954,20 @@ void lesson11Templates() {
     clearScreen();
     heading("SUMMARY");
 
-    std::cout << "   - a template is one definition, compiled separately per type used\n";
-    std::cout << "   - template<typename T> works for both functions and classes\n";
-    std::cout << "   - template argument deduction reads T from the arguments, no <T> needed\n";
-    std::cout << "   - a type missing an operation a template needs fails at compile time\n\n";
+    if (!print_summary_pt(11)) {
+        std::cout << "   - a template is one definition, compiled separately per type used\n";
+        std::cout << "   - template<typename T> works for both functions and classes\n";
+        std::cout << "   - template argument deduction reads T from the arguments, no <T> needed\n";
+        std::cout << "   - a type missing an operation a template needs fails at compile time\n\n";
 
-    std::cout << "  std::vector<T>, std::map<K, V> and std::string were all\n";
-    std::cout << "  templates from module 5 onward -- this is the mechanism\n";
-    std::cout << "  that was working underneath the whole time.\n\n";
+        std::cout << "  std::vector<T>, std::map<K, V> and std::string were all\n";
+        std::cout << "  templates from module 5 onward -- this is the mechanism\n";
+        std::cout << "  that was working underneath the whole time.\n\n";
 
-    std::cout << "  Module 12 is the last one: the idioms that make the\n";
-    std::cout << "  rest of modern C++ look the way it does, starting with\n";
-    std::cout << "  module 9's own new/delete leak, fixed for good.\n";
+        std::cout << "  Module 12 is the last one: the idioms that make the\n";
+        std::cout << "  rest of modern C++ look the way it does, starting with\n";
+        std::cout << "  module 9's own new/delete leak, fixed for good.\n";
+    }
     waitEnter();
 }
 
@@ -1354,19 +1366,21 @@ void lesson12Modern() {
     clearScreen();
     heading("SUMMARY");
 
-    std::cout << "   - std::unique_ptr<T>: single ownership, destroyed automatically,\n";
-    std::cout << "     copying it does not compile\n";
-    std::cout << "   - std::shared_ptr<T>: shared ownership, counted with use_count(),\n";
-    std::cout << "     costs real work per copy -- default to unique_ptr instead\n";
-    std::cout << "   - std::move casts to an rvalue reference; it does not move\n";
-    std::cout << "     anything by itself, it only permits the move constructor to run\n";
-    std::cout << "   - a moved-from object is valid but unspecified, not destroyed\n";
-    std::cout << "     and not undefined to touch\n";
-    std::cout << "   - auto [a, b] = pair; unpacks a pair/map entry into named pieces,\n";
-    std::cout << "     instead of .first and .second\n\n";
+    if (!print_summary_pt(12)) {
+        std::cout << "   - std::unique_ptr<T>: single ownership, destroyed automatically,\n";
+        std::cout << "     copying it does not compile\n";
+        std::cout << "   - std::shared_ptr<T>: shared ownership, counted with use_count(),\n";
+        std::cout << "     costs real work per copy -- default to unique_ptr instead\n";
+        std::cout << "   - std::move casts to an rvalue reference; it does not move\n";
+        std::cout << "     anything by itself, it only permits the move constructor to run\n";
+        std::cout << "   - a moved-from object is valid but unspecified, not destroyed\n";
+        std::cout << "     and not undefined to touch\n";
+        std::cout << "   - auto [a, b] = pair; unpacks a pair/map entry into named pieces,\n";
+        std::cout << "     instead of .first and .second\n\n";
 
-    std::cout << "  That is the whole course: from a compiler that only knew\n";
-    std::cout << "  printf, to memory that manages itself and ownership the\n";
-    std::cout << "  type system can enforce.\n";
+        std::cout << "  That is the whole course: from a compiler that only knew\n";
+        std::cout << "  printf, to memory that manages itself and ownership the\n";
+        std::cout << "  type system can enforce.\n";
+    }
     waitEnter();
 }

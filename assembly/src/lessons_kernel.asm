@@ -740,7 +740,7 @@ lesson_13_protected:
     challenge m13_challenge, m13_solution
 
     ; summary(13)
-    summary m13_summary_hdr, m13_summary
+    summary m13_summary_hdr, m13_summary, 13
     add rsp, 8
     pop r12
     pop rbx
@@ -807,7 +807,7 @@ lesson_14_long:
     challenge m14_challenge, m14_solution
 
     ; summary(14)
-    summary m14_summary_hdr, m14_summary
+    summary m14_summary_hdr, m14_summary, 14
     pop rbx
     ret
 
@@ -832,7 +832,7 @@ lesson_15_kernel:
     challenge m15_challenge, m15_solution
 
     ; summary(15)
-    summary m15_summary_hdr, m15_summary
+    summary m15_summary_hdr, m15_summary, 15
     ret
 
 lesson_16_interrupts:
@@ -854,7 +854,7 @@ lesson_16_interrupts:
     challenge m16_challenge, m16_solution
 
     ; summary(16)
-    summary m16_summary_hdr, m16_summary
+    summary m16_summary_hdr, m16_summary, 16
     ret
 
 ; Tells the linker this object does not need an executable stack.

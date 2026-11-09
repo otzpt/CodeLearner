@@ -31,7 +31,7 @@ public final class Ui {
     }
 
     public static void waitEnter() {
-        System.out.print("\n  Press ENTER to continue...");
+        System.out.print("\n  " + Strings.tr("Press ENTER to continue..."));
         System.out.flush();
         // At EOF there is nothing to wait for; do not throw out of the
         // handler in Main that calls this.
@@ -74,7 +74,7 @@ public final class Ui {
     }
 
     public static void heading(String text) {
-        System.out.println("\n  " + text);
+        System.out.println("\n  " + Strings.tr(text));
         rule();
     }
 
@@ -86,21 +86,21 @@ public final class Ui {
     }
 
     public static void exercise(int number) {
-        System.out.println("\n  >> EXERCISE - MODULE " + number);
+        System.out.println("\n  " + Strings.tr(">> EXERCISE - MODULE") + " " + number);
         rule();
     }
 
     public static boolean question(String text, String correct, String why) {
         System.out.println("\n  " + text);
-        System.out.print("  Your answer: ");
+        System.out.print("  " + Strings.tr("Your answer:") + " ");
         System.out.flush();
         String answer = IN.nextLine();
 
         boolean right = answer.strip().equalsIgnoreCase(correct.strip());
         if (right) {
-            System.out.println("\n  CORRECT.  " + why);
+            System.out.println("\n  " + Strings.tr("CORRECT.") + "  " + why);
         } else {
-            System.out.println("\n  NOT QUITE. The answer is: " + correct);
+            System.out.println("\n  " + Strings.tr("NOT QUITE. The answer is:") + " " + correct);
             System.out.println("             " + why);
         }
         return right;
@@ -115,7 +115,7 @@ public final class Ui {
     // one way of getting there and appears only after a confirmation.
     public static void challenge(List<String> task, List<String> input,
             List<String> expected, List<String> solution) {
-        System.out.println("\n  >> WRITE THIS YOURSELF, in a real file");
+        System.out.println("\n  " + Strings.tr(">> WRITE THIS YOURSELF, in a real file"));
         rule();
 
         for (String line : task) {
@@ -123,25 +123,25 @@ public final class Ui {
         }
 
         if (!input.isEmpty()) {
-            System.out.println("\n  Try it with this input:\n");
+            System.out.println("\n  " + Strings.tr("Try it with this input:") + "\n");
             for (String line : input) {
                 System.out.println("      " + line);
             }
         }
 
         if (!expected.isEmpty()) {
-            System.out.println("\n  It must print:\n");
+            System.out.println("\n  " + Strings.tr("It must print:") + "\n");
             for (String line : expected) {
                 System.out.println("      " + line);
             }
-            System.out.println("\n  That output is the whole specification. Any code that");
-            System.out.println("  produces it is correct.");
+            System.out.println("\n  " + Strings.tr("That output is the whole specification. Any code that"));
+            System.out.println("  " + Strings.tr("produces it is correct."));
         }
 
-        System.out.println("\n  Try it first. Compile with:");
+        System.out.println("\n  " + Strings.tr("Try it first. Compile with:"));
         System.out.println("    javac Test.java && java Test");
 
-        if (!askYes("Want to see example code?")) {
+        if (!askYes(Strings.tr("Want to see example code?"))) {
             return;
         }
 
@@ -151,8 +151,8 @@ public final class Ui {
             System.out.println("  " + line);
         }
         rule();
-        System.out.println("  This is EXAMPLE CODE, not the answer. It is one way to get");
-        System.out.println("  that output; yours may look nothing like it and still be");
-        System.out.println("  right -- or better. Compare the output, not the code.");
+        System.out.println("  " + Strings.tr("This is EXAMPLE CODE, not the answer. It is one way to get"));
+        System.out.println("  " + Strings.tr("that output; yours may look nothing like it and still be"));
+        System.out.println("  " + Strings.tr("right -- or better. Compare the output, not the code."));
     }
 }

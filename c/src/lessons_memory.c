@@ -135,10 +135,12 @@ void lesson_06_arrays_strings(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - array = values sitting next to each other in memory\n");
-    printf("   - string = array of char ending in \\0\n");
-    printf("   - strlen counts letters, sizeof counts bytes\n");
-    printf("   - == compares addresses; strcmp(a,b)==0 compares text\n");
+    if (!print_summary_pt(6)) {
+        printf("   - array = values sitting next to each other in memory\n");
+        printf("   - string = array of char ending in \\0\n");
+        printf("   - strlen counts letters, sizeof counts bytes\n");
+        printf("   - == compares addresses; strcmp(a,b)==0 compares text\n");
+    }
     wait_enter();
 }
 
@@ -414,12 +416,14 @@ void lesson_07_functions(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - type name(parameters) { ... return ...; }\n");
-    printf("   - arguments are copies\n");
-    printf("   - pass &variable so the function can change yours\n");
-    printf("   - declare before use, or write a prototype\n");
-    printf("   - a local variable shadows a global of the same name -- it does not change it\n");
-    printf("   - recursion needs a reachable base case, or the stack runs out\n");
+    if (!print_summary_pt(7)) {
+        printf("   - type name(parameters) { ... return ...; }\n");
+        printf("   - arguments are copies\n");
+        printf("   - pass &variable so the function can change yours\n");
+        printf("   - declare before use, or write a prototype\n");
+        printf("   - a local variable shadows a global of the same name -- it does not change it\n");
+        printf("   - recursion needs a reachable base case, or the stack runs out\n");
+    }
     wait_enter();
 }
 
@@ -588,13 +592,15 @@ void lesson_08_pointers(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - a pointer is a variable holding an address\n");
-    printf("   - & takes the address, * reads/writes what is there\n");
-    printf("   - in a type, * means 'pointer'; in code, * reaches through\n");
-    printf("   - test for NULL before using\n");
-    printf("   - const int *p locks writing through p; int *const p locks p itself\n\n");
+    if (!print_summary_pt(8)) {
+        printf("   - a pointer is a variable holding an address\n");
+        printf("   - & takes the address, * reads/writes what is there\n");
+        printf("   - in a type, * means 'pointer'; in code, * reaches through\n");
+        printf("   - test for NULL before using\n");
+        printf("   - const int *p locks writing through p; int *const p locks p itself\n\n");
 
-    printf("  Module 9 uses this to ask for memory properly.\n");
+        printf("  Module 9 uses this to ask for memory properly.\n");
+    }
     wait_enter();
 }
 
@@ -805,12 +811,14 @@ void lesson_09_memory(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - stack: automatic, dies with the function\n");
-    printf("   - heap: malloc, lives until free\n");
-    printf("   - always check whether malloc returned NULL\n");
-    printf("   - one free per malloc, then p = NULL\n");
-    printf("   - never return the address of a local array\n");
-    printf("   - gcc -fsanitize=address tells you where you slipped\n");
+    if (!print_summary_pt(9)) {
+        printf("   - stack: automatic, dies with the function\n");
+        printf("   - heap: malloc, lives until free\n");
+        printf("   - always check whether malloc returned NULL\n");
+        printf("   - one free per malloc, then p = NULL\n");
+        printf("   - never return the address of a local array\n");
+        printf("   - gcc -fsanitize=address tells you where you slipped\n");
+    }
     wait_enter();
 }
 
@@ -950,12 +958,14 @@ void lesson_10_structs(void)
     clear_screen();
     heading("SUMMARY");
 
-    printf("   - struct groups fields into one type; ; after the brace\n");
-    printf("   - a.field with a struct, ptr->field with a pointer\n");
-    printf("   - -> is (*ptr). written another way\n");
-    printf("   - sizeof can exceed the sum of the fields (padding)\n\n");
+    if (!print_summary_pt(10)) {
+        printf("   - struct groups fields into one type; ; after the brace\n");
+        printf("   - a.field with a struct, ptr->field with a pointer\n");
+        printf("   - -> is (*ptr). written another way\n");
+        printf("   - sizeof can exceed the sum of the fields (padding)\n\n");
 
-    printf("  That is the base course. The next step is writing a program\n");
-    printf("  of your own that uses malloc and frees it.\n");
+        printf("  That is the base course. The next step is writing a program\n");
+        printf("  of your own that uses malloc and frees it.\n");
+    }
     wait_enter();
 }

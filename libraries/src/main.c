@@ -70,6 +70,36 @@ static const struct Track TRACKS[] = {
 
 #define TRACK_COUNT (int)(sizeof TRACKS / sizeof TRACKS[0])
 
+/* Portuguese (PT-PT) for the menus. CODELEARNER_LANG=pt-pt turns it on; the
+ * pages themselves stay in English. */
+static const char *const TEXT_PT[][2] = {
+    { "LIBRARIES - A REFERENCE MANUAL", "BIBLIOTECAS - MANUAL DE REFERENCIA" },
+    { "The C and Python libraries, documented like man pages, with", "As bibliotecas de C e Python, documentadas como man pages, com" },
+    { "each example run on this machine. Pick a language:", "cada exemplo corrido nesta máquina. Escolhe uma linguagem:" },
+    { "Pick a language:", "Escolhe uma linguagem:" },
+    { "Page or search:", "Página ou pesquisa:" },
+    { "Type a number to open a page, a word to search (try: memory),", "Escreve um número para abrir uma página, uma palavra para pesquisar," },
+    { "or ENTER to go back.", "ou ENTER para voltar." },
+    { "Common tasks", "Tarefas comuns" },
+    { "Press ENTER to continue...", "Prime ENTER para continuar..." },
+    { "See you next time.", "Até à próxima." },
+    { "Quit", "Sair" },
+};
+
+static const char *tr(const char *text)
+{
+    const char *value = getenv("CODELEARNER_LANG");
+
+    if (value != NULL && strcmp(value, "pt-pt") == 0) {
+        for (size_t i = 0; i < sizeof TEXT_PT / sizeof TEXT_PT[0]; i++) {
+            if (strcmp(TEXT_PT[i][0], text) == 0) {
+                return TEXT_PT[i][1];
+            }
+        }
+    }
+    return text;
+}
+
 struct Page {
     char path[PATH_MAX + 320];
     char name[256];
@@ -149,7 +179,7 @@ static void wait_enter(void)
 {
     char ignored[8];
 
-    printf("\n  Press ENTER to continue...");
+    printf("\n  %s", tr("Press ENTER to continue..."));
     fflush(stdout);
     read_line(ignored, sizeof ignored);
 }
@@ -594,13 +624,13 @@ static void show_menu(const struct Track *track, const struct Page *pages, int c
         }
         if (strcmp(pages[i].group, shown_group) != 0) {
             shown_group = pages[i].group;
-            printf("\n  -- %s --\n", shown_group[0] != '\0' ? shown_group : "OTHER");
+            printf("\n  -- %s --\n", shown_group[0] != '\0' ? tr(shown_group) : "OTHER");
         }
         printf("   [%2d]  %s\n", i + 1, pages[i].title);
     }
 
-    printf("\n   Type a number to open a page, a word to search (try: memory),\n");
-    printf("   or ENTER to go back.\n");
+    printf("\n   %s\n", tr("Type a number to open a page, a word to search (try: memory),"));
+    printf("   %s\n", tr("or ENTER to go back."));
     rule();
 }
 
@@ -619,7 +649,7 @@ static void run_track(const struct Track *track)
 
     for (;;) {
         show_menu(track, pages, count, query);
-        printf("\n  Page or search: ");
+        printf("\n  %s ", tr("Page or search:"));
         fflush(stdout);
 
         if (!read_line(choice, sizeof choice) || choice[0] == '\0') {
@@ -650,13 +680,13 @@ static void run_track(const struct Track *track)
 static void show_tracks(void)
 {
     clear_screen();
-    title("LIBRARIES - A REFERENCE MANUAL");
-    puts("  The C and Python libraries, documented like man pages, with");
-    puts("  each example run on this machine. Pick a language:\n");
+    title(tr("LIBRARIES - A REFERENCE MANUAL"));
+    printf("  %s\n", tr("The C and Python libraries, documented like man pages, with"));
+    printf("  %s\n\n", tr("each example run on this machine. Pick a language:"));
     for (int i = 0; i < TRACK_COUNT; i++) {
         printf("   [%d]  %s\n", i + 1, TRACKS[i].name);
     }
-    printf("\n   [0]  Quit\n");
+    printf("\n   [0]  %s\n", tr("Quit"));
     rule();
 }
 
@@ -674,7 +704,7 @@ int main(void)
 
     for (;;) {
         show_tracks();
-        printf("\n  Pick a language: ");
+        printf("\n  %s ", tr("Pick a language:"));
         fflush(stdout);
 
         if (!read_line(choice, sizeof choice) || strcmp(choice, "0") == 0) {
@@ -688,6 +718,6 @@ int main(void)
         }
     }
 
-    printf("\n  See you next time.\n\n");
+    printf("\n  %s\n\n", tr("See you next time."));
     return 0;
 }
