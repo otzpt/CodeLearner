@@ -14,9 +14,9 @@
 #include "ui.h"
 
 /* `tier` files a module under one of the three menu bands. Display
- * grouping only -- the lesson functions never see it. INTERMEDIATE and
- * ADVANCED have no modules yet; they still print, empty, to show the arc
- * this course is headed toward. */
+ * grouping only -- the lesson functions never see it. ADVANCED has no
+ * modules yet; it still prints, empty, to show the arc this course is
+ * headed toward. */
 struct Module {
     const char *title;
     void (*run)(void);
@@ -25,11 +25,14 @@ struct Module {
 
 static const struct Module MODULES[] = {
     { "GTK: your first window", lesson_01_gtk, "BASIC" },
+    { "GTK: layout and the common widgets", lesson_02_layout, "BASIC" },
+    { "GTK: signals and keeping state", lesson_03_signals, "INTERMEDIATE" },
+    { "GTK: widgets that come and go (a todo list)", lesson_04_dynamic, "INTERMEDIATE" },
 };
 
 #define MODULE_COUNT (int)(sizeof MODULES / sizeof MODULES[0])
 
-static const char *const EMPTY_TIERS[] = { "INTERMEDIATE", "ADVANCED" };
+static const char *const EMPTY_TIERS[] = { "ADVANCED" };
 
 static void show_menu(void)
 {
