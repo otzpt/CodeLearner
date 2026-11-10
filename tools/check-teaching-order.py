@@ -523,10 +523,37 @@ COURSES = {
         "glob": "lessons_*.c",
         "exercise_marker": r'exercise\((\d+)\);',
         "summary_marker": r'\n    wait_enter\(\);\n    clear_screen\(\);\n    heading\("SUMMARY',
-        # Empty on purpose: a single-module course has no earlier module an
-        # exercise could reach ahead of yet. Grows the same way the other
-        # five courses' lists did, as soon as a second module exists here.
-        "first_taught": [],
+        # Credited to the module where a construct first appears on screen.
+        # Module 1 already names GtkBox, gtk_box_append and the label/button
+        # calls in its own build-it-yourself exercise, so those count as 1.
+        "first_taught": [
+            (1, r"\bgtk_application_new\s*\("),
+            (1, r"\bg_signal_connect\s*\("),
+            (1, r"\bG_CALLBACK\s*\("),
+            (1, r"\bgtk_window_set_child\s*\("),
+            (1, r"\bgtk_button_new_with_label\s*\("),
+            (1, r"\bgtk_label_new\s*\("),
+            (1, r"\bgtk_label_set_text\s*\("),
+            (1, r"\bgtk_box_new\s*\("),
+            (1, r"\bgtk_box_append\s*\("),
+            (2, r"\bgtk_entry_new\s*\("),
+            (2, r"\bgtk_check_button_new_with_label\s*\("),
+            (2, r"\bgtk_widget_set_hexpand\s*\("),
+            (2, r"\bgtk_widget_set_halign\s*\("),
+            (2, r"\bgtk_widget_set_margin_\w+\s*\("),
+            (2, r"\bgtk_box_set_homogeneous\s*\("),
+            (3, r"\bgtk_editable_get_text\s*\("),
+            (3, r"\bgtk_editable_set_text\s*\("),
+            (3, r"\bg_strdup_printf\s*\("),
+            (3, r"\bg_free\s*\("),
+            (4, r"\bg_object_set_data\s*\("),
+            (4, r"\bg_object_get_data\s*\("),
+            (4, r"\bgtk_box_remove\s*\("),
+            (4, r"\bgtk_widget_get_first_child\s*\("),
+            (4, r"\bgtk_widget_get_next_sibling\s*\("),
+            (4, r"\bgtk_check_button_set_active\s*\("),
+            (4, r"\bgtk_scrolled_window_new\s*\("),
+        ],
     },
     "assembly": {
         "dir": "assembly/src",

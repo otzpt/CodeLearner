@@ -11,5 +11,8 @@
 #define LESSONS_H
 
 void lesson_01_gtk(void);
+void lesson_02_layout(void);
+void lesson_03_signals(void);
+void lesson_04_dynamic(void);
 
 #endif

@@ -74,6 +74,9 @@ static const char *const TEXT[][2] = {
     { "ADVANCED", "AVANÇADO" },
     { "GUI COURSE - GTK", "CURSO DE GUI - GTK" },
     { "GTK: your first window", "GTK: a tua primeira janela" },
+    { "GTK: layout and the common widgets", "GTK: disposição e os widgets comuns" },
+    { "GTK: signals and keeping state", "GTK: sinais e guardar estado" },
+    { "GTK: widgets that come and go (a todo list)", "GTK: widgets que aparecem e desaparecem (lista de tarefas)" },
 };
 
 const char *tr(const char *text)
@@ -106,9 +109,58 @@ static const char *const SUMMARY_1[] = {
     NULL,
 };
 
+static const char *const SUMMARY_2[] = {
+    "   - uma janela tem um só filho; o GtkBox guarda vários, e as",
+    "     caixas encaixam umas nas outras",
+    "   - gtk_box_append e gtk_window_set_child são do GTK4; o",
+    "     pack_start e o container_add do GTK3 dão aqui erros de",
+    "     \"implicit declaration\"",
+    "   - as margens definem-se por lado na caixa exterior; o número",
+    "     da caixa é o espaço entre filhos",
+    "   - um filho ocupa só o que precisa: halign START impede que uma",
+    "     etiqueta estique, hexpand deixa um filho crescer, e",
+    "     homogeneous é o que torna iguais os filhos que crescem",
+    NULL,
+};
+
+static const char *const SUMMARY_3[] = {
+    "   - um callback recebe o objeto que emitiu o sinal e o user_data;",
+    "     uma struct de widgets passada como user_data é como chega",
+    "     ao resto",
+    "   - essa struct tem de sobreviver ao activate(): uma local",
+    "     compila em silêncio e é um erro; uma static ao nível do",
+    "     ficheiro é a correção simples",
+    "   - gtk_editable_get_text devolve texto do GTK, não o libertes;",
+    "     g_strdup_printf devolve texto teu, liberta-o com g_free",
+    "   - uma função pode tratar vários sinais, por exemplo o",
+    "     \"clicked\" de um botão e o \"activate\" de um campo de texto",
+    NULL,
+};
+
+static const char *const SUMMARY_4[] = {
+    "   - um handler pode criar e acrescentar widgets; uma caixa que",
+    "     está no ecrã mostra-os logo",
+    "   - g_object_set_data pendura um ponteiro com nome num widget;",
+    "     um nome mal escrito devolve NULL em execução",
+    "   - deriva uma contagem a partir dos widgets em vez de guardar",
+    "     um número que quatro handlers têm de atualizar",
+    "   - lê o gtk_widget_get_next_sibling antes do gtk_box_remove",
+    "   - GtkScrolledWindow com vexpand dá uma lista com scroll",
+    "",
+    "  Isto chega para construir uma janela GTK4 simples, com campos,",
+    "  botões, uma lista e comportamento. Não cobre estilos com CSS,",
+    "  janelas descritas em ficheiros .ui (GtkBuilder), nem os widgets",
+    "  de lista baseados em modelos, para listas muito grandes. Estão",
+    "  em docs.gtk.org.",
+    NULL,
+};
+
 static const char *const *const SUMMARIES[] = {
     NULL,
     SUMMARY_1,
+    SUMMARY_2,
+    SUMMARY_3,
+    SUMMARY_4,
 };
 
 int print_summary_pt(int module)

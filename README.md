@@ -85,7 +85,7 @@ for C and Python libraries, each with an example that runs on your machine.
 | Web | CSS | 5: the box and normal flow, Flexbox, Grid, responsive design, modern CSS and the cascade | [`css/`](css/) |
 | Web | Web JavaScript | 5: the DOM, events, forms, `fetch`, state and storage | [`webjs/`](webjs/) |
 | Security | Security | 2 so far: a topic course in Python. HTTP requests, what a server's headers reveal, the urllib 4xx/5xx-raises trap, and why plain HTTP is readable on the wire | [`security/`](security/) |
-| GUI | GUI (GTK) | 1: your first window | [`gui/`](gui/) |
+| GUI | GUI (GTK) | 4: a first window, layout and widgets, signals and state, and a todo list that adds and removes widgets | [`gui/`](gui/) |
 | Tooling | Git | 10: what is git through GitHub Actions | [`git/`](git/) |
 | Reference | Libraries | a reference manual, not a course: man-page style pages for the C and Python libraries (standard C, POSIX, Linux, /proc and /sys, raylib), each example run live | [`libraries/`](libraries/) |
 | | Launcher | done: pick a language, open its course | [`launcher/`](launcher/) |
@@ -95,8 +95,8 @@ INTERMEDIATE, and ADVANCED — a display grouping only, printed as section
 headers above the module numbers. The modules still run in one numbered
 sequence; a tier is one field on a module's row in its course's module
 table (`MODULES` in `main.c`/`main.py`/`main.js`, or the equivalent),
-nothing else changes. GUI still has one module, filed under BASIC, with
-INTERMEDIATE and ADVANCED shown empty until it has enough content to split.
+nothing else changes. GUI has four modules, two under BASIC and two under
+INTERMEDIATE, with ADVANCED shown empty until it has content to fill it.
 
 Sixteen courses are covered. GUI, Assembly, Git and Security are not languages
 in the same sense the others are, but all of them get the same treatment as one:
@@ -678,6 +678,9 @@ file the way it points at Python's and JavaScript's entry scripts.
 | # | Module | The thing it exists for |
 | --- | --- | --- |
 | 1 | GTK: your first window | `pkg-config` in the compile line; `GtkApplication`/`activate`, not `gtk_init`; `G_CALLBACK` hides a signature mismatch from the compiler |
+| 2 | GTK: layout and the common widgets | a window has one child, so `GtkBox`; GTK3 calls (`gtk_box_pack_start`, `gtk_container_add`) are "implicit declaration" errors in GTK4; `hexpand` alone does not make children equal, `homogeneous` does |
+| 3 | GTK: signals and keeping state | a struct passed as `user_data` must outlive `activate()` (a local compiles silently and is a bug); `gtk_editable_get_text` is GTK's string, `g_strdup_printf` is yours to `g_free` |
+| 4 | GTK: widgets that come and go (a todo list) | per-row data with `g_object_set_data`; count by walking the widgets instead of keeping a number; read `gtk_widget_get_next_sibling` before `gtk_box_remove` |
 
 Not a language — GTK is a C library — but it gets the same treatment as
 one: its own directory, its own zero-dependency binary teaching it, its own
@@ -702,6 +705,15 @@ describes the real observed behaviour (a button that relabels itself on
 click) instead of diffing against captured stdout — the same accommodation
 module 11 in the C course already makes for output that depends on a
 random number.
+
+Modules 2 to 4 are what a simple GTK4 window needs: layout, widgets, behaviour
+and a list that changes at run time. Every example is a file that was compiled
+with `-std=c11 -Wall -Wextra` and then driven by a test program against the
+real window (set text, tick check buttons, emit `clicked` and `activate`, assert
+on labels and row counts). The few pixel measurements the lessons quote were
+read back from the real widgets on the author's machine and are labelled as
+such. Styling with CSS, `GtkBuilder` `.ui` files and model-based list widgets
+are not covered.
 
 ## The Assembly course
 
