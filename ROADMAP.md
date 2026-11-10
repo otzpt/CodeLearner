@@ -8,8 +8,8 @@ exist.
 
 Courses outside the original five languages this file tracks have since
 been started -- see the README's own course tables, not this file, for their
-current state: **GUI (GTK)**, delivered in C since there is no separate "GTK
-language" to write a menu in; **Assembly**, **Rust**, **Arduino** and
+current state: **GTK** and **raylib + raygui**, delivered in C since there is no
+separate "GTK language" or "raylib language" to write a menu in; **Assembly**, **Rust**, **Arduino** and
 **MicroPython**, which have entries below; **Git**; and **Libraries**, which
 is a reference rather than a course (see below).
 
@@ -253,7 +253,7 @@ case: a school platform served its login page over HTTP only.
 ## Web: three courses built
 
 `html/`, `css/` and `webjs/` are terminal programs in plain C, the same
-arrangement as `gui/`. None of them opens a browser. Five modules each: HTML (structure, forms, accessibility, metadata, practical pages), CSS
+arrangement as `gtk/`. None of them opens a browser. Five modules each: HTML (structure, forms, accessibility, metadata, practical pages), CSS
 (the box and normal flow, Flexbox, Grid, responsive design, modern CSS), and
 Web JavaScript (the DOM, events, forms, `fetch`, state and storage).
 

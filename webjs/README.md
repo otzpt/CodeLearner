@@ -2,7 +2,7 @@
 
 5 modules: The DOM, Events, Forms and input, fetch and the network, State, storage and a small app.
 
-A terminal program in plain C, like `gui/`. It teaches Web JavaScript and never
+A terminal program in plain C, like `gtk/`. It teaches Web JavaScript and never
 opens a browser. The challenges are files you write yourself and open in
 whatever browser you normally use.
 

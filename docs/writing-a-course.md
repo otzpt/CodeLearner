@@ -181,7 +181,7 @@ carries one extra field: the tier name as a plain string. The menu-drawing
 loop prints a `-- TIER --` divider whenever that field changes from the
 previous row, so reordering or splitting modules never requires touching
 anything beyond that one field per row. A band with no modules yet (ADVANCED
-in GUI) is printed anyway, empty, from a fixed list in `main.c`, so the arc
+in GTK) is printed anyway, empty, from a fixed list in `main.c`, so the arc
 the course is headed toward stays visible.
 
 The split is by what a module assumes, not by module count: BASIC covers
@@ -284,7 +284,7 @@ unset, nothing a course prints changes.
 ## Courses about the web
 
 HTML, CSS and browser JavaScript are CLI programs like every other course,
-written in plain C the way `gui/` is, because neither HTML nor CSS can be the
+written in plain C the way `gtk/` is, because neither HTML nor CSS can be the
 language of a terminal program. They never open a browser or embed one.
 
 A terminal cannot render a page, so apply the rule for hardware courses: do not

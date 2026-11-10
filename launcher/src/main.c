@@ -86,7 +86,8 @@ struct Language {
 #define PY_PATH    "..\\python\\src\\main.py"
 #define JS_PATH    "..\\javascript\\src\\main.js"
 #define JAVA_BIN   "..\\java\\run.bat"
-#define GUI_BIN    "..\\gui\\gui-course.exe"
+#define GTK_BIN    "..\\gtk\\gtk-course.exe"
+#define RAYLIB_BIN "..\\raylib\\raylib-course.exe"
 #define CSHARP_BIN "..\\csharp\\run.bat"
 #define RUST_BIN   "..\\rust\\rust-course.exe"
 #define SEC_PATH   "..\\security\\src\\main.py"
@@ -99,7 +100,8 @@ struct Language {
 #define PY_PATH    "../python/src/main.py"
 #define JS_PATH    "../javascript/src/main.js"
 #define JAVA_BIN   "../java/run"
-#define GUI_BIN    "../gui/gui-course"
+#define GTK_BIN    "../gtk/gtk-course"
+#define RAYLIB_BIN "../raylib/raylib-course"
 #define ASM_BIN    "../assembly/asm-course"
 #define CSHARP_BIN "../csharp/run"
 #define GIT_PATH   "../git/src/main.sh"
@@ -164,7 +166,7 @@ static const struct Language LANGUAGES[] = {
      * split to make explicit here -- the run/run.bat wrapper covers it. */
     { "C#",         CSHARP_BIN, CSHARP_BIN, NULL },
     /* Plain C programs that teach these languages, the same arrangement as
-     * GUI (GTK, raylib) below. None of them opens a browser. */
+     * GTK below. None of them opens a browser. */
     { "HTML",       HTML_BIN, HTML_BIN, "WEB" },
     { "CSS",        CSS_BIN,  CSS_BIN, "WEB" },
     { "Web JavaScript", WEBJS_BIN, WEBJS_BIN, "WEB" },
@@ -180,7 +182,8 @@ static const struct Language LANGUAGES[] = {
     /* Not a language -- GTK, a C library -- but treated as a peer entry
      * here on purpose, the same way it gets its own top-level course
      * directory instead of living inside c/'s module list. */
-    { "GUI (GTK, raylib)",  GUI_BIN,  GUI_BIN, "GUI" },
+    { "GTK",        GTK_BIN,  GTK_BIN, "GUI" },
+    { "raylib + raygui", RAYLIB_BIN, RAYLIB_BIN, "GUI" },
 #ifdef _WIN32
     /* Same reasoning as Python/JavaScript's own installer story, the
      * other way around: python.org's and Node's installers are what

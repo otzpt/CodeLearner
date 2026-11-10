@@ -459,7 +459,7 @@ COURSES = {
         # way the Python course's did, once a second module exists here.
         "first_taught": [],
     },
-    # The web courses are C programs like gui/, so the markers are the same;
+    # The web courses are C programs like gtk/, so the markers are the same;
     # what the tables match is the HTML, CSS or JavaScript in the exercises.
     "html": {
         "dir": "html/src",
@@ -518,8 +518,8 @@ COURSES = {
             (5, r"\bJSON\."),
         ],
     },
-    "gui": {
-        "dir": "gui/src",
+    "gtk": {
+        "dir": "gtk/src",
         "glob": "lessons_*.c",
         "exercise_marker": r'exercise\((\d+)\);',
         "summary_marker": r'\n    wait_enter\(\);\n    clear_screen\(\);\n    heading\("SUMMARY',
@@ -553,22 +553,31 @@ COURSES = {
             (4, r"\bgtk_widget_get_next_sibling\s*\("),
             (4, r"\bgtk_check_button_set_active\s*\("),
             (4, r"\bgtk_scrolled_window_new\s*\("),
-            (5, r"\bInitWindow\s*\("),
-            (5, r"\bSetTargetFPS\s*\("),
-            (5, r"\bWindowShouldClose\s*\("),
-            (5, r"\bBeginDrawing\s*\("),
-            (5, r"\bEndDrawing\s*\("),
-            (5, r"\bClearBackground\s*\("),
-            (5, r"\bDrawText\s*\("),
-            (5, r"\bLoadTexture\s*\("),
-            (6, r"\bGuiButton\s*\("),
-            (6, r"\bGuiLabel\s*\("),
-            (6, r"\bGuiCheckBox\s*\("),
-            (6, r"\bGuiTextBox\s*\("),
-            (6, r"\bGuiSetStyle\s*\("),
-            (6, r"\bColorToInt\s*\("),
-            (6, r"\bTextFormat\s*\("),
-            (7, r"\bstrncpy\s*\("),
+        ],
+    },
+    "raylib": {
+        "dir": "raylib/src",
+        "glob": "lessons_*.c",
+        "exercise_marker": r'exercise\((\d+)\);',
+        "summary_marker": r'\n    wait_enter\(\);\n    clear_screen\(\);\n    heading\("SUMMARY',
+        # Credited to the module where a construct first appears on screen.
+        "first_taught": [
+            (1, r"\bInitWindow\s*\("),
+            (1, r"\bSetTargetFPS\s*\("),
+            (1, r"\bWindowShouldClose\s*\("),
+            (1, r"\bBeginDrawing\s*\("),
+            (1, r"\bEndDrawing\s*\("),
+            (1, r"\bClearBackground\s*\("),
+            (1, r"\bDrawText\s*\("),
+            (1, r"\bLoadTexture\s*\("),
+            (2, r"\bGuiButton\s*\("),
+            (2, r"\bGuiLabel\s*\("),
+            (2, r"\bGuiCheckBox\s*\("),
+            (2, r"\bGuiTextBox\s*\("),
+            (2, r"\bGuiSetStyle\s*\("),
+            (2, r"\bColorToInt\s*\("),
+            (2, r"\bTextFormat\s*\("),
+            (3, r"\bstrncpy\s*\("),
         ],
     },
     "assembly": {

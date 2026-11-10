@@ -1,6 +1,6 @@
-# GUI course
+# GTK course
 #
-#   make          builds ./gui-course
+#   make          builds ./gtk-course
 #   make run      builds and runs
 #   make clean    removes build output
 #
@@ -11,8 +11,8 @@
 
 CC      = cc
 CFLAGS  = -std=c11 -Wall -Wextra -g
-TARGET  = gui-course
-SOURCES = src/main.c src/ui.c src/strings_pt.c src/lessons_gtk.c src/lessons_widgets.c src/lessons_raylib.c
+TARGET  = gtk-course
+SOURCES = src/main.c src/ui.c src/strings_pt.c src/lessons_gtk.c src/lessons_widgets.c
 OBJECTS = $(SOURCES:.c=.o)
 
 $(TARGET): $(OBJECTS)

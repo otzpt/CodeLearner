@@ -2,7 +2,7 @@
 
 5 modules: Structure and meaning, Forms, Accessibility, Metadata, Practical pages.
 
-A terminal program in plain C, like `gui/`. It teaches HTML and never
+A terminal program in plain C, like `gtk/`. It teaches HTML and never
 opens a browser. The challenges are files you write yourself and open in
 whatever browser you normally use.
 

@@ -3,7 +3,8 @@
 *.class
 c/c-course
 cpp/cpp-course
-gui/gui-course
+gtk/gtk-course
+raylib/raylib-course
 html/html-course
 css/css-course
 webjs/webjs-course

@@ -1,7 +1,7 @@
 /*
  * The CSS course's lessons.
  *
- * Like gui/, this course is plain C with no dependency beyond a compiler. It
+ * Like gtk/, this course is plain C with no dependency beyond a compiler. It
  * teaches CSS; it does not open a browser or link against one.
  *
  * A terminal cannot render a page. Where a result depends on a browser the

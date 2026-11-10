@@ -4,7 +4,7 @@
 #   make run      builds and runs
 #   make clean    removes build output
 #
-# Plain C with no dependencies, same as gui/. It teaches CSS and does
+# Plain C with no dependencies, same as gtk/. It teaches CSS and does
 # not open a browser.
 
 CC      = cc

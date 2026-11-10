@@ -23,7 +23,7 @@ from lessons_wire import lesson_02_plain_http
 # "tier" files a module under one of the three menu bands, display grouping
 # only -- the lesson functions never see it. Only the BASIC band has a
 # module so far; INTERMEDIATE and ADVANCED are printed empty, the way the
-# GUI course does, so the arc the course is headed toward stays visible.
+# GTK course does, so the arc the course is headed toward stays visible.
 MODULES = [
     {"title": "Your first request", "run": lesson_01_first_request, "tier": "BASIC"},
     {"title": "Plain HTTP is readable on the wire", "run": lesson_02_plain_http, "tier": "BASIC"},

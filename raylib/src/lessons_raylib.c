@@ -1,10 +1,10 @@
 /*
- * Modules 5-7 - raylib and raygui: your first window, buttons and state,
+ * Modules 1-3 - raylib and raygui: your first window, buttons and state,
  * and a todo list.
  *
- * Same rule as the GTK modules: the lesson program itself is plain C. The
+ * Same rule as the GTK course: the lesson program itself is plain C. The
  * code it teaches needs raylib and raygui, which the student builds
- * (module 5 gives the exact steps).
+ * (module 1 gives the exact steps).
  *
  * Tested with raylib 6.5-dev (commit 0dedaf3066) and raygui 5.1-dev (commit
  * 2a3c4790c6), gcc 14.2.1, Linux with X11. The examples compile with
@@ -161,7 +161,7 @@ static const char *const BAD_STYLE[] = {
     "GuiSetStyle(DEFAULT, BACKGROUND_COLOR, DARKBLUE);   // a Color, not an int",
 };
 static const char *const EXR3_P0[] = {
-    "// todo.c : the todo list from module 4, built with raylib and raygui.",
+    "// todo.c : the GTK course's todo list, built with raylib and raygui.",
     "",
     "#include <string.h>",
     "#include \"raylib.h\"",
@@ -297,22 +297,23 @@ static const char *const GOOD_STRNCPY[] = {
     "text[count][TASK_LEN - 1] = '\\0';   // always end it ourselves",
 };
 
-void lesson_05_raylib(void)
+void lesson_01_raylib(void)
 {
-    title("MODULE 5 - RAYLIB: YOUR FIRST WINDOW AND THE LOOP");
+    title("MODULE 1 - RAYLIB: YOUR FIRST WINDOW AND THE LOOP");
 
     heading("WHAT YOU WILL HAVE AT THE END");
 
     printf("  A window you drew yourself, 60 times a second. Then, in\n");
-    printf("  modules 6 and 7, buttons and a todo list on top of it.\n\n");
+    printf("  modules 2 and 3, buttons and a todo list on top of it.\n\n");
 
     printf("  raylib is a small C library for windows, drawing, input\n");
     printf("  and sound. It is made for games, but it works for any\n");
     printf("  program that draws. raygui is one extra header that adds\n");
     printf("  buttons, text boxes and check boxes on top of it.\n\n");
 
-    printf("  GTK (modules 1 to 4) and raylib solve the same problem in\n");
-    printf("  opposite ways, and this module starts with that difference.\n");
+    printf("  GTK (the other course in the GUI group) and raylib solve\n");
+    printf("  the same problem in opposite ways, and this module starts\n");
+    printf("  with that difference.\n");
 
     heading("THE IDEA: REDRAW EVERYTHING, EVERY FRAME");
 
@@ -466,7 +467,7 @@ void lesson_05_raylib(void)
 
     wait_enter();
     clear_screen();
-    exercise(5);
+    exercise(1);
 
     question("With no SetTargetFPS the example looped 12134 times in one\n"
              "  second. With SetTargetFPS(60), how many times? (a number)",
@@ -517,7 +518,7 @@ void lesson_05_raylib(void)
     clear_screen();
     heading("SUMMARY");
 
-    if (!print_summary_pt(5)) {
+    if (!print_summary_pt(1)) {
         printf("   - raylib redraws the whole frame in a loop; nothing is\n");
         printf("     kept for you between frames\n");
         printf("   - SetTargetFPS caps the loop: 60 frames a second against\n");
@@ -529,9 +530,9 @@ void lesson_05_raylib(void)
     wait_enter();
 }
 
-void lesson_06_raygui(void)
+void lesson_02_raygui(void)
 {
-    title("MODULE 6 - RAYGUI: BUTTONS, TEXT AND STATE");
+    title("MODULE 2 - RAYGUI: BUTTONS, TEXT AND STATE");
 
     heading("WHAT YOU WILL HAVE AT THE END");
 
@@ -572,7 +573,7 @@ void lesson_06_raygui(void)
 
     code(LINES(EXR2_P2));
 
-    printf("\n  Compile with the line from module 5, changing window.c to\n");
+    printf("\n  Compile with the line from module 1, changing window.c to\n");
     printf("  widgets.c. You should see the form; type a name (click the\n");
     printf("  text box first), tick Shout, press Greet.\n");
 
@@ -659,7 +660,7 @@ void lesson_06_raygui(void)
 
     wait_enter();
     clear_screen();
-    exercise(6);
+    exercise(2);
 
     question("Does raygui remember whether a check box is ticked between\n"
              "  frames, or do you? (raygui or you)",
@@ -711,7 +712,7 @@ void lesson_06_raygui(void)
     clear_screen();
     heading("SUMMARY");
 
-    if (!print_summary_pt(6)) {
+    if (!print_summary_pt(2)) {
         printf("   - a raygui widget is a function call that draws and\n");
         printf("     answers in one go; your variables hold the state\n");
         printf("   - GuiCheckBox takes a pointer; GuiTextBox takes the real\n");
@@ -722,16 +723,16 @@ void lesson_06_raygui(void)
     wait_enter();
 }
 
-void lesson_07_raylib_todo(void)
+void lesson_03_todo(void)
 {
-    title("MODULE 7 - RAYGUI: A TODO LIST");
+    title("MODULE 3 - RAYGUI: A TODO LIST");
 
     heading("WHAT YOU WILL HAVE AT THE END");
 
-    printf("  The todo list from module 4, built again with raylib and\n");
-    printf("  raygui: a text box, Add, Clear done, a row per task with a\n");
-    printf("  tick box and an x, and an \"N left\" line. Same program, the\n");
-    printf("  other way of building it.\n");
+    printf("  The todo list from the GTK course's module 4, built again\n");
+    printf("  with raylib and raygui: a text box, Add, Clear done, a row\n");
+    printf("  per task with a tick box and an x, and an \"N left\" line.\n");
+    printf("  Same program, the other way of building it.\n");
 
     heading("THE IDEA: THE LIST IS AN ARRAY, NOT WIDGETS");
 
@@ -814,7 +815,7 @@ void lesson_07_raylib_todo(void)
 
     ref_head("int tasks_left()   [defined in part 1]");
     ref_line("Does:", "counts the unticked tasks every time it is asked.");
-    ref_line("", "As in module 4, there is no stored counter to keep in");
+    ref_line("", "As in the GTK course, there is no stored counter to keep in");
     ref_line("", "step with the data.");
 
     wait_enter();
@@ -833,7 +834,7 @@ void lesson_07_raylib_todo(void)
 
     wait_enter();
     clear_screen();
-    exercise(7);
+    exercise(3);
 
     question("In the test, deleting row b inside the loop over a, b, c, d\n"
              "  visited a, b, d. Which row was skipped? (the letter)",
@@ -881,7 +882,7 @@ void lesson_07_raylib_todo(void)
     clear_screen();
     heading("SUMMARY");
 
-    if (!print_summary_pt(7)) {
+    if (!print_summary_pt(3)) {
         printf("   - the list is an array; the window redraws it every frame\n");
         printf("   - keep data functions free of drawing so they can be\n");
         printf("     tested\n");

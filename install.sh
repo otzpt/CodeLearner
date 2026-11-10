@@ -138,7 +138,7 @@ mv "$tmp/$BUNDLE_DIR" "$SHARE_DIR"
 # filesystem without an exec bit (a FAT-formatted stick, say) can still
 # arrive here without them, and every one of these is useless unless
 # executable.
-for exe in launcher/launcher c/c-course cpp/cpp-course gui/gui-course \
+for exe in launcher/launcher c/c-course cpp/cpp-course gtk/gtk-course raylib/raylib-course \
            assembly/asm-course csharp/csharp csharp/run java/run \
            rust/rust-course arduino/arduino-course micropython/src/main.py \
            python/src/main.py javascript/src/main.js security/src/main.py \

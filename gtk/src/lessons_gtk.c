@@ -3,7 +3,7 @@
  *
  * This course, unlike c/, cpp/, python/ and javascript/, is not a
  * zero-dependency single binary all the way down: the lesson program
- * itself (this file, compiled into gui-course) needs nothing beyond a C
+ * itself (this file, compiled into gtk-course) needs nothing beyond a C
  * compiler, but the code it teaches needs GTK4's development files
  * installed to actually compile and run.
  *

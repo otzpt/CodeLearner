@@ -6,7 +6,7 @@ teach; this one is written in Python because that is its implementation
 language, and every lesson's code is readable, runnable example code.
 
 Two modules so far (BASIC). INTERMEDIATE and ADVANCED are printed empty in the
-menu, the way the GUI course does, so the planned arc stays visible.
+menu, the way the GTK course does, so the planned arc stays visible.
 
 | # | Module | Teaches |
 | --- | --- | --- |

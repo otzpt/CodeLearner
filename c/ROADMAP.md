@@ -168,7 +168,7 @@ project is open-ended by nature, and this course's own format (a fixed
 Milestone: a substantial C program, without AI.
 
 Note: GUI programming (GTK) is not filed here — it got its own course,
-[`gui/`](../gui), rather than a C-course module. See the top-level
+[`gtk/`](../gtk), rather than a C-course module. See the top-level
 README's course table.
 
 ## 13. Advanced C — module 19 fills part of this, most stays beyond the course

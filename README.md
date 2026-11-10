@@ -48,13 +48,14 @@ install options are under [Installing](#installing)):
    [14]  Security
 
    -- GUI --
-   [15]  GUI (GTK, raylib)
+   [15]  GTK
+   [16]  raylib + raygui
 
    -- TOOLING --
-   [16]  Git
+   [17]  Git
 
    -- REFERENCE --
-   [17]  Libraries
+   [18]  Libraries
 
    [u]  Check for updates
    [0]  Exit
@@ -85,7 +86,8 @@ for C and Python libraries, each with an example that runs on your machine.
 | Web | CSS | 5: the box and normal flow, Flexbox, Grid, responsive design, modern CSS and the cascade | [`css/`](css/) |
 | Web | Web JavaScript | 5: the DOM, events, forms, `fetch`, state and storage | [`webjs/`](webjs/) |
 | Security | Security | 2 so far: a topic course in Python. HTTP requests, what a server's headers reveal, the urllib 4xx/5xx-raises trap, and why plain HTTP is readable on the wire | [`security/`](security/) |
-| GUI | GUI (GTK, raylib) | 7: GTK4 in four modules (a first window, layout and widgets, signals and state, a todo list that adds and removes widgets), then raylib and raygui in three (the loop, buttons and state, the same todo list) | [`gui/`](gui/) |
+| GUI | GTK | 4: a first window, layout and widgets, signals and state, and a todo list that adds and removes widgets | [`gtk/`](gtk/) |
+| GUI | raylib + raygui | 3: the loop and immediate mode, buttons, text and state, and the same todo list as an array | [`raylib/`](raylib/) |
 | Tooling | Git | 10: what is git through GitHub Actions | [`git/`](git/) |
 | Reference | Libraries | a reference manual, not a course: man-page style pages for the C and Python libraries (standard C, POSIX, Linux, /proc and /sys, raylib), each example run live | [`libraries/`](libraries/) |
 | | Launcher | done: pick a language, open its course | [`launcher/`](launcher/) |
@@ -95,19 +97,20 @@ INTERMEDIATE, and ADVANCED — a display grouping only, printed as section
 headers above the module numbers. The modules still run in one numbered
 sequence; a tier is one field on a module's row in its course's module
 table (`MODULES` in `main.c`/`main.py`/`main.js`, or the equivalent),
-nothing else changes. GUI has four modules, two under BASIC and two under
-INTERMEDIATE, with ADVANCED shown empty until it has content to fill it.
+nothing else changes. GTK has four modules, two under BASIC and two under
+INTERMEDIATE, and raylib has three, two under BASIC and one under
+INTERMEDIATE. ADVANCED is shown empty in both until there is content to fill it.
 
-Sixteen courses are covered. GUI, Assembly, Git and Security are not languages
+Seventeen courses are covered. GTK, raylib, Assembly, Git and Security are not languages
 in the same sense the others are, but all of them get the same treatment as one:
 their own directory, their own binary or script, their own entry in the
 launcher, rather than being folded into `c/`'s module list. Assembly goes
-further than GUI does, though -- its own delivery program (`assembly/src/ui.asm`,
+further than GTK does, though -- its own delivery program (`assembly/src/ui.asm`,
 `main.asm`) is genuinely written in x86-64 assembly, the same "written in the
 language it teaches" rule every other course follows literally, just with
 no standard library underneath it (raw `read`/`write`/`exit` syscalls, no
-libc at all). GUI's own delivery stays C, since there is no separate "GTK
-language" to write a menu in. Git has no compiler or interpreter of its own
+libc at all). The GTK and raylib courses' own delivery stays C, since there
+is no separate "GTK language" or "raylib language" to write a menu in. Git has no compiler or interpreter of its own
 either, so its course is written in Bash -- the shell git is actually run
 from -- and every command it shows is a real invocation against a
 throwaway local repository, not a transcript typed from memory. The
@@ -196,7 +199,7 @@ The `.deb` and Arch packages install to `/opt/codelearner` and put the same
 `codelearner` command on PATH system-wide. The AppImage does not touch PATH
 at all, which is the point of it.
 
-The C, C++, GUI, HTML, CSS, Web JavaScript, C# and Assembly courses are compiled into these, and so
+The C, C++, GTK, raylib, HTML, CSS, Web JavaScript, C# and Assembly courses are compiled into these, and so
 are Rust and Arduino on Linux. Python, JavaScript, Java, Security, MicroPython
 and Git ship as source and run through their own language's toolchain (see
 below). Assembly, Rust, Arduino, MicroPython, Git and Libraries are Linux
@@ -673,7 +676,7 @@ reason: `dotnet run`, like `java Main.java`, has to run from inside the
 project's own directory, so the launcher cannot point straight at a `.cs`
 file the way it points at Python's and JavaScript's entry scripts.
 
-## The GUI course
+## The GTK course
 
 | # | Module | The thing it exists for |
 | --- | --- | --- |
@@ -681,33 +684,16 @@ file the way it points at Python's and JavaScript's entry scripts.
 | 2 | GTK: layout and the common widgets | a window has one child, so `GtkBox`; GTK3 calls (`gtk_box_pack_start`, `gtk_container_add`) are "implicit declaration" errors in GTK4; `hexpand` alone does not make children equal, `homogeneous` does |
 | 3 | GTK: signals and keeping state | a struct passed as `user_data` must outlive `activate()` (a local compiles silently and is a bug); `gtk_editable_get_text` is GTK's string, `g_strdup_printf` is yours to `g_free` |
 | 4 | GTK: widgets that come and go (a todo list) | per-row data with `g_object_set_data`; count by walking the widgets instead of keeping a number; read `gtk_widget_get_next_sibling` before `gtk_box_remove` |
-| 5 | raylib: your first window and the loop | immediate mode (redraw everything every frame); `SetTargetFPS`: 12134 frames a second without it, 60 with; a missing file is a logged WARNING, not a crash |
-| 6 | raygui: buttons, text and state | a widget is a function call that draws and answers; your variables hold the state; `GuiCheckBox` takes a pointer, `GuiTextBox` takes the real buffer size; `TextFormat` reuses its buffers |
-| 7 | raygui: a todo list | the list is an array, not widgets; never delete inside the loop that draws (it skips a row); `strncpy` may not terminate |
 
-Not a language — GTK is a C library — but it gets the same treatment as
-one: its own directory, its own zero-dependency binary teaching it, its own
-entry in the launcher next to C, C++, Python, JavaScript and Java, rather
-than being folded into `c/`'s module list. That separation is real, not
-cosmetic: `gui-course` itself (the menu, this module's text) is plain C
-with no dependency beyond a compiler, same as every other course, but the
-GTK code it teaches needs GTK4's development files installed to actually
-compile and run, a dependency none of the original language courses have.
-`gui/src/lessons_gtk.c`'s own header comment has the exact verification:
-every example was compiled and run for real (`gcc -Wall -Wextra
-$(pkg-config --cflags gtk4) ... $(pkg-config --libs gtk4)`), and running it
-opened a real window, confirmed via the window manager's own client list.
-
-Module 1 leads with what GTK actually is — a C library, called the same
-way any C library is called, not a black box behind a friendlier
-language — before any code, since that framing is the difference between
-"here is unfamiliar syntax" and "here is C you already know, aimed at a
-new library." Its exercise has no fixed transcript to match the way every
-other course's does: the result is a window, not text, so the module
-describes the real observed behaviour (a button that relabels itself on
-click) instead of diffing against captured stdout — the same accommodation
-module 11 in the C course already makes for output that depends on a
-random number.
+Not a language: GTK is a C library, but it gets the same treatment as one:
+its own directory, its own zero-dependency binary teaching it, its own entry
+in the launcher (in the GUI group), rather than being folded into `c/`'s
+module list. That separation is real, not cosmetic: `gtk-course` itself (the
+menu, the lesson text) is plain C with no dependency beyond a compiler, same
+as every other course, but the GTK code it teaches needs GTK4's development
+files installed to compile and run, a dependency none of the original
+language courses have. `gtk/src/lessons_gtk.c`'s own header comment lists
+exactly what was compiled and run.
 
 Every module follows one shape, like a chapter of a C book: the idea first,
 the program in commented parts (every line explained), a reference entry for
@@ -716,24 +702,45 @@ good use and a bad use, then a good-practice screen and the exercises. Every
 bad use was compiled or run, and the error or message quoted next to it is
 its real output. Undefined behaviour is explained, not run.
 
-Modules 1 to 4 are what a simple GTK4 window needs: the first window, layout,
-widgets, behaviour and a list that changes at run time. Modules 5 to 7 do the
-same job with raylib and raygui, which work the opposite way (immediate mode:
-no widget objects, the loop redraws everything each frame), so the two
-toolkits can be compared on the same todo list. Every example was compiled with
-`-std=c11 -Wall -Wextra` and, for GTK, driven by a test program against the
-real window (set text, tick check buttons, emit `clicked` and `activate`,
-assert on labels and row counts). The raylib examples were started and ran; the
-todo list's data functions were tested without a window. The few pixel and
-timing measurements the lessons quote were read back on the author's machine
-and are labelled as such. The raylib modules were tested with raylib 6.5-dev
-(commit `0dedaf3066`) and raygui 5.1-dev (commit `2a3c4790c6`), which module 5
-tells the student to check out. Clicking and typing in the raygui windows were
-not driven by a test. Styling GTK with CSS, `GtkBuilder` files, model-based
-lists, and raygui scroll panels are not covered.
+Module 1 starts from installing GTK4 and checking it, then builds a window,
+adds a button and makes it react, before any of the traps. Modules 1 to 4 are
+what a simple GTK4 window needs: the first window, layout, widgets, behaviour
+and a list that changes at run time. Every example was compiled with
+`-std=c11 -Wall -Wextra` and driven by a test program against the real window
+(set text, tick check buttons, emit `clicked` and `activate`, assert on labels
+and row counts). The few pixel measurements the lessons quote were read back
+from the real widgets on the author's machine and are labelled as such. Styling
+with CSS, `GtkBuilder` files and model-based lists are not covered.
 
 The course prints in colour when it runs in a terminal. `NO_COLOR=1` turns it
 off, as does piping the output; `CODELEARNER_COLOR=1` forces it on.
+
+## The raylib course
+
+| # | Module | The thing it exists for |
+| --- | --- | --- |
+| 1 | raylib: your first window and the loop | immediate mode (redraw everything every frame); `SetTargetFPS`: 12134 frames a second without it, 60 with; a missing file is a logged WARNING, not a crash |
+| 2 | raygui: buttons, text and state | a widget is a function call that draws and answers; your variables hold the state; `GuiCheckBox` takes a pointer, `GuiTextBox` takes the real buffer size; `TextFormat` reuses its buffers |
+| 3 | raygui: a todo list | the list is an array, not widgets; never delete inside the loop that draws (it skips a row); `strncpy` may not terminate |
+
+raylib and raygui are one course because raygui is a single header that sits
+on top of raylib. They work the opposite way to GTK: immediate mode, with no
+widget objects, where a loop redraws everything every frame and a button is
+a function call that draws and answers. The last module builds the same todo
+list as the GTK course, so the two toolkits can be compared.
+
+The course has the same shape as the GTK one (idea, commented code, reference
+with good and bad uses, good practice, exercises, colour). raylib is not in
+every distribution's repository, so module 1 builds it from source and pins the
+two commits it was tested with: raylib 6.5-dev (`0dedaf3066`) and raygui 5.1-dev
+(`2a3c4790c6`). The examples compile with `-std=c11 -Wall -Wextra` and no
+warnings of their own (raygui.h prints 11 under `-Wextra`, which `-isystem`
+hides) and each one was started and ran. The todo list's data functions were
+tested by a program that included the file without opening a window. Clicking
+and typing in the raygui windows were not driven by a test. The timing and
+buffer measurements the lessons quote were read back on the author's machine
+and are labelled as such. Scrolling a long list and the other raygui controls
+are not covered.
 
 ## The Assembly course
 
@@ -764,7 +771,7 @@ system and have their own source in [`assembly/os/`](assembly/os/).
 Linux/x86-64 only — see [`ROADMAP.md`](ROADMAP.md)'s note on why there is
 no Windows path to translate this one to. This is the one course where
 "written in the language it teaches" is taken completely literally: unlike
-the GUI course, there genuinely is a language here to write a menu in, so
+the GTK course, there genuinely is a language here to write a menu in, so
 `assembly/src/ui.asm` and `main.asm` are real x86-64 assembly, not C that
 talks about assembly. No libc, no C runtime — `title`/`heading`/`question`/
 `ask_yes`/`read_line` are all built from nothing but the `read`, `write`
@@ -819,7 +826,7 @@ in the lesson.
 ## The web courses
 
 HTML, CSS and browser JavaScript are three terminal programs written in plain
-C, the same arrangement as the GUI course: [`html/`](html/), [`css/`](css/) and
+C, the same arrangement as the GTK course: [`html/`](html/), [`css/`](css/) and
 [`webjs/`](webjs/). None of them opens a browser or depends on one. The
 challenges are files you write yourself and open in whatever browser you use.
 
@@ -967,9 +974,9 @@ recalled from documentation.
 
 `python3 tools/check-teaching-order.py` covers all the language courses with a
 real teaching-order table (C, C++, Python, JavaScript, Java, C#, Rust,
-MicroPython, Arduino) in one run. GUI
-and Assembly are registered too, with empty tables. GUI's is empty because it
-has no second module yet for an exercise to reach ahead of. Assembly's stays
+MicroPython, Arduino) in one run. GTK and raylib have their own tables, with
+the constructs each module first teaches. Assembly is registered too, with an
+empty table. Assembly's stays
 empty for a structural reason instead: an `.s` file keeps its question text,
 challenge, and example solution in `.rodata` at the top of the file, so the
 region between the exercise and summary markers holds the call sequence that
@@ -1016,14 +1023,19 @@ c/
     ├── lessons_io.c        module 18
     ├── lessons_lang_features.c  module 19
     └── lessons_assembly.c  module 20
-gui/
+gtk/
 ├── Makefile
 └── src/
     ├── main.c              menu: a table of modules and a loop
-    ├── ui.h  ui.c          screen, input, questions (no challenge() --
-    │                        a window is not text to diff against)
+    ├── ui.h  ui.c          screen, colour, input, questions, code display
+    ├── strings_pt.c  .h    Portuguese menus and summaries
     ├── lessons.h           one prototype per module
-    └── lessons_gtk.c       module 1
+    ├── lessons_gtk.c       module 1
+    └── lessons_widgets.c   modules 2-4
+raylib/
+├── Makefile
+└── src/                    same layout as gtk/
+    └── lessons_raylib.c    modules 1-3
 cpp/
 ├── Makefile
 └── src/
@@ -1073,7 +1085,7 @@ assembly/                   x86-64 assembly course (NASM, Intel syntax): src/ ha
 git/                        Bash course: src/ has main.sh, ui.sh, lessons_*.sh
 security/                   Python topic course: src/ has main.py, ui.py,
                              lessons_basics.py (module 1), lessons_wire.py (module 2)
-html/ css/ webjs/           the web courses, plain C programs like gui/: src/ has
+html/ css/ webjs/           the web courses, plain C programs like gtk/: src/ has
                              main.c, ui.c and the lessons
 assets/                     the desktop entry and icon the Linux packages install
 rust/                       12 modules; check-course.py, check-embedded.py and

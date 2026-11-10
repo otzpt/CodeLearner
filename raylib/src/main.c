@@ -1,9 +1,9 @@
 /*
- * GUI course - main menu.
+ * raylib course - main menu.
  *
  * Same shape as every other course's main.c: a table of modules, a loop.
  * Build:  make
- * Run:    ./gui-course
+ * Run:    ./raylib-course
  */
 
 #include <stdio.h>
@@ -24,13 +24,9 @@ struct Module {
 };
 
 static const struct Module MODULES[] = {
-    { "GTK: your first window", lesson_01_gtk, "BASIC" },
-    { "GTK: layout and the common widgets", lesson_02_layout, "BASIC" },
-    { "GTK: signals and keeping state", lesson_03_signals, "INTERMEDIATE" },
-    { "GTK: widgets that come and go (a todo list)", lesson_04_dynamic, "INTERMEDIATE" },
-    { "raylib: your first window and the loop", lesson_05_raylib, "INTERMEDIATE" },
-    { "raygui: buttons, text and state", lesson_06_raygui, "INTERMEDIATE" },
-    { "raygui: a todo list", lesson_07_raylib_todo, "INTERMEDIATE" },
+    { "raylib: your first window and the loop", lesson_01_raylib, "BASIC" },
+    { "raygui: buttons, text and state", lesson_02_raygui, "BASIC" },
+    { "raygui: a todo list", lesson_03_todo, "INTERMEDIATE" },
 };
 
 #define MODULE_COUNT (int)(sizeof MODULES / sizeof MODULES[0])
@@ -40,9 +36,9 @@ static const char *const EMPTY_TIERS[] = { "ADVANCED" };
 static void show_menu(void)
 {
     clear_screen();
-    title(tr("GUI COURSE - GTK, RAYLIB"));
+    title(tr("RAYLIB COURSE"));
     printf("  %s\n", tr("NO GUI -- this course is a CLI program, same as every other"));
-    printf("  %s\n", tr("course here. It teaches GTK and raylib; it does not open a window itself."));
+    printf("  %s\n", tr("course here. It teaches raylib and raygui; it does not open a window itself."));
 
     const char *shown_tier = "";
     for (int i = 0; i < MODULE_COUNT; i++) {

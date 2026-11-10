@@ -1,5 +1,5 @@
 /*
- * lessons.h - the modules of the GUI course.
+ * lessons.h - the modules of the raylib course.
  *
  * Each module is a function taking nothing and returning nothing. It draws
  * its own screens and returns when the student is done. The menu knows
@@ -10,12 +10,8 @@
 #ifndef LESSONS_H
 #define LESSONS_H
 
-void lesson_01_gtk(void);
-void lesson_02_layout(void);
-void lesson_03_signals(void);
-void lesson_04_dynamic(void);
-void lesson_05_raylib(void);
-void lesson_06_raygui(void);
-void lesson_07_raylib_todo(void);
+void lesson_01_raylib(void);
+void lesson_02_raygui(void);
+void lesson_03_todo(void);
 
 #endif

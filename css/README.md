@@ -2,7 +2,7 @@
 
 5 modules: The box and normal flow, Flexbox, Grid, Responsive design, Modern CSS and the cascade.
 
-A terminal program in plain C, like `gui/`. It teaches CSS and never
+A terminal program in plain C, like `gtk/`. It teaches CSS and never
 opens a browser. The challenges are files you write yourself and open in
 whatever browser you normally use.
 
