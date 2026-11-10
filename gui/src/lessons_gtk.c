@@ -15,10 +15,11 @@
  *
  *   gcc -Wall -Wextra $(pkg-config --cflags gtk4) main.c -o app $(pkg-config --libs gtk4)
  *
- * compiled warning-free, and running it opened a real window titled
- * "VUXIOCODE GTK Test" (confirmed via the window manager's own client list,
- * not just "the process didn't crash") with a button that changed its own
- * label on click, then closed cleanly.
+ * compiled warning-free. The window's title was read back with
+ * gtk_window_get_title() ("GTK Test") and emitting "clicked" on the button
+ * changed its label to "Clicked!". (An earlier version of this module,
+ * with a different title, was also confirmed against the window manager's
+ * own client list; that check was not repeated after the rename.)
  */
 
 #include <stdio.h>
@@ -169,7 +170,7 @@ void lesson_01_gtk(void)
 
     printf("  Everything above, as one file. This is exactly what was\n");
     printf("  compiled and run to verify this module -- a window titled\n");
-    printf("  \"VUXIOCODE GTK Test\" with a button that relabels itself to\n");
+    printf("  \"GTK Test\" with a button that relabels itself to\n");
     printf("  \"Clicked!\" on click:\n\n");
 
     rule();
@@ -185,7 +186,7 @@ void lesson_01_gtk(void)
     printf("  {\n");
     printf("      (void) user_data;\n");
     printf("      GtkWidget *window = gtk_application_window_new(app);\n");
-    printf("      gtk_window_set_title(GTK_WINDOW(window), \"VUXIOCODE GTK Test\");\n");
+    printf("      gtk_window_set_title(GTK_WINDOW(window), \"GTK Test\");\n");
     printf("      gtk_window_set_default_size(GTK_WINDOW(window), 300, 100);\n");
     printf("  \n");
     printf("      GtkWidget *button = gtk_button_new_with_label(\"Click me\");\n");
@@ -198,7 +199,7 @@ void lesson_01_gtk(void)
     printf("  int main(int argc, char **argv)\n");
     printf("  {\n");
     printf("      GtkApplication *app = gtk_application_new(\n");
-    printf("          \"com.vuxiocode.test\", G_APPLICATION_DEFAULT_FLAGS);\n");
+    printf("          \"com.example.test\", G_APPLICATION_DEFAULT_FLAGS);\n");
     printf("      g_signal_connect(app, \"activate\", G_CALLBACK(activate), NULL);\n");
     printf("      int status = g_application_run(G_APPLICATION(app), argc, argv);\n");
     printf("      g_object_unref(app);\n");
@@ -300,7 +301,7 @@ void lesson_01_gtk(void)
         printf("  int main(int argc, char **argv)\n");
         printf("  {\n");
         printf("      GtkApplication *app = gtk_application_new(\n");
-        printf("          \"com.vuxiocode.labeldemo\", G_APPLICATION_DEFAULT_FLAGS);\n");
+        printf("          \"com.example.labeldemo\", G_APPLICATION_DEFAULT_FLAGS);\n");
         printf("      g_signal_connect(app, \"activate\", G_CALLBACK(activate), NULL);\n");
         printf("      int status = g_application_run(G_APPLICATION(app), argc, argv);\n");
         printf("      g_object_unref(app);\n");
