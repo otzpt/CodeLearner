@@ -61,6 +61,8 @@ int main(void)
 {
     char choice[16];
 
+    ui_init();
+
     for (;;) {
         show_menu();
         printf("\n  %s ", tr("Pick a module:"));

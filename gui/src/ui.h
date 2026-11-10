@@ -63,4 +63,47 @@ void exercise(int number);
  */
 int question(const char *text, const char *correct, const char *why);
 
+
+/* ---- colour -----------------------------------------------------------
+ *
+ * Colour is on only when stdout is a terminal and NO_COLOR is not set (and,
+ * on Windows, only inside Windows Terminal). CODELEARNER_COLOR=1 forces it on
+ * and =0 forces it off. When it is off every colour string below is "", so
+ * piped output and CI logs stay plain text. Call ui_init() once, first. */
+void ui_init(void);
+
+extern const char *C_RESET, *C_BOLD, *C_DIM, *C_RED, *C_GREEN, *C_YELLOW,
+                  *C_BLUE, *C_MAGENTA, *C_CYAN;
+
+/* Number of lines in a string array, for the calls below:
+ *     code(LINES(EXAMPLE));                                              */
+#define LINES(a) (a), (int) (sizeof (a) / sizeof (a)[0])
+
+/* Print example C code, one array element per line. Comments, strings,
+ * #preprocessor lines and a few keywords are coloured. */
+void code(const char *const *lines, int n);
+
+/* The same, with a green "+" or red "x" in the margin: code worth copying
+ * and code that is wrong. */
+void code_good(const char *const *lines, int n);
+void code_bad(const char *const *lines, int n);
+
+/* One-line notes: a coloured label, then the text. more() continues the
+ * previous note on the next line, indented to match. */
+void good(const char *text);
+void bad(const char *text);
+void tip(const char *text);
+void more(const char *text);
+
+/* A reference entry in the style of a C book's function index:
+ *
+ *     gtk_window_set_title(window, title)
+ *       Does:     sets the text in the title bar.
+ *       Takes:    ...
+ *       Returns:  nothing.
+ *
+ * ref_line() with an empty label continues the line above. */
+void ref_head(const char *signature);
+void ref_line(const char *label, const char *text);
+
 #endif
