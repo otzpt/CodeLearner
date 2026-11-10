@@ -4,23 +4,31 @@
  *
  * Same rule as module 1 (lessons_gtk.c): the lesson program itself is plain
  * C, and the GTK code it teaches is compiled separately by the student.
- * Every example printed here is a file that was compiled and run, not typed
- * from memory:
+ * gcc 14.2.1, GTK 4.22.5.
  *
- *   gcc -std=c11 -Wall -Wextra $(pkg-config --cflags gtk4) x.c -o x $(pkg-config --libs gtk4)
- *
- * gcc 14.2.1, GTK 4.22.5. All of them compiled with no warnings. Beyond
- * "it compiled", each one was driven by a small test program that included
- * the example, opened the real window, set entry text, ticked check
+ * Every example printed here is a file that was compiled with
+ * -std=c11 -Wall -Wextra and no warnings, then driven by a test program
+ * that included it, opened the real window, set entry text, ticked check
  * buttons, emitted "clicked" and "activate", and asserted on the labels and
- * the number of rows. The two layout numbers in module 2 and the scroller
- * height in module 4 are widths and heights read back from the real
- * widgets on the author's machine, so they will differ with another theme
- * or font; the lessons say so where they quote them.
+ * the number of rows. The examples are printed with their comments exactly
+ * as in those files.
  *
- * Not demonstrated, on purpose, because they are undefined behaviour: a
- * callback reading a dead stack variable (module 3) and reading a
- * widget's sibling after the widget was removed (module 4).
+ * Numbers read back from the real widgets on the author's machine (they
+ * change with theme and font, and the lessons say so): the label widths
+ * (336 and 79), the button widths (22/49, 117/143, 130/130), the scroller
+ * heights (297 and 46) and the first row's height (34).
+ *
+ * Run, and quoted as real output next to the BAD examples:
+ *   gtk_box_append of a widget that already has a parent -> CRITICAL
+ *   gtk_box_remove of a widget that is not a child       -> CRITICAL
+ *   GTK_EDITABLE(label) / a NULL widget                   -> CRITICAL
+ *   g_object_get_data with a mistyped name                -> NULL
+ *   GTK3's gtk_box_pack_start, gtk_container_add,
+ *   gtk_widget_show_all                                   -> compile errors
+ *
+ * Explained and not run, because they are undefined behaviour: a callback
+ * reading a dead stack struct, free() on GTK's text, and reading a
+ * widget's sibling after gtk_box_remove.
  */
 
 #include <stdio.h>
@@ -29,173 +37,558 @@
 #include "strings_pt.h"
 #include "ui.h"
 
+static const char *const EX2_P0[] = {
+    "// layout.c : a form built from boxes, a label, a text field, buttons.",
+    "",
+    "#include <gtk/gtk.h>",
+    "",
+    "static void activate(GtkApplication *app, gpointer user_data)",
+    "{",
+    "    (void) user_data;",
+    "",
+    "    GtkWidget *window = gtk_application_window_new(app);",
+    "    gtk_window_set_title(GTK_WINDOW(window), \"Layout\");",
+    "    gtk_window_set_default_size(GTK_WINDOW(window), 360, 160);",
+    "",
+    "    // A window holds ONE child, so that child is a vertical box.",
+    "    // The box stacks its own children top to bottom, 8 pixels apart.",
+    "    GtkWidget *column = gtk_box_new(GTK_ORIENTATION_VERTICAL, 8);",
+    "",
+    "    // Space between the box and the window edge, one call per side.",
+    "    gtk_widget_set_margin_top(column, 12);",
+    "    gtk_widget_set_margin_bottom(column, 12);",
+    "    gtk_widget_set_margin_start(column, 12);",
+    "    gtk_widget_set_margin_end(column, 12);",
+};
+static const char *const EX2_P1[] = {
+    "    // A label: text the user reads but cannot edit.",
+    "    GtkWidget *prompt = gtk_label_new(\"Your name:\");",
+    "",
+    "    // A label stretches across the whole box by default. START makes",
+    "    // it take only the room its text needs, at the left edge.",
+    "    gtk_widget_set_halign(prompt, GTK_ALIGN_START);",
+    "",
+    "    // A one-line text field the user can type in.",
+    "    GtkWidget *entry = gtk_entry_new();",
+    "",
+    "    // A tick box with its label beside it.",
+    "    GtkWidget *check = gtk_check_button_new_with_label(\"Subscribe\");",
+};
+static const char *const EX2_P2[] = {
+    "    // A second box, horizontal, to put two buttons side by side.",
+    "    // Boxes nest inside boxes: that is how layouts are built.",
+    "    GtkWidget *buttons = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);",
+    "    GtkWidget *ok = gtk_button_new_with_label(\"OK\");",
+    "    GtkWidget *cancel = gtk_button_new_with_label(\"Cancel\");",
+    "",
+    "    // A child normally takes only the width its content needs.",
+    "    // hexpand lets it grow into the spare room.",
+    "    gtk_widget_set_hexpand(ok, TRUE);",
+    "    gtk_widget_set_hexpand(cancel, TRUE);",
+    "",
+    "    // append() adds a child at the END of the box, so the order of",
+    "    // the calls is the order on screen.",
+    "    gtk_box_append(GTK_BOX(buttons), ok);",
+    "    gtk_box_append(GTK_BOX(buttons), cancel);",
+};
+static const char *const EX2_P3[] = {
+    "    // Fill the vertical box, top to bottom.",
+    "    gtk_box_append(GTK_BOX(column), prompt);",
+    "    gtk_box_append(GTK_BOX(column), entry);",
+    "    gtk_box_append(GTK_BOX(column), check);",
+    "    gtk_box_append(GTK_BOX(column), buttons);",
+    "",
+    "    // The vertical box is the window's one child.",
+    "    gtk_window_set_child(GTK_WINDOW(window), column);",
+    "    gtk_window_present(GTK_WINDOW(window));",
+    "}",
+    "",
+    "int main(int argc, char **argv)",
+    "{",
+    "    // Same four lines as module 1: create, connect, run, release.",
+    "    GtkApplication *app = gtk_application_new(",
+    "        \"com.example.layout\", G_APPLICATION_DEFAULT_FLAGS);",
+    "    g_signal_connect(app, \"activate\", G_CALLBACK(activate), NULL);",
+    "    int status = g_application_run(G_APPLICATION(app), argc, argv);",
+    "    g_object_unref(app);",
+    "    return status;",
+    "}",
+};
+static const char *const GOOD_APPEND[] = {
+    "gtk_box_append(GTK_BOX(column), prompt);",
+};
+static const char *const BAD_APPEND2[] = {
+    "gtk_box_append(GTK_BOX(box1), button);",
+    "gtk_box_append(GTK_BOX(box2), button);   // already in box1",
+};
+static const char *const GOOD_HALIGN[] = {
+    "gtk_widget_set_halign(prompt, GTK_ALIGN_START);",
+};
+static const char *const BAD_EXPAND[] = {
+    "gtk_widget_set_hexpand(ok, TRUE);       // expecting equal buttons",
+    "gtk_widget_set_hexpand(cancel, TRUE);",
+};
+static const char *const GOOD_EQUAL[] = {
+    "gtk_box_set_homogeneous(GTK_BOX(buttons), TRUE);",
+    "gtk_widget_set_hexpand(ok, TRUE);",
+    "gtk_widget_set_hexpand(cancel, TRUE);",
+};
+static const char *const EX3_P0[] = {
+    "// greeter.c : read a text field and a tick box when a button is used.",
+    "",
+    "#include <gtk/gtk.h>",
+    "",
+    "// The widgets that more than one function needs, kept together.",
+    "struct Ui {",
+    "    GtkWidget *entry;    // where the user types a name",
+    "    GtkWidget *shout;    // the \"Shout\" tick box",
+    "    GtkWidget *result;   // the label that shows the greeting",
+    "};",
+    "",
+    "// One file-level variable. \"static\" at file level means: visible only",
+    "// in this file, and it lives for the whole run of the program.",
+    "static struct Ui ui;",
+};
+static const char *const EX3_P1[] = {
+    "// The callback. GTK passes the object that emitted the signal first,",
+    "// then user_data last. Here the first one is ignored, and user_data is",
+    "// the &ui we hand over in g_signal_connect below.",
+    "static void greet(gpointer source, gpointer user_data)",
+    "{",
+    "    (void) source;",
+    "    struct Ui *u = user_data;   // plain pointer back into a Ui *",
+    "",
+    "    // The text belongs to the entry: read it, never free it.",
+    "    const char *name = gtk_editable_get_text(GTK_EDITABLE(u->entry));",
+    "    if (*name == '\\0') {   // nothing typed: say so and stop",
+    "        gtk_label_set_text(GTK_LABEL(u->result), \"Type a name first\");",
+    "        return;",
+    "    }",
+    "",
+    "    // g_strdup_printf builds a NEW string that we own and must free.",
+    "    char *message;",
+    "    if (gtk_check_button_get_active(GTK_CHECK_BUTTON(u->shout)))",
+    "        message = g_strdup_printf(\"HELLO, %s!\", name);",
+    "    else",
+    "        message = g_strdup_printf(\"Hello, %s.\", name);",
+    "",
+    "    // set_text copies the text, so we can free our copy straight away.",
+    "    gtk_label_set_text(GTK_LABEL(u->result), message);",
+    "    g_free(message);",
+    "}",
+};
+static const char *const EX3_P2[] = {
+    "static void activate(GtkApplication *app, gpointer user_data)",
+    "{",
+    "    (void) user_data;",
+    "    GtkWidget *window = gtk_application_window_new(app);",
+    "    gtk_window_set_title(GTK_WINDOW(window), \"Greeter\");",
+    "    gtk_window_set_default_size(GTK_WINDOW(window), 320, 160);",
+    "",
+    "    GtkWidget *column = gtk_box_new(GTK_ORIENTATION_VERTICAL, 8);",
+    "    gtk_widget_set_margin_top(column, 12);",
+    "    gtk_widget_set_margin_bottom(column, 12);",
+    "    gtk_widget_set_margin_start(column, 12);",
+    "    gtk_widget_set_margin_end(column, 12);",
+    "",
+    "    // Fill in the shared struct as the widgets are created.",
+    "    ui.entry = gtk_entry_new();",
+    "    ui.shout = gtk_check_button_new_with_label(\"Shout\");",
+    "    ui.result = gtk_label_new(\"\");",
+    "    GtkWidget *button = gtk_button_new_with_label(\"Greet\");",
+    "",
+    "    // Two different signals, one handler. The last argument, &ui,",
+    "    // arrives in greet() as user_data.",
+    "    g_signal_connect(button, \"clicked\", G_CALLBACK(greet), &ui);",
+    "    g_signal_connect(ui.entry, \"activate\", G_CALLBACK(greet), &ui);",
+    "",
+    "    gtk_box_append(GTK_BOX(column), ui.entry);",
+    "    gtk_box_append(GTK_BOX(column), ui.shout);",
+    "    gtk_box_append(GTK_BOX(column), button);",
+    "    gtk_box_append(GTK_BOX(column), ui.result);",
+    "    gtk_window_set_child(GTK_WINDOW(window), column);",
+    "    gtk_window_present(GTK_WINDOW(window));",
+    "}",
+    "",
+    "int main(int argc, char **argv)",
+    "{",
+    "    GtkApplication *app = gtk_application_new(",
+    "        \"com.example.greeter\", G_APPLICATION_DEFAULT_FLAGS);",
+    "    g_signal_connect(app, \"activate\", G_CALLBACK(activate), NULL);",
+    "    int status = g_application_run(G_APPLICATION(app), argc, argv);",
+    "    g_object_unref(app);",
+    "    return status;",
+    "}",
+};
+static const char *const GOOD_STATIC[] = {
+    "static struct Ui ui;   // file level: lives for the whole run",
+};
+static const char *const BAD_LOCAL[] = {
+    "static void activate(GtkApplication *app, gpointer user_data)",
+    "{",
+    "    struct Ui ui;   // local: ends when activate() returns",
+    "    g_signal_connect(button, \"clicked\", G_CALLBACK(greet), &ui);",
+    "}",
+};
+static const char *const BAD_NULL_STATE[] = {
+    "// the handler runs, but ui.entry was never assigned (NULL)",
+    "gtk_editable_get_text(GTK_EDITABLE(u->entry));",
+};
+static const char *const GOOD_GET[] = {
+    "const char *name = gtk_editable_get_text(GTK_EDITABLE(u->entry));",
+};
+static const char *const BAD_GET_LABEL[] = {
+    "gtk_editable_get_text(GTK_EDITABLE(u->result));   // a label",
+};
+static const char *const GOOD_FMT[] = {
+    "char *message = g_strdup_printf(\"Hello, %s.\", name);",
+    "gtk_label_set_text(GTK_LABEL(u->result), message);",
+    "g_free(message);   // the label copied it, so ours can go",
+};
+static const char *const EX4_P0[] = {
+    "// todo.c : a list that grows and shrinks while the program runs.",
+    "",
+    "#include <gtk/gtk.h>",
+    "",
+    "struct Ui {",
+    "    GtkWidget *entry;    // where a new task is typed",
+    "    GtkWidget *list;     // a vertical box holding one row per task",
+    "    GtkWidget *status;   // the \"N left\" label",
+    "};",
+    "",
+    "static struct Ui ui;",
+    "",
+    "// Recount and redraw the \"N left\" label. There is no counter variable:",
+    "// we ask the rows themselves, so the label cannot disagree with them.",
+    "static void refresh(void)",
+    "{",
+    "    int left = 0;",
+    "",
+    "    // Walk the list's children: first child, then each next sibling.",
+    "    for (GtkWidget *row = gtk_widget_get_first_child(ui.list);",
+    "         row != NULL; row = gtk_widget_get_next_sibling(row)) {",
+    "        // Each row has its check button stored under the name \"check\".",
+    "        GtkWidget *check = g_object_get_data(G_OBJECT(row), \"check\");",
+    "        if (!gtk_check_button_get_active(GTK_CHECK_BUTTON(check)))",
+    "            left++;",
+    "    }",
+    "",
+    "    char *text = g_strdup_printf(\"%d left\", left);   // we own this",
+    "    gtk_label_set_text(GTK_LABEL(ui.status), text);  // label copies it",
+    "    g_free(text);                                    // so we free ours",
+    "}",
+};
+static const char *const EX4_P1[] = {
+    "// Ticking a box emits \"toggled\": just recount.",
+    "static void on_toggled(gpointer source, gpointer user_data)",
+    "{",
+    "    (void) source;",
+    "    (void) user_data;",
+    "    refresh();",
+    "}",
+    "",
+    "// The \"x\" button. user_data is the row it belongs to.",
+    "static void on_delete(gpointer source, gpointer row)",
+    "{",
+    "    (void) source;",
+    "    // Remove the row from the list. The list lets go of it, which",
+    "    // frees it. We do not touch `row` again after this line.",
+    "    gtk_box_remove(GTK_BOX(ui.list), GTK_WIDGET(row));",
+    "    refresh();",
+    "}",
+};
+static const char *const EX4_P2[] = {
+    "// Add button, or Enter in the text field.",
+    "static void on_add(gpointer source, gpointer user_data)",
+    "{",
+    "    (void) source;",
+    "    (void) user_data;",
+    "    const char *text = gtk_editable_get_text(GTK_EDITABLE(ui.entry));",
+    "    if (*text == '\\0')   // ignore an empty entry",
+    "        return;",
+    "",
+    "    // Build one row: a horizontal box with a check button and an \"x\".",
+    "    GtkWidget *row = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);",
+    "    GtkWidget *check = gtk_check_button_new_with_label(text);",
+    "    GtkWidget *del = gtk_button_new_with_label(\"x\");",
+    "    gtk_widget_set_hexpand(check, TRUE);   // push the \"x\" to the right",
+    "",
+    "    // Attach the check button to the row under the name \"check\".",
+    "    g_object_set_data(G_OBJECT(row), \"check\", check);",
+    "",
+    "    g_signal_connect(check, \"toggled\", G_CALLBACK(on_toggled), NULL);",
+    "    g_signal_connect(del, \"clicked\", G_CALLBACK(on_delete), row);",
+    "    gtk_box_append(GTK_BOX(row), check);",
+    "    gtk_box_append(GTK_BOX(row), del);",
+    "    gtk_box_append(GTK_BOX(ui.list), row);   // now it is on screen",
+    "",
+    "    gtk_editable_set_text(GTK_EDITABLE(ui.entry), \"\");   // clear field",
+    "    refresh();",
+    "}",
+};
+static const char *const EX4_P3[] = {
+    "// Remove every ticked row.",
+    "static void on_clear_done(gpointer source, gpointer user_data)",
+    "{",
+    "    (void) source;",
+    "    (void) user_data;",
+    "    GtkWidget *row = gtk_widget_get_first_child(ui.list);",
+    "    while (row != NULL) {",
+    "        // Read the next row BEFORE a possible remove: afterwards",
+    "        // `row` may be freed and cannot be asked for its sibling.",
+    "        GtkWidget *next = gtk_widget_get_next_sibling(row);",
+    "        GtkWidget *check = g_object_get_data(G_OBJECT(row), \"check\");",
+    "        if (gtk_check_button_get_active(GTK_CHECK_BUTTON(check)))",
+    "            gtk_box_remove(GTK_BOX(ui.list), row);",
+    "        row = next;",
+    "    }",
+    "    refresh();",
+    "}",
+};
+static const char *const EX4_P4[] = {
+    "static void activate(GtkApplication *app, gpointer user_data)",
+    "{",
+    "    (void) user_data;",
+    "    GtkWidget *window = gtk_application_window_new(app);",
+    "    gtk_window_set_title(GTK_WINDOW(window), \"Todo\");",
+    "    gtk_window_set_default_size(GTK_WINDOW(window), 400, 420);",
+    "",
+    "    GtkWidget *column = gtk_box_new(GTK_ORIENTATION_VERTICAL, 8);",
+    "    gtk_widget_set_margin_top(column, 8);",
+    "    gtk_widget_set_margin_bottom(column, 8);",
+    "    gtk_widget_set_margin_start(column, 8);",
+    "    gtk_widget_set_margin_end(column, 8);",
+    "",
+    "    // Top row: text field, Add, Clear done.",
+    "    GtkWidget *top = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);",
+    "    ui.entry = gtk_entry_new();",
+    "    gtk_widget_set_hexpand(ui.entry, TRUE);   // field takes spare width",
+    "    GtkWidget *add = gtk_button_new_with_label(\"Add\");",
+    "    GtkWidget *clear = gtk_button_new_with_label(\"Clear done\");",
+    "    gtk_box_append(GTK_BOX(top), ui.entry);",
+    "    gtk_box_append(GTK_BOX(top), add);",
+    "    gtk_box_append(GTK_BOX(top), clear);",
+    "",
+    "    // The list of rows, inside a scrolling area so it can grow.",
+    "    ui.list = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);",
+    "    GtkWidget *scroll = gtk_scrolled_window_new();",
+    "    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scroll), ui.list);",
+    "    gtk_widget_set_vexpand(scroll, TRUE);   // take the spare height",
+    "",
+    "    ui.status = gtk_label_new(\"0 left\");",
+    "    gtk_widget_set_halign(ui.status, GTK_ALIGN_START);",
+    "",
+    "    g_signal_connect(ui.entry, \"activate\", G_CALLBACK(on_add), NULL);",
+    "    g_signal_connect(add, \"clicked\", G_CALLBACK(on_add), NULL);",
+    "    g_signal_connect(clear, \"clicked\", G_CALLBACK(on_clear_done), NULL);",
+    "",
+    "    gtk_box_append(GTK_BOX(column), top);",
+    "    gtk_box_append(GTK_BOX(column), scroll);",
+    "    gtk_box_append(GTK_BOX(column), ui.status);",
+    "    gtk_window_set_child(GTK_WINDOW(window), column);",
+    "    gtk_window_present(GTK_WINDOW(window));",
+    "}",
+    "",
+    "int main(int argc, char **argv)",
+    "{",
+    "    GtkApplication *app = gtk_application_new(",
+    "        \"com.example.todo\", G_APPLICATION_DEFAULT_FLAGS);",
+    "    g_signal_connect(app, \"activate\", G_CALLBACK(activate), NULL);",
+    "    int status = g_application_run(G_APPLICATION(app), argc, argv);",
+    "    g_object_unref(app);",
+    "    return status;",
+    "}",
+};
+static const char *const BAD_REMOVE_STRANGER[] = {
+    "gtk_box_remove(GTK_BOX(box), other);   // other is not in box",
+};
+static const char *const BAD_LOOP_REMOVE[] = {
+    "for (row = first; row; row = gtk_widget_get_next_sibling(row))",
+    "    if (ticked(row))",
+    "        gtk_box_remove(GTK_BOX(ui.list), row);",
+};
+static const char *const GOOD_LOOP_REMOVE[] = {
+    "GtkWidget *next = gtk_widget_get_next_sibling(row);   // read FIRST",
+    "if (ticked(row))",
+    "    gtk_box_remove(GTK_BOX(ui.list), row);",
+    "row = next;",
+};
+static const char *const GOOD_DATA[] = {
+    "g_object_set_data(G_OBJECT(row), \"check\", check);",
+    "GtkWidget *c = g_object_get_data(G_OBJECT(row), \"check\");",
+};
+static const char *const BAD_DATA[] = {
+    "GtkWidget *c = g_object_get_data(G_OBJECT(row), \"chek\");   // typo",
+};
+static const char *const GOOD_SCROLL[] = {
+    "gtk_widget_set_vexpand(scroll, TRUE);   // take the spare height",
+};
+
 void lesson_02_layout(void)
 {
     title("MODULE 2 - GTK: LAYOUT AND THE COMMON WIDGETS");
 
-    heading("A WINDOW HAS ONE CHILD");
+    heading("WHAT YOU WILL HAVE AT THE END");
 
-    printf("  Module 1 ended on a limit: gtk_window_set_child() takes one\n");
-    printf("  widget. A real window has a label, a text field, a few\n");
-    printf("  buttons. The answer is a container that is itself one\n");
-    printf("  widget and holds many: GtkBox lays its children out in a\n");
-    printf("  line, vertical or horizontal.\n\n");
+    printf("  A form: a label, a text field, a tick box and two buttons\n");
+    printf("  side by side, laid out the way you want. It does nothing yet.\n");
+    printf("  Making it do something is module 3.\n");
 
-    printf("    GtkWidget *column = gtk_box_new(GTK_ORIENTATION_VERTICAL, 8);\n");
-    printf("    gtk_box_append(GTK_BOX(column), label);\n");
-    printf("    gtk_box_append(GTK_BOX(column), entry);\n");
-    printf("    gtk_window_set_child(GTK_WINDOW(window), column);\n\n");
+    heading("THE IDEA: WIDGETS FORM A TREE");
 
-    printf("  The 8 is the gap in pixels between children. Children appear\n");
-    printf("  in the order they were appended. A row of buttons inside a\n");
-    printf("  column is a horizontal box appended to the vertical one --\n");
-    printf("  boxes nest, and that is how every layout in this course is\n");
-    printf("  built.\n\n");
+    printf("  Module 1 ended on a limit: a window holds ONE child. A real\n");
+    printf("  window has many widgets, so the one child is a container: a\n");
+    printf("  widget whose job is to hold and arrange other widgets.\n\n");
 
-    printf("  The window itself has no padding setting. Space around the\n");
-    printf("  edge is a margin on the outermost box, one call per side:\n\n");
-    printf("    gtk_widget_set_margin_top(column, 12);\n");
-    printf("    gtk_widget_set_margin_bottom(column, 12);\n");
-    printf("    gtk_widget_set_margin_start(column, 12);\n");
-    printf("    gtk_widget_set_margin_end(column, 12);\n");
+    printf("  The simplest container is GtkBox. It lays its children out\n");
+    printf("  in a line, vertical or horizontal. A box can hold another\n");
+    printf("  box, so a column of rows is just a vertical box whose\n");
+    printf("  children are horizontal boxes. Every layout in this course\n");
+    printf("  is built that way.\n\n");
+
+    printf("  Every widget has at most one parent. The window is the root\n");
+    printf("  of the tree, and the widgets you can see are its leaves.\n\n");
+
+    printf("  Size works like a negotiation. Each child asks for the room\n");
+    printf("  its content needs, and the box gives it that. Spare room\n");
+    printf("  goes only to children that asked to expand. Part 3 shows\n");
+    printf("  measured numbers.\n");
 
     wait_enter();
     clear_screen();
-    heading("PART 1: GTK3 tutorials do not compile");
+    heading("THE PROGRAM, PART 1 OF 4: THE COLUMN");
 
-    printf("  Search for \"GTK box example\" and most results are GTK3. Their\n");
-    printf("  calls were removed in GTK4. This file, written the GTK3 way:\n\n");
+    printf("  Save this as layout.c. All four parts are one file.\n\n");
+    code(LINES(EX2_P0));
 
-    rule();
-    printf("  #include <gtk/gtk.h>\n");
-    printf("  \n");
-    printf("  static void activate(GtkApplication *app, gpointer user_data)\n");
-    printf("  {\n");
-    printf("      (void) user_data;\n");
-    printf("      GtkWidget *window = gtk_application_window_new(app);\n");
-    printf("      GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 8);\n");
-    printf("      GtkWidget *button = gtk_button_new_with_label(\"Hi\");\n");
-    printf("      gtk_box_pack_start(GTK_BOX(box), button, TRUE, TRUE, 0);\n");
-    printf("      gtk_container_add(GTK_CONTAINER(window), box);\n");
-    printf("      gtk_widget_show_all(window);\n");
-    printf("  }\n");
-    rule();
+    wait_enter();
+    clear_screen();
+    heading("THE PROGRAM, PART 2 OF 4: THE WIDGETS");
 
-    printf("\n  gives, against GTK 4.22.5 with gcc 14.2.1 (-Wall -Wextra):\n\n");
+    code(LINES(EX2_P1));
 
-    printf("    error: implicit declaration of function 'gtk_box_pack_start'\n");
-    printf("    error: implicit declaration of function 'gtk_container_add'\n");
-    printf("    error: implicit declaration of function 'GTK_CONTAINER'\n");
-    printf("    error: implicit declaration of function 'gtk_widget_show_all'\n\n");
+    wait_enter();
+    clear_screen();
+    heading("THE PROGRAM, PART 3 OF 4: THE ROW OF BUTTONS");
 
-    printf("  \"Implicit declaration\" means the function does not exist in the\n");
-    printf("  headers you included -- not that you misspelled it. GCC 14\n");
-    printf("  made that an error; older GCC versions only warned. The GTK4\n");
-    printf("  replacements:\n\n");
+    code(LINES(EX2_P2));
 
-    printf("    GTK3                            GTK4\n");
+    wait_enter();
+    clear_screen();
+    heading("THE PROGRAM, PART 4 OF 4: ASSEMBLE AND RUN");
+
+    code(LINES(EX2_P3));
+
+    printf("\n  Compile and run it as in module 1. You should see a\n");
+    printf("  window with a name field, a tick box and two buttons.\n");
+
+    wait_enter();
+    clear_screen();
+    heading("REFERENCE 1/3: BOXES");
+
+    ref_head("GtkWidget *gtk_box_new(orientation, spacing)");
+    ref_line("Does:", "creates a box that lays its children out in a line.");
+    ref_line("Takes:", "orientation  GTK_ORIENTATION_VERTICAL or");
+    ref_line("", "             GTK_ORIENTATION_HORIZONTAL.");
+    ref_line("", "spacing      the gap between children, in pixels.");
+
+    ref_head("void gtk_box_append(box, child)");
+    ref_line("Does:", "adds child at the end of the box. Call order is the");
+    ref_line("", "order on screen.");
+    ref_line("Takes:", "box  a GtkBox * (use GTK_BOX), child  any widget.");
+    printf("\n");
+    code_good(LINES(GOOD_APPEND));
+    code_bad(LINES(BAD_APPEND2));
+    bad("Gtk-CRITICAL: gtk_box_append: assertion");
+    more("'gtk_widget_get_parent (child) == NULL' failed");
+    more("The second call is ignored: read back, the button stayed in box1.");
+    more("A widget has one parent. To move it, remove it first.");
+
+    ref_head("gtk_box_pack_start(...), gtk_container_add(...)  [GTK3]");
+    ref_line("Status:", "do not exist in GTK4. Tutorials written for GTK3");
+    ref_line("", "use them, which is the usual way to get stuck.");
+    bad("error: implicit declaration of function 'gtk_box_pack_start'");
+    more("error: implicit declaration of function 'gtk_container_add'");
+    more("error: implicit declaration of function 'gtk_widget_show_all'");
+    more("(gcc 14.2.1, GTK 4.22.5. \"Implicit declaration\" means the header");
+    more("you included does not declare it: it is not a typo.)");
+    printf("\n    GTK3                            GTK4\n");
     printf("    gtk_box_pack_start(box, w,...)  gtk_box_append(box, w)\n");
     printf("    gtk_container_add(window, w)    gtk_window_set_child(window, w)\n");
     printf("    gtk_widget_show_all(window)     gtk_window_present(window)\n");
 
     wait_enter();
     clear_screen();
-    heading("PART 2: the four widgets most forms are made of");
+    heading("REFERENCE 2/3: MARGINS AND THE FOUR WIDGETS");
 
-    printf("    gtk_label_new(\"text\")                  text the user reads\n");
-    printf("    gtk_entry_new()                        one line of typed text\n");
-    printf("    gtk_check_button_new_with_label(\"x\")   a tick box with a label\n");
-    printf("    gtk_button_new_with_label(\"OK\")        a button\n\n");
+    ref_head("void gtk_widget_set_margin_top(widget, pixels)");
+    ref_line("Also:", "gtk_widget_set_margin_bottom, _start, _end.");
+    ref_line("Does:", "adds empty space around a widget, one side per call.");
+    ref_line("", "(start and end are left and right in left-to-right text.)");
+    ref_line("Note:", "the window has no padding setting of its own. Space");
+    ref_line("", "around the edge is a margin on its outer box.");
 
-    printf("  A GtkLabel placed in a vertical box does not sit at the left\n");
-    printf("  by default: it stretches across the whole box. Measured on the\n");
-    printf("  example below, the \"Your name:\" label was 336 pixels wide (the\n");
-    printf("  full width of its column) with the default alignment, and 79\n");
-    printf("  once gtk_widget_set_halign(prompt, GTK_ALIGN_START) was set.\n");
-    printf("  START means \"take only what the text needs, and stay at the\n");
-    printf("  start edge\".\n");
+    ref_head("GtkWidget *gtk_label_new(text)");
+    ref_line("Does:", "text the user reads but cannot edit.");
 
-    wait_enter();
-    clear_screen();
-    heading("PART 3: children hug their content unless told otherwise");
+    ref_head("GtkWidget *gtk_entry_new()");
+    ref_line("Does:", "a one-line text field the user can type in.");
 
-    printf("  In the horizontal row, OK and Cancel are only as wide as their\n");
-    printf("  text. gtk_widget_set_hexpand(button, TRUE) lets a child grow\n");
-    printf("  into spare room. Measured on this author's machine, with the\n");
-    printf("  window 360 pixels wide:\n\n");
+    ref_head("GtkWidget *gtk_check_button_new_with_label(text)");
+    ref_line("Does:", "a tick box with text beside it.");
 
-    printf("    no hexpand                     OK  22 px   Cancel  49 px\n");
-    printf("    hexpand on both                OK 117 px   Cancel 143 px\n");
-    printf("    hexpand + gtk_box_set_homogeneous(box, TRUE)\n");
-    printf("                                   OK 130 px   Cancel 130 px\n\n");
-
-    printf("  The middle row is the trap. Both buttons grew, but they are\n");
-    printf("  still not equal: each one starts from its own text width, and\n");
-    printf("  the 27 px difference between \"OK\" and \"Cancel\" (22 against 49)\n");
-    printf("  shows up again as 26 px (117 against 143). To get equal\n");
-    printf("  widths, make the box homogeneous. The exact pixel counts\n");
-    printf("  depend on your theme and font; which row is equal and which\n");
-    printf("  is not does not.\n");
+    ref_head("void gtk_widget_set_halign(widget, align)");
+    ref_line("Does:", "where a widget sits across the space it is given.");
+    ref_line("Takes:", "GTK_ALIGN_START (left), GTK_ALIGN_CENTER, GTK_ALIGN_END");
+    ref_line("", "(right), or GTK_ALIGN_FILL (stretch, the default).");
+    printf("\n");
+    code_good(LINES(GOOD_HALIGN));
+    tip("Measured on the example: the \"Your name:\" label was 336 pixels");
+    more("wide (its whole column) with the default, and 79 with START.");
+    more("A label you want at the left edge needs START.");
 
     wait_enter();
     clear_screen();
-    heading("THE FULL EXAMPLE");
+    heading("REFERENCE 3/3: SIZE, EXPAND AND EQUAL WIDTHS");
 
-    printf("  A small form: a left-aligned label, a text field, a check\n");
-    printf("  button, and two buttons sharing a row. It does nothing yet --\n");
-    printf("  wiring widgets to behaviour is module 3.\n\n");
+    ref_head("void gtk_widget_set_hexpand(widget, TRUE)");
+    ref_line("Does:", "lets the widget grow into spare room in a horizontal");
+    ref_line("", "box. Its vertical twin is gtk_widget_set_vexpand.");
 
-    rule();
-    printf("  #include <gtk/gtk.h>\n");
-    printf("  \n");
-    printf("  static void activate(GtkApplication *app, gpointer user_data)\n");
-    printf("  {\n");
-    printf("      (void) user_data;\n");
-    printf("      GtkWidget *window = gtk_application_window_new(app);\n");
-    printf("      gtk_window_set_title(GTK_WINDOW(window), \"Layout\");\n");
-    printf("      gtk_window_set_default_size(GTK_WINDOW(window), 360, 160);\n");
-    printf("  \n");
-    printf("      GtkWidget *column = gtk_box_new(GTK_ORIENTATION_VERTICAL, 8);\n");
-    printf("      gtk_widget_set_margin_top(column, 12);\n");
-    printf("      gtk_widget_set_margin_bottom(column, 12);\n");
-    printf("      gtk_widget_set_margin_start(column, 12);\n");
-    printf("      gtk_widget_set_margin_end(column, 12);\n");
-    printf("  \n");
-    printf("      GtkWidget *prompt = gtk_label_new(\"Your name:\");\n");
-    printf("      gtk_widget_set_halign(prompt, GTK_ALIGN_START);\n");
-    printf("      GtkWidget *entry = gtk_entry_new();\n");
-    printf("      GtkWidget *check = gtk_check_button_new_with_label(\"Subscribe\");\n");
-    printf("  \n");
-    printf("      GtkWidget *buttons = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);\n");
-    printf("      GtkWidget *ok = gtk_button_new_with_label(\"OK\");\n");
-    printf("      GtkWidget *cancel = gtk_button_new_with_label(\"Cancel\");\n");
-    printf("      gtk_widget_set_hexpand(ok, TRUE);\n");
-    printf("      gtk_widget_set_hexpand(cancel, TRUE);\n");
-    printf("      gtk_box_append(GTK_BOX(buttons), ok);\n");
-    printf("      gtk_box_append(GTK_BOX(buttons), cancel);\n");
-    printf("  \n");
-    printf("      gtk_box_append(GTK_BOX(column), prompt);\n");
-    printf("      gtk_box_append(GTK_BOX(column), entry);\n");
-    printf("      gtk_box_append(GTK_BOX(column), check);\n");
-    printf("      gtk_box_append(GTK_BOX(column), buttons);\n");
-    printf("      gtk_window_set_child(GTK_WINDOW(window), column);\n");
-    printf("      gtk_window_present(GTK_WINDOW(window));\n");
-    printf("  }\n");
-    printf("  \n");
-    printf("  int main(int argc, char **argv)\n");
-    printf("  {\n");
-    printf("      GtkApplication *app = gtk_application_new(\n");
-    printf("          \"com.example.layout\", G_APPLICATION_DEFAULT_FLAGS);\n");
-    printf("      g_signal_connect(app, \"activate\", G_CALLBACK(activate), NULL);\n");
-    printf("      int status = g_application_run(G_APPLICATION(app), argc, argv);\n");
-    printf("      g_object_unref(app);\n");
-    printf("      return status;\n");
-    printf("  }\n");
-    rule();
+    ref_head("void gtk_box_set_homogeneous(box, TRUE)");
+    ref_line("Does:", "makes every child of the box the same size.");
 
-    printf("\n  Build and run it yourself:\n\n");
-    printf("    gcc -std=c11 -Wall -Wextra $(pkg-config --cflags gtk4) main.c -o app $(pkg-config --libs gtk4)\n");
-    printf("    ./app\n");
+    printf("\n  Measured on this machine (window 360 px wide; your theme and\n");
+    printf("  font change the numbers, not which row is equal):\n\n");
+
+    printf("    no expand                       OK  22 px   Cancel  49 px\n");
+    printf("    hexpand on both                 OK 117 px   Cancel 143 px\n");
+    printf("    hexpand + homogeneous           OK 130 px   Cancel 130 px\n\n");
+
+    code_bad(LINES(BAD_EXPAND));
+    bad("Both buttons grew, but they are not equal. Each starts from its");
+    more("own text width: the 27 px gap between OK and Cancel (22 and 49)");
+    more("comes back as 26 px (117 and 143). No error is printed.");
+    printf("\n");
+    code_good(LINES(GOOD_EQUAL));
+
+    wait_enter();
+    clear_screen();
+    heading("GOOD PRACTICE");
+
+    tip("Name each widget for what it is: prompt, entry, ok, cancel. A");
+    more("layout with names like w1, w2, w3 cannot be read back later.");
+    tip("Build a row as its own box, and a column as a box of rows. One");
+    more("box does one job.");
+    tip("Put the margin on the outer box once, and the gap between");
+    more("children in the box's spacing. Do not add margins to each child");
+    more("to fake spacing.");
+    tip("Ask for expansion on exactly the widgets that should grow: the");
+    more("text field, not every widget \"just in case\".");
+    tip("Group the calls for one widget together, with a comment per");
+    more("group, so activate() reads top to bottom like the screen.");
+    tip("Run from a terminal. Every CRITICAL line in this module was a");
+    more("call that was ignored.");
 
     wait_enter();
     clear_screen();
@@ -235,7 +628,7 @@ void lesson_02_layout(void)
     printf("  equal.\n\n");
 
     printf("  Compile with:\n");
-    printf("    gcc -std=c11 -Wall -Wextra $(pkg-config --cflags gtk4) main.c -o app $(pkg-config --libs gtk4)\n");
+    printf("    gcc -Wall -Wextra main.c -o app $(pkg-config --cflags --libs gtk4)\n");
 
     if (ask_yes("Want to see example code?")) {
         printf("\n");
@@ -266,183 +659,146 @@ void lesson_03_signals(void)
 {
     title("MODULE 3 - GTK: SIGNALS AND KEEPING STATE");
 
-    heading("A CALLBACK CAN SEE ONLY WHAT IT IS HANDED");
+    heading("WHAT YOU WILL HAVE AT THE END");
 
-    printf("  A form that does something has to read one widget when\n");
-    printf("  another is clicked. But a callback is a plain C function:\n");
-    printf("  its parameters are the widget that emitted the signal and\n");
-    printf("  the user_data pointer given to g_signal_connect. Nothing\n");
-    printf("  else is in scope. There are three ways to reach the widgets\n");
-    printf("  it needs: a global variable per widget, one widget through\n");
-    printf("  user_data (module 1's label), or -- the way used here -- a\n");
-    printf("  struct holding every widget the handlers share, passed\n");
-    printf("  through user_data:\n\n");
+    printf("  A greeter. You type a name, tick Shout, and press Greet or\n");
+    printf("  Enter. The window shows a greeting built from what you\n");
+    printf("  typed. This is the first window that reads your input.\n");
 
-    printf("    struct Ui {\n");
-    printf("        GtkWidget *entry;\n");
-    printf("        GtkWidget *shout;\n");
-    printf("        GtkWidget *result;\n");
-    printf("    };\n\n");
-    printf("    g_signal_connect(button, \"clicked\", G_CALLBACK(greet), &ui);\n\n");
+    heading("THE IDEA: A CALLBACK SEES ONLY WHAT IT IS HANDED");
 
-    printf("  and inside the handler, user_data is that pointer again:\n\n");
-    printf("    struct Ui *u = user_data;\n");
+    printf("  A callback is an ordinary C function. When GTK calls it, the\n");
+    printf("  only things it has are its parameters: the object that\n");
+    printf("  emitted the signal, and one extra pointer, user_data, that\n");
+    printf("  you chose when you connected it. Nothing else is in scope.\n\n");
 
-    wait_enter();
-    clear_screen();
-    heading("PART 1: where the struct lives");
+    printf("  So a handler that must read the text field when a button is\n");
+    printf("  clicked needs some way to reach that field. There are three:\n\n");
 
-    printf("  The obvious place to put it is where the widgets are made,\n");
-    printf("  inside activate():\n\n");
-    printf("    static void activate(GtkApplication *app, gpointer user_data)\n");
-    printf("    {\n");
-    printf("        struct Ui ui;                      /* <-- local variable */\n");
-    printf("        ...\n");
-    printf("        g_signal_connect(button, \"clicked\", G_CALLBACK(greet), &ui);\n");
-    printf("    }\n\n");
+    printf("    1. a global variable for each widget;\n");
+    printf("    2. user_data carrying one widget (module 1's label);\n");
+    printf("    3. user_data carrying a struct that holds all the widgets\n");
+    printf("       the handlers share.\n\n");
 
-    printf("  gcc -std=c11 -Wall -Wextra compiled that file with no output at\n");
-    printf("  all -- not even a warning. It is still a bug. activate() builds\n");
-    printf("  the window and returns straight away, and a local variable ends\n");
-    printf("  when its function does. The button is clicked later, from GTK's\n");
-    printf("  event loop; by then &ui points at stack space that something\n");
-    printf("  else is using. That is undefined behaviour, so this course does\n");
-    printf("  not run it. Same family as returning a pointer to a local\n");
-    printf("  array in plain C.\n\n");
-
-    printf("  The state has to outlive activate(). The simplest fix is a\n");
-    printf("  file-level static, which is what every example here uses:\n\n");
-    printf("    static struct Ui ui;\n\n");
-    printf("  A heap block from g_new0(struct Ui, 1) also works, but then\n");
-    printf("  something has to g_free it. A static struct for one window is\n");
-    printf("  enough until a program opens many.\n");
+    printf("  This course uses the third. It scales: adding a widget adds\n");
+    printf("  one field, not one more parameter on every function.\n");
 
     wait_enter();
     clear_screen();
-    heading("PART 2: who owns which string");
+    heading("THE PROGRAM, PART 1 OF 3: THE SHARED STATE");
 
-    printf("  Two calls return text, and they follow opposite rules:\n\n");
-
-    printf("    const char *name = gtk_editable_get_text(GTK_EDITABLE(entry));\n");
-    printf("    char *message = g_strdup_printf(\"Hello, %%s.\", name);\n\n");
-
-    printf("  gtk_editable_get_text returns a pointer into the entry. GTK\n");
-    printf("  owns it: you do not free it, and you must not change it. It\n");
-    printf("  is only good until the entry's text changes, so to keep the\n");
-    printf("  name past that, copy it with g_strdup.\n\n");
-
-    printf("  g_strdup_printf builds a new string and gives you ownership.\n");
-    printf("  You free it with g_free (not free -- GLib's allocator is the\n");
-    printf("  one that handed it out). The example calls g_free right after\n");
-    printf("  gtk_label_set_text, which copies the text, so the label does\n");
-    printf("  not depend on your copy surviving.\n\n");
-
-    printf("  Setting an entry's text goes through the same GtkEditable\n");
-    printf("  interface: gtk_editable_set_text(GTK_EDITABLE(entry), \"\")\n");
-    printf("  empties it.\n");
+    printf("  Save this as greeter.c. All three parts are one file.\n\n");
+    code(LINES(EX3_P0));
 
     wait_enter();
     clear_screen();
-    heading("PART 3: one handler, two signals");
+    heading("THE PROGRAM, PART 2 OF 3: THE HANDLER");
 
-    printf("  Pressing Enter in a GtkEntry emits \"activate\". Clicking a\n");
-    printf("  button emits \"clicked\". If both should do the same thing,\n");
-    printf("  connect both to one function instead of copying it:\n\n");
-
-    printf("    g_signal_connect(button, \"clicked\", G_CALLBACK(greet), &ui);\n");
-    printf("    g_signal_connect(ui.entry, \"activate\", G_CALLBACK(greet), &ui);\n\n");
-
-    printf("  Module 1's warning still applies: G_CALLBACK checks nothing.\n");
-    printf("  greet() is written as (gpointer source, gpointer user_data):\n");
-    printf("  both of these signals pass an object pointer first and the\n");
-    printf("  user_data last, and the handler ignores the object. A signal\n");
-    printf("  with extra parameters in the middle would need a different\n");
-    printf("  signature, which is why docs.gtk.org is worth opening for\n");
-    printf("  each new signal.\n");
+    code(LINES(EX3_P1));
 
     wait_enter();
     clear_screen();
-    heading("THE FULL EXAMPLE");
+    heading("THE PROGRAM, PART 3 OF 3: BUILD THE WINDOW");
 
-    printf("  A greeter. Clicking Greet or pressing Enter in the field\n");
-    printf("  shows a message, in capitals when Shout is ticked.\n\n");
-
-    rule();
-    printf("  #include <gtk/gtk.h>\n");
-    printf("  \n");
-    printf("  struct Ui {\n");
-    printf("      GtkWidget *entry;\n");
-    printf("      GtkWidget *shout;\n");
-    printf("      GtkWidget *result;\n");
-    printf("  };\n");
-    printf("  \n");
-    printf("  static struct Ui ui;\n");
-    printf("  \n");
-    printf("  static void greet(gpointer source, gpointer user_data)\n");
-    printf("  {\n");
-    printf("      (void) source;\n");
-    printf("      struct Ui *u = user_data;\n");
-    printf("  \n");
-    printf("      const char *name = gtk_editable_get_text(GTK_EDITABLE(u->entry));\n");
-    printf("      if (*name == '\\0') {\n");
-    printf("          gtk_label_set_text(GTK_LABEL(u->result), \"Type a name first\");\n");
-    printf("          return;\n");
-    printf("      }\n");
-    printf("  \n");
-    printf("      char *message;\n");
-    printf("      if (gtk_check_button_get_active(GTK_CHECK_BUTTON(u->shout)))\n");
-    printf("          message = g_strdup_printf(\"HELLO, %%s!\", name);\n");
-    printf("      else\n");
-    printf("          message = g_strdup_printf(\"Hello, %%s.\", name);\n");
-    printf("  \n");
-    printf("      gtk_label_set_text(GTK_LABEL(u->result), message);\n");
-    printf("      g_free(message);\n");
-    printf("  }\n");
-    printf("  \n");
-    printf("  static void activate(GtkApplication *app, gpointer user_data)\n");
-    printf("  {\n");
-    printf("      (void) user_data;\n");
-    printf("      GtkWidget *window = gtk_application_window_new(app);\n");
-    printf("      gtk_window_set_title(GTK_WINDOW(window), \"Greeter\");\n");
-    printf("      gtk_window_set_default_size(GTK_WINDOW(window), 320, 160);\n");
-    printf("  \n");
-    printf("      GtkWidget *column = gtk_box_new(GTK_ORIENTATION_VERTICAL, 8);\n");
-    printf("      gtk_widget_set_margin_top(column, 12);\n");
-    printf("      gtk_widget_set_margin_bottom(column, 12);\n");
-    printf("      gtk_widget_set_margin_start(column, 12);\n");
-    printf("      gtk_widget_set_margin_end(column, 12);\n");
-    printf("  \n");
-    printf("      ui.entry = gtk_entry_new();\n");
-    printf("      ui.shout = gtk_check_button_new_with_label(\"Shout\");\n");
-    printf("      ui.result = gtk_label_new(\"\");\n");
-    printf("      GtkWidget *button = gtk_button_new_with_label(\"Greet\");\n");
-    printf("  \n");
-    printf("      g_signal_connect(button, \"clicked\", G_CALLBACK(greet), &ui);\n");
-    printf("      g_signal_connect(ui.entry, \"activate\", G_CALLBACK(greet), &ui);\n");
-    printf("  \n");
-    printf("      gtk_box_append(GTK_BOX(column), ui.entry);\n");
-    printf("      gtk_box_append(GTK_BOX(column), ui.shout);\n");
-    printf("      gtk_box_append(GTK_BOX(column), button);\n");
-    printf("      gtk_box_append(GTK_BOX(column), ui.result);\n");
-    printf("      gtk_window_set_child(GTK_WINDOW(window), column);\n");
-    printf("      gtk_window_present(GTK_WINDOW(window));\n");
-    printf("  }\n");
-    printf("  \n");
-    printf("  int main(int argc, char **argv)\n");
-    printf("  {\n");
-    printf("      GtkApplication *app = gtk_application_new(\n");
-    printf("          \"com.example.greeter\", G_APPLICATION_DEFAULT_FLAGS);\n");
-    printf("      g_signal_connect(app, \"activate\", G_CALLBACK(activate), NULL);\n");
-    printf("      int status = g_application_run(G_APPLICATION(app), argc, argv);\n");
-    printf("      g_object_unref(app);\n");
-    printf("      return status;\n");
-    printf("  }\n");
-    rule();
+    code(LINES(EX3_P2));
 
     printf("\n  Checked by driving the real window from a test program:\n\n");
     printf("    click Greet, field empty         ->  Type a name first\n");
     printf("    type Ana, click Greet            ->  Hello, Ana.\n");
     printf("    tick Shout, press Enter          ->  HELLO, Ana!\n");
+
+    wait_enter();
+    clear_screen();
+    heading("REFERENCE 1/3: user_data AND WHERE THE STRUCT LIVES");
+
+    ref_head("g_signal_connect(instance, \"signal\", G_CALLBACK(fn), &ui)");
+    ref_line("Does:", "the fourth argument arrives in fn as its last");
+    ref_line("", "parameter, user_data. It is a plain pointer: you turn");
+    ref_line("", "it back into your type with a line like");
+    ref_line("", "struct Ui *u = user_data;");
+    printf("\n");
+    code_good(LINES(GOOD_STATIC));
+    code_bad(LINES(BAD_LOCAL));
+    bad("gcc -std=c11 -Wall -Wextra printed nothing for this file. It is");
+    more("still a bug. activate() builds the window and returns at once,");
+    more("and a local variable ends with its function. When the button is");
+    more("clicked later, &ui points at stack space something else is using:");
+    more("undefined behaviour, so this course does not run it.");
+    printf("\n");
+    code_bad(LINES(BAD_NULL_STATE));
+    bad("Gtk-CRITICAL: gtk_editable_get_text: assertion");
+    more("'GTK_IS_EDITABLE (editable)' failed");
+    more("Fill every field of the struct before the window is shown.");
+
+    wait_enter();
+    clear_screen();
+    heading("REFERENCE 2/3: TEXT IN AND OUT");
+
+    ref_head("const char *gtk_editable_get_text(editable)");
+    ref_line("Does:", "returns what is typed in a text field.");
+    ref_line("Takes:", "an entry (use GTK_EDITABLE(entry)).");
+    ref_line("Owner:", "GTK. It is good until the text next changes. You do");
+    ref_line("", "not free it. To keep it longer, copy it with g_strdup.");
+    printf("\n");
+    code_good(LINES(GOOD_GET));
+    code_bad(LINES(BAD_GET_LABEL));
+    bad("GLib-GObject-CRITICAL: invalid cast from 'GtkLabel' to 'GtkEditable'");
+    more("Gtk-CRITICAL: gtk_editable_get_text: assertion");
+    more("'GTK_IS_EDITABLE (editable)' failed");
+    more("It returned NULL. Passing that to printf or strlen would crash.");
+    bad("free(name) on the returned text is undefined behaviour (the text");
+    more("belongs to the entry), so it is explained here and not run.");
+
+    ref_head("void gtk_editable_set_text(editable, text)");
+    ref_line("Does:", "replaces the text in the field; \"\" empties it.");
+
+    ref_head("void gtk_label_set_text(label, text)");
+    ref_line("Does:", "replaces a label's text. The label keeps its own copy,");
+    ref_line("", "so your string may be freed straight afterwards.");
+
+    ref_head("gboolean gtk_check_button_get_active(check)");
+    ref_line("Does:", "TRUE when the box is ticked, FALSE when not.");
+
+    wait_enter();
+    clear_screen();
+    heading("REFERENCE 3/3: BUILDING A STRING, AND WHO FREES IT");
+
+    ref_head("char *g_strdup_printf(format, ...)");
+    ref_line("Does:", "like printf, but builds and returns a new string.");
+    ref_line("Owner:", "YOU. The memory is yours to release with g_free.");
+    ref_head("void g_free(pointer)");
+    ref_line("Does:", "releases memory from g_strdup_printf and the other");
+    ref_line("", "g_ allocators. Use g_free for these, not free().");
+    printf("\n");
+    code_good(LINES(GOOD_FMT));
+    bad("Forgetting g_free leaks one string per click. Nothing is printed,");
+    more("which is why it needs a habit: every g_strdup_printf gets a");
+    more("g_free on every path out of the function.");
+
+    ref_head("signal \"activate\" on a GtkEntry");
+    ref_line("Does:", "emitted when the user presses Enter in the field.");
+    ref_line("", "Connecting it to the same handler as the button's \"clicked\"");
+    ref_line("", "makes Enter and Greet do the same thing.");
+    ref_line("Note:", "greet is written (gpointer source, gpointer user_data):");
+    ref_line("", "both signals pass an object pointer first and user_data");
+    ref_line("", "last. A signal with other parameters needs another");
+    ref_line("", "signature. Check docs.gtk.org for each new signal.");
+
+    wait_enter();
+    clear_screen();
+    heading("GOOD PRACTICE");
+
+    tip("Keep shared widgets in one struct, at file level, and fill every");
+    more("field before the window is shown.");
+    tip("Return early on bad input (an empty name) instead of nesting the");
+    more("whole handler inside an if.");
+    tip("Every string you own gets exactly one g_free. Every string GTK");
+    more("owns gets none. When unsure, the function's documentation says");
+    more("who owns the result.");
+    tip("One handler per action, connected to every signal that means that");
+    more("action, instead of copying the code.");
+    tip("Do not trust a clean compile for pointer lifetimes: the local");
+    more("struct above compiled with no warnings at all.");
 
     wait_enter();
     clear_screen();
@@ -483,7 +839,7 @@ void lesson_03_signals(void)
     printf("  leaves an empty field and an empty label.\n\n");
 
     printf("  Compile with:\n");
-    printf("    gcc -std=c11 -Wall -Wextra $(pkg-config --cflags gtk4) main.c -o app $(pkg-config --libs gtk4)\n");
+    printf("    gcc -Wall -Wextra main.c -o app $(pkg-config --cflags --libs gtk4)\n");
 
     wait_enter();
     clear_screen();
@@ -508,244 +864,61 @@ void lesson_04_dynamic(void)
 {
     title("MODULE 4 - GTK: WIDGETS THAT COME AND GO");
 
-    heading("A LIST THAT CHANGES WHILE THE PROGRAM RUNS");
+    heading("WHAT YOU WILL HAVE AT THE END");
 
-    printf("  Everything so far built its widgets once, in activate().\n");
-    printf("  A todo list cannot: rows appear when the user presses Add\n");
-    printf("  and vanish when they press x. The calls are the same ones\n");
-    printf("  from modules 1-3, only made from inside a handler:\n\n");
+    printf("  A todo list. You type a task and press Add or Enter, and a\n");
+    printf("  row appears with a tick box and an x. Tick tasks, delete\n");
+    printf("  them, clear the finished ones, and a label tells you how\n");
+    printf("  many are left.\n");
 
-    printf("    GtkWidget *row = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);\n");
-    printf("    GtkWidget *check = gtk_check_button_new_with_label(text);\n");
-    printf("    GtkWidget *del = gtk_button_new_with_label(\"x\");\n");
-    printf("    gtk_box_append(GTK_BOX(row), check);\n");
-    printf("    gtk_box_append(GTK_BOX(row), del);\n");
-    printf("    gtk_box_append(GTK_BOX(ui.list), row);\n\n");
+    heading("THE IDEA: THE WIDGET TREE CAN CHANGE WHILE IT RUNS");
 
-    printf("  ui.list is a vertical box that already exists in the window.\n");
-    printf("  Appending to a box that is on screen shows the new child\n");
-    printf("  straight away; there is no \"redraw\" call to make. Read back\n");
-    printf("  from the real window, the first row added was mapped on\n");
-    printf("  screen and 34 pixels tall.\n");
+    printf("  Everything so far built its widgets once, in activate(). A\n");
+    printf("  todo list cannot: rows appear when the user presses Add and\n");
+    printf("  vanish when they press x. The calls are the same ones from\n");
+    printf("  modules 1 to 3, made from inside a handler, appended to a box\n");
+    printf("  that is already on screen. Three ideas make that manageable:\n\n");
 
-    wait_enter();
-    clear_screen();
-    heading("PART 1: per-row data without a second list");
+    printf("    1. Each row is a widget, so keep a row's data ON the row.\n");
+    printf("    2. Do not keep a copy of a fact the widgets already hold.\n");
+    printf("       The \"N left\" count is counted from the rows each time.\n");
+    printf("    3. A removed widget may be freed, so never touch it after\n");
+    printf("       the remove call.\n\n");
 
-    printf("  The \"x\" button must remove its own row, and Clear done must\n");
-    printf("  know which rows are ticked. Each row is a widget, so the\n");
-    printf("  program can ask the row. g_object_set_data attaches a named\n");
-    printf("  pointer to any widget:\n\n");
-
-    printf("    g_object_set_data(G_OBJECT(row), \"check\", check);\n");
-    printf("    ...\n");
-    printf("    GtkWidget *check = g_object_get_data(G_OBJECT(row), \"check\");\n\n");
-
-    printf("  The name is a string, so a typo gives NULL at run time, not an\n");
-    printf("  error at compile time -- the same property \"clicked\" had in\n");
-    printf("  module 1. The delete handler is told its row through\n");
-    printf("  user_data, which is module 3's other use of that argument:\n\n");
-
-    printf("    g_signal_connect(del, \"clicked\", G_CALLBACK(on_delete), row);\n");
+    printf("  Read back from the real window: after adding the first row,\n");
+    printf("  it was on screen (mapped) and 34 pixels tall, with no\n");
+    printf("  redraw call anywhere in the program.\n");
 
     wait_enter();
     clear_screen();
-    heading("PART 2: count by looking, not by keeping a number");
+    heading("THE PROGRAM, PART 1 OF 5: THE STATE AND THE COUNT");
 
-    printf("  \"N left\" could be an int incremented on Add and decremented on\n");
-    printf("  tick, delete and clear -- four places that must all agree. The\n");
-    printf("  example has no such int. refresh() walks the rows and counts\n");
-    printf("  the unticked ones every time:\n\n");
-
-    printf("    for (GtkWidget *row = gtk_widget_get_first_child(ui.list);\n");
-    printf("         row != NULL;\n");
-    printf("         row = gtk_widget_get_next_sibling(row)) { ... }\n\n");
-
-    printf("  The widgets are the one source of truth, so the label cannot\n");
-    printf("  drift away from what is on screen. This is a plain loop over\n");
-    printf("  a linked chain of widgets, and for a list the size of a todo\n");
-    printf("  list the cost does not matter.\n");
+    printf("  Save this as todo.c. All five parts are one file.\n\n");
+    code(LINES(EX4_P0));
 
     wait_enter();
     clear_screen();
-    heading("PART 3: removing while looping");
+    heading("THE PROGRAM, PART 2 OF 5: TICKING AND DELETING");
 
-    printf("  Clear done removes every ticked row. The natural loop is:\n\n");
-    printf("    for (row = first; row; row = gtk_widget_get_next_sibling(row))\n");
-    printf("        if (ticked(row))\n");
-    printf("            gtk_box_remove(GTK_BOX(ui.list), row);\n\n");
-
-    printf("  gtk_box_remove drops the box's reference to the row. As module\n");
-    printf("  1 showed, the container is what keeps its children alive, so\n");
-    printf("  the row can be freed right there. The loop's next step then\n");
-    printf("  calls gtk_widget_get_next_sibling on a row that may no longer\n");
-    printf("  exist: undefined behaviour, so not run here. Read the next\n");
-    printf("  sibling first, remove after:\n\n");
-
-    printf("    GtkWidget *row = gtk_widget_get_first_child(ui.list);\n");
-    printf("    while (row != NULL) {\n");
-    printf("        GtkWidget *next = gtk_widget_get_next_sibling(row);\n");
-    printf("        if (ticked(row))\n");
-    printf("            gtk_box_remove(GTK_BOX(ui.list), row);\n");
-    printf("        row = next;\n");
-    printf("    }\n\n");
-
-    printf("  Same rule as deleting from a linked list in plain C: save the\n");
-    printf("  link before you free the node. refresh() may use a for loop\n");
-    printf("  because it only reads.\n");
+    code(LINES(EX4_P1));
 
     wait_enter();
     clear_screen();
-    heading("PART 4: a list that scrolls");
+    heading("THE PROGRAM, PART 3 OF 5: ADDING A ROW");
 
-    printf("  Fifty rows would push the window taller than the screen. A\n");
-    printf("  GtkScrolledWindow around the list adds a scrollbar instead:\n\n");
-
-    printf("    GtkWidget *scroll = gtk_scrolled_window_new();\n");
-    printf("    gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scroll), ui.list);\n");
-    printf("    gtk_widget_set_vexpand(scroll, TRUE);\n\n");
-
-    printf("  The vexpand line is module 2's expand idea, vertically. Read\n");
-    printf("  back from the real window (420 pixels tall, empty list):\n");
-    printf("  the scroller was 297 pixels tall with vexpand on, and 46\n");
-    printf("  with it off, a thin strip under the buttons. Pixel counts\n");
-    printf("  depend on your theme; the difference does not.\n");
+    code(LINES(EX4_P2));
 
     wait_enter();
     clear_screen();
-    heading("THE FULL EXAMPLE");
+    heading("THE PROGRAM, PART 4 OF 5: CLEARING DONE ROWS");
 
-    printf("  The todo list: type a task, press Enter or Add; tick it; x\n");
-    printf("  deletes one row; Clear done deletes every ticked row.\n\n");
+    code(LINES(EX4_P3));
 
-    rule();
-    printf("  #include <gtk/gtk.h>\n");
-    printf("  \n");
-    printf("  struct Ui {\n");
-    printf("      GtkWidget *entry;\n");
-    printf("      GtkWidget *list;\n");
-    printf("      GtkWidget *status;\n");
-    printf("  };\n");
-    printf("  \n");
-    printf("  static struct Ui ui;\n");
-    printf("  \n");
-    printf("  static void refresh(void)\n");
-    printf("  {\n");
-    printf("      int left = 0;\n");
-    printf("      for (GtkWidget *row = gtk_widget_get_first_child(ui.list); row != NULL;\n");
-    printf("           row = gtk_widget_get_next_sibling(row)) {\n");
-    printf("          GtkWidget *check = g_object_get_data(G_OBJECT(row), \"check\");\n");
-    printf("          if (!gtk_check_button_get_active(GTK_CHECK_BUTTON(check)))\n");
-    printf("              left++;\n");
-    printf("      }\n");
-    printf("      char *text = g_strdup_printf(\"%%d left\", left);\n");
-    printf("      gtk_label_set_text(GTK_LABEL(ui.status), text);\n");
-    printf("      g_free(text);\n");
-    printf("  }\n");
-    printf("  \n");
-    printf("  static void on_toggled(gpointer source, gpointer user_data)\n");
-    printf("  {\n");
-    printf("      (void) source;\n");
-    printf("      (void) user_data;\n");
-    printf("      refresh();\n");
-    printf("  }\n");
-    printf("  \n");
-    printf("  static void on_delete(gpointer source, gpointer row)\n");
-    printf("  {\n");
-    printf("      (void) source;\n");
-    printf("      gtk_box_remove(GTK_BOX(ui.list), GTK_WIDGET(row));\n");
-    printf("      refresh();\n");
-    printf("  }\n");
-    printf("  \n");
-    printf("  static void on_add(gpointer source, gpointer user_data)\n");
-    printf("  {\n");
-    printf("      (void) source;\n");
-    printf("      (void) user_data;\n");
-    printf("      const char *text = gtk_editable_get_text(GTK_EDITABLE(ui.entry));\n");
-    printf("      if (*text == '\\0')\n");
-    printf("          return;\n");
-    printf("  \n");
-    printf("      GtkWidget *row = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);\n");
-    printf("      GtkWidget *check = gtk_check_button_new_with_label(text);\n");
-    printf("      GtkWidget *del = gtk_button_new_with_label(\"x\");\n");
-    printf("      gtk_widget_set_hexpand(check, TRUE);\n");
-    printf("      g_object_set_data(G_OBJECT(row), \"check\", check);\n");
-    printf("      g_signal_connect(check, \"toggled\", G_CALLBACK(on_toggled), NULL);\n");
-    printf("      g_signal_connect(del, \"clicked\", G_CALLBACK(on_delete), row);\n");
-    printf("      gtk_box_append(GTK_BOX(row), check);\n");
-    printf("      gtk_box_append(GTK_BOX(row), del);\n");
-    printf("      gtk_box_append(GTK_BOX(ui.list), row);\n");
-    printf("  \n");
-    printf("      gtk_editable_set_text(GTK_EDITABLE(ui.entry), \"\");\n");
-    printf("      refresh();\n");
-    printf("  }\n");
-    printf("  \n");
-    printf("  static void on_clear_done(gpointer source, gpointer user_data)\n");
-    printf("  {\n");
-    printf("      (void) source;\n");
-    printf("      (void) user_data;\n");
-    printf("      GtkWidget *row = gtk_widget_get_first_child(ui.list);\n");
-    printf("      while (row != NULL) {\n");
-    printf("          GtkWidget *next = gtk_widget_get_next_sibling(row);\n");
-    printf("          GtkWidget *check = g_object_get_data(G_OBJECT(row), \"check\");\n");
-    printf("          if (gtk_check_button_get_active(GTK_CHECK_BUTTON(check)))\n");
-    printf("              gtk_box_remove(GTK_BOX(ui.list), row);\n");
-    printf("          row = next;\n");
-    printf("      }\n");
-    printf("      refresh();\n");
-    printf("  }\n");
-    printf("  \n");
-    printf("  static void activate(GtkApplication *app, gpointer user_data)\n");
-    printf("  {\n");
-    printf("      (void) user_data;\n");
-    printf("      GtkWidget *window = gtk_application_window_new(app);\n");
-    printf("      gtk_window_set_title(GTK_WINDOW(window), \"Todo\");\n");
-    printf("      gtk_window_set_default_size(GTK_WINDOW(window), 400, 420);\n");
-    printf("  \n");
-    printf("      GtkWidget *column = gtk_box_new(GTK_ORIENTATION_VERTICAL, 8);\n");
-    printf("      gtk_widget_set_margin_top(column, 8);\n");
-    printf("      gtk_widget_set_margin_bottom(column, 8);\n");
-    printf("      gtk_widget_set_margin_start(column, 8);\n");
-    printf("      gtk_widget_set_margin_end(column, 8);\n");
-    printf("  \n");
-    printf("      GtkWidget *top = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 8);\n");
-    printf("      ui.entry = gtk_entry_new();\n");
-    printf("      gtk_widget_set_hexpand(ui.entry, TRUE);\n");
-    printf("      GtkWidget *add = gtk_button_new_with_label(\"Add\");\n");
-    printf("      GtkWidget *clear = gtk_button_new_with_label(\"Clear done\");\n");
-    printf("      gtk_box_append(GTK_BOX(top), ui.entry);\n");
-    printf("      gtk_box_append(GTK_BOX(top), add);\n");
-    printf("      gtk_box_append(GTK_BOX(top), clear);\n");
-    printf("  \n");
-    printf("      ui.list = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);\n");
-    printf("      GtkWidget *scroll = gtk_scrolled_window_new();\n");
-    printf("      gtk_scrolled_window_set_child(GTK_SCROLLED_WINDOW(scroll), ui.list);\n");
-    printf("      gtk_widget_set_vexpand(scroll, TRUE);\n");
-    printf("  \n");
-    printf("      ui.status = gtk_label_new(\"0 left\");\n");
-    printf("      gtk_widget_set_halign(ui.status, GTK_ALIGN_START);\n");
-    printf("  \n");
-    printf("      g_signal_connect(ui.entry, \"activate\", G_CALLBACK(on_add), NULL);\n");
-    printf("      g_signal_connect(add, \"clicked\", G_CALLBACK(on_add), NULL);\n");
-    printf("      g_signal_connect(clear, \"clicked\", G_CALLBACK(on_clear_done), NULL);\n");
-    printf("  \n");
-    printf("      gtk_box_append(GTK_BOX(column), top);\n");
-    printf("      gtk_box_append(GTK_BOX(column), scroll);\n");
-    printf("      gtk_box_append(GTK_BOX(column), ui.status);\n");
-    printf("      gtk_window_set_child(GTK_WINDOW(window), column);\n");
-    printf("      gtk_window_present(GTK_WINDOW(window));\n");
-    printf("  }\n");
-    printf("  \n");
-    printf("  int main(int argc, char **argv)\n");
-    printf("  {\n");
-    printf("      GtkApplication *app = gtk_application_new(\n");
-    printf("          \"com.example.todo\", G_APPLICATION_DEFAULT_FLAGS);\n");
-    printf("      g_signal_connect(app, \"activate\", G_CALLBACK(activate), NULL);\n");
-    printf("      int status = g_application_run(G_APPLICATION(app), argc, argv);\n");
-    printf("      g_object_unref(app);\n");
-    printf("      return status;\n");
-    printf("  }\n");
-    rule();
+    wait_enter();
+    clear_screen();
+    heading("THE PROGRAM, PART 5 OF 5: BUILD THE WINDOW");
+
+    code(LINES(EX4_P4));
 
     printf("\n  Checked by driving the real window from a test program:\n\n");
     printf("    add a, b, c, d                     ->  4 left, 4 rows\n");
@@ -754,6 +927,89 @@ void lesson_04_dynamic(void)
     printf("    delete one unticked row            ->  1 left, 2 rows\n");
     printf("    add e, f; tick two; Clear done     ->  2 left, 2 rows\n");
     printf("    tick everything; Clear done        ->  0 left, 0 rows\n");
+
+    wait_enter();
+    clear_screen();
+    heading("REFERENCE 1/3: WALKING AND CHANGING THE TREE");
+
+    ref_head("GtkWidget *gtk_widget_get_first_child(widget)");
+    ref_head("GtkWidget *gtk_widget_get_next_sibling(widget)");
+    ref_line("Does:", "walk a container's children: first, then each next one.");
+    ref_line("Returns:", "NULL when there is no more. That ends the loop.");
+
+    ref_head("void gtk_box_remove(box, child)");
+    ref_line("Does:", "takes child out of the box. The box lets go of it, and");
+    ref_line("", "if nothing else holds it, it is freed.");
+    printf("\n");
+    code_bad(LINES(BAD_REMOVE_STRANGER));
+    bad("Gtk-CRITICAL: gtk_box_remove: assertion");
+    more("'gtk_widget_get_parent (child) == (GtkWidget *)box' failed");
+    more("Nothing was removed. Only remove children of that exact box.");
+    printf("\n");
+    code_bad(LINES(BAD_LOOP_REMOVE));
+    bad("After the remove, row may be freed, and the loop then asks it for");
+    more("its next sibling. Undefined behaviour, so explained and not run.");
+    code_good(LINES(GOOD_LOOP_REMOVE));
+    more("Same rule as deleting from a linked list in plain C: save the");
+    more("link before you free the node.");
+
+    wait_enter();
+    clear_screen();
+    heading("REFERENCE 2/3: DATA ON A WIDGET");
+
+    ref_head("void g_object_set_data(object, \"name\", pointer)");
+    ref_head("gpointer g_object_get_data(object, \"name\")");
+    ref_line("Does:", "attach a pointer to any widget under a text name, and");
+    ref_line("", "read it back later. Here each row stores its check button.");
+    ref_line("Returns:", "NULL from get_data when the name was never set.");
+    printf("\n");
+    code_good(LINES(GOOD_DATA));
+    code_bad(LINES(BAD_DATA));
+    bad("The name is only text, so a typo compiles and returns NULL (read");
+    more("back: (nil)). Using that NULL then prints:");
+    more("Gtk-CRITICAL: gtk_check_button_get_active: assertion");
+    more("'GTK_IS_CHECK_BUTTON (self)' failed");
+    more("and the call returns 0 as if the box were not ticked.");
+
+    ref_head("void gtk_check_button_set_active(check, TRUE)");
+    ref_line("Does:", "ticks or unticks a box from code. It emits \"toggled\", so");
+    ref_line("", "handlers connected to it run, as if the user had clicked.");
+
+    wait_enter();
+    clear_screen();
+    heading("REFERENCE 3/3: COUNT, DO NOT KEEP A COUNTER");
+
+    printf("  \"N left\" could be an int that Add increments and tick,\n");
+    printf("  delete and Clear change: four places that must all agree.\n");
+    printf("  The program has no such int. refresh() walks the rows and\n");
+    printf("  counts the unticked ones every time. The widgets are the one\n");
+    printf("  source of truth, so the label cannot drift away from what is\n");
+    printf("  on screen. For a list this size the loop costs nothing.\n\n");
+
+    ref_head("GtkWidget *gtk_scrolled_window_new()");
+    ref_head("void gtk_scrolled_window_set_child(scrolled, child)");
+    ref_line("Does:", "a viewport with scrollbars around its child, so a");
+    ref_line("", "long list scrolls instead of growing the window.");
+    printf("\n");
+    code_good(LINES(GOOD_SCROLL));
+    tip("Read back from the real window (420 px tall, empty list): the");
+    more("scroller was 297 px tall with vexpand on and 46 px with it off,");
+    more("a thin strip under the buttons.");
+
+    wait_enter();
+    clear_screen();
+    heading("GOOD PRACTICE");
+
+    tip("Keep a row's data on the row (g_object_set_data) or in a struct");
+    more("the row owns. Do not keep a second list that must match.");
+    tip("Derive values from the widgets (count, ticked state) instead of");
+    more("mirroring them in variables.");
+    tip("In a loop that removes, read the next pointer first.");
+    tip("After gtk_box_remove, treat the removed widget as gone. Do not");
+    more("read it, and do not store it.");
+    tip("Reject empty input at the top of the handler, once.");
+    tip("Wrap a list in a GtkScrolledWindow from the start. Adding it");
+    more("later changes the layout.");
 
     wait_enter();
     clear_screen();
@@ -792,7 +1048,7 @@ void lesson_04_dynamic(void)
     printf("  every box ticked and the label reads 0 left.\n\n");
 
     printf("  Compile with:\n");
-    printf("    gcc -std=c11 -Wall -Wextra $(pkg-config --cflags gtk4) main.c -o app $(pkg-config --libs gtk4)\n");
+    printf("    gcc -Wall -Wextra main.c -o app $(pkg-config --cflags --libs gtk4)\n");
 
     if (ask_yes("Want to see example code?")) {
         printf("\n");
@@ -836,3 +1092,4 @@ void lesson_04_dynamic(void)
     }
     wait_enter();
 }
+
