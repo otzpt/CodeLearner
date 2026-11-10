@@ -67,16 +67,19 @@ static const char *const TEXT[][2] = {
     { "other course here. It teaches CSS; it never opens a page.", "os outros daqui. Ensina CSS; nunca abre uma página." },
     { "other course here. It teaches Web JavaScript; it never opens a page.", "os outros daqui. Ensina JavaScript web; nunca abre uma página." },
     { "NO GUI -- this course is a CLI program, same as every other", "SEM INTERFACE GRÁFICA: este curso é um programa de terminal," },
-    { "course here. It teaches GTK; it does not open a window itself.", "como todos os outros. Ensina GTK; ele próprio não abre janelas." },
+    { "course here. It teaches GTK and raylib; it does not open a window itself.", "como todos os outros. Ensina GTK e raylib; ele próprio não abre janelas." },
     { "SUMMARY", "RESUMO" },
     { "BASIC", "BÁSICO" },
     { "INTERMEDIATE", "INTERMÉDIO" },
     { "ADVANCED", "AVANÇADO" },
-    { "GUI COURSE - GTK", "CURSO DE GUI - GTK" },
+    { "GUI COURSE - GTK, RAYLIB", "CURSO DE GUI - GTK, RAYLIB" },
     { "GTK: your first window", "GTK: a tua primeira janela" },
     { "GTK: layout and the common widgets", "GTK: disposição e os widgets comuns" },
     { "GTK: signals and keeping state", "GTK: sinais e guardar estado" },
     { "GTK: widgets that come and go (a todo list)", "GTK: widgets que aparecem e desaparecem (lista de tarefas)" },
+    { "raylib: your first window and the loop", "raylib: a tua primeira janela e o ciclo" },
+    { "raygui: buttons, text and state", "raygui: botões, texto e estado" },
+    { "raygui: a todo list", "raygui: uma lista de tarefas" },
 };
 
 const char *tr(const char *text)
@@ -155,12 +158,49 @@ static const char *const SUMMARY_4[] = {
     NULL,
 };
 
+static const char *const SUMMARY_5[] = {
+    "   - o raylib redesenha o frame inteiro num ciclo; nada é guardado",
+    "     por ti entre frames",
+    "   - SetTargetFPS limita o ciclo: 60 frames por segundo contra",
+    "     12134 medidos sem ele",
+    "   - desenha entre BeginDrawing e EndDrawing; o y cresce para baixo",
+    "   - um ficheiro em falta é um WARNING registado, não um crash",
+    NULL,
+};
+
+static const char *const SUMMARY_6[] = {
+    "   - um widget do raygui é uma chamada de função que desenha e",
+    "     responde de uma vez; as tuas variáveis guardam o estado",
+    "   - GuiCheckBox recebe um ponteiro; GuiTextBox recebe o tamanho",
+    "     real do buffer e és tu que alternas o editMode",
+    "   - o resultado do TextFormat é um buffer reutilizado: usa-o logo",
+    "   - GuiSetStyle recebe ints; ColorToInt converte uma Color",
+    NULL,
+};
+
+static const char *const SUMMARY_7[] = {
+    "   - a lista é um array; a janela redesenha-o a cada frame",
+    "   - mantém as funções de dados sem desenho, para poderem ser",
+    "     testadas",
+    "   - nunca apagues dentro do ciclo que desenha: regista o pedido e",
+    "     apaga depois",
+    "   - o strncpy pode não terminar a string; termina-a tu",
+    "",
+    "  Não coberto: scroll de listas longas, outros controlos do raygui",
+    "  (sliders, listas) e carregar imagens e som com o raylib. A folha",
+    "  de consulta do raylib lista-os.",
+    NULL,
+};
+
 static const char *const *const SUMMARIES[] = {
     NULL,
     SUMMARY_1,
     SUMMARY_2,
     SUMMARY_3,
     SUMMARY_4,
+    SUMMARY_5,
+    SUMMARY_6,
+    SUMMARY_7,
 };
 
 int print_summary_pt(int module)

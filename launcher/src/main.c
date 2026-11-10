@@ -164,7 +164,7 @@ static const struct Language LANGUAGES[] = {
      * split to make explicit here -- the run/run.bat wrapper covers it. */
     { "C#",         CSHARP_BIN, CSHARP_BIN, NULL },
     /* Plain C programs that teach these languages, the same arrangement as
-     * GUI (GTK) below. None of them opens a browser. */
+     * GUI (GTK, raylib) below. None of them opens a browser. */
     { "HTML",       HTML_BIN, HTML_BIN, "WEB" },
     { "CSS",        CSS_BIN,  CSS_BIN, "WEB" },
     { "Web JavaScript", WEBJS_BIN, WEBJS_BIN, "WEB" },
@@ -180,7 +180,7 @@ static const struct Language LANGUAGES[] = {
     /* Not a language -- GTK, a C library -- but treated as a peer entry
      * here on purpose, the same way it gets its own top-level course
      * directory instead of living inside c/'s module list. */
-    { "GUI (GTK)",  GUI_BIN,  GUI_BIN, "GUI" },
+    { "GUI (GTK, raylib)",  GUI_BIN,  GUI_BIN, "GUI" },
 #ifdef _WIN32
     /* Same reasoning as Python/JavaScript's own installer story, the
      * other way around: python.org's and Node's installers are what

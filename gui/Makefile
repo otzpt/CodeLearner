@@ -12,7 +12,7 @@
 CC      = cc
 CFLAGS  = -std=c11 -Wall -Wextra -g
 TARGET  = gui-course
-SOURCES = src/main.c src/ui.c src/strings_pt.c src/lessons_gtk.c src/lessons_widgets.c
+SOURCES = src/main.c src/ui.c src/strings_pt.c src/lessons_gtk.c src/lessons_widgets.c src/lessons_raylib.c
 OBJECTS = $(SOURCES:.c=.o)
 
 $(TARGET): $(OBJECTS)

@@ -48,7 +48,7 @@ install options are under [Installing](#installing)):
    [14]  Security
 
    -- GUI --
-   [15]  GUI (GTK)
+   [15]  GUI (GTK, raylib)
 
    -- TOOLING --
    [16]  Git
@@ -85,7 +85,7 @@ for C and Python libraries, each with an example that runs on your machine.
 | Web | CSS | 5: the box and normal flow, Flexbox, Grid, responsive design, modern CSS and the cascade | [`css/`](css/) |
 | Web | Web JavaScript | 5: the DOM, events, forms, `fetch`, state and storage | [`webjs/`](webjs/) |
 | Security | Security | 2 so far: a topic course in Python. HTTP requests, what a server's headers reveal, the urllib 4xx/5xx-raises trap, and why plain HTTP is readable on the wire | [`security/`](security/) |
-| GUI | GUI (GTK) | 4: a first window, layout and widgets, signals and state, and a todo list that adds and removes widgets | [`gui/`](gui/) |
+| GUI | GUI (GTK, raylib) | 7: GTK4 in four modules (a first window, layout and widgets, signals and state, a todo list that adds and removes widgets), then raylib and raygui in three (the loop, buttons and state, the same todo list) | [`gui/`](gui/) |
 | Tooling | Git | 10: what is git through GitHub Actions | [`git/`](git/) |
 | Reference | Libraries | a reference manual, not a course: man-page style pages for the C and Python libraries (standard C, POSIX, Linux, /proc and /sys, raylib), each example run live | [`libraries/`](libraries/) |
 | | Launcher | done: pick a language, open its course | [`launcher/`](launcher/) |
@@ -681,6 +681,9 @@ file the way it points at Python's and JavaScript's entry scripts.
 | 2 | GTK: layout and the common widgets | a window has one child, so `GtkBox`; GTK3 calls (`gtk_box_pack_start`, `gtk_container_add`) are "implicit declaration" errors in GTK4; `hexpand` alone does not make children equal, `homogeneous` does |
 | 3 | GTK: signals and keeping state | a struct passed as `user_data` must outlive `activate()` (a local compiles silently and is a bug); `gtk_editable_get_text` is GTK's string, `g_strdup_printf` is yours to `g_free` |
 | 4 | GTK: widgets that come and go (a todo list) | per-row data with `g_object_set_data`; count by walking the widgets instead of keeping a number; read `gtk_widget_get_next_sibling` before `gtk_box_remove` |
+| 5 | raylib: your first window and the loop | immediate mode (redraw everything every frame); `SetTargetFPS`: 12134 frames a second without it, 60 with; a missing file is a logged WARNING, not a crash |
+| 6 | raygui: buttons, text and state | a widget is a function call that draws and answers; your variables hold the state; `GuiCheckBox` takes a pointer, `GuiTextBox` takes the real buffer size; `TextFormat` reuses its buffers |
+| 7 | raygui: a todo list | the list is an array, not widgets; never delete inside the loop that draws (it skips a row); `strncpy` may not terminate |
 
 Not a language — GTK is a C library — but it gets the same treatment as
 one: its own directory, its own zero-dependency binary teaching it, its own
@@ -706,14 +709,31 @@ click) instead of diffing against captured stdout — the same accommodation
 module 11 in the C course already makes for output that depends on a
 random number.
 
-Modules 2 to 4 are what a simple GTK4 window needs: layout, widgets, behaviour
-and a list that changes at run time. Every example is a file that was compiled
-with `-std=c11 -Wall -Wextra` and then driven by a test program against the
-real window (set text, tick check buttons, emit `clicked` and `activate`, assert
-on labels and row counts). The few pixel measurements the lessons quote were
-read back from the real widgets on the author's machine and are labelled as
-such. Styling with CSS, `GtkBuilder` `.ui` files and model-based list widgets
-are not covered.
+Every module follows one shape, like a chapter of a C book: the idea first,
+the program in commented parts (every line explained), a reference entry for
+every function and macro (what it does, what it takes, what it returns) with a
+good use and a bad use, then a good-practice screen and the exercises. Every
+bad use was compiled or run, and the error or message quoted next to it is
+its real output. Undefined behaviour is explained, not run.
+
+Modules 1 to 4 are what a simple GTK4 window needs: the first window, layout,
+widgets, behaviour and a list that changes at run time. Modules 5 to 7 do the
+same job with raylib and raygui, which work the opposite way (immediate mode:
+no widget objects, the loop redraws everything each frame), so the two
+toolkits can be compared on the same todo list. Every example was compiled with
+`-std=c11 -Wall -Wextra` and, for GTK, driven by a test program against the
+real window (set text, tick check buttons, emit `clicked` and `activate`,
+assert on labels and row counts). The raylib examples were started and ran; the
+todo list's data functions were tested without a window. The few pixel and
+timing measurements the lessons quote were read back on the author's machine
+and are labelled as such. The raylib modules were tested with raylib 6.5-dev
+(commit `0dedaf3066`) and raygui 5.1-dev (commit `2a3c4790c6`), which module 5
+tells the student to check out. Clicking and typing in the raygui windows were
+not driven by a test. Styling GTK with CSS, `GtkBuilder` files, model-based
+lists, and raygui scroll panels are not covered.
+
+The course prints in colour when it runs in a terminal. `NO_COLOR=1` turns it
+off, as does piping the output; `CODELEARNER_COLOR=1` forces it on.
 
 ## The Assembly course
 

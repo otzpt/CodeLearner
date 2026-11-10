@@ -14,5 +14,8 @@ void lesson_01_gtk(void);
 void lesson_02_layout(void);
 void lesson_03_signals(void);
 void lesson_04_dynamic(void);
+void lesson_05_raylib(void);
+void lesson_06_raygui(void);
+void lesson_07_raylib_todo(void);
 
 #endif

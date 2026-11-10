@@ -28,6 +28,9 @@ static const struct Module MODULES[] = {
     { "GTK: layout and the common widgets", lesson_02_layout, "BASIC" },
     { "GTK: signals and keeping state", lesson_03_signals, "INTERMEDIATE" },
     { "GTK: widgets that come and go (a todo list)", lesson_04_dynamic, "INTERMEDIATE" },
+    { "raylib: your first window and the loop", lesson_05_raylib, "INTERMEDIATE" },
+    { "raygui: buttons, text and state", lesson_06_raygui, "INTERMEDIATE" },
+    { "raygui: a todo list", lesson_07_raylib_todo, "INTERMEDIATE" },
 };
 
 #define MODULE_COUNT (int)(sizeof MODULES / sizeof MODULES[0])
@@ -37,9 +40,9 @@ static const char *const EMPTY_TIERS[] = { "ADVANCED" };
 static void show_menu(void)
 {
     clear_screen();
-    title(tr("GUI COURSE - GTK"));
+    title(tr("GUI COURSE - GTK, RAYLIB"));
     printf("  %s\n", tr("NO GUI -- this course is a CLI program, same as every other"));
-    printf("  %s\n", tr("course here. It teaches GTK; it does not open a window itself."));
+    printf("  %s\n", tr("course here. It teaches GTK and raylib; it does not open a window itself."));
 
     const char *shown_tier = "";
     for (int i = 0; i < MODULE_COUNT; i++) {
