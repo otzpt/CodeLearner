@@ -74,6 +74,9 @@ static const char *const TEXT[][2] = {
     { "ADVANCED", "AVANÇADO" },
     { "RAYLIB COURSE", "CURSO DE RAYLIB" },
     { "raylib: your first window and the loop", "raylib: a tua primeira janela e o ciclo" },
+    { "raylib: shapes, colours and text", "raylib: formas, cores e texto" },
+    { "raylib: keyboard, mouse and clicks", "raylib: teclado, rato e cliques" },
+    { "raylib: time, movement and collision", "raylib: tempo, movimento e colisão" },
     { "raygui: buttons, text and state", "raygui: botões, texto e estado" },
     { "raygui: a todo list", "raygui: uma lista de tarefas" },
 };
@@ -101,6 +104,37 @@ static const char *const SUMMARY_1[] = {
 };
 
 static const char *const SUMMARY_2[] = {
+    "   - a origem é o canto superior esquerdo e o y cresce para baixo;",
+    "     as formas desenhadas depois cobrem as anteriores",
+    "   - um retângulo cobre de x até x + largura - 1",
+    "   - usa Fade() para transparência: um alfa fracionário vira 0",
+    "   - os triângulos precisam de pontos no sentido anti-horário, ou",
+    "     desaparecem",
+    "   - centra o texto com MeasureText",
+    NULL,
+};
+
+static const char *const SUMMARY_3[] = {
+    "   - pergunta a cada frame: Down é verdadeiro em todas as frames em",
+    "     que está premido, Pressed numa só, Released numa só",
+    "   - um clique é Pressed mais um teste de colisão com o ponteiro",
+    "   - uma caixa inclui as arestas de cima e da esquerda e exclui",
+    "     x + largura e y + altura",
+    "   - GetCharPressed para texto escrito, constantes de tecla para",
+    "     controlos",
+    NULL,
+};
+
+static const char *const SUMMARY_4[] = {
+    "   - move por velocidade * GetFrameTime(), nunca por uma quantidade",
+    "     fixa por frame (93 px contra 183 px medidos)",
+    "   - normaliza uma direção antes de a multiplicar pela velocidade",
+    "   - arestas que só se tocam não colidem; sobrepor colide",
+    "   - mantém as regras numa função sem desenho",
+    NULL,
+};
+
+static const char *const SUMMARY_5[] = {
     "   - um widget do raygui é uma chamada de função que desenha e",
     "     responde de uma vez; as tuas variáveis guardam o estado",
     "   - GuiCheckBox recebe um ponteiro; GuiTextBox recebe o tamanho",
@@ -110,7 +144,7 @@ static const char *const SUMMARY_2[] = {
     NULL,
 };
 
-static const char *const SUMMARY_3[] = {
+static const char *const SUMMARY_6[] = {
     "   - a lista é um array; a janela redesenha-o a cada frame",
     "   - mantém as funções de dados sem desenho, para poderem ser",
     "     testadas",
@@ -129,6 +163,9 @@ static const char *const *const SUMMARIES[] = {
     SUMMARY_1,
     SUMMARY_2,
     SUMMARY_3,
+    SUMMARY_4,
+    SUMMARY_5,
+    SUMMARY_6,
 };
 
 int print_summary_pt(int module)

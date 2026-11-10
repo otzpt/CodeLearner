@@ -25,8 +25,11 @@ struct Module {
 
 static const struct Module MODULES[] = {
     { "raylib: your first window and the loop", lesson_01_raylib, "BASIC" },
-    { "raygui: buttons, text and state", lesson_02_raygui, "BASIC" },
-    { "raygui: a todo list", lesson_03_todo, "INTERMEDIATE" },
+    { "raylib: shapes, colours and text", lesson_02_shapes, "BASIC" },
+    { "raylib: keyboard, mouse and clicks", lesson_03_input, "BASIC" },
+    { "raylib: time, movement and collision", lesson_04_move, "INTERMEDIATE" },
+    { "raygui: buttons, text and state", lesson_05_raygui, "INTERMEDIATE" },
+    { "raygui: a todo list", lesson_06_todo, "INTERMEDIATE" },
 };
 
 #define MODULE_COUNT (int)(sizeof MODULES / sizeof MODULES[0])

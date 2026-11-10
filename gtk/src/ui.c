@@ -3,7 +3,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <string.h>
+#ifndef _WIN32
+#include <sys/ioctl.h>
+#endif
 
 #ifdef _WIN32
 #include <io.h>
@@ -51,6 +55,107 @@ void ui_init(void)
 /* Inside width of the frame. Changing this changes every box in the course. */
 #define WIDTH 54
 
+/* ---- paging (see ui.h) -------------------------------------------------- */
+
+static int page_rows = -1;   /* -1 not decided yet, 0 paging off */
+static int page_cols = 80;
+static int page_lines;       /* lines shown since the last clear */
+
+static void page_init(void)
+{
+    page_rows = 0;
+#ifndef _WIN32
+    if (isatty(fileno(stdout)) && getenv("CODELEARNER_NO_PAGER") == NULL) {
+        struct winsize w;
+        if (ioctl(STDOUT_FILENO, TIOCGWINSZ, &w) == 0 && w.ws_row > 8) {
+            page_rows = w.ws_row;
+            page_cols = w.ws_col > 20 ? w.ws_col : 80;
+        }
+    }
+#endif
+}
+
+static void ui_page_reset(void)
+{
+    page_lines = 0;
+}
+
+/* Visible columns of s[0..len): ANSI colour codes take none. */
+static int visible_width(const char *s, size_t len)
+{
+    int width = 0;
+    for (size_t i = 0; i < len; i++) {
+        if (s[i] == '\033' && i + 1 < len && s[i + 1] == '[') {
+            i += 2;
+            while (i < len && !((s[i] >= 'A' && s[i] <= 'Z') || (s[i] >= 'a' && s[i] <= 'z'))) {
+                i++;
+            }
+        } else if (((unsigned char) s[i] & 0xC0) != 0x80) {
+            width++;   /* count UTF-8 characters, not bytes */
+        }
+    }
+    return width;
+}
+
+static void page_pause(void)
+{
+    fputs("  \033[2m-- more: press ENTER --\033[0m", stdout);
+    fflush(stdout);
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF) {
+        /* discard */
+    }
+    fputs("\033[A\033[2K\r", stdout);   /* erase the prompt line */
+    page_lines = 0;
+}
+
+int ui_printf(const char *format, ...)
+{
+    char small[1024];
+    char *buffer = small;
+    va_list args, again;
+
+    va_start(args, format);
+    va_copy(again, args);
+    int length = vsnprintf(small, sizeof small, format, args);
+    va_end(args);
+    if (length >= (int) sizeof small) {
+        buffer = malloc((size_t) length + 1);
+        if (buffer != NULL) {
+            vsnprintf(buffer, (size_t) length + 1, format, again);
+        } else {
+            buffer = small;
+        }
+    }
+    va_end(again);
+
+    if (page_rows < 0) {
+        page_init();
+    }
+    if (page_rows == 0) {
+        fputs(buffer, stdout);
+    } else {
+        const char *p = buffer;
+        while (*p != '\0') {
+            const char *newline = strchr(p, '\n');
+            size_t part = newline != NULL ? (size_t) (newline - p) + 1 : strlen(p);
+            fwrite(p, 1, part, stdout);
+            if (newline != NULL) {
+                int width = visible_width(p, part - 1);
+                page_lines += 1 + (width > page_cols ? (width - 1) / page_cols : 0);
+                if (page_lines >= page_rows - 3) {
+                    page_pause();
+                }
+            }
+            p += part;
+        }
+    }
+    if (buffer != small) {
+        free(buffer);
+    }
+    return length;
+}
+
 void clear_screen(void)
 {
 #ifdef _WIN32
@@ -62,6 +167,7 @@ void clear_screen(void)
      * program runs outside a normal terminal. */
     fputs("\033[H\033[2J\033[3J", stdout);
     fflush(stdout);
+    ui_page_reset();
 #endif
 }
 
@@ -74,6 +180,7 @@ void wait_enter(void)
     while ((c = getchar()) != '\n' && c != EOF) {
         /* discard */
     }
+    ui_page_reset();
 }
 
 void rule(void)
@@ -107,11 +214,11 @@ static void frame(char fill)
 
 void title(const char *text)
 {
-    putchar('\n');
+    printf("\n");
     frame('=');
     padded_line(text, '|');
     frame('=');
-    putchar('\n');
+    printf("\n");
 }
 
 void heading(const char *text)
@@ -283,7 +390,7 @@ static void print_code(const char *const *lines, int n, const char *margin,
     for (int i = 0; i < n; i++) {
         printf("  %s%s%s", margin_colour, margin, C_RESET);
         highlight(lines[i]);
-        putchar('\n');
+        printf("\n");
     }
 }
 

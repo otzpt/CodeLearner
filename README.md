@@ -87,7 +87,7 @@ for C and Python libraries, each with an example that runs on your machine.
 | Web | Web JavaScript | 5: the DOM, events, forms, `fetch`, state and storage | [`webjs/`](webjs/) |
 | Security | Security | 2 so far: a topic course in Python. HTTP requests, what a server's headers reveal, the urllib 4xx/5xx-raises trap, and why plain HTTP is readable on the wire | [`security/`](security/) |
 | GUI | GTK | 4: a first window, layout and widgets, signals and state, and a todo list that adds and removes widgets | [`gtk/`](gtk/) |
-| GUI | raylib + raygui | 3: the loop and immediate mode, buttons, text and state, and the same todo list as an array | [`raylib/`](raylib/) |
+| GUI | raylib + raygui | 6: the loop and immediate mode, shapes and text, keyboard and mouse input, time and movement, raygui buttons and state, and a todo list as an array | [`raylib/`](raylib/) |
 | Tooling | Git | 10: what is git through GitHub Actions | [`git/`](git/) |
 | Reference | Libraries | a reference manual, not a course: man-page style pages for the C and Python libraries (standard C, POSIX, Linux, /proc and /sys, raylib), each example run live | [`libraries/`](libraries/) |
 | | Launcher | done: pick a language, open its course | [`launcher/`](launcher/) |
@@ -98,7 +98,7 @@ headers above the module numbers. The modules still run in one numbered
 sequence; a tier is one field on a module's row in its course's module
 table (`MODULES` in `main.c`/`main.py`/`main.js`, or the equivalent),
 nothing else changes. GTK has four modules, two under BASIC and two under
-INTERMEDIATE, and raylib has three, two under BASIC and one under
+INTERMEDIATE, and raylib has six, three under BASIC and three under
 INTERMEDIATE. ADVANCED is shown empty in both until there is content to fill it.
 
 Seventeen courses are covered. GTK, raylib, Assembly, Git and Security are not languages
@@ -720,8 +720,11 @@ off, as does piping the output; `CODELEARNER_COLOR=1` forces it on.
 | # | Module | The thing it exists for |
 | --- | --- | --- |
 | 1 | raylib: your first window and the loop | immediate mode (redraw everything every frame); `SetTargetFPS`: 12134 frames a second without it, 60 with; a missing file is a logged WARNING, not a crash |
-| 2 | raygui: buttons, text and state | a widget is a function call that draws and answers; your variables hold the state; `GuiCheckBox` takes a pointer, `GuiTextBox` takes the real buffer size; `TextFormat` reuses its buffers |
-| 3 | raygui: a todo list | the list is an array, not widgets; never delete inside the loop that draws (it skips a row); `strncpy` may not terminate |
+| 2 | raylib: shapes, colours and text | origin top-left, later shapes on top; a rectangle covers `x` to `x + width - 1`; `(Color){255,0,0,0.5f}` draws nothing (use `Fade`); a clockwise triangle is not drawn; centre text with `MeasureText` |
+| 3 | raylib: keyboard, mouse and clicks | `Down` is every frame held, `Pressed` is one frame; a click is Pressed plus a hit test; a box excludes `x + width` and `y + height`; `GetCharPressed` for typed text |
+| 4 | raylib: time, movement and collision | move by `speed * GetFrameTime()` (93 px against 183 px at 30 and 60 FPS with a fixed step); normalise diagonals (1.4142); touching edges do not collide; a small pong |
+| 5 | raygui: buttons, text and state | a widget is a function call that draws and answers; your variables hold the state; `GuiCheckBox` takes a pointer, `GuiTextBox` takes the real buffer size; `TextFormat` reuses its buffers |
+| 6 | raygui: a todo list | the list is an array, not widgets; never delete inside the loop that draws (it skips a row); `strncpy` may not terminate |
 
 raylib and raygui are one course because raygui is a single header that sits
 on top of raylib. They work the opposite way to GTK: immediate mode, with no
@@ -730,17 +733,31 @@ a function call that draws and answers. The last module builds the same todo
 list as the GTK course, so the two toolkits can be compared.
 
 The course has the same shape as the GTK one (idea, commented code, reference
-with good and bad uses, good practice, exercises, colour). raylib is not in
-every distribution's repository, so module 1 builds it from source and pins the
-two commits it was tested with: raylib 6.5-dev (`0dedaf3066`) and raygui 5.1-dev
-(`2a3c4790c6`). The examples compile with `-std=c11 -Wall -Wextra` and no
-warnings of their own (raygui.h prints 11 under `-Wextra`, which `-isystem`
-hides) and each one was started and ran. The todo list's data functions were
-tested by a program that included the file without opening a window. Clicking
-and typing in the raygui windows were not driven by a test. The timing and
-buffer measurements the lessons quote were read back on the author's machine
-and are labelled as such. Scrolling a long list and the other raygui controls
-are not covered.
+with good and bad uses, good practice, exercises, colour). The reference
+screens are generated from `raylib.h` and `raymath.h`, so each signature and
+one-line description is raylib's own, and every function in the area a module
+covers (all of the basic shapes, colour, text-drawing, keyboard, mouse,
+gamepad, touch and 2D collision functions) is listed, not only the ones the
+examples use. Textures and images, fonts, audio, cameras, 3D and the rest of
+raygui's controls are not covered yet.
+
+raylib is not in every distribution's repository, so module 1 builds it from
+source and pins the two commits it was tested with: raylib 6.5-dev
+(`0dedaf3066`) and raygui 5.1-dev (`2a3c4790c6`). The examples compile with
+`-std=c11 -Wall -Wextra` and no warnings of their own (raygui.h prints 11 under
+`-Wextra`, which `-isystem` hides) and each one was started and ran. Drawing
+results were read back from an off-screen texture; collision, vector maths,
+frame-time movement and the pong rules were run by small programs without a
+window; the todo list's data functions were tested the same way. How real key
+presses, mouse clicks and raygui widgets behave under a person's hands was
+**not** driven by a test: the lessons describe raylib's documented behaviour
+and say so. The measurements quoted were read back on the author's machine and
+are labelled as such.
+
+Long screens page automatically: when output is a terminal the course counts
+the lines shown and pauses with "more: press ENTER" before a screen would
+scroll off. It does nothing when output is piped. `CODELEARNER_NO_PAGER=1` turns
+it off.
 
 ## The Assembly course
 

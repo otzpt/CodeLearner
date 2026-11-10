@@ -174,7 +174,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for entry in "gtk 4" "raylib 3"; do
+          for entry in "gtk 4" "raylib 6"; do
             course=${entry% *}
             count=${entry#* }
             for module in $(seq 1 "$count"); do

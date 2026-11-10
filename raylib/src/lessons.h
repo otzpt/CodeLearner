@@ -11,7 +11,10 @@
 #define LESSONS_H
 
 void lesson_01_raylib(void);
-void lesson_02_raygui(void);
-void lesson_03_todo(void);
+void lesson_02_shapes(void);
+void lesson_03_input(void);
+void lesson_04_move(void);
+void lesson_05_raygui(void);
+void lesson_06_todo(void);
 
 #endif

@@ -22,4 +22,5 @@ compiled or run, and the error quoted is its real output. See the header of
 `src/lessons_gtk.c` and `src/lessons_widgets.c` for the full list.
 
 `tools/check-teaching-order.py` covers the exercises. Output is coloured in a
-terminal; `NO_COLOR=1` turns it off.
+terminal (`NO_COLOR=1` turns it off) and long screens pause with "more: press
+ENTER" so they never scroll off (`CODELEARNER_NO_PAGER=1` turns that off).

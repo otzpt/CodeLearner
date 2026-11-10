@@ -104,6 +104,20 @@ void more(const char *text);
  *
  * ref_line() with an empty label continues the line above. */
 void ref_head(const char *signature);
+
+/* A compact two-line entry for long lists of functions: the signature, then
+ * its one-line description indented below it. */
+void api_line(const char *signature, const char *text);
 void ref_line(const char *label, const char *text);
+
+
+/* ---- paging ------------------------------------------------------------
+ *
+ * Every printf in a lesson goes through ui_printf(). When stdout is a
+ * terminal it counts the lines shown since the last clear_screen() and, when
+ * a screen would not fit, pauses with "more: press ENTER", like less. It does
+ * nothing when output is piped, and CODELEARNER_NO_PAGER=1 turns it off. */
+int ui_printf(const char *format, ...);
+#define printf ui_printf
 
 #endif

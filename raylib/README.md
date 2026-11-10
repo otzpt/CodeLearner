@@ -1,6 +1,6 @@
 # raylib course
 
-3 modules: your first window and the loop, raygui buttons and state, a todo list.
+6 modules: your first window and the loop, shapes and text, keyboard and mouse input, time and movement, raygui buttons and state, a todo list.
 
 A terminal program in plain C, like `gtk/`. It teaches raylib and its
 companion header raygui. It never opens a window itself: the programs it
@@ -17,12 +17,14 @@ make
 ## How it was verified
 
 Every example compiles with `-std=c11 -Wall -Wextra` and no warnings of its
-own, and was started and ran. The todo list's data functions were tested by a
-program that included the file without opening a window. Clicking and typing in
-the raygui windows were not driven by a test. The measurements the lessons
-quote (frames per second with and without `SetTargetFPS`, a missing-file
-warning, `TextFormat`'s reused buffer, `strncpy` not terminating, deleting
-inside a draw loop) were read back by small programs on the author's machine.
+own, and was started and ran. Drawing results were read back from an
+off-screen texture. Collision, vector maths, frame-time movement, the pong
+rules and the todo list's data functions were run by small programs that
+include the example file and never open a window. How real key presses,
+mouse clicks and raygui widgets behave under a person's hands was not driven
+by a test; the lessons say so. The reference screens are generated from
+`raylib.h` and `raymath.h`, not retyped.
 
 `tools/check-teaching-order.py` covers the exercises. Output is coloured in a
-terminal; `NO_COLOR=1` turns it off.
+terminal (`NO_COLOR=1` turns it off) and long screens pause with "more: press
+ENTER" so they never scroll off (`CODELEARNER_NO_PAGER=1` turns that off).
