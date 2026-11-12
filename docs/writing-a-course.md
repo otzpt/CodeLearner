@@ -2,6 +2,8 @@
 
 How the courses are built, and how to add a module or a whole new language.
 Read this before writing lessons — most of it is about what *not* to do.
+For how a real learner worked through a course, see
+[`learner-notes.md`](learner-notes.md).
 
 ## The rules
 
