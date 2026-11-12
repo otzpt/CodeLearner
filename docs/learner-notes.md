@@ -22,9 +22,11 @@ They are copied here unchanged, typos included, in
 learner's work, not course material, and they are not run by any check. The
 `node_modules` folder and `package-lock.json` were left out.
 
-The learner says the basics took about four hours (**stated**). The file dates
-do not confirm or contradict that, because they show only the last time each
-file was saved.
+The learner's time tracker, Hackatime, shows about four hours of work on the
+basics (**stated** by the learner, the tracker data was not checked here). The
+file dates neither confirm nor contradict that: they show only the last time
+each file was saved, and a tracker counts time spent working, not the span
+between the first and the last save.
 
 ## What the practice files show
 
