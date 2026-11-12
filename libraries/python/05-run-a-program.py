@@ -1,6 +1,6 @@
 """
-TITLE: subprocess, shutil.which: running another program
-GROUP: Common tasks
+TITLE: how-to: run another program and read its output
+GROUP: How-to guides
 USES: import subprocess, shutil
 SUMMARY: subprocess.run() starts a program, waits, and gives you its output.
   It is the way to use a command line tool (lspci, ip, xrandr) from Python.

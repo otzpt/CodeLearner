@@ -1,0 +1,797 @@
+# Specifications for make-python-pages.py (executed by it). One page() per page.
+
+# ---- Built-ins ----------------------------------------------------------
+page(10, "builtins", "builtins: functions that need no import", G_BUILTIN,
+ "Functions that are always available. print() and open() are here, with the conversions (int, str), the collection helpers (len, sorted, sum) and the inspection ones (type, isinstance). Methods of str, list and dict have their own pages.",
+ ["print", "input", "open", "len", "range", "enumerate", "zip", "map", "filter", "sorted", "reversed", "sum", "min", "max", "abs", "round", "divmod", "pow", "int", "float", "str", "bool", "list", "dict", "tuple", "set", "isinstance", "type", "repr", "format", "iter", "next", "any", "all", "hasattr", "getattr"],
+ '''
+import sys
+
+print("a", "b", "c", sep="-", end="!\\n")
+print("to stderr", file=sys.stderr)
+print("int('42') + 1 =", int("42") + 1, "  float('2.5') =", float("2.5"))
+print("sorted([3, 1, 2], reverse=True) =", sorted([3, 1, 2], reverse=True))
+print("sum / min / max:", sum([1, 2, 3]), min([4, 2, 9]), max("pear", "fig", key=len))
+print("list(enumerate('ab', start=1)) =", list(enumerate("ab", start=1)))
+print("list(zip('ab', [1, 2])) =", list(zip("ab", [1, 2])))
+print("round(2.5), round(3.5), round(2.675, 2) =", round(2.5), round(3.5), round(2.675, 2))
+print("isinstance(True, int):", isinstance(True, int), "  type(3.0):", type(3.0).__name__)
+print("any([]) / all([]):", any([]), all([]))
+''',
+ notes=["print() writes to sys.stdout and adds a newline; file=sys.stderr keeps messages out of piped output.",
+        "round() rounds halves to the nearest even number: round(2.5) is 2 and round(3.5) is 4.",
+        "A float that cannot be stored exactly rounds as stored: round(2.675, 2) gives 2.67, not 2.68.",
+        "For formatted output see the format page."],
+ see="https://docs.python.org/3/library/functions.html, pydoc builtins")
+
+page(11, "str", "str: text strings (methods)", G_BUILTIN,
+ "A str is an immutable sequence of Unicode characters. Its methods return new strings; none of them changes the original.",
+ ["str.strip", "str.lstrip", "str.rstrip", "str.split", "str.rsplit", "str.splitlines", "str.join", "str.replace", "str.startswith", "str.endswith", "str.find", "str.index", "str.count", "str.lower", "str.upper", "str.title", "str.capitalize", "str.partition", "str.zfill", "str.center", "str.ljust", "str.rjust", "str.isdigit", "str.isalpha", "str.encode"],
+ '''
+line = "  model name\\t: AMD Ryzen 5 7600X  \\n"
+print(repr(line.strip()))
+key, _, value = line.partition(":")
+print("partition:", repr(key.strip()), repr(value.strip()))
+print("split:", "a,b,,c".split(","), " ".join(["x", "y"]), "a b  c".split())
+print("find / index:", "mississippi".find("ss"), "mississippi".find("zz"))
+try:
+    "mississippi".index("zz")
+except ValueError as error:
+    print("index raises ValueError:", error)
+print("startswith a tuple:", "main.py".endswith((".py", ".pyw")))
+print("replace:", "a-b-c".replace("-", "+", 1), " count:", "banana".count("an"))
+print("'7'.zfill(3) =", "7".zfill(3), " 'abc'.center(9, '*') =", "abc".center(9, "*"))
+print("'١٢٣'.isdigit() =", "١٢٣".isdigit(), " '12'.isdigit() =", "12".isdigit())
+print("encode:", "é".encode("utf-8"))
+''',
+ notes=["strip() with no argument removes whitespace; with an argument it removes any of those characters from the ends, not a prefix.",
+        "split() with no argument splits on any run of whitespace and drops empty strings; split(',') keeps them.",
+        "find() returns -1 when absent; index() raises ValueError. Use `in` to only test presence.",
+        "isdigit() is true for digits of other scripts too; int() accepts them as well."],
+ see="https://docs.python.org/3/library/stdtypes.html#string-methods, help(str)")
+
+page(12, "list", "list: mutable sequences (methods)", G_BUILTIN,
+ "A list is an ordered, mutable sequence. sort(), reverse(), append() and the other mutating methods change the list in place and return None.",
+ ["list.append", "list.extend", "list.insert", "list.remove", "list.pop", "list.index", "list.count", "list.sort", "list.reverse", "list.copy", "list.clear"],
+ '''
+items = [3, 1, 4, 1, 5]
+items.append(9)
+items.extend([2, 6])
+items.insert(0, 0)
+print("after append/extend/insert:", items)
+print("pop() ->", items.pop(), " pop(0) ->", items.pop(0), " now", items)
+items.remove(1)          # removes the FIRST 1 only
+print("remove(1):", items, " count(1) =", items.count(1), " index(4) =", items.index(4))
+result = items.sort()
+print("sort() returns", result, "and sorts in place:", items)
+print("sorted() returns a new list:", sorted(items, reverse=True), "original:", items)
+alias, clone = items, items.copy()
+items.append(99)
+print("alias sees the change:", alias[-1] == 99, " copy does not:", clone[-1] != 99)
+try:
+    [].pop()
+except IndexError as error:
+    print("pop on an empty list raises IndexError:", error)
+''',
+ notes=["sort() and reverse() return None. `items = items.sort()` sets items to None.",
+        "remove() deletes the first equal item and raises ValueError if there is none.",
+        "b = a makes a second name for the same list; a.copy() or a[:] makes a new one (shallow)."],
+ see="https://docs.python.org/3/library/stdtypes.html#list, help(list)")
+
+page(13, "dict", "dict: key-value mappings (methods)", G_BUILTIN,
+ "A dict maps keys to values and keeps insertion order. Keys must be hashable (str, int, tuple of those); lists and dicts cannot be keys.",
+ ["dict.get", "dict.setdefault", "dict.keys", "dict.values", "dict.items", "dict.update", "dict.pop", "dict.popitem", "dict.copy", "dict.fromkeys", "dict.clear"],
+ '''
+info = {"os": "Void", "cores": 12}
+print("get with default:", info.get("gpu", "(none)"), " get without:", info.get("gpu"))
+try:
+    info["gpu"]
+except KeyError as error:
+    print("info['gpu'] raises KeyError:", error)
+print("setdefault:", info.setdefault("shell", "bash"), info)
+info.update({"cores": 16, "kernel": "6.18"})
+print("update:", info)
+print("pop with default:", info.pop("nothing", "missing"), " pop:", info.pop("kernel"))
+for key, value in info.items():
+    print(f"  {key:<6} {value}")
+print("keys is a live view:", list(info.keys()))
+print("fromkeys:", dict.fromkeys("abc", 0))
+''',
+ notes=["d[key] raises KeyError for a missing key; d.get(key, default) does not.",
+        "Changing a dict's size while looping over it raises RuntimeError; loop over list(d) instead.",
+        "d.keys(), d.values() and d.items() are live views, not copies."],
+ see="https://docs.python.org/3/library/stdtypes.html#mapping-types-dict, help(dict)")
+
+page(14, "exceptions", "exceptions: built-in exception types", G_BUILTIN,
+ "Errors are raised as exceptions. try/except catches them by type, most specific first. OSError and its subclasses cover failures of files, processes and the network.",
+ ["BaseException", "Exception", "OSError", "FileNotFoundError", "PermissionError", "IsADirectoryError", "NotADirectoryError", "FileExistsError", "TimeoutError", "ChildProcessError", "BrokenPipeError", "ConnectionRefusedError", "ValueError", "TypeError", "KeyError", "IndexError", "AttributeError", "ZeroDivisionError", "UnicodeDecodeError", "RecursionError", "KeyboardInterrupt", "SystemExit", "StopIteration"],
+ '''
+import errno
+
+for path in ("/no/such/file", "/root/.hidden", "/proc"):
+    try:
+        with open(path, encoding="utf-8") as file:
+            file.read(1)
+    except FileNotFoundError as error:
+        print(f"{path:<14} FileNotFoundError, errno {error.errno} ({errno.errorcode[error.errno]}): {error.strerror}")
+    except PermissionError as error:
+        print(f"{path:<14} PermissionError, errno {error.errno}: {error.strerror}")
+    except OSError as error:
+        print(f"{path:<14} {type(error).__name__}, errno {error.errno}: {error.strerror}")
+
+for action in (lambda: int("x"), lambda: 1 / 0, lambda: {}["k"], lambda: [][0], lambda: None.name):
+    try:
+        action()
+    except Exception as error:          # catching Exception is for a demo, not for real code
+        print(f"{type(error).__name__:<18} {error}")
+print("is FileNotFoundError an OSError?", issubclass(FileNotFoundError, OSError))
+''',
+ notes=["Catch the narrowest type that makes sense. `except Exception` hides bugs; a bare `except:` also swallows KeyboardInterrupt.",
+        "OSError carries errno and strerror; its subclasses (FileNotFoundError, ...) are chosen from errno automatically.",
+        "KeyboardInterrupt and SystemExit derive from BaseException, not Exception, so `except Exception` lets Ctrl-C through."],
+ see="https://docs.python.org/3/library/exceptions.html, pydoc exceptions")
+
+page(15, "format", "format: f-strings and the format mini-language", G_BUILTIN,
+ "A format spec after a colon inside {} controls how a value is shown: [[fill]align][sign][0][width][,][.precision][type]. The same mini-language is used by str.format() and format().",
+ [("f\"{value}\"", "An f-string. The expression in braces is evaluated, then converted with str()."),
+  ("{value:>10}   {value:<10}   {value:^10}", "Align in a field: > right, < left, ^ centre. Numbers default to right, text to left."),
+  ("{value:*^10}", "A fill character comes before the alignment: centred in 10 columns, padded with *."),
+  ("{value:.2f}", "Fixed-point with 2 digits after the point. Rounds the stored binary value."),
+  ("{value:10.3f}   {value:010.3f}", "Width 10, 3 decimals. A leading 0 pads with zeros instead of spaces."),
+  ("{value:,}   {value:_}", "A thousands separator: 1234567 shows as 1,234,567 (or 1_234_567)."),
+  ("{value:+d}   {value: d}", "Always show a sign, or a space for positive numbers."),
+  ("{value:x}  {value:X}  {value:o}  {value:b}  {value:#x}", "Hexadecimal (lower, upper), octal, binary. # adds the 0x / 0o / 0b prefix."),
+  ("{value:.1%}", "Multiply by 100 and add a percent sign: 0.256 shows as 25.6%."),
+  ("{value:e}   {value:g}", "Scientific notation; general format (switches between fixed and scientific)."),
+  ("{text:.5}", "On a string, precision truncates: only the first 5 characters."),
+  ("{value!r}   {value!s}", "Convert with repr() or str() first. !r shows quotes and escapes."),
+  ("{value=}", "Show the expression and its value: f'{x=}' gives x=5. Handy for debugging."),
+  ("{width}", "The spec itself can contain fields: f'{value:{width}.{precision}f}'."),
+  ("{{ and }}", "Literal braces.")],
+ '''
+value, text, width = 1234567.891, "formatting", 12
+print(f"[{value}]")
+print(f"[{value:.2f}] [{value:,.2f}] [{value:15,.1f}] [{value:015.1f}]")
+print(f"[{'left':<10}] [{'right':>10}] [{'mid':^10}] [{'fill':*^10}]")
+print(f"[{42:+d}] [{42:x}] [{42:#x}] [{42:#b}] [{42:o}] [{255:08b}]")
+print(f"[{0.256:.1%}] [{1e-5:e}] [{value:g}]")
+print(f"[{text:.5}] [{text!r}] [{text:>{width}}]")
+print(f"{width=} {width * 2=}")
+print(f"literal braces: {{width}} = {width}")
+print("old style:", "%5.1f|%-6s|%03d" % (3.14159, "ab", 7), "  str.format:", "{:>6}|{:06.2f}".format("ab", 3.14159))
+''',
+ notes=["f-strings need Python 3.6 or later; the {value=} form needs 3.8.",
+        "Width counts characters, not columns. East Asian wide characters take two columns on screen: see the unicodedata page.",
+        "A coloured string includes invisible escape codes that width counts too: pad the plain text, then colour it."],
+ see="https://docs.python.org/3/library/string.html#format-specification-mini-language")
+
+# ---- Files, paths and processes ------------------------------------------
+page(20, "os", "os: operating system interfaces", G_FILES,
+ "Access to the operating system: environment variables, the working directory, files and directories, process ids and the system's identity. Paths are best handled with pathlib; os is where the system calls live.",
+ ["os.environ", "os.name", "os.getenv", "os.getcwd", "os.chdir", "os.listdir", "os.scandir", "os.walk", "os.stat", "os.mkdir", "os.makedirs", "os.remove", "os.rename", "os.access", "os.getpid", "os.getppid", "os.getuid", "os.uname", "os.getloadavg", "os.cpu_count", "os.urandom", "os.strerror", "os.get_terminal_size", "os.isatty"],
+ '''
+import os
+
+print("HOME      :", os.environ.get("HOME", "(not set)"))
+print("missing   :", os.environ.get("NO_SUCH_VARIABLE_HERE", "(not set)"))
+print("pid / ppid:", os.getpid(), "/", os.getppid(), "  uid:", os.getuid())
+print("cwd is a directory:", os.path.isdir(os.getcwd()))
+print("cpu_count :", os.cpu_count())
+
+name = os.uname()
+print("uname     :", name.sysname, name.release, name.machine, "node", name.nodename)
+print("load      : %.2f %.2f %.2f" % os.getloadavg())
+
+with os.scandir("/sys/class/net") as entries:
+    print("net devices:", sorted(entry.name for entry in entries))
+print("listdir of a missing path:", end=" ")
+try:
+    os.listdir("/no/such/directory")
+except OSError as error:
+    print(type(error).__name__, "-", os.strerror(error.errno))
+print("urandom(4) has", len(os.urandom(4)), "bytes;  stdout is a tty:", os.isatty(1))
+''',
+ notes=["os.environ['X'] raises KeyError if X is unset; os.environ.get('X', default) does not.",
+        "os.uname() gives the kernel's name, release and machine. os.uname().nodename is the host name.",
+        "os.scandir() is faster than os.listdir() when you need file types: DirEntry caches them.",
+        "os.getloadavg() is the 1, 5 and 15 minute load average; it raises OSError where unavailable.",
+        "os.urandom() is for cryptographic random bytes; the random module is not."])
+
+page(21, "os.path", "os.path: pathname manipulation", G_FILES,
+ "Functions on path strings: join, split, test existence, expand ~. They work on strings and mostly do not touch the disk. The pathlib module offers the same operations as methods on Path objects.",
+ ["os.path.join", "os.path.split", "os.path.splitext", "os.path.basename", "os.path.dirname", "os.path.abspath", "os.path.realpath", "os.path.normpath", "os.path.relpath", "os.path.expanduser", "os.path.exists", "os.path.isfile", "os.path.isdir", "os.path.islink", "os.path.getsize", "os.path.getmtime", "os.path.commonpath"],
+ '''
+import os.path
+
+path = "/usr/local/lib/python3/site-packages/../json/__init__.py"
+print("join       :", os.path.join("/usr", "lib", "python3"), os.path.join("a", "/abs"))
+print("split      :", os.path.split("/usr/lib/libc.so.6"))
+print("splitext   :", os.path.splitext("archive.tar.gz"), os.path.splitext(".bashrc"))
+print("basename   :", os.path.basename("/usr/lib/"), "| dirname:", os.path.dirname("/usr/lib/libc.so"))
+print("normpath   :", os.path.normpath(path))
+print("expanduser :", os.path.expanduser("~") == os.environ.get("HOME"))
+print("exists/isdir/isfile of /proc:", os.path.exists("/proc"), os.path.isdir("/proc"), os.path.isfile("/proc"))
+print("relpath    :", os.path.relpath("/usr/lib/x", "/usr"))
+print("commonpath :", os.path.commonpath(["/usr/lib/a", "/usr/share/b"]))
+print("getsize of /proc/self/status is", os.path.getsize("/proc/self/status"), "(procfs reports 0)")
+''',
+ notes=["os.path.join('a', '/abs') returns '/abs': an absolute second part discards the first.",
+        "os.path.splitext('.bashrc') gives ('.bashrc', ''): a leading dot is not an extension.",
+        "exists() is false for a broken symlink; lexists() is true for it.",
+        "Files under /proc often report size 0 although reading them returns data."])
+
+page(22, "pathlib", "pathlib: object-oriented paths", G_FILES,
+ "A Path is a path with methods: join with /, read and write files, list and search directories, ask about the file. It is the usual way to handle paths in new code.",
+ ["pathlib.Path", "pathlib.Path.home", "pathlib.Path.cwd", "pathlib.Path.exists", "pathlib.Path.is_file", "pathlib.Path.is_dir", "pathlib.Path.read_text", "pathlib.Path.write_text", "pathlib.Path.read_bytes", "pathlib.Path.iterdir", "pathlib.Path.glob", "pathlib.Path.rglob", "pathlib.Path.mkdir", "pathlib.Path.unlink", "pathlib.Path.rename", "pathlib.Path.resolve", "pathlib.Path.stat", "pathlib.Path.joinpath", "pathlib.Path.name", "pathlib.Path.stem", "pathlib.Path.suffix", "pathlib.Path.parent", "pathlib.Path.parts", "pathlib.Path.with_suffix"],
+ '''
+import tempfile
+from pathlib import Path
+
+path = Path("/usr/lib/python3/dist-packages/example.tar.gz")
+print("name, stem, suffix:", path.name, path.stem, path.suffix, "  suffixes:", path.suffixes)
+print("parent, parts[:3]  :", path.parent, path.parts[:3])
+print("with_suffix        :", path.with_suffix(".zip"))
+print("joined with /      :", Path("/etc") / "os-release")
+
+print("net devices:", sorted(p.name for p in Path("/sys/class/net").iterdir()))
+print("drm cards  :", sorted(p.name for p in Path("/sys/class/drm").glob("card[0-9]*") if "-" not in p.name))
+
+with tempfile.TemporaryDirectory() as folder:
+    note = Path(folder) / "note.txt"
+    note.write_text("hello\\n", encoding="utf-8")
+    print("read_text:", repr(note.read_text(encoding="utf-8")), " size:", note.stat().st_size)
+    note.unlink()
+    print("exists after unlink:", note.exists())
+try:
+    Path("/no/such/dir").iterdir().__next__()
+except OSError as error:
+    print("iterdir on a missing path:", type(error).__name__)
+''',
+ notes=["Always pass encoding='utf-8' to read_text() and write_text(): the default depends on the locale.",
+        "iterdir() and glob() are lazy; the order of results is not sorted. Wrap them in sorted().",
+        "Path('a') / '/b' is Path('/b'): an absolute right side discards the left.",
+        "exists() hides permission errors by returning False; call stat() if you need to tell them apart."])
+
+page(23, "shutil", "shutil: high-level file operations", G_FILES,
+ "Copying, moving and removing files and trees, finding programs on PATH, disk usage and the terminal size.",
+ ["shutil.which", "shutil.copy", "shutil.copy2", "shutil.copyfile", "shutil.copytree", "shutil.move", "shutil.rmtree", "shutil.disk_usage", "shutil.get_terminal_size", "shutil.make_archive"],
+ '''
+import shutil
+
+print("which('python3'):", shutil.which("python3"))
+print("which('no-such-program'):", shutil.which("no-such-program"))
+
+usage = shutil.disk_usage("/")
+shown_total = usage.used + usage.free
+print(f"/   {usage.used / 2**30:.1f} GiB / {shown_total / 2**30:.1f} GiB ({usage.used / shown_total * 100:.0f}%)")
+print(f"raw total {usage.total / 2**30:.1f} GiB; reserved for root {(usage.total - shown_total) / 2**30:.1f} GiB")
+
+size = shutil.get_terminal_size(fallback=(80, 24))
+print("terminal size:", tuple(size), "(an environment variable COLUMNS / LINES overrides, then the terminal, then the fallback)")
+''',
+ notes=["which() returns None when the program is not found; it follows PATH like the shell.",
+        "disk_usage().used + .free is less than .total on ext4: root reserves some blocks. Percentages usually use used + free.",
+        "get_terminal_size() never raises: it falls back to (80, 24) when stdout is not a terminal.",
+        "rmtree() deletes without asking. Check the path before you call it."])
+
+page(24, "sys", "sys: the interpreter and its streams", G_FILES,
+ "Parameters and functions of the running interpreter: command-line arguments, the standard streams, the module search path, the version, and how to exit.",
+ ["sys.argv", "sys.exit", "sys.platform", "sys.version", "sys.version_info", "sys.executable", "sys.path", "sys.stdin", "sys.stdout", "sys.stderr", "sys.byteorder", "sys.maxsize", "sys.getsizeof", "sys.getdefaultencoding", "sys.getrecursionlimit"],
+ '''
+import sys
+
+print("platform :", sys.platform, " byteorder:", sys.byteorder)
+print("python   :", ".".join(map(str, sys.version_info[:3])), " >= 3.10:", sys.version_info >= (3, 10))
+print("argv     :", sys.argv[1:] or "(no arguments)")
+print("stdout is a terminal:", sys.stdout.isatty())
+print("default encoding:", sys.getdefaultencoding(), " stdout encoding:", sys.stdout.encoding)
+print("getsizeof(0), getsizeof('abc'):", sys.getsizeof(0), sys.getsizeof("abc"))
+print("recursion limit:", sys.getrecursionlimit())
+print("first sys.path entry is this script's folder:", bool(sys.path[0]))
+sys.stderr.write("(this line went to stderr)\\n")
+sys.exit(0)        # same as raising SystemExit(0); the exit status is 0
+''',
+ notes=["sys.exit('message') prints the message to stderr and exits with status 1.",
+        "sys.argv elements are strings; convert with int() where you need numbers. For options use argparse.",
+        "Compare versions as tuples: sys.version_info >= (3, 10), never as strings."])
+
+page(25, "subprocess", "subprocess: running other programs", G_FILES,
+ "Starts a program, optionally feeds it input and collects its output and exit status. run() covers almost every case; Popen is the lower-level class under it.",
+ ["subprocess.run", "subprocess.check_output", "subprocess.check_call", "subprocess.call", "subprocess.Popen", "subprocess.CompletedProcess", "subprocess.CalledProcessError", "subprocess.TimeoutExpired", "subprocess.PIPE", "subprocess.DEVNULL"],
+ '''
+import subprocess
+
+done = subprocess.run(["uname", "-s"], capture_output=True, text=True, check=True, timeout=5)
+print("stdout:", repr(done.stdout), " returncode:", done.returncode)
+
+failed = subprocess.run(["ls", "/no/such/dir"], capture_output=True, text=True)
+print("exit status", failed.returncode, "- stderr:", failed.stderr.strip())
+
+try:
+    subprocess.run(["ls", "/no/such/dir"], capture_output=True, check=True)
+except subprocess.CalledProcessError as error:
+    print("check=True raises CalledProcessError, returncode", error.returncode)
+
+try:
+    subprocess.run(["sleep", "5"], timeout=0.2)
+except subprocess.TimeoutExpired as error:
+    print("timeout=0.2 raises TimeoutExpired after", error.timeout, "s")
+
+try:
+    subprocess.run(["no-such-program"])
+except FileNotFoundError as error:
+    print("a missing program raises FileNotFoundError:", error.filename)
+
+print("a list is safe; a string needs shell=True:", subprocess.run("echo $((1 + 2))", shell=True, capture_output=True, text=True).stdout.strip())
+''',
+ notes=["Pass a list of arguments, not a string, unless you need the shell. shell=True with user input is a command-injection hole.",
+        "Without check=True, a failing program does not raise: look at returncode.",
+        "capture_output=True is stdout=PIPE plus stderr=PIPE. A very large output is held in memory.",
+        "timeout= kills the child and raises TimeoutExpired; without it a hung child hangs you."])
+
+page(26, "errno", "errno: error numbers", G_FILES,
+ "The numeric codes the operating system uses for failures (the C errno). An OSError has .errno; this module names the numbers and errno.errorcode maps a number back to its name.",
+ ["errno.errorcode", "errno.ENOENT", "errno.EACCES", "errno.EEXIST", "errno.EINVAL", "errno.EPERM", "errno.EAGAIN", "errno.EINTR", "errno.ENOMEM", "errno.EPIPE", "errno.ENOTDIR", "errno.EISDIR", "errno.ENOSPC", "errno.EBADF", "errno.ECHILD", "errno.ETIMEDOUT", "errno.ECONNREFUSED"],
+ '''
+import errno
+import os
+
+for code in (errno.ENOENT, errno.EACCES, errno.EEXIST, errno.EPIPE, errno.ENOSPC):
+    print(f"{code:>3} {errno.errorcode[code]:<8} {os.strerror(code)}")
+
+try:
+    os.mkdir("/proc/forbidden")
+except OSError as error:
+    print("os.mkdir('/proc/forbidden'):", type(error).__name__, error.errno, errno.errorcode[error.errno])
+print("errorcode is a plain dict with", len(errno.errorcode), "entries on this system")
+''',
+ notes=["Compare error.errno with errno.ENOENT, never with a number: values differ between systems.",
+        "In most code, catch the subclass (FileNotFoundError, PermissionError) instead of testing errno.",
+        "The numbers shown are this machine's; Linux and macOS disagree on some."],
+ see="https://docs.python.org/3/library/errno.html, man 3 errno")
+
+# ---- Text and data -------------------------------------------------------
+page(30, "re", "re: regular expressions", G_TEXT,
+ "Pattern matching on strings with regular expressions. search() finds a match anywhere; match() only at the start; fullmatch() must cover the whole string; findall(), sub() and split() work over all matches.",
+ ["re.compile", "re.search", "re.match", "re.fullmatch", "re.findall", "re.finditer", "re.sub", "re.subn", "re.split", "re.escape", "re.IGNORECASE", "re.MULTILINE", "re.DOTALL", "re.error"],
+ '''
+import re
+
+cpuinfo = "processor\\t: 0\\nmodel name\\t: AMD Ryzen 5 7600X 6-Core Processor\\ncpu MHz\\t\\t: 4700.123\\n"
+
+found = re.search(r"^model name\\s*:\\s*(.+)$", cpuinfo, re.MULTILINE)
+print("model:", found.group(1) if found else "(not found)", " span:", found.span() if found else None)
+print("findall numbers:", re.findall(r"\\d+\\.\\d+|\\d+", cpuinfo))
+print("no match returns:", re.search(r"GPU", cpuinfo))
+print("match only at the start:", re.match(r"model", cpuinfo), "| fullmatch:", bool(re.fullmatch(r"\\d+", "123")))
+print("sub:", re.sub(r"\\x1b\\[[0-9;]*m", "", "\\x1b[1;34mOS\\x1b[0m"))
+print("named group:", re.search(r"(?P<key>\\w+)=(?P<value>\\d+)", "x=5").groupdict())
+print("split:", re.split(r"[,;]\\s*", "a, b;c"))
+print("escape:", re.escape("1+1=2?"))
+pattern = re.compile(r"\\d+")
+print("compiled pattern reuse:", pattern.findall("a1b22c333"))
+try:
+    re.compile("(unclosed")
+except re.error as error:
+    print("re.error:", error)
+''',
+ notes=["Write patterns as raw strings, r'...': otherwise \\\\d needs a doubled backslash.",
+        "search() and match() return None on failure: test the result before calling .group().",
+        "Greedy .* matches as much as possible; use .*? for the shortest match.",
+        "Do not parse nested structures such as HTML or JSON with a regular expression."])
+
+page(31, "json", "json: JSON encoder and decoder", G_TEXT,
+ "Converts Python values to JSON text and back. Only dicts, lists, strings, numbers, booleans and None survive the trip; JSON object keys always become strings.",
+ ["json.dumps", "json.dump", "json.loads", "json.load", "json.JSONDecodeError", "json.JSONEncoder", "json.JSONDecoder"],
+ '''
+import json
+
+info = {"os": "Void", "kernel": "6.18", "cores": 12, "battery": None, "ok": True, 1: "one"}
+text = json.dumps(info, indent=2)
+print(text)
+print("round trip equal:", json.loads(text) == info, "(False: the key 1 came back as '1')")
+print("compact for machines:", json.dumps({"a": [1, 2]}, separators=(",", ":")))
+print("sorted keys:", json.dumps({"b": 1, "a": 2}, sort_keys=True))
+print("non-ASCII:", json.dumps("café"), json.dumps("café", ensure_ascii=False))
+try:
+    json.loads("{'single': 'quotes'}")
+except json.JSONDecodeError as error:
+    print("JSONDecodeError:", error.msg, "at line", error.lineno, "column", error.colno)
+try:
+    json.dumps({"x": {1, 2}})
+except TypeError as error:
+    print("TypeError:", error)
+''',
+ notes=["dumps() returns a str, dump() writes to a file object. loads() takes a str, load() a file object.",
+        "A set, a datetime or bytes is not JSON: pass default=str (or a function) to dumps() to convert them.",
+        "NaN and Infinity are written as NaN and Infinity, which is not valid JSON; use allow_nan=False to refuse them.",
+        "JSON has no tuple: a tuple comes back as a list."])
+
+page(32, "collections", "collections: container datatypes", G_TEXT,
+ "Specialised containers: Counter counts things, defaultdict builds groups, deque is a fast queue at both ends, namedtuple names the fields of a tuple.",
+ ["collections.Counter", "collections.Counter.most_common", "collections.defaultdict", "collections.deque", "collections.namedtuple", "collections.OrderedDict", "collections.ChainMap"],
+ '''
+from collections import Counter, defaultdict, deque, namedtuple
+
+counts = Counter("mississippi")
+print("Counter:", counts, " most_common(2):", counts.most_common(2), " missing key:", counts["z"])
+
+groups = defaultdict(list)
+for word in ("apple", "avocado", "banana", "blueberry", "cherry"):
+    groups[word[0]].append(word)
+print("defaultdict(list):", dict(groups))
+
+queue = deque([1, 2, 3], maxlen=3)
+queue.append(4)
+queue.appendleft(0)
+print("deque with maxlen=3 after append(4), appendleft(0):", list(queue), " popleft:", queue.popleft())
+
+Point = namedtuple("Point", ["x", "y"])
+point = Point(3, y=4)
+print("namedtuple:", point, point.x + point.y, point._asdict())
+''',
+ notes=["A Counter returns 0 for a missing key instead of raising KeyError.",
+        "A defaultdict creates a missing entry on lookup, which can grow it by accident: dd['x'] adds 'x'.",
+        "deque.popleft() is O(1); list.pop(0) is O(n).",
+        "In new code a dataclass is often clearer than a namedtuple."])
+
+page(33, "argparse", "argparse: command-line options", G_TEXT,
+ "Declares a program's options and positional arguments, parses sys.argv, and writes --help and error messages for you. Exits with status 2 on a bad command line.",
+ ["argparse.ArgumentParser", "argparse.ArgumentParser.add_argument", "argparse.ArgumentParser.parse_args", "argparse.ArgumentParser.print_usage", "argparse.ArgumentParser.print_help", "argparse.ArgumentParser.add_subparsers", "argparse.Namespace", "argparse.ArgumentError"],
+ '''
+import argparse
+
+parser = argparse.ArgumentParser(prog="count", description="Count lines in files.")
+parser.add_argument("--quiet", "-q", action="store_true", help="print totals only")
+parser.add_argument("--width", type=int, default=80, help="output width in columns")
+parser.add_argument("files", nargs="*", help="files to read (default: stdin)")
+
+options = parser.parse_args(["--width", "60", "-q", "a.txt", "b.txt"])
+print(options)
+print("quiet:", options.quiet, " width + 1 =", options.width + 1)
+parser.print_usage()
+
+try:
+    parser.parse_args(["--width", "wide"])
+except SystemExit as error:
+    print("a bad value exits with status", error.code, "(the message went to stderr)")
+''',
+ notes=["parse_args() with no argument reads sys.argv[1:]; pass a list to test your parser.",
+        "type=int converts and rejects bad values; choices=[...] restricts them; default= is used when the option is absent.",
+        "action='store_true' makes a flag: False unless given.",
+        "On a bad command line parse_args() prints usage to stderr and raises SystemExit(2)."])
+
+page(34, "unicodedata", "unicodedata: Unicode character database", G_TEXT,
+ "Properties of Unicode characters: name, category, combining class, and how many columns they take (east_asian_width). len() counts characters, not screen columns.",
+ ["unicodedata.east_asian_width", "unicodedata.combining", "unicodedata.category", "unicodedata.name", "unicodedata.lookup", "unicodedata.normalize", "unicodedata.numeric", "unicodedata.decimal"],
+ '''
+import re
+import unicodedata
+
+ANSI = re.compile("\\x1b\\\\[[0-9;]*[A-Za-z]")
+
+
+def visible_width(text):
+    """Columns the text takes on screen."""
+    width = 0
+    for character in ANSI.sub("", text):
+        if unicodedata.combining(character):
+            continue
+        width += 2 if unicodedata.east_asian_width(character) in ("W", "F") else 1
+    return width
+
+
+labels = ["\\x1b[1;34mOS\\x1b[0m", "Disk", "日本語", "e\\u0301"]
+for label in labels:
+    print(f"len={len(label):<2} columns={visible_width(label):<2} {label!r}")
+print("name:", unicodedata.name("é"), "|", unicodedata.lookup("SNOWMAN"), "| category of '5':", unicodedata.category("5"))
+print("NFC makes e + combining acute one character:", len(unicodedata.normalize("NFC", "e\\u0301")))
+print("numeric('½') =", unicodedata.numeric("½"))
+''',
+ notes=["east_asian_width 'W' and 'F' take two columns in a terminal; combining marks take none.",
+        "Compare text after normalising (NFC or NFKC): 'é' can be one character or two.",
+        "A terminal's own idea of width can differ for emoji and ambiguous-width characters."])
+
+page(35, "locale", "locale: internationalisation services", G_TEXT,
+ "The user's locale: language, number formatting and the character encoding the system prefers. setlocale(LC_ALL, '') adopts the user's environment settings.",
+ ["locale.setlocale", "locale.getlocale", "locale.getpreferredencoding", "locale.LC_ALL", "locale.format_string", "locale.currency", "locale.strcoll"],
+ '''
+import locale
+import os
+import sys
+
+print("LANG      ", os.environ.get("LANG", "(not set)"))
+print("LC_ALL    ", os.environ.get("LC_ALL", "(not set)"))
+print("setlocale ", locale.setlocale(locale.LC_ALL, ""))
+print("getlocale ", locale.getlocale())
+print("stdout encoding:", sys.stdout.encoding)
+print("preferred encoding:", locale.getpreferredencoding(False))
+print("grouped number:", locale.format_string("%d", 1234567, grouping=True))
+''',
+ notes=["Python 3.7+ coerces the C locale to UTF-8 for text I/O; the shell's LANG still matters.",
+        "Call setlocale once at start-up: it changes process-wide state and is not thread-safe.",
+        "For text files always give an explicit encoding rather than relying on the locale."])
+
+# ---- Numbers and time ----------------------------------------------------
+page(40, "math", "math: mathematical functions", G_NUM,
+ "Floating-point mathematics from the C library: roots, powers and logarithms, trigonometry, rounding to integers, and number theory. Functions take and return floats unless noted; for complex numbers see cmath.",
+ ["math.pi", "math.e", "math.tau", "math.inf", "math.nan", "math.sqrt", "math.isqrt", "math.floor", "math.ceil", "math.trunc", "math.fabs", "math.pow", "math.exp", "math.log", "math.log2", "math.log10", "math.sin", "math.cos", "math.tan", "math.atan2", "math.hypot", "math.degrees", "math.radians", "math.gcd", "math.lcm", "math.factorial", "math.comb", "math.perm", "math.isclose", "math.isnan", "math.isinf", "math.fsum", "math.prod"],
+ '''
+import math
+
+used, total = 5368709120, 16106127360
+print("sqrt(144)      =", math.sqrt(144), " isqrt(144) =", math.isqrt(144))
+print("floor/ceil/trunc of -2.5:", math.floor(-2.5), math.ceil(-2.5), math.trunc(-2.5))
+print("7 / 2, 7 // 2, divmod(7, 2) =", 7 / 2, 7 // 2, divmod(7, 2))
+print("round(2.5), round(3.5) =", round(2.5), round(3.5), " (halves go to the even number)")
+print("0.1 + 0.2 == 0.3:", 0.1 + 0.2 == 0.3, "  isclose:", math.isclose(0.1 + 0.2, 0.3))
+print("fsum([0.1] * 10) =", math.fsum([0.1] * 10), " sum([0.1] * 10) =", sum([0.1] * 10))
+print("gcd, lcm, factorial(5), comb(5, 2):", math.gcd(12, 18), math.lcm(4, 6), math.factorial(5), math.comb(5, 2))
+print("log2(1024), log10(1000), log(math.e):", math.log2(1024), math.log10(1000), math.log(math.e))
+print("hypot(3, 4) =", math.hypot(3, 4), " degrees(pi) =", math.degrees(math.pi))
+print("nan == nan:", math.nan == math.nan, " isnan:", math.isnan(math.nan), " inf > 10**100:", math.inf > 10**100)
+print(f"memory used = {used / total * 100:.1f}% ({used / 2**30:.2f} GiB of {total / 2**30:.2f} GiB)")
+try:
+    math.sqrt(-1)
+except ValueError as error:
+    print("sqrt(-1) raises ValueError:", error)
+''',
+ notes=["Never compare floats with ==: use math.isclose(a, b). 0.1 + 0.2 is not 0.3.",
+        "round() rounds halves to even; floor() rounds toward minus infinity, trunc() toward zero.",
+        "math.sqrt(-1) raises ValueError; use cmath.sqrt for complex results.",
+        "Integers have no overflow in Python: 2 ** 100 is exact."])
+
+page(41, "statistics", "statistics: mathematical statistics functions", G_NUM,
+ "Averages and spread of numeric data: mean, median, mode, variance, standard deviation and quantiles.",
+ ["statistics.mean", "statistics.fmean", "statistics.median", "statistics.median_low", "statistics.median_high", "statistics.mode", "statistics.multimode", "statistics.stdev", "statistics.pstdev", "statistics.variance", "statistics.pvariance", "statistics.quantiles", "statistics.StatisticsError"],
+ '''
+import statistics
+
+data = [3, 1, 4, 1, 5, 9, 2, 6]
+print("mean, fmean:", statistics.mean(data), statistics.fmean(data))
+print("median, low, high:", statistics.median(data), statistics.median_low(data), statistics.median_high(data))
+print("mode, multimode:", statistics.mode(data), statistics.multimode([1, 1, 2, 2, 3]))
+print("stdev (sample), pstdev (population):", round(statistics.stdev(data), 3), round(statistics.pstdev(data), 3))
+print("variance, pvariance:", round(statistics.variance(data), 3), round(statistics.pvariance(data), 3))
+print("quartiles:", statistics.quantiles(data, n=4))
+try:
+    statistics.mean([])
+except statistics.StatisticsError as error:
+    print("StatisticsError:", error)
+''',
+ notes=["stdev() and variance() are for a sample (divide by n - 1); pstdev() and pvariance() for a whole population (divide by n).",
+        "fmean() is faster than mean() and always returns a float.",
+        "An empty list raises StatisticsError."])
+
+page(42, "time", "time: time access and conversions", G_NUM,
+ "Clocks and sleeping. time.time() is wall-clock seconds since the epoch and can jump; monotonic() and perf_counter() never go back and are for measuring durations.",
+ ["time.time", "time.monotonic", "time.perf_counter", "time.sleep", "time.strftime", "time.localtime", "time.gmtime", "time.mktime", "time.clock_gettime", "time.CLOCK_BOOTTIME", "time.CLOCK_MONOTONIC", "time.struct_time"],
+ '''
+import time
+
+
+def format_uptime(seconds):
+    """'1 day, 2 hours, 3 mins': leave out zero days and hours, always show minutes."""
+    days, rest = divmod(int(seconds), 86400)
+    hours, rest = divmod(rest, 3600)
+    minutes = rest // 60
+    parts = []
+    if days:
+        parts.append(f"{days} day{'s' if days != 1 else ''}")
+    if hours:
+        parts.append(f"{hours} hour{'s' if hours != 1 else ''}")
+    parts.append(f"{minutes} min{'s' if minutes != 1 else ''}")
+    return ", ".join(parts)
+
+
+print("epoch 0 in UTC:", time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(0)))
+start = time.perf_counter()
+time.sleep(0.05)
+print("slept about 50 ms:", 0.05 <= time.perf_counter() - start < 0.5)
+print("monotonic never decreases:", time.monotonic() <= time.monotonic())
+seconds = time.clock_gettime(time.CLOCK_BOOTTIME)
+print("uptime:", format_uptime(seconds), " | format_uptime(93780) =", format_uptime(93780))
+print("localtime fields:", time.localtime().tm_year >= 2024, " struct_time has", len(time.localtime()), "fields")
+''',
+ notes=["Measure durations with perf_counter() or monotonic(), never time.time(): the wall clock can be adjusted.",
+        "CLOCK_BOOTTIME counts time spent suspended; CLOCK_MONOTONIC does not (Linux).",
+        "time.sleep() may sleep slightly longer than asked, and in 3.5+ it is not cut short by signals."])
+
+page(43, "datetime", "datetime: basic date and time types", G_NUM,
+ "Dates, times, time zones and differences between them. A datetime without tzinfo is 'naive' and means local time by convention; use timezone-aware datetimes for anything stored or exchanged.",
+ ["datetime.datetime", "datetime.datetime.now", "datetime.datetime.fromtimestamp", "datetime.datetime.strptime", "datetime.datetime.strftime", "datetime.datetime.isoformat", "datetime.date", "datetime.date.today", "datetime.timedelta", "datetime.timedelta.total_seconds", "datetime.timezone", "datetime.timezone.utc"],
+ '''
+from datetime import date, datetime, timedelta, timezone
+
+print("epoch 0 is", datetime.fromtimestamp(0, timezone.utc).strftime("%Y-%m-%d %H:%M:%S"), "UTC")
+now = datetime.now(timezone.utc)
+print("aware now has tzinfo:", now.tzinfo, " this year >= 2024:", now.year >= 2024)
+print("93780 s      =", timedelta(seconds=93780), " =", timedelta(seconds=93780).total_seconds(), "seconds")
+print("isoformat    :", datetime(2024, 2, 29, 13, 5, tzinfo=timezone.utc).isoformat())
+parsed = datetime.strptime("2024-03-01 09:30", "%Y-%m-%d %H:%M")
+print("strptime     :", parsed, " + 1 day:", parsed + timedelta(days=1))
+print("difference   :", datetime(2024, 3, 1) - datetime(2024, 2, 1))
+print("date.today() is a date:", isinstance(date.today(), date))
+try:
+    datetime.strptime("1 March 2024", "%Y-%m-%d")
+except ValueError as error:
+    print("strptime with a wrong format raises ValueError:", error)
+try:
+    now - datetime.now()
+except TypeError as error:
+    print("aware minus naive raises TypeError:", error)
+''',
+ notes=["datetime.now() is naive (local time); datetime.now(timezone.utc) is aware. You cannot subtract one from the other.",
+        "datetime.utcnow() is deprecated since 3.12: use datetime.now(timezone.utc).",
+        "strftime directives: %Y %m %d %H %M %S, %A weekday, %B month, %z offset.",
+        "timedelta stores days, seconds and microseconds; .total_seconds() gives the whole thing as a float."])
+
+# ---- System information --------------------------------------------------
+page(50, "platform", "platform: identifying the platform", G_SYS,
+ "The operating system, release, machine type and Python build. freedesktop_os_release() reads /etc/os-release for the distribution.",
+ ["platform.system", "platform.release", "platform.version", "platform.machine", "platform.node", "platform.processor", "platform.python_version", "platform.uname", "platform.platform", "platform.freedesktop_os_release"],
+ '''
+import platform
+
+print("system / release / machine:", platform.system(), platform.release(), platform.machine())
+print("node:", platform.node(), " python:", platform.python_version())
+try:
+    release = platform.freedesktop_os_release()
+except OSError as error:
+    print("no os-release file:", error)
+else:
+    for key in ("PRETTY_NAME", "NAME", "ID", "ID_LIKE", "VERSION_ID", "ANSI_COLOR"):
+        print(f"{key:<12} {release.get(key, '(not set)')}")
+''',
+ notes=["platform.system() is 'Linux', 'Darwin' or 'Windows'. sys.platform is the lowercase form.",
+        "freedesktop_os_release() needs Python 3.10 or later and raises OSError if neither /etc/os-release nor /usr/lib/os-release exists.",
+        "Test features, not names: write `if hasattr(os, 'uname')` rather than `if platform.system() == 'Linux'` where you can."],
+ see="https://docs.python.org/3/library/platform.html, pydoc platform, man os-release")
+
+page(51, "pwd", "pwd: the password database", G_SYS,
+ "Reads /etc/passwd (and whatever the system's name service adds): the account behind a user id, its home directory and login shell. Unix only.",
+ ["pwd.getpwuid", "pwd.getpwnam", "pwd.getpwall", "pwd.struct_passwd"],
+ '''
+import os
+import pwd
+
+account = pwd.getpwuid(os.getuid())
+print("uid           ", os.getuid())
+print("pw_name       ", account.pw_name)
+print("pw_dir        ", account.pw_dir)
+print("pw_shell      ", account.pw_shell)
+print("$SHELL        ", os.environ.get("SHELL", "(not set)"))
+print("getpwnam('root').pw_uid:", pwd.getpwnam("root").pw_uid)
+try:
+    pwd.getpwnam("no-such-user-here")
+except KeyError as error:
+    print("unknown user raises KeyError:", error)
+''',
+ notes=["$SHELL is the shell you started from; pw_shell is the login shell: they can differ.",
+        "getpwuid() raises KeyError for an unknown id.",
+        "The module does not exist on Windows."])
+
+page(52, "getpass", "getpass: portable password input", G_SYS,
+ "Prompts for a password without echoing it, and finds the current user name. getuser() looks at LOGNAME, USER, LNAME and USERNAME before the password database.",
+ ["getpass.getuser", "getpass.getpass"],
+ '''
+import getpass
+
+print("getpass.getuser():", getpass.getuser())
+# getpass.getpass("Password: ") reads from the terminal with echo turned off.
+# It is not called here because this page runs without a terminal to type into.
+''',
+ notes=["getpass() reads from /dev/tty, not from a pipe, so it cannot be fed by shell redirection.",
+        "getuser() trusts environment variables; use pwd.getpwuid(os.getuid()) for the real account."])
+
+page(53, "socket", "socket: low-level networking interface", G_SYS,
+ "BSD sockets: connect to servers, accept connections, look up host names, list network interfaces. Most programs use higher-level modules (http, urllib), but this is what they are built on.",
+ ["socket.gethostname", "socket.gethostbyname", "socket.getaddrinfo", "socket.socket", "socket.create_connection", "socket.if_nameindex", "socket.inet_aton", "socket.inet_ntoa", "socket.AF_INET", "socket.SOCK_STREAM", "socket.SOCK_DGRAM", "socket.timeout"],
+ '''
+import fcntl
+import os
+import socket
+import struct
+
+SIOCGIFADDR, SIOCGIFNETMASK = 0x8915, 0x891B
+
+
+def default_interface():
+    try:
+        with open("/proc/net/route", encoding="utf-8") as file:
+            next(file)                                  # header line
+            for line in file:
+                fields = line.split()
+                if len(fields) > 1 and int(fields[1], 16) == 0:
+                    return fields[0]
+    except OSError:
+        pass
+    return ""
+
+
+def ipv4_of(sock, name, request):
+    packed = struct.pack("256s", name.encode()[:15])
+    return socket.inet_ntoa(fcntl.ioctl(sock.fileno(), request, packed)[20:24])
+
+
+print("gethostname() == os.uname().nodename:", socket.gethostname() == os.uname().nodename)
+print("inet_aton / inet_ntoa:", socket.inet_aton("192.168.1.10"), socket.inet_ntoa(b"\\xc0\\xa8\\x01\\x0a"))
+route = default_interface()
+print("default route goes out through:", route or "(none)")
+
+with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+    for _index, name in socket.if_nameindex():
+        if name == "lo":
+            continue
+        try:
+            address = ipv4_of(sock, name, SIOCGIFADDR)
+            mask = ipv4_of(sock, name, SIOCGIFNETMASK)
+        except OSError:
+            continue                                    # no IPv4 address on this one
+        prefix = bin(int.from_bytes(socket.inet_aton(mask), "big")).count("1")
+        print(f"{name:<12} IPv4 {address}/{prefix}" + ("  <- default route" if name == route else ""))
+''',
+ notes=["Always give network calls a timeout (settimeout, or timeout= in create_connection); the default is to wait forever.",
+        "send() may send less than you asked: use sendall().",
+        "A socket is a context manager: `with socket.socket(...) as s:` closes it for you.",
+        "The interface address lookup above uses fcntl.ioctl with Linux request numbers (SIOCGIFADDR 0x8915); the socket module itself has no portable way to list addresses."])
+
+page(54, "fcntl", "fcntl: fcntl and ioctl system calls", G_SYS,
+ "File-descriptor control (fcntl), device control requests (ioctl) and file locking (flock, lockf). Unix only. ioctl request numbers and structures are system-specific.",
+ ["fcntl.fcntl", "fcntl.ioctl", "fcntl.flock", "fcntl.lockf"],
+ '''
+import fcntl
+import os
+import struct
+import tempfile
+import termios
+
+# fcntl: read the flags of a file descriptor.
+descriptor = os.open("/dev/null", os.O_RDONLY)
+flags = fcntl.fcntl(descriptor, fcntl.F_GETFL)
+print("F_GETFL of /dev/null opened O_RDONLY:", flags, " access mode is O_RDONLY:", flags & os.O_ACCMODE == os.O_RDONLY)
+os.close(descriptor)
+
+# flock: an advisory lock on a file.
+with tempfile.TemporaryFile() as lockfile:
+    fcntl.flock(lockfile, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    print("got an exclusive lock on a temporary file")
+    fcntl.flock(lockfile, fcntl.LOCK_UN)
+
+# ioctl: ask the controlling terminal for its size (TIOCGWINSZ).
+try:
+    tty = os.open("/dev/tty", os.O_RDONLY)
+except OSError:
+    print("no controlling terminal to ask")
+else:
+    try:
+        rows, columns, _x, _y = struct.unpack("HHHH", fcntl.ioctl(tty, termios.TIOCGWINSZ, b"\\0" * 8))
+        print("terminal size from ioctl:", columns, "x", rows)
+    finally:
+        os.close(tty)
+''',
+ notes=["Locks from flock() are advisory: they only stop other processes that also take the lock.",
+        "Read ioctl request numbers from termios (termios.TIOCGWINSZ), not from a copy typed out of a header.",
+        "fcntl.ioctl() takes a bytes buffer and returns the filled bytes."])
+
+page(55, "termios", "termios: POSIX style tty control", G_SYS,
+ "Terminal modes: echo, line editing and raw input, set with tcgetattr and tcsetattr. Always put the terminal back the way you found it.",
+ ["termios.tcgetattr", "termios.tcsetattr", "termios.tcflush", "termios.TIOCGWINSZ", "termios.ECHO", "termios.ICANON", "termios.TCSANOW"],
+ '''
+import os
+import sys
+import termios
+
+if sys.stdin.isatty():
+    saved = termios.tcgetattr(sys.stdin)
+    lflag = saved[3]
+    print("echo is on:", bool(lflag & termios.ECHO), " line editing (ICANON) is on:", bool(lflag & termios.ICANON))
+    # To read single keys: clear ICANON and ECHO, call tcsetattr, and ALWAYS
+    # restore `saved` in a finally block.
+else:
+    print("stdin is not a terminal, so there are no modes to read (this page runs without one)")
+print("TIOCGWINSZ is a constant of this module:", hasattr(termios, "TIOCGWINSZ"))
+''',
+ notes=["Restore the saved attributes in a finally block, or a crash leaves the user's terminal without echo.",
+        "tcgetattr returns a list: [iflag, oflag, cflag, lflag, ispeed, ospeed, cc]. Copy it before modifying.",
+        "tty.setcbreak() and tty.setraw() wrap the common cases."])

@@ -1,6 +1,6 @@
 """
-TITLE: str methods, int(), float(): parsing text
-GROUP: Common tasks
+TITLE: how-to: parse text into fields and numbers
+GROUP: How-to guides
 USES: built-in str methods, int(), float()
 SUMMARY: Text from files and other programs usually comes as "Key: value"
   lines, "KEY=value" lines and numbers followed by units. These few methods

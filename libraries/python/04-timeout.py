@@ -1,6 +1,6 @@
 """
-TITLE: timeout=: giving up on something slow
-GROUP: Common tasks
+TITLE: how-to: give up on something slow
+GROUP: How-to guides
 USES: import subprocess, socket
 SUMMARY: Anything that waits on the outside world can wait for ever. Most calls
   that do take a timeout, in seconds, and raise an exception when it runs out.

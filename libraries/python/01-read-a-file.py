@@ -1,6 +1,6 @@
 """
-TITLE: open() and pathlib: reading a file
-GROUP: Common tasks
+TITLE: how-to: read a file line by line
+GROUP: How-to guides
 USES: built-in open(), pathlib.Path
 SUMMARY: open() in a with block reads a file and closes it afterwards.
   Iterating over the file gives one line at a time. Path.read_text() reads

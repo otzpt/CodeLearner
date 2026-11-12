@@ -1,6 +1,6 @@
 """
-TITLE: sorted(), list.sort(): sorting
-GROUP: Common tasks
+TITLE: how-to: sort a list
+GROUP: How-to guides
 USES: built-in sorted(), list.sort(); operator.itemgetter
 SUMMARY: sorted() returns a new sorted list from anything iterable.
   list.sort() sorts a list where it is. A key function says what to compare.
