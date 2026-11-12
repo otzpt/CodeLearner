@@ -17,6 +17,11 @@ Ten practice files made while following the JavaScript course:
 `package.json` for one npm package (`prompt-sync`). The files are dated 1 to
 5 September.
 
+They are copied here unchanged, typos included, in
+[`learner-examples/javascript/`](learner-examples/javascript/). They are the
+learner's work, not course material, and they are not run by any check. The
+`node_modules` folder and `package-lock.json` were left out.
+
 The learner says the basics took about four hours (**stated**). The file dates
 do not confirm or contradict that, because they show only the last time each
 file was saved.
