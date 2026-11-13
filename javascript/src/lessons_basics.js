@@ -403,6 +403,11 @@ async function lesson04Conditions() {
   console.log("  Verified: this executes with no error at all -- unlike gcc");
   console.log("  and g++, Node does not even warn about it by default.");
 
+  await ui.predict(
+    ["let x = 3;", "if (x = 0) {", '  console.log("inside");', "}", "console.log(x);"],
+    "x = 0 stores 0, then the if tests that 0. 0 is falsy, so the block is skipped. Nothing is compared."
+  );
+
   await ui.waitEnter();
   ui.clearScreen();
   ui.exercise(4);

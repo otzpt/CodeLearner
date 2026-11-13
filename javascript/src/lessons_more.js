@@ -561,6 +561,11 @@ async function lesson10Errors() {
     console.log(`           ${e.constructor.name}: ${e.message}`);
   }
 
+  await ui.predict(
+    ["const total = 5;", "try {", "  total();", "} catch (e) {", "  console.log(`${e.name}: ${e.message}`);", "}"],
+    "total holds a number, and () tried to call it. That is what \"not a function\" means."
+  );
+
   await ui.waitEnter();
   ui.clearScreen();
   ui.heading("PART 3: your own error types");

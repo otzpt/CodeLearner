@@ -53,8 +53,13 @@ between the first and the last save.
 8. **Reading input was a hurdle.** `third.js` spends about 25 lines of
    comments on the fact that JavaScript has no `scanf` and that reading a line
    is asynchronous. The two later programs read input synchronously instead.
-9. **One note is wrong.** `fifth.js` says `for...in` over an array gives the
-   indices `"1"`, `"2"`, `"3"`. Running it in Node 24 gives `"0"`, `"1"`, `"2"`.
+9. **Three notes are wrong.** `fifth.js` says `for...in` over an array gives
+   the indices `"1"`, `"2"`, `"3"`. Running it in Node 24 gives `"0"`, `"1"`,
+   `"2"`. `fourth.js` says `if (x = 5)` sets x to 5 "and then checks whether
+   it is 5"; it tests whether 5 is truthy and compares nothing. `tenth.js`
+   reads TypeError as "called something that is not in the function"; the
+   course says "called something not a function". Modules 5, 4 and 10 now
+   have a prediction or question aimed at each one.
 10. **A module reaches into a skipped one.** `tenth.js` extends `Error` with a
     class and notes that this is "the same mechanism as module 9, which I
     skipped".
