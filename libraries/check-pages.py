@@ -66,7 +66,13 @@ def main():
                     if not fields.get(required):
                         problems.append("header lacks " + required)
                 # Every runnable page says how to call it and how it fails.
-                if not path.endswith(".txt"):
+                # A module page made by tools/make-python-pages.py says it
+                # with one ENTRY per function instead: Python's own signature
+                # and docstring, which carry the parameters, the return value
+                # and the exceptions, so it is not asked for them again.
+                if fields.get("ENTRY"):
+                    pass
+                elif not path.endswith(".txt"):
                     if not fields.get("SIGNATURE") and not fields.get("PROVIDES"):
                         problems.append("header lacks SIGNATURE or PROVIDES")
                     for required in ("PARAMETERS", "RETURNS", "ERRORS"):

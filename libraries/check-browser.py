@@ -47,11 +47,11 @@ def main():
         script += ["", "0"]
         text, code = run(script)
 
-        runnable = len(re.findall(r"EXAMPLE OUTPUT, on this machine", text))
+        runnable = len(re.findall(r"EXAMPLES: OUTPUT, on this machine", text))
         problems = []
         if code != 0:
             problems.append(f"exit status {code}")
-        sections = [s.split("Press ENTER")[0] for s in text.split("EXAMPLE OUTPUT, on this machine")[1:]]
+        sections = [s.split("Press ENTER")[0] for s in text.split("EXAMPLES: OUTPUT, on this machine")[1:]]
         if any("did not compile" in s and not NOT_INSTALLED.search(s) for s in sections):
             problems.append("a page did not compile")
         if "No " + track + " pages found" in text:
@@ -63,7 +63,7 @@ def main():
         if runnable != count - documentation:
             problems.append(f"{runnable} pages ran but {count - documentation} are runnable")
         # Each RUN section must have at least one indented line of output.
-        for section in text.split("EXAMPLE OUTPUT, on this machine")[1:]:
+        for section in text.split("EXAMPLES: OUTPUT, on this machine")[1:]:
             body = section.split("Press ENTER")[0]
             if len([line for line in body.splitlines() if line.startswith("      ")]) == 0:
                 problems.append("a page ran and printed nothing")
