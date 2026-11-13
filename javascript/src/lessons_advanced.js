@@ -15,7 +15,31 @@ const { spawnSync } = require("node:child_process");
 async function lesson11Promises() {
   ui.title("MODULE 11 - PROMISES");
 
+  ui.typeThis([
+    "function wait(ms) {",
+    "  return new Promise((resolve) => setTimeout(resolve, ms));",
+    "}",
+    "",
+    "async function main() {",
+    '  console.log("start");',
+    "  await wait(500);",
+    '  console.log("half a second later");',
+    "}",
+    "",
+    "main();",
+  ]);
+
+  await ui.waitEnter();
+  ui.clearScreen();
   ui.heading("PART 1: a callback -- the way this used to be done");
+
+  await ui.predict(
+    ['setTimeout(() => console.log("later"), 0);', 'console.log("now");'],
+    "A callback runs after the code that scheduled it has finished, even with a 0 ms delay."
+  );
+
+  await ui.waitEnter();
+  ui.clearScreen();
 
   console.log("  Before Promises existed, an async result was handed back");
   console.log("  through a function you passed in, called when the work");
@@ -201,6 +225,21 @@ const MISSING_URL = "https://jsonplaceholder.typicode.com/posts/999999";
 async function lesson12Apis() {
   ui.title("MODULE 12 - WORKING WITH APIS");
 
+  ui.typeThis([
+    "async function main() {",
+    '  const response = new Response(\'{"title": "hello"}\');',
+    "  console.log(response.ok, response.status);",
+    "  const data = await response.json();",
+    "  console.log(data.title);",
+    "}",
+    "",
+    "main();",
+  ]);
+  console.log("\n  new Response() builds by hand the same object fetch() returns,");
+  console.log("  so this runs without a network. PART 1 makes a real request.");
+
+  await ui.waitEnter();
+  ui.clearScreen();
   ui.heading("PART 1: fetch and the two Promises inside it");
 
   console.log("  fetch(url) returns a Promise -- but not of the parsed body.");
@@ -247,6 +286,13 @@ async function lesson12Apis() {
   ui.clearScreen();
   ui.heading("PART 2: the trap -- fetch does not reject on a 404");
 
+  await ui.question(
+    "PREDICT FIRST. await fetch(url) on a page that does not exist,\n" +
+      "  so the server answers 404. Does the await throw?  (answer: yes or no)",
+    "no",
+    "The server answered, so the request did not fail. The rest of this part shows it."
+  );
+  console.log();
   console.log("  A rejected Promise means the REQUEST failed: no route, no");
   console.log("  DNS, connection refused. A 404 or a 500 is a completed,");
   console.log("  successful HTTP exchange -- the server answered, it just");
@@ -404,6 +450,14 @@ function runNode(scriptPath, scriptArgs = []) {
 async function lesson13Modules() {
   ui.title("MODULE 13 - MODULES");
 
+  ui.typeThis([
+    'const path = require("node:path");',
+    'console.log(path.basename("/home/ana/notes.txt"));',
+    'console.log(path.extname("notes.txt"));',
+  ]);
+
+  await ui.waitEnter();
+  ui.clearScreen();
   ui.heading("PART 1: require and module.exports -- this course's own pattern");
 
   console.log("  Every module in this course has been using this already.");
@@ -412,21 +466,12 @@ async function lesson13Modules() {
   console.log('    const ui = require("./ui.js");');
   console.log();
   console.log("  and ui.js's own last lines -- the exact thing that call");
-  console.log("  gets back:");
+  console.log("  gets back, as the running course sees it:");
   console.log();
   console.log("    module.exports = {");
-  console.log("      ask,");
-  console.log("      isInputClosed,");
-  console.log("      clearScreen,");
-  console.log("      waitEnter,");
-  console.log("      rule,");
-  console.log("      title,");
-  console.log("      heading,");
-  console.log("      askYes,");
-  console.log("      exercise,");
-  console.log("      question,");
-  console.log("      challenge,");
-  console.log("      closeInput,");
+  for (const name of Object.keys(ui)) {
+    console.log(`      ${name},`);
+  }
   console.log("    };");
   console.log();
   console.log('  require("./ui.js") runs ui.js once, top to bottom, then hands');
@@ -724,6 +769,14 @@ async function lesson14NodeStdlib() {
   console.log("  of \"standard library\" differs from what a browser's");
   console.log("  JavaScript is allowed to touch at all.");
 
+  ui.typeThis([
+    'const fs = require("node:fs");',
+    'fs.writeFileSync("note.txt", "hello from a file\\n");',
+    'console.log(fs.readFileSync("note.txt", "utf8"));',
+  ]);
+
+  await ui.waitEnter();
+  ui.clearScreen();
   ui.heading("PART 1: fs.readFileSync/writeFileSync -- blocking, and that's fine here");
 
   console.log("  fs is Node's filesystem module -- direct disk access a");
@@ -796,6 +849,13 @@ async function lesson14NodeStdlib() {
   ui.clearScreen();
   ui.heading("PART 3: process.argv -- Node's version of argc/argv");
 
+  await ui.question(
+    "PREDICT FIRST. You run:  node script.js alpha beta\n" +
+      '  At which index of process.argv is "alpha"?',
+    "2",
+    "Index 0 is node itself and index 1 is the script. Yours start at 2."
+  );
+  console.log();
   console.log("  Every argument typed after `node script.js` on the command");
   console.log("  line lands in one array, process.argv. Index 0 is always");
   console.log("  the node executable running the script, index 1 is the");

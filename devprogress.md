@@ -2,7 +2,7 @@
 
 What is built, what is partly done, and what is open. Dates come from `git log`.
 Course contents and module tables live in `README.md`; plans live in `ROADMAP.md`.
-This file is a status log, not a plan. Last updated 2026-11-13.
+This file is a status log, not a plan. Last updated 2026-11-13 (2.0.0).
 
 ## Done
 
@@ -21,9 +21,11 @@ This file is a status log, not a plan. Last updated 2026-11-13.
 | 2026-11-09 | Bug sweep (lesson claims, EOF crashes, installer icon cache), Security module 2, launcher groups courses by topic, HTML, CSS and Web JavaScript courses, PT-PT mode, libraries as a normal reference manual |
 | 2026-11-10 | GTK course (4 modules), raylib + raygui course (6 modules), split into two courses, module 1 rewritten as a beginner walkthrough |
 | 2026-11-12 | Python manual reorganised by topic with a page generator, notes on how a learner worked through the JavaScript course, learner JavaScript practice files in `docs/learner-examples/` |
+| 2026-11-13 | 2.0.0: a new lesson shape (type it, predict it, write it; rule 8 of `docs/writing-a-course.md`) in the JavaScript course: a program to type at the start of each module, a prediction before each trap's output, modules list which later modules they rely on, and `javascript/check-course.py` walks all 14 modules in CI |
 
 ## Partly done
 
+- **Lesson shape (rule 8)**: only the JavaScript course has it. The other 16 courses still use the older shape and move over one course at a time.
 - **Security course**: modules 1 and 2 exist. The roadmap names the next module.
 - **GTK / raylib courses**: four and six modules. The roadmap does not state an end point for either.
 - **Desktop entry on Linux**: `install.sh` was tested against a fake release only. A real run needs the next release tag.
@@ -35,7 +37,6 @@ This file is a status log, not a plan. Last updated 2026-11-13.
 ## Not committed anywhere
 
 - Git stash `gui modules 2-4` on a local clone (4 files: `gui/Makefile`, `gui/src/lessons.h`, `gui/src/main.c`, `tools/check-teaching-order.py`). The `gui` course was later split into `gtk` and `raylib`, so it may be obsolete. Not diffed.
-- Numbered Python practice files (`10-print.py` through `33-socket-interfaces.py`) in the installed copy under `~/.local/share/codelearner/libraries/python/`. Origin unchecked.
 
 ## Not started
 

@@ -8,6 +8,10 @@ const ui = require("./ui.js");
 async function lesson01Running() {
   ui.title("MODULE 1 - RUNNING NODE AND CONSOLE.LOG()");
 
+  ui.typeThis(['const name = "Ana";', 'console.log("Hello", name);', "console.log(`Hello, ${name}!`);"]);
+
+  await ui.waitEnter();
+  ui.clearScreen();
   ui.heading("PART 1: no compile step");
 
   console.log("  Like Python, JavaScript run through Node has no separate");
@@ -40,8 +44,12 @@ async function lesson01Running() {
   const name = "Ana";
   console.log(`  Running: Hello, ${name}`);
   console.log();
-  console.log("  ${expr} inside backticks is evaluated and inserted. Regular");
-  console.log("  quotes do not do this -- \"Hello, ${name}\" prints literally.");
+  console.log("  ${expr} inside backticks is evaluated and inserted.");
+
+  await ui.predict(
+    ['const name = "Ana";', 'console.log("Hello, ${name}");'],
+    "Regular quotes do not interpolate. Only backticks do, so ${name} is printed as written."
+  );
 
   await ui.waitEnter();
   ui.clearScreen();
@@ -96,6 +104,10 @@ async function lesson01Running() {
 async function lesson02Variables() {
   ui.title("MODULE 2 - VARIABLES AND TYPES");
 
+  ui.typeThis(["let age = 25;", "console.log(typeof age);", 'age = "twenty-five";', "console.log(typeof age);"]);
+
+  await ui.waitEnter();
+  ui.clearScreen();
   ui.heading("PART 1: typeof, and == vs ===");
 
   console.log("    let age = 25;");
@@ -106,7 +118,15 @@ async function lesson02Variables() {
   console.log(`    typeof age    -> ${typeof age}`);
   console.log(`    typeof height -> ${typeof height}`);
   console.log(`    typeof "x"    -> ${typeof "x"}`);
-  console.log();
+
+  await ui.predict(
+    ['console.log(0 == "", 0 === "");'],
+    "== converts \"\" to the number 0 before comparing. === compares type first."
+  );
+
+  await ui.waitEnter();
+  ui.clearScreen();
+  ui.heading("PART 1: typeof, and == vs ===");
   console.log("  Two equals operators, and they are not interchangeable:");
   console.log();
   console.log(`    1 == "1"   -> ${1 == "1"}    // converts, then compares`);
@@ -190,6 +210,27 @@ async function lesson02Variables() {
 async function lesson03Input() {
   ui.title("MODULE 3 - READING INPUT");
 
+  ui.typeThis(
+    [
+      'const readline = require("node:readline");',
+      "const rl = readline.createInterface({ input: process.stdin });",
+      "const it = rl[Symbol.asyncIterator]();",
+      "",
+      "async function main() {",
+      "  const { value } = await it.next();",
+      "  console.log(`You typed: ${value}`);",
+      "  rl.close();",
+      "}",
+      "",
+      "main();",
+    ],
+    ["hello"]
+  );
+  console.log("\n  It waits with no prompt until you type a line. PART 1 explains");
+  console.log("  every line of it.");
+
+  await ui.waitEnter();
+  ui.clearScreen();
   ui.heading("PART 1: reading a line is asynchronous");
 
   console.log("  C's scanf, Python's input(), even C++'s cin -- all block");
@@ -295,6 +336,17 @@ async function lesson03Input() {
 async function lesson04Conditions() {
   ui.title("MODULE 4 - CONDITIONS");
 
+  ui.typeThis([
+    "const score = 72;",
+    "if (score >= 50) {",
+    '  console.log("pass");',
+    "} else {",
+    '  console.log("fail");',
+    "}",
+  ]);
+
+  await ui.waitEnter();
+  ui.clearScreen();
   ui.heading("PART 1: if / else if / else");
 
   console.log("    const score = 85;");
@@ -325,11 +377,17 @@ async function lesson04Conditions() {
 
   console.log("  Falsy in JavaScript: false, 0, \"\", null, undefined, NaN.");
   console.log("  So far, similar to Python. Here is where they diverge:");
+
+  await ui.predict(
+    ["const items = [];", "if (items) {", '  console.log("has items");', "} else {", '  console.log("empty");', "}"],
+    "[] is not in the falsy list, so the if branch runs."
+  );
+
   console.log();
   console.log(`    Boolean([])   -> ${Boolean([])}`);
   console.log(`    Boolean({})   -> ${Boolean({})}`);
   console.log();
-  console.log("  TRUE. An empty array and an empty object are both truthy in");
+  console.log("  An empty array and an empty object are both truthy in");
   console.log("  JavaScript -- the opposite of Python, where [] and {} are");
   console.log("  falsy. If you know Python: `if (arr)` is never a length");
   console.log("  check here. Use `if (arr.length)` or `if (arr.length === 0)`.");
@@ -395,6 +453,10 @@ async function lesson04Conditions() {
 async function lesson05Loops() {
   ui.title("MODULE 5 - LOOPS");
 
+  ui.typeThis(["for (let i = 1; i <= 3; i++) {", '  console.log("lap", i);', "}"]);
+
+  await ui.waitEnter();
+  ui.clearScreen();
   ui.heading("PART 1: for, while, unchanged from C");
 
   console.log("    for (let i = 1; i <= 5; i++) {");
@@ -415,6 +477,14 @@ async function lesson05Loops() {
   ui.clearScreen();
   ui.heading("PART 2: for...of and for...in are not the same loop");
 
+  await ui.predict(
+    ['const fruits = ["apple", "banana", "cherry"];', "for (const i in fruits) {", "  console.log(i);", "}"],
+    "for...in walks the keys. An array's keys are its indices, as strings, starting at 0."
+  );
+
+  await ui.waitEnter();
+  ui.clearScreen();
+  ui.heading("PART 2: for...of and for...in are not the same loop");
   const fruits = ["apple", "banana", "cherry"];
   console.log('    const fruits = ["apple", "banana", "cherry"];');
   console.log("    for (const f of fruits) console.log(f);      // VALUES");
@@ -456,6 +526,11 @@ async function lesson05Loops() {
 
   await ui.question("for (const x of arr)  -- does x hold values or indices?", "values", "of walks the values directly.");
   await ui.question("for (const x in arr)  -- does x hold values or indices?", "indices", "in walks the keys/indices, as strings.");
+  await ui.question(
+    'for (const x in ["a", "b", "c"]) console.log(x);  -- what is the\n  first line it prints?',
+    "0",
+    'Indices start at 0, so the keys are "0", "1", "2" -- not "1", "2", "3".'
+  );
 
   await ui.challenge(
     [

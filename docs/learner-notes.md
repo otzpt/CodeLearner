@@ -70,7 +70,10 @@ between the first and the last save.
 
 ## What this suggests for the courses
 
-**Suggestions**, none of them implemented or tested:
+**Suggestions.** Items 1 to 4 were built into the JavaScript course on
+2026-11-13, as rule 8 of `writing-a-course.md`. Whether they help a learner
+has not been tested.
+
 
 1. **Keep a short example before the explanation, one the student can type.**
    The learner's stated benefit was muscle memory, which reading output does
@@ -82,14 +85,16 @@ between the first and the last save.
    the traps in rule 6 of `writing-a-course.md`.
 3. **Say when a module depends on one a student may skip.** Item 10 above: a
    student who skips module 9 still meets its mechanism in module 10.
-   `tools/check-teaching-order.py` is described as checking the numbered
-   sequence. Whether it accounts for skipped modules was not checked.
+   `tools/check-teaching-order.py` checks the numbered sequence only and
+   does not account for skipped modules. The `uses` list in the JavaScript
+   `MODULES` table does, and is written by hand.
 4. **Check the common wrong summaries.** Item 9 shows a student ending up with
    a wrong rule even though the course was available. Where a trap has an easy
    wrong summary (indices starting at 1), a question about it would catch it.
 5. **Give input reading its own early note.** Item 8: the first obstacle for a
-   student coming from C or Python was how to read a line. Whether the course
-   already covers this early enough was not checked here.
+   student coming from C or Python was how to read a line. Checked on
+   2026-11-13: reading input is module 3 of 14, and module 3 now opens with a
+   short program to type that reads one line.
 
 ## Limits
 

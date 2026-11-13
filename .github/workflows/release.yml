@@ -167,6 +167,9 @@ jobs:
           python3 libraries/check-pages.py
           python3 libraries/check-browser.py
           python3 tools/check-teaching-order.py
+          # Every JavaScript module reaches its SUMMARY, which also runs
+          # every TYPE THIS and PREDICT snippet as its own node process.
+          python3 javascript/check-course.py
 
       # Every module of the two GUI courses reaches its SUMMARY, the same way.
       - name: Walk the GUI courses (Linux)

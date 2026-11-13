@@ -10,6 +10,10 @@ const ui = require("./ui.js");
 async function lesson06Arrays() {
   ui.title("MODULE 6 - ARRAYS");
 
+  ui.typeThis(["const nums = [3, 1, 2];", "nums.push(4);", "console.log(nums.length, nums[0]);", "console.log(nums);"]);
+
+  await ui.waitEnter();
+  ui.clearScreen();
   ui.heading("PART 1: const does not stop this -- the same bug Python has");
 
   console.log("    const a = [1, 2, 3];");
@@ -40,9 +44,8 @@ async function lesson06Arrays() {
   ui.clearScreen();
   ui.heading("PART 2: sort mutates, and sorts as text by default");
 
-  console.log("    [10, 9, 2].sort()");
-  console.log();
-  console.log(`  Running: [${[10, 9, 2].sort()}]`);
+  await ui.predict(["console.log([10, 9, 2].sort());"], "sort() with no argument compares the elements as text.");
+
   console.log();
   console.log("  Not [2, 9, 10]. sort() converts each element to a string");
   console.log('  first, and "10" sorts before "9" the same way "apple" sorts');
@@ -111,6 +114,18 @@ async function lesson06Arrays() {
 async function lesson07Functions() {
   ui.title("MODULE 7 - FUNCTIONS AND THIS");
 
+  ui.typeThis([
+    'function greet(name, greeting = "Hello") {',
+    "  return `${greeting}, ${name}`;",
+    "}",
+    "const twice = (x) => x * 2;",
+    "",
+    'console.log(greet("Ana"));',
+    "console.log(twice(21));",
+  ]);
+
+  await ui.waitEnter();
+  ui.clearScreen();
   ui.heading("PART 1: default parameters and arrow functions");
 
   console.log("    function greet(name) { return `hello, ${name}`; }");
@@ -164,15 +179,11 @@ async function lesson07Functions() {
   ui.clearScreen();
   ui.heading("PART 3: closures, and the var/let loop trap");
 
-  console.log("    const fns = [];");
-  console.log("    for (var i = 0; i < 3; i++) { fns.push(() => i); }");
-  console.log("    console.log(fns.map(f => f()));");
-  console.log();
-  const fnsVar = [];
-  for (var i = 0; i < 3; i++) {
-    fnsVar.push(() => i);
-  }
-  console.log(`  Running with var:  [${fnsVar.map((f) => f())}]`);
+  await ui.predict(
+    ["const fns = [];", "for (var i = 0; i < 3; i++) {", "  fns.push(() => i);", "}", "console.log(fns.map((f) => f()));"],
+    "Each function returns i when it is called, after the loop has finished."
+  );
+
   console.log();
   console.log("  Not [0, 1, 2]. var is not scoped to the loop body -- there");
   console.log("  is only ONE i for the whole loop, and by the time any of");
@@ -230,6 +241,15 @@ async function lesson07Functions() {
 async function lesson08Objects() {
   ui.title("MODULE 8 - OBJECTS");
 
+  ui.typeThis([
+    'const student = { name: "Ana", grade: 15 };',
+    "student.grade = 17;",
+    "console.log(student.name, student.grade);",
+    "console.log(JSON.stringify(student));",
+  ]);
+
+  await ui.waitEnter();
+  ui.clearScreen();
   ui.heading("PART 1: property access, and JSON");
 
   const student = { name: "Ana", grade: 15 };
@@ -249,6 +269,14 @@ async function lesson08Objects() {
   ui.clearScreen();
   ui.heading("PART 2: == and === are both wrong for comparing objects");
 
+  await ui.predict(
+    ["const a = [1, 2];", "const b = [1, 2];", "console.log(a === b, a == b);"],
+    "a and b hold the same numbers but are two different arrays."
+  );
+
+  await ui.waitEnter();
+  ui.clearScreen();
+  ui.heading("PART 2: == and === are both wrong for comparing objects");
   console.log(`    [1, 2] == [1, 2]   -> ${[1, 2] == [1, 2]}`);
   console.log(`    [1, 2] === [1, 2]  -> ${[1, 2] === [1, 2]}`);
   console.log();
@@ -317,6 +345,21 @@ async function lesson08Objects() {
 async function lesson09Classes() {
   ui.title("MODULE 9 - CLASSES");
 
+  ui.typeThis([
+    "class Dog {",
+    "  constructor(name) {",
+    "    this.name = name;",
+    "  }",
+    "  speak() {",
+    "    return `${this.name} says woof`;",
+    "  }",
+    "}",
+    "",
+    'console.log(new Dog("Rex").speak());',
+  ]);
+
+  await ui.waitEnter();
+  ui.clearScreen();
   ui.heading("PART 1: class, constructor, and real private fields");
 
   console.log("    class Student {");
@@ -342,7 +385,15 @@ async function lesson09Classes() {
 
   const st = new Student("Ana", 15);
   console.log(`  Running: ${st.describe()}`);
-  console.log();
+
+  await ui.predict(
+    ["class Student {", '  name = "Ana";', "  #grade = 15;", "}", "console.log(JSON.stringify(new Student()));"],
+    "A # field is not a property at all. Nothing outside the class sees it, JSON included."
+  );
+
+  await ui.waitEnter();
+  ui.clearScreen();
+  ui.heading("PART 1: class, constructor, and real private fields");
   console.log("  #grade is a REAL private field -- unlike Python's leading");
   console.log("  underscore, which is only a convention. Trying to read");
   console.log("  s.#grade from outside the class is not just wrong, it is a");
@@ -451,37 +502,38 @@ async function lesson09Classes() {
 async function lesson10Errors() {
   ui.title("MODULE 10 - ERRORS");
 
+  ui.typeThis([
+    "try {",
+    '  throw new Error("something broke");',
+    "} catch (e) {",
+    '  console.log("caught:", e.message);',
+    "}",
+    'console.log("still running");',
+  ]);
+
+  await ui.waitEnter();
+  ui.clearScreen();
   ui.heading("PART 1: try / catch / finally, and throw");
 
-  console.log("    function divide(a, b) {");
-  console.log('        if (b === 0) throw new Error("division by zero");');
-  console.log("        return a / b;");
-  console.log("    }");
-  console.log();
-  console.log("    try {");
-  console.log("        console.log(divide(10, 2));");
-  console.log("        console.log(divide(1, 0));");
-  console.log("    } catch (e) {");
-  console.log("        console.log(`caught: ${e.message}`);");
-  console.log("    } finally {");
-  console.log('        console.log("always runs");');
-  console.log("    }");
-  console.log();
-
-  function divide(a, b) {
-    if (b === 0) throw new Error("division by zero");
-    return a / b;
-  }
-
-  console.log("  Running:");
-  try {
-    console.log(`    ${divide(10, 2)}`);
-    console.log(`    ${divide(1, 0)}`);
-  } catch (e) {
-    console.log(`    caught: ${e.message}`);
-  } finally {
-    console.log("    always runs");
-  }
+  await ui.predict(
+    [
+      "function divide(a, b) {",
+      '  if (b === 0) throw new Error("division by zero");',
+      "  return a / b;",
+      "}",
+      "",
+      "try {",
+      "  console.log(divide(10, 2));",
+      "  console.log(divide(1, 0));",
+      '  console.log("after");',
+      "} catch (e) {",
+      "  console.log(`caught: ${e.message}`);",
+      "} finally {",
+      '  console.log("always runs");',
+      "}",
+    ],
+    'The throw leaves the try block at once, so "after" never prints.'
+  );
   console.log();
   console.log("  The second divide() never returns -- the throw jumps");
   console.log("  straight to catch. finally runs either way.");

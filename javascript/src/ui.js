@@ -20,7 +20,11 @@
 // by hand instead, which returns "" once input is exhausted rather than
 // hanging -- verified against both a closed pipe and a real terminal.
 
+const fs = require("node:fs");
+const os = require("node:os");
+const path = require("node:path");
 const readline = require("node:readline");
+const { spawnSync } = require("node:child_process");
 const { stdin, stdout } = require("node:process");
 const { tr, printSummaryPt } = require("./strings_pt.js");
 
@@ -160,6 +164,85 @@ async function challenge(task, input, expected, solution) {
   console.log("  " + tr("right -- or better. Compare the output, not the code."));
 }
 
+// Run `code` as its own file in a fresh node process, the way the student
+// runs it with `node try.js`, and return the lines it printed. A separate
+// process rather than node:vm, so require(), stdin and console.log's own
+// formatting are the real ones. `input` is fed to its stdin.
+//
+// A snippet that fails is a bug in the course, not a lesson: it throws, and
+// main.js reports it.
+function runSnippet(code, input = []) {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "codelearner-js-"));
+  const file = path.join(dir, "try.js");
+  try {
+    fs.writeFileSync(file, code.join("\n") + "\n");
+    const result = spawnSync(process.execPath, [file], {
+      cwd: dir,
+      input: input.length > 0 ? input.join("\n") + "\n" : "",
+      encoding: "utf8",
+      timeout: 10000,
+    });
+    if (result.error || result.status !== 0) {
+      // Node ends its stderr with a version banner; the line naming the
+      // error is the useful one.
+      const errorLine = result.stderr.split("\n").find((line) => /^\w*Error\b/.test(line));
+      const reason = result.error ? result.error.message : errorLine || `exit code ${result.status}`;
+      throw new Error(`a lesson snippet failed: ${reason}`);
+    }
+    return result.stdout.trimEnd().split("\n");
+  } finally {
+    fs.rmSync(dir, { recursive: true, force: true });
+  }
+}
+
+// A short program for the student to type by hand before the explanation,
+// for the feel of the syntax. Its output is produced by running it here.
+function typeThis(code, input = []) {
+  console.log("\n  " + tr(">> TYPE THIS YOURSELF, do not paste it"));
+  rule();
+  for (const line of code) {
+    console.log(`    ${line}`);
+  }
+  rule();
+  console.log("  " + tr("Save it as try.js and run it with:") + "  node try.js");
+  if (input.length > 0) {
+    console.log("  " + tr("When it waits, type:") + "  " + input.join(" / "));
+  }
+  console.log("\n  " + tr("It prints:"));
+  for (const line of runSnippet(code, input)) {
+    console.log(`    ${line}`);
+  }
+}
+
+// Words and numbers only, so "[ 10, 2, 9 ]" and "10 2 9" compare equal.
+function tokens(text) {
+  return (text.toLowerCase().match(/[\w.-]+/g) || []).join(" ");
+}
+
+// Show code, ask what it prints, then run it. The guess comes before the
+// output is on screen; that order is the point.
+async function predict(code, why) {
+  console.log("\n  " + tr("PREDICT FIRST. What will this print?") + "\n");
+  for (const line of code) {
+    console.log(`    ${line}`);
+  }
+  const guess = await ask("\n  " + tr("Your prediction (ENTER to skip):") + " ");
+  const printed = runSnippet(code);
+
+  console.log("\n  " + tr("It prints:"));
+  for (const line of printed) {
+    console.log(`    ${line}`);
+  }
+  console.log();
+  if (guess.trim() === "") {
+    console.log(`  ${why}`);
+  } else if (tokens(guess) === tokens(printed.join(" "))) {
+    console.log(`  ${tr("As you predicted.")}  ${why}`);
+  } else {
+    console.log(`  ${tr("Not what you predicted.")}  ${why}`);
+  }
+}
+
 function closeInput() {
   rl.close();
 }
@@ -178,5 +261,7 @@ module.exports = {
   exercise,
   question,
   challenge,
+  typeThis,
+  predict,
   closeInput,
 };

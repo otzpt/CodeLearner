@@ -27,6 +27,10 @@ const { lesson11Promises, lesson12Apis, lesson13Modules, lesson14NodeStdlib } = 
 
 // `tier` files a module under one of the three menu bands. Display
 // grouping only -- the lesson functions never see it.
+//
+// `uses` lists the modules after the BASIC band whose code this module shows
+// again, so a student who skipped one is told before meeting it. Written by
+// hand from the lesson text: module 10's own error class is a module 9 class.
 const MODULES = [
   { title: "Running Node and console.log()", run: lesson01Running, tier: "BASIC" },
   { title: "Variables and types", run: lesson02Variables, tier: "BASIC" },
@@ -34,15 +38,26 @@ const MODULES = [
   { title: "Conditions", run: lesson04Conditions, tier: "BASIC" },
   { title: "Loops", run: lesson05Loops, tier: "BASIC" },
   { title: "Arrays", run: lesson06Arrays, tier: "INTERMEDIATE" },
-  { title: "Functions and this", run: lesson07Functions, tier: "INTERMEDIATE" },
+  { title: "Functions and this", run: lesson07Functions, tier: "INTERMEDIATE", uses: [6] },
   { title: "Objects", run: lesson08Objects, tier: "INTERMEDIATE" },
-  { title: "Classes", run: lesson09Classes, tier: "ADVANCED" },
-  { title: "Errors", run: lesson10Errors, tier: "ADVANCED" },
-  { title: "Promises", run: lesson11Promises, tier: "ADVANCED" },
-  { title: "Working with APIs", run: lesson12Apis, tier: "ADVANCED" },
+  { title: "Classes", run: lesson09Classes, tier: "ADVANCED", uses: [7, 8] },
+  { title: "Errors", run: lesson10Errors, tier: "ADVANCED", uses: [7, 9] },
+  { title: "Promises", run: lesson11Promises, tier: "ADVANCED", uses: [7, 10] },
+  { title: "Working with APIs", run: lesson12Apis, tier: "ADVANCED", uses: [10] },
   { title: "Modules", run: lesson13Modules, tier: "ADVANCED" },
-  { title: "Node-specific stdlib", run: lesson14NodeStdlib, tier: "ADVANCED" },
+  { title: "Node-specific stdlib", run: lesson14NodeStdlib, tier: "ADVANCED", uses: [11, 13] },
 ];
+
+function showUses(module) {
+  if (!module.uses) {
+    return;
+  }
+  console.log("\n  " + ui.tr("This module uses:"));
+  for (const n of module.uses) {
+    console.log(`    ${ui.tr("module")} ${n}  ${ui.tr(MODULES[n - 1].title)}`);
+  }
+  console.log("  " + ui.tr("Skipped one? Expect a few lines you have not seen yet."));
+}
 
 function showMenu() {
   ui.clearScreen();
@@ -73,6 +88,7 @@ async function main() {
     const n = Number(choice);
     if (Number.isInteger(n) && n >= 1 && n <= MODULES.length) {
       ui.clearScreen();
+      showUses(MODULES[n - 1]);
       await MODULES[n - 1].run();
     } else {
       console.log("\n  " + ui.tr("Not a valid option."));
