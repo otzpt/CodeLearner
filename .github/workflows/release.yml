@@ -238,8 +238,11 @@ jobs:
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/bundle"
           tar -xzf codelearner-linux-x86_64.tar.gz -C "$RUNNER_TEMP/bundle"
-          cd "$RUNNER_TEMP/bundle/codelearner-linux-x86_64/launcher"
-          out=$(printf '5\n1\n\n\n\nm\nq\n0\n' | CODELEARNER_PRACTICE_DIR="$RUNNER_TEMP/bundle-practice" timeout 60 ./launcher)
+          # Straight to the course, not through the launcher: the launcher
+          # reads stdin with buffered C stdio, so a pipe's lines would all be
+          # used up by it before the course starts. A keyboard does not do that.
+          cd "$RUNNER_TEMP"
+          out=$(printf '1\n\n\n\nm\nq\n' | CODELEARNER_PRACTICE_DIR="$RUNNER_TEMP/bundle-practice" timeout 60 node "$RUNNER_TEMP/bundle/codelearner-linux-x86_64/arduino/learn.js")
           grep -q "ARDUINO FROM ZERO" <<<"$out" || { echo "::error::the bundled Arduino course did not start"; exit 1; }
           grep -q "Output:" <<<"$out" || { echo "::error::the bundled Arduino course ran no example"; echo "$out" | tail -20; exit 1; }
 
