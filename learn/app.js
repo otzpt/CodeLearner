@@ -151,7 +151,7 @@ function runFile(course, file, input = [], opts = {}) {
       input: last && input.length ? input.join("\n") + "\n" : "",
       encoding: "utf8",
       timeout: course.timeout || 10000,
-      env: { ...process.env, ...(course.env || {}) },
+      env: { ...process.env, ...(course.env || {}), ...(opts.env || {}) },
     });
     if (r.error && r.error.code === "ENOENT") {
       return { ok: false, output: [], errorLine: `${cmd}: ${tr("not installed")}`, missing: cmd };
@@ -259,7 +259,8 @@ function saveProgress(course, progress) {
 // result looks on screen, and is checked against the real run.
 // `setup` runs before the example without being shown; `run: false` only
 // shows the code; `error: true` marks an example that is meant to fail;
-// `flags` are extra build options for this example only.
+// `flags` are extra build options and `env` extra environment for this
+// example only (an exercise may set `env` too).
 async function codeBlock(course, block) {
   if (block.setup) {
     console.log("    " + dim(tr(block.setupLabel || "(the helper above goes here)")));
@@ -271,7 +272,7 @@ async function codeBlock(course, block) {
   }
   const full = block.setup ? block.setup + "\n\n" + block.code : block.code;
   const t = block.output ? transcript(block.output) : null;
-  const result = runCode(course, full, t ? t.input : [], { flags: block.flags });
+  const result = runCode(course, full, t ? t.input : [], { flags: block.flags, env: block.env });
 
   if (result.missing) {
     showError(course, result);
@@ -366,7 +367,7 @@ async function exerciseBlock(course, block, lessonNumber) {
       console.log();
       continue;
     }
-    const result = runFile(course, file, t.input);
+    const result = runFile(course, file, t.input, { env: block.env });
     if (result.timeout) {
       say(red(tr("Your program did not finish within 10 seconds.")) + tr(" Is there a loop that never stops, or is it waiting for more input?"));
     } else if (!result.ok) {

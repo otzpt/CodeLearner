@@ -37,7 +37,7 @@ function checkCourse(dir) {
         if (b.code && b.run !== false) {
           const full = b.setup ? b.setup + "\n\n" + b.code : b.code;
           const t = b.output ? app.transcript(b.output) : null;
-          const r = app.runCode(course, full, t ? t.input : [], { flags: b.flags });
+          const r = app.runCode(course, full, t ? t.input : [], { flags: b.flags, env: b.env });
           if (b.error && r.ok) fail(where, "example marked as an error ran fine");
           if (!b.error && !r.ok) fail(where, `example failed: ${r.errorLine || "timeout"}`);
           if (r.ok && t && !app.sameOutput(t.raw, r.output)) fail(where, `example printed ${JSON.stringify(r.output)}, transcript says ${JSON.stringify(t.raw)}`);
@@ -46,13 +46,13 @@ function checkCourse(dir) {
           if (!Number.isInteger(b.answer) || b.answer < 1 || b.answer > b.choices.length) fail(where, "quiz answer out of range");
         } else if (b.exercise) {
           const t = app.transcript(b.expected);
-          const r = app.runCode(course, b.solution, t.input);
+          const r = app.runCode(course, b.solution, t.input, { env: b.env });
           if (!r.ok || !app.sameOutput(t.raw, r.output)) {
             fail(where, `solution printed ${JSON.stringify(r.output)} ${r.errorLine || ""}`);
           }
           const starter = b.starter || course.starter;
           if (starter) {
-            const s2 = app.runCode(course, starter, t.input);
+            const s2 = app.runCode(course, starter, t.input, { env: b.env });
             if (!s2.ok && !s2.timeout) fail(where, `starter does not run: ${s2.errorLine}`);
           }
           if (!b.hints || b.hints.length === 0) fail(where, "exercise has no hints");
