@@ -1,4 +1,4 @@
-const HELPER = require("./10-input.js").HELPER;
+const HELPER = require("./11-input.js").HELPER;
 
 module.exports = {
   id: "guessing-game",
@@ -7,7 +7,7 @@ module.exports = {
     [
       "Time to put everything together in one real program: a number guessing game.",
       "The program thinks of a secret number. The player guesses; the program says \"Too low\" or \"Too high\" until the guess is right, then says how many guesses it took.",
-      "It uses almost every lesson: variables (3), if (5), a while loop (6), a function (8), ask and Number (10).",
+      "It uses almost every lesson: variables (3), if (5), a while loop (6), a function (8), ask and Number (11).",
     ],
     [
       "Plan it in plain words before writing code. Programmers do this all the time:",
