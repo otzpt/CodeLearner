@@ -1,367 +1,158 @@
 # Writing a course
 
-How the courses are built, and how to add a module or a whole new language.
-Read this before writing lessons — most of it is about what *not* to do.
-For how a real learner worked through a course, see
+How a course is put together, and how to write lessons that teach. For how a
+real learner used a course, and why the courses look the way they do, see
 [`learner-notes.md`](learner-notes.md).
+
+## How a course is built
+
+Every course runs on one engine, `learn/`, with Node. A course is a folder:
+
+```
+python/
+  learn.js       the entry: require("../learn/main.js").start(__dirname)
+  course.js      how this language builds and runs code, and reads its errors
+  lessons/       one file per lesson, as plain data, run in file-name order
+```
+
+The launcher starts a course with `node <folder>/learn.js`. The engine draws
+the menu and the screens, runs every example, checks exercises, explains
+errors and saves progress in `~/codelearner/<course>/`.
+
+### course.js
+
+| Field | What it is |
+| --- | --- |
+| `id`, `title`, `titlePt` | folder name, and the menu title in English and Portuguese |
+| `file` | the name an example is written to, such as `main.c`; its extension names exercise files |
+| `steps(file, dir, opts)` | the commands that build and run a file: every step but the last builds, the last runs and gets the typed input |
+| `parseError(text, file)` | turns a compiler or runtime message into `{ errorLine, line }` |
+| `errors` | `[pattern, English, Portuguese]` plain-word explanations, tried in order |
+| `warnings(text)` | optional: compiler warnings from a build step, shown above the output |
+| `starter` | the file an exercise starts from, unless the exercise gives its own |
+| `howToRun(name)` | the command the student types to run an exercise file |
+| `env`, `timeout` | optional extra environment and a time limit in milliseconds |
+| `buildOnly`, `unavailable()` | for courses whose programs open windows (GTK, raylib): build, do not run; and say when the library is missing |
+
+`errorsOnStdout` and `stdoutWarning` exist for toolchains that print errors or
+warnings on standard output (dotnet, git). The C#, Git and web courses show
+how they are used.
+
+### A lesson
+
+```js
+module.exports = {
+  id: "loops",                       // never change it: progress is saved by id
+  title: "Repeating with loops",
+  titlePt: "Repetir com ciclos",
+  screens: [                         // one terminal screen each
+    [
+      "A paragraph of text.",
+      { code: "...", },              // an example, run when shown
+      { quiz: "...", choices: ["a", "b"], answer: 2, why: "..." },
+      { tip: "One line to remember." },
+    ],
+    [
+      { exercise: "count", task: "...", expected: ["1", "2"], hints: ["..."], solution: "..." },
+    ],
+  ],
+  recap: ["...", "..."],             // WHAT YOU LEARNED, at the end
+  recapPt: ["...", "..."],           // the same, in Portuguese
+};
+```
+
+An example block can also have:
+
+- `error: true`: the example is meant to fail; its error is shown and explained.
+- `warning: true`: the example is meant to make the compiler warn.
+- `run: false`: shown only, never run (a terminal command, for instance).
+- `output: [...]`: for an example that reads input, the terminal transcript,
+  with what the user types in braces at the end of a line: `"Name? {Ana}"`.
+  The engine types the input, checks the real output against it, and shows
+  the transcript.
+- `setup` and `setupLabel`: code that runs before the example without being
+  shown, such as a helper from an earlier screen.
+- `flags` and `env`: extra build options or environment for this example.
+
+An exercise's `expected` uses the same transcript form for input. The student
+writes the program in a real file, the engine runs it and compares the output
+line by line, and says which line differs.
 
 ## The rules
 
-### 1. Write the course in the language it teaches
+### 1. Start from zero, and explain each thing on its own terms
 
-The C course is written in C. The Python course will be written in Python.
+Every course is for someone who has never programmed. Never explain through
+another language, not even C or Python: "the same rule as C's `==` on a
+`char*`" taught a learner nothing about JavaScript and confused them about C.
+A course may say which other course covers a prerequisite (the GTK course
+assumes C basics), never compare to it.
 
-This is not a gimmick. A student who has just been shown function pointers can
-open `c/src/main.c` and see one holding the module table. The course stops
-being a description of the language and becomes a program written in it.
+### 2. At most one example per screen, minimal words, full detail
 
-It also keeps the author honest: you cannot teach something the course itself
-does badly.
+Too many examples on one screen lost a learner halfway through a lesson. Too
+few words made lessons useless. Keep every detail that matters, in short
+sentences, and give each example its own screen. `learn/check.js` fails a
+screen with two examples.
 
-### 2. Nothing is claimed without being shown
+### 3. Nothing is claimed without being shown
 
-If an example can run, run it and print the real result.
+Every example runs when it is shown, so the output on screen is the real
+output of the code above it. Where something cannot run here (a boot sector,
+a window), say so and say why. The web courses use `learn/web.js`, a small
+stand-in for a browser, and the hardware courses use stand-ins for the
+board; anything that plays the outside world (`sim.click`, `sim_set_external`)
+is called PC-only every time it appears.
 
-```c
-printf("    sizeof(int)    = %zu bytes\n", sizeof(int));
-```
+### 4. Teach the trap, and show the wrong summary failing
 
-Not "an int is usually 4 bytes" — the number the student's own compiler just
-produced. The same goes for addresses, for `5 / 2`, for what `malloc`
-returned. A course that asserts is a worse book; a course that demonstrates is
-something a book cannot be.
+What is worth a screen is the thing that makes people lose an afternoon:
+`"5" + 1`, `=` inside `if`, positions starting at 0, `==` on strings. Where a
+trap has an easy wrong summary, show the case where that summary gives the
+wrong answer. A learner's notes said `for...in` gives `"1"`, `"2"`, `"3"` and
+that `if (x = 5)` checks whether x is 5; the JavaScript lessons now show both
+failing.
 
-Where the language runs elsewhere, verify before writing it down. Every output
-in the C course was produced by running the code first. Two claims changed as
-a result.
+### 5. An exercise only needs what came before it
 
-### 3. Never demonstrate undefined behaviour
+A task that needs something a later lesson teaches is a broken task, not a
+hard one. When a lesson uses something from an earlier lesson that is easy to
+skip, say which lesson it came from.
 
-A double free, a use-after-free, reading past an array. Explain them, show the
-error message they produce, and do not run them. Undefined behaviour either
-crashes the course or — much worse — appears to work, teaching exactly the
-wrong lesson.
+### 6. The output is the specification, not the solution
 
-Show the diagnostic instead:
+An exercise states what the program must print (and what is typed). Any code
+that produces it is correct; the solution is one way, shown only on request.
 
-```
-free(): double free detected in tcache 2
-```
+### 7. Errors and warnings are teaching material
 
-### 4. An exercise may only need what the course has already taught
-
-A task requiring `if` before module 4 has taught `if` is a broken task, not a
-hard one. It reads as "you should have known this" to somebody who could not
-have.
-
-This has slipped through twice, both times caught by a student rather than by
-the author, so it is checked automatically now:
-
-```bash
-python3 tools/check-teaching-order.py
-```
-
-It maps every construct to the module that first teaches it and flags any
-exercise reaching ahead. Run it before committing a new module. Adding a
-construct to a lesson means adding it to that map too.
-
-### 5. The input and the output are the specification, not your code
-
-Every `challenge` states two things: the input the program will read, if any,
-and the output it must produce from that input. That pair is what the student
-checks against — not the code shown afterwards, which is labelled example code
-and described as one way of getting there. A different solution that reads the
-same input and produces the same output is correct, and may well be better.
-
-State input explicitly even when it already appears inside the expected
-transcript (a prompt like `What is your name? ` followed by the typed `Jose`
-on the same line is realistic, but does not by itself tell a reader that
-`Jose` was theirs to type rather than the program's to print). Leave it empty
-for a task that reads nothing — most of the early ones do.
-
-### 6. Teach the trap, not the syntax
-
-Syntax is in every reference. What is worth a module is the thing that makes
-people lose an afternoon:
-
-- `5 / 2` giving `2`, and casting the result being too late
-- `scanf` needing `&`, and arrays not
-- `==` on strings comparing addresses
-- an array of 5 having no index 5
-- one `free` per `malloc`, and who owes it
-
-If a module has no trap in it, it probably does not need to be a module.
-
-### 7. Warnings are teaching material
-
-Build with `-Wall -Wextra`. When the compiler catches something the module is
-about, quote it. `if (x = 5)` is a better lesson with the warning next to it.
-
-### 8. Do not explain through a language the student may not know
-
-Explain each point in the language the course teaches. A comparison to another
-language is an aside after the explanation, never the explanation itself, and
-only to basics a beginner has likely met, such as Python's `print()` and
-`input()` or an `if` in C. No C++, no C pointers, no compiler flags: "the same
-rule as C's `==` on a `char*`" taught a learner nothing about JavaScript and
-confused them about C.
-
-### 9. Run the trap, catch the wrong summary, name what a skipped module hid
-
-- Show a trap by running it, so the code on screen and its output cannot
-  drift. The JavaScript course runs every example in a fresh `node` process.
-- Where a trap has an easy wrong summary, show the case where that summary
-  gives the wrong answer. The JavaScript learner's notes said `for...in` gives
-  `"1"`, `"2"`, `"3"` and that `if (x = 5)` checks whether x is 5; the
-  JavaScript course's lessons 7 and 5 now show both failing.
-- Students skip modules. When a lesson uses something from an earlier one
-  that is easy to skip, say which lesson it came from. The learner skipped
-  objects and classes and then met a class in the errors module.
-
-Tried and removed: a snippet to type into `try.js` at the start of each
-module, and asking the student to predict output before showing it. Both
-came from misreading the learner's files (they type the lesson's own examples
-into one file per module, and the outputs in their comments were copied from
-the course to save switching windows).
-
-## Adding a module to an existing course
-
-Three steps.
-
-**1. Write the function.** In `c/src/lessons_basics.c` or
-`c/src/lessons_memory.c`, following the shape every other module uses:
-
-```c
-void lesson_11_files(void)
-{
-    title("MODULE 11 - FILES");
-
-    heading("PART 1: ...");
-    /* explanation, and run whatever can be run */
-
-    wait_enter();
-    clear_screen();
-    exercise(11);
-
-    question("...", "answer", "why");
-
-    {
-        const char *task[] = { "...", };
-        const char *expected[] = { "what it must print", };
-        const char *solution[] = { "...", };
-        challenge(task, 1, expected, 1, solution, 1);
-    }
-
-    wait_enter();
-    clear_screen();
-    heading("SUMMARY");
-    /* four or five lines */
-    wait_enter();
-}
-```
-
-**2. Declare it** in `c/src/lessons.h`.
-
-**3. Add one line** to the `MODULES` table in `c/src/main.c`, including
-which tier it belongs to (`"BASIC"`, `"INTERMEDIATE"`, or `"ADVANCED"` — see
-"Tiers" below). The menu numbers itself and `MODULE_COUNT` counts itself, so
-there is nothing else to update.
-
-If the new module changes where a tier boundary should fall, move the
-string on the rows around it rather than adding a fourth tier — three bands
-is the whole convention, in every course.
-
-If the file is getting long, split it the way `lessons_basics.c` and
-`lessons_memory.c` are split — by theme, not by line count.
-
-## The helpers
-
-From `ui.h`. They exist so a lesson contains teaching and nothing else.
-
-| Function | Use |
-| --- | --- |
-| `title("MODULE 1 - ...")` | framed heading, once per module |
-| `heading("PART 1: ...")` | section heading inside a module |
-| `wait_enter()` | between screens |
-| `clear_screen()` | after `wait_enter()`, before the next part |
-| `rule()` | a plain horizontal line |
-| `exercise(n)` | the exercise header |
-| `question(text, correct, why)` | short answer, checked immediately |
-| `challenge(task, n, expected, e, solution, m)` | task, the output it must produce, and example code on request |
-| `read_line(buf, sizeof buf)` | read input safely |
-| `ask_yes("...")` | yes/no |
-
-`question` compares answers ignoring case and surrounding spaces. Keep the
-expected answer short and unambiguous — `"3"`, `"-o"`, `"yes"`. If a question
-has two reasonable phrasings, rewrite the question.
-
-## The JavaScript course is built differently
-
-`javascript/` was rewritten on 2026-11-14 as "JavaScript from zero", for a
-student who has never programmed, and does not follow the module shape
-above. Each lesson is a data file in `javascript/src/lessons/` (screens of
-text, examples, multiple-choice questions and one exercise); `src/app.js`
-draws them. Examples run when shown. The exercise is written in a real file
-under `~/codelearner-js/`, and the course runs it and compares its output.
-There are no tiers and no `check-teaching-order.py` table: `javascript/check.js`
-runs every example, question and solution, and `javascript/check-course.py`
-plays every lesson to the end. At most one example per screen.
-
-## Tiers
-
-Every course's menu groups its modules under three bands — BASIC,
-INTERMEDIATE, and ADVANCED — printed as section headers above the module
-numbers in whatever loop draws the menu. It is a display grouping only:
-the modules still run in one numbered sequence, `check-teaching-order.py`
-checks that sequence exactly as it did before tiers existed, and a lesson
-function has no way to know or care which tier it was filed under.
-
-Each module's row in its course's module table (`MODULES` in
-`main.c`/`main.py`/`Main.java`/`Program.cs`, or the equivalent)
-carries one extra field: the tier name as a plain string. The menu-drawing
-loop prints a `-- TIER --` divider whenever that field changes from the
-previous row, so reordering or splitting modules never requires touching
-anything beyond that one field per row. A band with no modules yet (ADVANCED
-in GTK) is printed anyway, empty, from a fixed list in `main.c`, so the arc
-the course is headed toward stays visible.
-
-The split is by what a module assumes, not by module count: BASIC covers
-syntax fundamentals a student needs before touching pointers or
-references; INTERMEDIATE covers collections and deeper procedural work;
-ADVANCED covers OOP, error handling, and whatever is genuinely
-language-specific and hard (pointers/memory/data structures for C, RAII
-for C++, nullable reference types for C#). Bands don't need to be the same
-size across languages — follow where each language's own difficulty jumps
-actually are, not a fixed module count per band.
-
-## Adding a new language
-
-Create a directory next to `c/`, build it the same way, and add it to the
-table in the README.
-
-The course must:
-
-- be written in the language it teaches
-- be a single self-contained CLI program with no runtime dependencies beyond
-  that language's own toolchain
-- follow the module shape above
-- state in its own README how to run it and how it was verified
-
-Do not share code between courses. They are separate programs on purpose: a
-Python course importing a helper written in C would be worse in every way that
-matters, and the duplication is a menu loop.
-
-Once the course builds -- or, for an interpreted language, once its entry
-script exists and is runnable -- register it in `launcher/src/main.c`: change
-its `LANGUAGES` entry from `NULL` to the relative path, next to the other rows
-of its menu group (the last field, `NULL` for LANGUAGES). Nothing else changes
-— the launcher checks the path exists and runs it with `system()`. It does
-not need to know the course's module count, its language, or whether that
-path is a compiled binary or a script. Python's and JavaScript's entries are
-scripts, `"../python/src/main.py"` and `"../javascript/src/main.js"`: no
-build step, but the same file_exists() check and the same system() call as C
-and C++. On Linux this relies on the script's own shebang line and its
-execute bit (`chmod +x`); on Windows, on the extension being associated with
-the right interpreter, which the standard installers set up. C++, Python and
-JavaScript are all working examples of registering a language with a
-two-line change.
-
-Java could not use that same direct-to-entry-file pattern: verified against
-the installed JDK that a `#!` shebang line on a `.java` file does not
-compile, so unlike a `.py`/`.js` script, `java/src/Main.java` cannot be
-marked executable and pointed at directly. `java/run` (`run.bat` on Windows)
-is a small wrapper doing `cd src && java Main.java`, and that wrapper is
-what is registered instead -- worth checking for early if a future
-language's own launch story turns out not to be a single runnable file
-either.
-
-Also add the course to `COURSES` in `tools/check-teaching-order.py` — its
-own `first_taught` table, in that language's own vocabulary. The five
-existing entries are working examples of the shape: a construct's regex
-mapped to the module that first shows it *anywhere in that module*, including
-the module's own explanation, not just its formally-named topic. `std::vector`'s
-declaration syntax is credited to the C++ course's module 5, where it first
-appears on screen as something to loop over, even though its method
-vocabulary (`push_back`, `sort`) is not taught until module 8 -- the check
-follows what a reader has actually seen, not which module "owns" a topic.
-
-## Courses for hardware
-
-A course runs in a terminal, so a course about a board has no board. Give it a
-small stand-in for the board's library (`arduino/shim/Arduino.h`,
-`micropython/src/sim.py`) so that the code in a lesson is the code the board
-would run. Keep three rules:
-
-- **Name the outside world.** Anything that plays the part of the world, such
-  as a button press, a voltage or time passing, gets a `sim_` / `sim.` name
-  and is called out as PC-only wherever a lesson uses it. Nothing with that
-  prefix is part of the real API.
-- **Say where the PC differs from the chip.** An `int` is 4 bytes on a PC and
-  2 on an Uno, a float is 64-bit on a PC and usually 32-bit on a board, and
-  time is simulated. Show the difference running; do not hide it.
-- **Do not claim what was not observed.** Code that cannot run on the PC
-  (AVR, Cortex-M0+) is compiled for its real target and the real compiler
-  output quoted. Where a simulator exists, execute it and read the results
-  back: `arduino/avr/run-avr.py` runs AVR code in simavr and
-  `rust/run-embedded.py` runs Thumb code in the Unicorn emulator. Where one
-  does not (`@micropython.asm_thumb`), say it was assembled, not executed.
-
-Each such course keeps its checks next to it: `check-course.py` (every module
-runs to its SUMMARY), `check-solutions.py` (every challenge solution builds
-clean and prints what its challenge promises, read straight from the lesson
-source) and the target-specific ones above.
+Show the real error, with the line, and explain it in one plain sentence from
+`course.js`'s `errors`. Compiled courses build with warnings on.
 
 ## The Portuguese text
 
-Each course has its own `strings_pt` file, holding the Portuguese for its menu
-and its module summaries. A new module needs its title and summary added there.
-Translate what the text says and leave every command, identifier and piece of
-output exactly as it is. `CODELEARNER_LANG=pt-pt` turns it on. With the variable
-unset, nothing a course prints changes.
+`CODELEARNER_LANG=pt-pt` translates the engine's menus, prompts and feedback
+(`learn/pt.js`), and each lesson's `titlePt` and `recapPt`. The lesson text
+and every piece of code stay as they are. `learn/check.js` fails a lesson
+without them.
 
-## Courses about the web
+## Adding a lesson or a course
 
-HTML, CSS and browser JavaScript are CLI programs like every other course,
-written in plain C the way `gtk/` is, because neither HTML nor CSS can be the
-language of a terminal program. They never open a browser or embed one.
-
-A terminal cannot render a page, so apply the rule for hardware courses: do not
-claim what was not observed. Measure the result in a real browser and quote it,
-naming the browser. Anything C can work out for itself, such as form encoding
-or the arithmetic of a layout, it should compute when the lesson runs.
+A lesson is one more file in `lessons/`, named so it sorts into place. A new
+course is a folder with the three parts above, and one `COURSE(...)` line in
+`launcher/src/main.c`, plus its name in `COURSES` in
+`.github/workflows/release.yml`.
 
 ## Verifying before committing
 
-For the C course:
-
 ```bash
-cd c
-make clean && make                     # must be warning-free
-cc -std=c11 -Wall -Wextra -g -fsanitize=address,undefined -o /tmp/course src/*.c
-/tmp/course                            # walk the modules you changed
+node learn/check.js <course>          # every example, quiz, solution and starter
+python3 learn/check-course.py <course> # every lesson played to the end
 ```
 
-And compile every solution you added to a `challenge`. A solution shown to a
-student that does not compile is worse than no solution. Same idea for C++,
-with `g++ -std=c++20` in place of `cc -std=c11`.
-
-For an interpreted language with no compiler to catch mistakes, a syntax
-check plus running every module without crashing is the minimum, not
-optional:
-
-```bash
-cd python/src
-python3 -c "import ast; ast.parse(open('lessons_basics.py').read())"
-python3 main.py
-```
-
-For coverage without hand-counting how many prompts each module has,
-intercept `input()` and call each module's function directly rather than
-driving the menu through a pipe -- a real terminal, or a FIFO with delays
-between lines, is the only thing that behaves like actual typing; a plain
-`printf ... | prog` pre-fills the whole pipe at once and lets one process's
-buffered reads consume input meant for another, which looks like a hang or a
-skipped module and is not one. See the Python course's own verification
-history for the working pattern: mock `input()` with an iterator, redirect
-`stdout` to a buffer, call the lesson function, assert no exception and that
-`"SUMMARY"` appears in the captured output.
+`check.js` runs every example (and checks error examples fail and
+transcripts match), checks every quiz answer exists, runs every solution
+through the same checker the student meets, and checks that every starter
+file runs. `check-course.py` plays each lesson from the menu to WHAT YOU
+LEARNED and confirms a correct practice file is accepted. CI runs both for
+every course.

@@ -1,7 +1,7 @@
 # Development progress
 
 What is built, what is partly done, and what is open. Dates come from `git log`.
-Course contents and module tables live in `README.md`; plans live in `ROADMAP.md`.
+How courses are built is in `docs/writing-a-course.md`; plans live in `ROADMAP.md`.
 This file is a status log, not a plan. Last updated 2026-11-14.
 
 ## Done
@@ -21,23 +21,21 @@ This file is a status log, not a plan. Last updated 2026-11-14.
 | 2026-11-09 | Bug sweep (lesson claims, EOF crashes, installer icon cache), Security module 2, launcher groups courses by topic, HTML, CSS and Web JavaScript courses, PT-PT mode, libraries as a normal reference manual |
 | 2026-11-10 | GTK course (4 modules), raylib + raygui course (6 modules), split into two courses, module 1 rewritten as a beginner walkthrough |
 | 2026-11-12 | Python manual reorganised by topic with a page generator, notes on how a learner worked through the JavaScript course, learner JavaScript practice files in `docs/learner-examples/` |
-| 2026-11-14 | JavaScript course rewritten as "JavaScript from zero": 13 lessons for a first-time programmer (classes included), no other language mentioned, examples run live, one example per screen, exercises written in real files and checked by running them, saved progress, PT-PT menus and summaries; `javascript/check.js` and `check-course.py` in CI. The two Libraries checks fixed after the Python manual reorganisation |
+| 2026-11-14 | Every course rewritten "from zero" on one shared lesson engine (`learn/`, Node): written for a first-time programmer, no other language mentioned, at most one example per screen, every example run live, plain-word error explanations, exercises written in real files and checked by running them, saved progress, PT-PT menus and summaries. 17 courses, 153 lessons: C 14, Python 14, JavaScript 13, C++ 12, Java 12, Rust 12, C# 11, Assembly 9, Arduino 8, Git 8, HTML 7, MicroPython 7, Security 7, CSS 6, Web JavaScript 5, GTK 4, raylib 4. `learn/web.js` stands in for a browser; Arduino and MicroPython run on PC stand-ins for the board; GTK and raylib are build-only. CI checks every course with `learn/check.js` and `learn/check-course.py`. The launcher starts every course with `node`. The Libraries checks fixed after the Python manual reorganisation |
 
 ## Partly done
 
-- **JavaScript from zero**: 13 lessons, up to a guessing-game project. The old course's promises, fetch, modules, files, command-line arguments and JSON are not covered yet.
-- **Rules 8 and 9 of `docs/writing-a-course.md`**: the other 16 courses still explain through other languages in places.
-- **Security course**: modules 1 and 2 exist. The roadmap names the next module.
-- **GTK / raylib courses**: four and six modules. The roadmap does not state an end point for either.
+- **Course coverage after the rewrite**: the new courses are shorter than the old ones. Not yet covered again: JavaScript promises, fetch, modules, files and JSON; Python and Java beyond the basics of files; C's function pointers, bit operations, variadic functions and inline assembly; the old Assembly course's OS modules as lessons (the files and `check-os.py` are kept in `assembly/`); Rust traits, lifetimes and collections; the old Security course's HTTP modules.
+- **Windows**: the Windows CI leg checks only C, C++, MicroPython, Python, JavaScript, HTML, CSS and Web JavaScript. Assembly, Arduino and Git are Linux-only. `install.ps1` has never been run, and no Start Menu shortcut exists.
+- **GTK and raylib**: build-only. The examples and solutions are compiled, but the windows they open are not run by any check. CI's ubuntu-22.04 runner has GTK 4.6 and no raylib, so both are skipped there and only checked on a machine that has them.
+- **READMEs**: the main `README.md` and each course's `README.md` still describe the old courses. `c/ROADMAP.md` is the old C course's plan.
 - **Desktop entry on Linux**: `install.sh` was tested against a fake release only. A real run needs the next release tag.
-- **Windows support**: `install.ps1` has never been run (the README says so). No Start Menu shortcut exists. Needs a Windows machine.
-- **Target arcs for the older courses** (Python, C++, JavaScript and others in `ROADMAP.md`): each lists next modules, none designed to the depth of `c/ROADMAP.md`.
 - **Libraries reference**: C track has 21 header pages. Python pages were reorganised on 2026-11-12. Other languages are one folder and a `TRACKS` row each.
 - **Learner notes**: `docs/learner-notes.md` records about four hours of practice, stated by the learner, tracker data not checked.
 
 ## Not committed anywhere
 
-- Git stash `gui modules 2-4` on a local clone (4 files: `gui/Makefile`, `gui/src/lessons.h`, `gui/src/main.c`, `tools/check-teaching-order.py`). The `gui` course was later split into `gtk` and `raylib`, so it may be obsolete. Not diffed.
+- Git stash `gui modules 2-4` on a local clone (4 files under `gui/` and `tools/check-teaching-order.py`). Both the old `gui` course and that checker are gone since the 2026-11-14 rewrite, so it is obsolete.
 
 ## Not started
 

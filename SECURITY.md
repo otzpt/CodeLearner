@@ -2,43 +2,38 @@
 
 ## Scope
 
-CodeLearner is a set of command-line programs. Each course runs only the
-code it ships with, and there is no telemetry and no account system. A few
-parts do make network requests: the launcher's `[u] Check for updates`
-(one request to the GitHub releases API, only when you pick it), the Python,
-JavaScript and Security modules that call a real web API or fetch
-`https://example.com`, and Security module 2, which opens servers on the
-loopback interface only. The realistic security surface is small:
+CodeLearner is a set of command-line courses. Each runs the examples it
+ships with and the practice files the student writes, with that language's
+own toolchain, on the student's machine. There is no telemetry and no
+account system. The only network request is the launcher's `[u] Check for
+updates` (one request to the GitHub releases API, only when you pick it).
+The realistic security surface is small:
 
-- A course running arbitrary input through `scanf`/`cin`/`input()`/
-  `readline` in a way that could crash it or corrupt memory (relevant
-  mainly to the C and C++ courses, which do not have a garbage collector).
-- The launcher (`launcher/`) invoking a course binary or script via
-  `system()`.
+- The launcher (`launcher/`) starting a course with `node` via `system()`,
+  and the lesson engine (`learn/`) running examples and the student's own
+  practice files with that language's toolchain.
 - A future contribution introducing a real vulnerability into the shared
-  tooling (`tools/check-teaching-order.py`) or a course's own `ui`
-  module.
+  tooling (`learn/`) or a course's `course.js`.
 
-None of this touches a file outside the repository or another user's data,
-and the only outbound requests are the ones listed above. There is no
+Apart from the practice folder, `~/codelearner/`, where exercises and
+progress are saved, none of this touches a file outside the install or
+another user's data, and the only outbound request is the one above. There is no
 privileged operation anywhere in this codebase.
 
 ## What is not in scope
 
-The C and C++ courses' own lessons deliberately explain and sometimes
-trigger memory bugs (a segmentation fault, a deliberately unmatched
-`malloc`) as teaching material. That is the point of those modules and is
-not a vulnerability report -- it is documented in the lesson text itself,
-and the course as a whole is verified clean under AddressSanitizer,
-UndefinedBehaviorSanitizer, and LeakSanitizer (see
-[`docs/writing-a-course.md`](docs/writing-a-course.md)).
+Some lessons deliberately show unsafe code running, as teaching material:
+the C course's crashes and AddressSanitizer reports, and the Security
+course's SQL injection, command injection (it only ever runs `echo`) and
+path traversal, each followed by the fix. That is the point of those
+lessons and is not a vulnerability report.
 
 ## Reporting a vulnerability
 
 If you find something that is a real vulnerability rather than a teaching
 example -- a crash triggerable by ordinary use of the course, a bug in the
-launcher that could execute something other than the intended course
-binary, or similar -- please open a GitHub issue describing it. There is no
+launcher or the lesson engine that could run something other than the
+intended course or practice file, or similar -- please open a GitHub issue describing it. There is no
 dedicated security contact or bug bounty; this is a small educational
 project maintained by one person, and issues are the fastest way to reach
 them.

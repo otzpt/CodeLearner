@@ -99,8 +99,8 @@ lesson's own examples, and item 2 rested on misreading item 5 above.
    comments in item 5 were predictions, which they were not.
 3. **Say when a module depends on one a student may skip.** Item 10 above: a
    student who skips module 9 still meets its mechanism in module 10.
-   `tools/check-teaching-order.py` checks the numbered sequence only and
-   does not account for skipped modules.
+   The rewritten courses name the earlier lesson where they use something
+   from it (rule 5 of `writing-a-course.md`).
 4. **Check the common wrong summaries.** Item 9 shows a student ending up with
    a wrong rule even though the course was available. Where a trap has an easy
    wrong summary (indices starting at 1), a question about it would catch it.

@@ -1,261 +1,52 @@
 # Roadmap
 
-Not scheduled, not started — a map so none of this gets lost or re-derived
-from scratch later. `c/ROADMAP.md` is a different, narrower thing: the path
-past the existing C course's 19 modules. This file is the whole project:
-new languages, and what "done" looks like for the languages that already
-exist.
+Not scheduled: a map, so none of this gets lost or re-derived later. What is
+already built is in `devprogress.md`; how a course is built is in
+`docs/writing-a-course.md`.
 
-Courses outside the original five languages this file tracks have since
-been started -- see the README's own course tables, not this file, for their
-current state: **GTK** and **raylib + raygui**, delivered in C since there is no
-separate "GTK language" or "raylib language" to write a menu in; **Assembly**, **Rust**, **Arduino** and
-**MicroPython**, which have entries below; **Git**; and **Libraries**, which
-is a reference rather than a course (see below).
+## The rule every course follows
 
-## The one rule everything else follows
+Every course starts from zero, for someone who has never programmed, and
+explains each thing on its own terms: no comparison to another language. At
+most one example per screen, every example run, every exercise checked by
+running the student's own file. Each course still follows what matters in
+its own language (ownership in Rust, pointers in C, the cascade in CSS)
+rather than one shared list of topics.
 
-**Don't make every language follow the same curriculum structure.** Python
-should feel like Python, C should feel like C, Rust should teach ownership
-properly on Rust's own terms. The common framework — write the course in
-the language it teaches, verify every output, teach the trap not the
-syntax, no filler modules — is the quality bar every course is held to.
-It is not a template every course's *content* has to match. A Rust course
-structured like the C course would be teaching Rust as if it were C with
-different syntax, which is a worse Rust course than one that starts from
-what actually makes Rust Rust.
+## Where each course stops, and what comes next
 
-## Target arcs for the languages already in the repo
+Rewritten from zero on 2026-11-14; the old courses went further in places.
+Next topics, roughly in order:
 
-Not commitments to build in this order — a statement of what a *finished*
-version of each course covers, since none of these currently states an end
-point beyond its current module count. Each arc below is broken into
-concrete next modules, numbered as a continuation of that course's current
-last module, the same level of detail `c/ROADMAP.md` now has for C. None
-of this is designed as deeply as the C plan yet — it's the map for where to
-go next, not finished module content.
-
-A constraint that applies to every language here, from
-`docs/writing-a-course.md`: each course must stay "a single self-contained
-CLI program with no runtime dependencies beyond that language's own
-toolchain." That rules out reaching for a third-party package (Python's
-`requests`, a JS `npm install`) for anything below — an "APIs" module
-means the language's own stdlib HTTP client, not the ergonomic library
-everyone actually reaches for in real code. Worth teaching that trade-off
-explicitly when it comes up (the stdlib way is uglier and that's exactly
-why the ecosystem library exists), not silently working around it.
-
-- **Python**: fundamentals → OOP → modules → files → APIs → practical
-  projects.
-  - Module 11 — modules and packages: built. `import`, `if __name__ ==
-    "__main__":` (demonstrated live against this course's own main.py, not
-    described), writing your own importable module, a brief note on
-    `pip`/venv for when a real project needs a dependency (without the
-    course itself ever depending on one).
-  - Module 12 — files and context managers: built. `open`/`.read`/`.write`/
-    `.close` and the trap (forgetting to close, or an exception before
-    close leaking the handle), `with open(...) as f:` proven — not just
-    asserted — to close on the way out even when an exception is raised
-    and caught inside the block, `.readlines()` keeping `\n`, `.write()`
-    never adding one, and `json.dump`/`json.load` round-tripping a dict
-    through a real file.
-  - Module 13, working with APIs: built. `urllib.request` + `json`, both
-    stdlib, deliberately not `requests` (see the constraint above); a real
-    call to a real endpoint the student can inspect, with real error
-    handling for a network failure (`HTTPError` vs. `URLError`, caught
-    differently), not a happy-path-only demo.
-  - Practical projects (project-practice track, not a numbered module,
-    same reasoning as the C course's issue-tracked "Practical C" backlog):
-    a CLI tool that reads a config file, calls an API, and writes a
-    report — combines 11-13 in one program.
-- **C++**: C++ basics → STL → OOP → templates → modern C++ → projects.
-  - Module 10 — maps and sets: built. `std::map` (and the trap: `[]` on a
-    missing key silently inserts a default value rather than telling you
-    it was missing — `.count()` is the safe check), `std::set` (unique,
-    sorted, `.insert()` on an existing value is a silent no-op), and
-    `std::find` (`end()` as the "not found" signal, the same role `NULL`
-    plays for a pointer).
-  - Module 11 — templates: built. A function template (`myMax<T>`) and a
-    class template (`Box<T>`), motivated the same way module 9's classes
-    are: what the duplicated version looks like first, then the fix; a
-    real, actually-triggered template compile error (a type missing
-    `operator+`) shown by invoking `g++` live and printing its real error
-    text, honestly gated on the compiler actually having run and failed
-    the expected way rather than narrating any failure as if it were that.
-  - Module 12, modern C++ idioms: built. Smart pointers (`unique_ptr`,
-    `shared_ptr`) as the RAII idea from module 9 applied to dynamically
-    allocated objects specifically, move semantics (`std::move`, why a
-    copy is sometimes wasted work), `auto` and structured bindings beyond
-    what module 2 already introduced.
-  - Module 13, inline assembly and `extern "C"`: built, added for the
-    microcontroller work.
-  - Practical projects track, same shape as every other language here.
-- **Java**: OOP → collections → generics → concurrency → projects.
-  - Module 11 — the Collections Framework: built. `List`/`Map`/`Set` as
-    interfaces with real implementations, and the trap Java hides
-    somewhere different from every sibling course: `HashMap.get()` on a
-    missing key returns `null` — no exception, no inserted default —
-    with `getOrDefault()` as the fix.
-  - Module 12 — generics: built. The `Object`-typed container and its
-    real, caught `ClassCastException`, then a generic class/method/bounded
-    type parameter, then type erasure verified at runtime (`new
-    ArrayList<String>().getClass() == new ArrayList<Integer>().getClass()`
-    actually prints `true`), contrasted with C++'s per-type template
-    instantiation from that course's own module 11.
-  - Module 13, concurrency: built. `Thread`, `Runnable`, a real, observed
-    race condition on a shared counter (not simulated — module 9's
-    leak-detector-output precedent from the C course is the model: run the
-    broken version, show what actually happens), then `synchronized` as
-    the fix, measured before and after.
-  - Practical projects track.
-- **JavaScript**: rewritten as "JavaScript from zero" (13 lessons, up to classes, input, errors and a project). Next: promises, fetch, modules, files, command-line arguments, JSON
-  specifics → practical projects. Correction to an earlier draft of this
-  arc: `async`/`await` is not a gap — module 3 (reading input) already
-  introduces it, out of necessity (Node's own stdin is asynchronous), and
-  every module since has been an `async function` as a result. Module 11
-  (built) is what module 3 never named: the Promise object `await` has
-  been unwrapping the whole time.
-  - Module 11 — Promises: built. A callback (the pre-Promise way), what a
-    Promise actually is (pending → fulfilled/rejected, once, via
-    `.then()`/`.catch()` or `await`, the same object either way), and
-    `Promise.all` for running independent awaits concurrently instead of
-    one after another.
-  - Module 12 — working with APIs: built. Real, live `fetch` calls (not
-    a captured-once string) against `jsonplaceholder.typicode.com`, each
-    wrapped in `AbortSignal.timeout(...)` with a clearly-labeled,
-    already-verified-real fallback if the live attempt genuinely fails;
-    the central trap proven live — a 404 does not reject the Promise,
-    only `response.ok`/`.status` reveals it; a genuine DNS failure
-    contrasted right after, which does throw. The challenge itself stays
-    network-independent (a literal JSON string), keeping its expected
-    output exact per this project's own rule 5.
-  - Module 13, modules: built. `require`/CommonJS vs. `import`/ESM, since
-    Node's own ecosystem genuinely uses both and a student will meet both
-    in real code; `module.exports`/`export` for writing your own.
-  - Module 14, Node-specific stdlib: built. `fs.readFileSync` (blocking)
-    vs. `fs.promises.readFile` (async), `process.argv` (command-line
-    arguments, verified via a real child process printing its own argv),
-    and what makes Node different from browser-JavaScript at the platform
-    level, not just "no DOM here."
-  - Practical projects track. DOM/browser JavaScript is deliberately not
-    in this arc: this course is a Node.js CLI program per the "no
-    dependencies beyond the language's own toolchain" rule, and DOM APIs
-    need a browser, not a terminal. The separate Web JavaScript course in
-    `webjs/` teaches them.
-- **C#**: fundamentals → nullable/IDisposable → LINQ → async/await →
-  generics and interfaces in depth → delegates and events → practical
-  projects. Deliberately built to sit next to Java's course rather than
-  duplicate it — see the README's own C# section for where the two
-  genuinely diverge (default parameters, `string ==`, checked exceptions,
-  value vs reference types) and where they don't.
-  - Module 11 — LINQ: built. The manual loop first, then `Where`/`Select`
-    method syntax, `Sum`/`Count`/`OrderBy(Descending)`, and the trap: a
-    LINQ query is lazy, running at enumeration time rather than creation
-    time — proven by mutating the source list after building the query
-    and showing the addition is still included.
-  - Module 12 — async/await: built. `Task` as C#'s Promise, deliberately
-    compared against JavaScript's own module 11; `Task.Delay` vs. blocking
-    `Thread.Sleep`; `Task.WhenAll` with a REAL `Stopwatch`-measured timing
-    difference (sequential ~200ms vs. concurrent ~100ms for two 100ms
-    delays); an awaited faulted `Task` caught with ordinary `try`/`catch`.
-    The one new module in this batch that needed a structural decision:
-    rather than converting the whole menu's module table from `Action` to
-    `Func<Task>` (touching all 11 other modules), the one async module is
-    wrapped in `() => LessonsAdvanced.Lesson12Async().GetAwaiter().GetResult()`
-    — a single new array row, the standard safe pattern for a console app
-    with no captured `SynchronizationContext`, with a note in the module
-    itself pointing at this exact line as the deliberate exception to
-    "async propagates all the way to the entry point."
-  - Module 13, generics and interfaces in depth: built. A generic class
-    with constraints (`where T : IComparable<T>`), a default interface
-    method that dispatches on runtime type (not the compile-time reference
-    type), going past what module 8's structs/records already touched;
-    a real, verified `CS7036` compiler error from `MemoryExtensions`'s
-    always-in-scope `CompareTo` extension method colliding on arity.
-  - Module 14, delegates and events: built. `Action`/`Func` as behavior
-    passed by value, a custom `delegate` type, the `event` keyword
-    restricting outside code to `+=`/`-=` (a real `CS0070` for anything
-    else), bridging back to the function-pointer-style dispatch table
-    every course's own `Program.cs`/`main.c`/etc. already uses.
-  - Practical projects track.
-
-## Assembly — 16 modules
-
-[`assembly/`](assembly/), in NASM's Intel syntax. Modules 1-4: registers and
-syscalls, comparing and branching, loops, then reading input and a
-number-guessing game. Modules 5-8 go under the instructions: memory and
-addressing, the stack and the calling convention, bits and flags and
-arithmetic, strings and the block instructions. Module 9 puts C and assembly
-together, both directions and freestanding. Modules 10-16 are the path to an
-operating system, written to follow someone who is writing one: a boot sector
-in real mode, the serial port and video memory, a second stage that reads the
-disk and the memory map, protected mode, long mode with its page tables, a
-kernel in C, and interrupts (IDT, PIC, timer, keyboard).
-
-Everything in 10-16 runs in QEMU with SeaBIOS and is checked there by
-`assembly/check-os.py`, which reads the screen, the serial port, the CPU's
-registers and QEMU's exception log. Not run on real hardware.
-
-Still to write, none of it started: physical memory management from the
-E820 map, and a page-frame allocator; a higher-half kernel and page tables
-beyond one identity map; enabling SSE and the FPU (module 15 compiles with
-`-mgeneral-regs-only` until then); a keyboard driver with a real scancode
-table; the APIC and more than one CPU; a scheduler, a system call interface
-and user mode; booting under UEFI instead of the BIOS; and a file system.
-Distinct from `c/ROADMAP.md` section 9, which is "read enough asm to
-understand your own compiled C" for someone taking the C course, not a
-full course in its own right.
-
-Linux/x86-64 only, and not planned to become cross-platform: the whole
-course is built on Linux syscalls made directly (`syscall` plus a Linux
-syscall number in `rax`), which have no Windows equivalent to translate
-to -- a Windows version would need a real second implementation against
-a completely different ABI (different argument registers, no directly
-callable stable syscall interface), not a path or flag change the way
-every other course's Windows support is. The launcher reflects this:
-Assembly shows as unavailable on a Windows build, the same "coming soon"
-treatment as a language with no course yet, not a broken link.
-
-## Rust, Arduino and MicroPython: started
-
-Added for microcontroller work (a Raspberry Pi Pico or an Arduino board);
-the README's course tables have the module lists.
-
-- **Rust** (`rust/`, 12 modules): printing, variables, control flow,
-  functions, ownership, borrowing, memory, structs, enums and `Option`,
-  `Result`, hardware registers and `no_std`, inline assembly and NASM. Still
-  to write: lifetimes, traits and generics, collections, async, projects.
-  Ownership is the whole point of Rust; it has three modules and deserves
-  the weight module 9 (memory) gets in the C course.
-- **Arduino** (`arduino/`, 13 modules): `setup()`/`loop()` through registers,
-  interrupts and AVR inline assembly. It runs on a PC through a shim, so the
-  student needs no board; the course says where the PC differs.
-- **MicroPython** (`micropython/`, 11 modules): the Pico's pins, PWM/ADC,
-  interrupts, native/viper and `asm_thumb`, ending in a robot. A small
-  simulator stands in for `machine`.
-
-## Security: two modules built
-
-`security/` is a topic course implemented in Python, standard library only.
-Module 1 (Your first request) covers the request and response, the Server
-header as information disclosure, missing security headers, and urllib
-raising on 4xx/5xx. Module 2 (Plain HTTP is readable on the wire) logs in to
-a loopback server over HTTP and over HTTPS through a tap on the student's own
-machine: the password is in the captured bytes as plain text over HTTP, and
-absent over HTTPS, where the server name is still visible in the handshake.
-INTERMEDIATE and ADVANCED are listed empty in its menu.
-
-Module 2 only touches the student's own machine and traffic, never someone
-else's network; the module says so and why (capturing other people's
-traffic without permission is illegal in most countries). It came from a real
-case: a school platform served its login page over HTTP only.
-
-## Web: three courses built
-
-`html/`, `css/` and `webjs/` are terminal programs in plain C, the same
-arrangement as `gtk/`. None of them opens a browser. Five modules each: HTML (structure, forms, accessibility, metadata, practical pages), CSS
-(the box and normal flow, Flexbox, Grid, responsive design, modern CSS), and
-Web JavaScript (the DOM, events, forms, `fetch`, state and storage).
+- **C** (14 lessons, to structs, files and AddressSanitizer): function
+  pointers, bit operations, variadic functions, the preprocessor, inline
+  assembly. Issues #1-#14.
+- **C++** (12, to inheritance, exceptions and files): templates, RAII and
+  smart pointers, std::map and algorithms, move semantics.
+- **Python** (14, to classes, files and a project): modules and packages,
+  comprehensions, the standard library (json, pathlib, argparse), testing.
+- **JavaScript** (13, to classes, input and errors): promises and
+  async/await in depth, fetch, modules, files with fs, JSON.
+- **Java** (12, to interfaces, exceptions and files): collections (HashMap),
+  generics, records, streams.
+- **C#** (11, to interfaces, exceptions and files): collections
+  (Dictionary), LINQ, records, async.
+- **Rust** (12, to Result, files and a project): traits, generics,
+  lifetimes, collections (HashMap), iterators, modules.
+- **Assembly** (9, to text and a look at boot sectors): reading input with
+  syscalls, calling C, then the OS track kept in `assembly/os` (two-stage
+  loader, protected and long mode, a C kernel, interrupts) as lessons.
+- **Arduino** (8) and **MicroPython** (7), on PC stand-ins: sensors over
+  I2C/SPI, interrupts on Arduino, servo and motor control, state machines
+  for a robot.
+- **Git** (8): rebase, stash, bisect, pull requests on a real host.
+- **HTML** (7), **CSS** (6), **Web JavaScript** (5): the box model and layout
+  (flexbox, grid) need a stand-in that lays out boxes, which
+  `learn/web.js` does not do yet; fetch from the page.
+- **Security** (7): HTTP and headers against a local server, plain HTTP
+  readable on the wire (the old roadmap's next module), session cookies.
+- **GTK** (4) and **raylib** (4), build-only: lists and dialogs in GTK;
+  sprites, sound and a full game loop in raylib.
 
 ## Libraries: a reference manual, not a course
 
@@ -300,18 +91,10 @@ same module skeleton as C.
 - Common mistakes explicitly taught, not just correct usage.
 - Language-specific best practices — not generic advice reworded per
   language.
-- Cross-language comparisons where genuinely useful (e.g. `==` on strings:
-  C compares addresses, C++'s `std::string` compares content, Python
-  always compares content, Java is the C++ trap again). Only where the
-  comparison teaches something; not for its own sake.
 - No filler modules just to increase the module count.
 - Keep the Wiki → lesson → exercise connection strong — a concept
   introduced in a lesson should be findable and an exercise should exercise
   it, not the other way around.
-- Apply rules 8 and 9 of `docs/writing-a-course.md` to every course: no
-  explaining through a language the student may not know, traps run live,
-  wrong summaries shown failing, skipped modules named. The rewritten
-  JavaScript course has them; the other 16 courses do not yet.
 
 ## Packaging and distribution
 
@@ -338,8 +121,6 @@ change in an unverified script. It needs someone with a Windows machine.
 
 Filed as tracked issues rather than left in a file, since they're scoped
 enough to work individually: [issues #1-#14](https://github.com/otzpt/CodeLearner/issues).
-See `c/ROADMAP.md` for how they fit the existing course's path. All 14 are
-still open. Two are partly answered since they were filed: the Libraries
-reference covers the headers named in #4 as reference pages (not as a course
-module), and C module 20 is the start of #7 (inline assembly and NASM, not yet
-reading compiled output).
+They were written against the old C course; `c/ROADMAP.md` is that course's
+plan. All 14 are still open. The Libraries reference covers the headers
+named in #4 as reference pages.
