@@ -156,7 +156,9 @@ function runFile(course, file, input = [], opts = {}) {
       cwd: path.dirname(file),
       input: last && input.length ? input.join("\n") + "\n" : "",
       encoding: "utf8",
-      timeout: course.timeout || 10000,
+      // Building can be slow on a cold machine (a first rustc or dotnet
+      // run); only the program itself is held to the 10 seconds.
+      timeout: last ? course.timeout || 10000 : course.buildTimeout || 120000,
       env: { ...process.env, ...(course.env || {}), ...(opts.env || {}) },
     });
     if (r.error && r.error.code === "ENOENT") {
