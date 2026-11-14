@@ -167,8 +167,9 @@ jobs:
           python3 libraries/check-pages.py
           python3 libraries/check-browser.py
           python3 tools/check-teaching-order.py
-          # Every JavaScript module reaches its SUMMARY, which also runs
-          # every code demo as its own node process.
+          # Every JavaScript example, quiz and exercise solution, then every
+          # lesson played from start to finish.
+          node javascript/check.js
           python3 javascript/check-course.py
 
       # Every module of the two GUI courses reaches its SUMMARY, the same way.
@@ -247,10 +248,15 @@ jobs:
           check Rust rust/rust-course
           check Python python3 python/src/main.py
           check Security python3 security/src/main.py
-          check JavaScript node javascript/src/main.js
           check Git bash git/src/main.sh
           check "C#" csharp-publish/csharp
           check Java java -cp "$RUNNER_TEMP/java" Main
+
+          # JavaScript: a blank line at an exercise means "check my file", so
+          # this walk answers k (skip) to reach the lesson summary.
+          out=$({ printf '1\n'; printf 'k\n%.0s' $(seq 100); } | CODELEARNER_LANG=pt-pt CODELEARNER_JS_DIR="$RUNNER_TEMP/js" timeout 30 node javascript/src/main.js)
+          grep -q "Sair" <<<"$out" || { echo "::error::JavaScript has no Portuguese menu"; exit 1; }
+          grep -q "RESUMO" <<<"$out" || { echo "::error::JavaScript has no Portuguese summary"; exit 1; }
 
           out=$(printf '0\n' | CODELEARNER_LANG=pt-pt timeout 20 arduino/arduino-course)
           grep -q "Sair" <<<"$out" || { echo "::error::Arduino has no Portuguese menu"; exit 1; }
@@ -421,6 +427,8 @@ jobs:
           cp python/src/*.py "$out/python/src/"
           cp security/src/*.py "$out/security/src/"
           cp javascript/src/*.js "$out/javascript/src/"
+          mkdir -p "$out/javascript/src/lessons"
+          cp javascript/src/lessons/*.js "$out/javascript/src/lessons/"
           cp java/src/*.java "$out/java/src/"
           cp README.md LICENSE "$out/"
 
@@ -589,6 +597,9 @@ jobs:
             done
             for f in "\$startdir/payload/javascript/src"/*.js; do
               install -Dm644 "\$f" "\$pkgdir/opt/codelearner/javascript/src/\$(basename "\$f")"
+            done
+            for f in "\$startdir/payload/javascript/src/lessons"/*.js; do
+              install -Dm644 "\$f" "\$pkgdir/opt/codelearner/javascript/src/lessons/\$(basename "\$f")"
             done
             for f in "\$startdir/payload/security/src"/*.py; do
               install -Dm644 "\$f" "\$pkgdir/opt/codelearner/security/src/\$(basename "\$f")"

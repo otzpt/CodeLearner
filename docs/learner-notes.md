@@ -60,8 +60,8 @@ between the first and the last save.
    `"2"`. `fourth.js` says `if (x = 5)` sets x to 5 "and then checks whether
    it is 5"; it tests whether 5 is truthy and compares nothing. `tenth.js`
    reads TypeError as "called something that is not in the function"; the
-   course says "called something not a function". Modules 5, 4 and 10 now
-   show a case where each wrong rule gives the wrong answer.
+   course says "called something not a function". The rewritten course
+   shows each one going wrong: lessons 7, 5 and 12.
 10. **A module reaches into a skipped one.** `tenth.js` extends `Error` with a
     class and notes that this is "the same mechanism as module 9, which I
     skipped".
@@ -77,11 +77,17 @@ between the first and the last save.
 - Comparisons to a language the learner does not know make it more
   confusing, not less: the course's "same rule as C's `==` on a `char*`" and
   C++'s `std::string` taught nothing about JavaScript (2026-11-14).
+- After comparing the old course with the rewrite (2026-11-14): the old one
+  "felt good, and precise while keeping wording minimal". The rewrite's
+  level of detail was right, but too many examples on one screen lost them
+  halfway through the classes lesson. At most one example per terminal
+  screen. Cutting the text itself in half went too far: the first lessons
+  became useless.
 
 ## What this suggests for the courses
 
-**Suggestions.** Items 3 and 4 are in the JavaScript course (rule 9 of
-`writing-a-course.md`). Items 1 and 2 were built and then removed at the
+**Suggestions.** Item 4 is in the rewritten JavaScript course (rule 9 of
+`writing-a-course.md`); item 3 became a plain mention of the earlier lesson. Items 1 and 2 were built and then removed at the
 learner's request: the extra snippet repeated what they already did with the
 lesson's own examples, and item 2 rested on misreading item 5 above.
 
@@ -94,8 +100,7 @@ lesson's own examples, and item 2 rested on misreading item 5 above.
 3. **Say when a module depends on one a student may skip.** Item 10 above: a
    student who skips module 9 still meets its mechanism in module 10.
    `tools/check-teaching-order.py` checks the numbered sequence only and
-   does not account for skipped modules. The `uses` list in the JavaScript
-   `MODULES` table does, and is written by hand.
+   does not account for skipped modules.
 4. **Check the common wrong summaries.** Item 9 shows a student ending up with
    a wrong rule even though the course was available. Where a trap has an easy
    wrong summary (indices starting at 1), a question about it would catch it.

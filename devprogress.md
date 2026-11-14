@@ -21,11 +21,12 @@ This file is a status log, not a plan. Last updated 2026-11-14.
 | 2026-11-09 | Bug sweep (lesson claims, EOF crashes, installer icon cache), Security module 2, launcher groups courses by topic, HTML, CSS and Web JavaScript courses, PT-PT mode, libraries as a normal reference manual |
 | 2026-11-10 | GTK course (4 modules), raylib + raygui course (6 modules), split into two courses, module 1 rewritten as a beginner walkthrough |
 | 2026-11-12 | Python manual reorganised by topic with a page generator, notes on how a learner worked through the JavaScript course, learner JavaScript practice files in `docs/learner-examples/` |
-| 2026-11-14 | JavaScript course: comparisons to C++ and advanced C removed, traps run live (`demo`), wrong summaries from the learner's notes shown failing, modules name the skipped modules they rely on, module 13's export list read live; `javascript/check-course.py` walks all 14 modules in CI; the two Libraries checks fixed after the Python manual reorganisation |
+| 2026-11-14 | JavaScript course rewritten as "JavaScript from zero": 13 lessons for a first-time programmer (classes included), no other language mentioned, examples run live, one example per screen, exercises written in real files and checked by running them, saved progress, PT-PT menus and summaries; `javascript/check.js` and `check-course.py` in CI. The two Libraries checks fixed after the Python manual reorganisation |
 
 ## Partly done
 
-- **Rules 8 and 9 of `docs/writing-a-course.md`**: only the JavaScript course follows them. The other 16 courses still explain through other languages in places.
+- **JavaScript from zero**: 13 lessons, up to a guessing-game project. The old course's promises, fetch, modules, files, command-line arguments and JSON are not covered yet.
+- **Rules 8 and 9 of `docs/writing-a-course.md`**: the other 16 courses still explain through other languages in places.
 - **Security course**: modules 1 and 2 exist. The roadmap names the next module.
 - **GTK / raylib courses**: four and six modules. The roadmap does not state an end point for either.
 - **Desktop entry on Linux**: `install.sh` was tested against a fake release only. A real run needs the next release tag.

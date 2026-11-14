@@ -108,17 +108,15 @@ confused them about C.
 
 ### 9. Run the trap, catch the wrong summary, name what a skipped module hid
 
-- Show a trap by running it. In JavaScript, `demo(code, why)` runs the code
-  shown in a fresh process and prints its real output, so the two cannot
-  drift.
+- Show a trap by running it, so the code on screen and its output cannot
+  drift. The JavaScript course runs every example in a fresh `node` process.
 - Where a trap has an easy wrong summary, show the case where that summary
   gives the wrong answer. The JavaScript learner's notes said `for...in` gives
-  `"1"`, `"2"`, `"3"` and that `if (x = 5)` checks whether x is 5; modules 5
-  and 4 now show both failing.
-- Students skip modules. A module that shows code from a module after the
-  BASIC band lists it (`uses` in the JavaScript `MODULES` table), so the
-  course says so before it starts. Module 10's error class is a module 9
-  class, which is how this was found.
+  `"1"`, `"2"`, `"3"` and that `if (x = 5)` checks whether x is 5; the
+  JavaScript course's lessons 7 and 5 now show both failing.
+- Students skip modules. When a lesson uses something from an earlier one
+  that is easy to skip, say which lesson it came from. The learner skipped
+  objects and classes and then met a class in the errors module.
 
 Tried and removed: a snippet to type into `try.js` at the start of each
 module, and asking the student to predict output before showing it. Both
@@ -192,11 +190,22 @@ From `ui.h`. They exist so a lesson contains teaching and nothing else.
 | `challenge(task, n, expected, e, solution, m)` | task, the output it must produce, and example code on request |
 | `read_line(buf, sizeof buf)` | read input safely |
 | `ask_yes("...")` | yes/no |
-| `demo(code, why)` | JavaScript only so far: show `code`, run it, show its real output and why |
 
 `question` compares answers ignoring case and surrounding spaces. Keep the
 expected answer short and unambiguous — `"3"`, `"-o"`, `"yes"`. If a question
 has two reasonable phrasings, rewrite the question.
+
+## The JavaScript course is built differently
+
+`javascript/` was rewritten on 2026-11-14 as "JavaScript from zero", for a
+student who has never programmed, and does not follow the module shape
+above. Each lesson is a data file in `javascript/src/lessons/` (screens of
+text, examples, multiple-choice questions and one exercise); `src/app.js`
+draws them. Examples run when shown. The exercise is written in a real file
+under `~/codelearner-js/`, and the course runs it and compares its output.
+There are no tiers and no `check-teaching-order.py` table: `javascript/check.js`
+runs every example, question and solution, and `javascript/check-course.py`
+plays every lesson to the end. At most one example per screen.
 
 ## Tiers
 
@@ -208,7 +217,7 @@ checks that sequence exactly as it did before tiers existed, and a lesson
 function has no way to know or care which tier it was filed under.
 
 Each module's row in its course's module table (`MODULES` in
-`main.c`/`main.py`/`main.js`/`Main.java`/`Program.cs`, or the equivalent)
+`main.c`/`main.py`/`Main.java`/`Program.cs`, or the equivalent)
 carries one extra field: the tier name as a plain string. The menu-drawing
 loop prints a `-- TIER --` divider whenever that field changes from the
 previous row, so reordering or splitting modules never requires touching
@@ -273,10 +282,7 @@ mapped to the module that first shows it *anywhere in that module*, including
 the module's own explanation, not just its formally-named topic. `std::vector`'s
 declaration syntax is credited to the C++ course's module 5, where it first
 appears on screen as something to loop over, even though its method
-vocabulary (`push_back`, `sort`) is not taught until module 8; JavaScript's
-arrow-function syntax `=>` is credited to module 6 for the identical reason
--- it appears as a `map`/`filter`/`sort` argument before module 7 makes
-arrow functions a named topic -- the check
+vocabulary (`push_back`, `sort`) is not taught until module 8 -- the check
 follows what a reader has actually seen, not which module "owns" a topic.
 
 ## Courses for hardware

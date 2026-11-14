@@ -78,7 +78,10 @@ npx postject javascript-course NODE_SEA_BLOB sea-prep.blob \
     --sentinel-fuse NODE_SEA_FUSE_fce680ab2cc467b6e072b8b5df1996b2
 ```
 
-Also platform-specific -- build on the OS you're targeting.
+Also platform-specific -- build on the OS you're targeting. The course reads
+its lessons from `src/lessons/` when it starts, so a single executable built
+this way still needs that folder next to it (or the lessons added as SEA
+assets).
 
 **Java -- `jpackage`** (ships with the JDK, `jlink` bundles a minimal JRE so
 the result needs no separate Java install):

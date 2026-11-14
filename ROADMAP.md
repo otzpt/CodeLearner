@@ -108,7 +108,7 @@ why the ecosystem library exists), not silently working around it.
     broken version, show what actually happens), then `synchronized` as
     the fix, measured before and after.
   - Practical projects track.
-- **JavaScript**: fundamentals → async → APIs → modules → Node.js
+- **JavaScript**: rewritten as "JavaScript from zero" (13 lessons, up to classes, input, errors and a project). Next: promises, fetch, modules, files, command-line arguments, JSON
   specifics → practical projects. Correction to an earlier draft of this
   arc: `async`/`await` is not a gap — module 3 (reading input) already
   introduces it, out of necessity (Node's own stdin is asynchronous), and
@@ -310,8 +310,8 @@ same module skeleton as C.
   it, not the other way around.
 - Apply rules 8 and 9 of `docs/writing-a-course.md` to every course: no
   explaining through a language the student may not know, traps run live,
-  wrong summaries shown failing, skipped modules named. JavaScript has them;
-  the other 16 courses do not yet.
+  wrong summaries shown failing, skipped modules named. The rewritten
+  JavaScript course has them; the other 16 courses do not yet.
 
 ## Packaging and distribution
 

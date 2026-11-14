@@ -63,7 +63,7 @@ Two things a review will check specifically:
   the new construct to that language's table in
   `tools/check-teaching-order.py` if it introduces something new.
 - Every array or vector passed to `challenge()` with an explicit count (the
-  C course only -- C++, Python and JavaScript pass a vector/list/array with
+  C course only -- C++ and Python pass a vector/list/array with
   no separate count to get wrong) must have that count match the real
   number of elements. This has been the source of every buffer-overflow-
   class bug found in this project so far.
@@ -126,8 +126,10 @@ cc -std=c11 -Wall -Wextra -g -fsanitize=address,undefined -o /tmp/course src/*.c
 
 For C++, the same with `g++ -std=c++20` in place of `cc -std=c11`.
 
-For Python and JavaScript, there is no compiler to catch a mistake, so the
-check is running every module and confirming nothing raises or throws. See
+For Python, there is no compiler to catch a mistake, so the check is
+running every module and confirming nothing raises or throws. The
+JavaScript course has its own two: `node javascript/check.js` and
+`python3 javascript/check-course.py`. See
 the "Verifying before committing" section of `docs/writing-a-course.md` for
 the pattern this project uses (mocking the input function, capturing
 output, calling each lesson directly) -- a real terminal or a FIFO with
