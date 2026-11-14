@@ -138,12 +138,8 @@ mv "$tmp/$BUNDLE_DIR" "$SHARE_DIR"
 # filesystem without an exec bit (a FAT-formatted stick, say) can still
 # arrive here without them, and every one of these is useless unless
 # executable.
-for exe in launcher/launcher c/c-course cpp/cpp-course gtk/gtk-course raylib/raylib-course \
-           assembly/asm-course csharp/csharp csharp/run java/run \
-           rust/rust-course arduino/arduino-course micropython/src/main.py \
-           python/src/main.py javascript/src/main.js security/src/main.py \
-           c/asm/use_asm cpp/asm/use_asm rust/asm/use_asm libraries/libraries \
-           git/src/main.sh html/html-course css/css-course webjs/webjs-course; do
+for exe in launcher/launcher libraries/libraries "$SHARE_DIR"/*/learn.js; do
+    exe=${exe#"$SHARE_DIR/"}
     [ -f "$SHARE_DIR/$exe" ] && chmod +x "$SHARE_DIR/$exe"
 done
 rm -f "$SHARE_DIR/codelearner.sh"     # the wrapper below replaces it
@@ -207,3 +203,11 @@ case ":${PATH}:" in
         echo "Until then, run it with:  $WRAPPER"
         ;;
 esac
+
+# Every course runs on Node. Installing it is the system's package manager's
+# job, not this script's, so only say so.
+if ! command -v node >/dev/null 2>&1; then
+    echo
+    echo "The courses need Node.js, which is not installed. Install it with your"
+    echo "system's package manager (the package is usually called nodejs)."
+fi

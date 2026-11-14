@@ -118,3 +118,9 @@ if (-not $onPath) {
 Write-Host ''
 Write-Host "Installed to $Prefix"
 Write-Host $pathNote
+
+# Every course runs on Node. Installing it is up to you; only say so.
+if (-not (Get-Command node -ErrorAction SilentlyContinue)) {
+    Write-Host ""
+    Write-Host "The courses need Node.js, which is not installed. Get it from https://nodejs.org"
+}

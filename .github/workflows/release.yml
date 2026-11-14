@@ -1,22 +1,13 @@
 name: Release
 
-# Builds the universal launcher (bundled with the compiled C/C++/GTK/raylib/C#
-# courses and the Python/JavaScript/Java source they don't need compiling)
-# for Windows and Linux, and packages Linux three more ways (.deb, Arch,
-# AppImage). Triggered by a version tag (v1.0.0) or manually. Tags with a
-# suffix (v1.0.0-ci1) build without publishing, so the workflow can be
-# exercised safely.
+# Builds the launcher and bundles it with every course for Windows and Linux,
+# and packages Linux three more ways (.deb, Arch, AppImage). Triggered by a
+# version tag (v1.0.0) or manually. Tags with a suffix (v1.0.0-ci1) build
+# without publishing, so the workflow can be exercised safely.
 #
-# Standalone per-language builds needing no toolchain installed exist for
-# C, C++, GTK, raylib (all compiled ahead of time, same as always) and now C# too
-# (`dotnet publish --self-contained -p:PublishSingleFile=true` -- one
-# `.exe`/binary, no .NET SDK required to run it). Python, JavaScript and
-# Java are deliberately NOT given this treatment: that would need a
-# different tool per language -- PyInstaller, Node's SEA, jpackage -- each
-# with its own failure modes, for languages this project's own docs already
-# say need nothing beyond their toolchain to browse. See
-# docs/building-a-single-course.md for building one of those standalone by
-# hand instead.
+# Every course runs on the shared lesson engine in learn/ with Node, and runs
+# its examples with that language's own toolchain on the student's machine,
+# so the bundle is the launcher, learn/ and each course's lesson files.
 #
 # Artifacts are UNSIGNED; the OS may warn about an unknown publisher.
 
@@ -43,6 +34,12 @@ jobs:
             name: windows-x86_64
           - os: ubuntu-22.04
             name: linux-x86_64
+    env:
+      # Every course in the bundle, in launcher order.
+      COURSES: c cpp assembly rust arduino micropython python javascript java csharp html css webjs security gtk raylib git
+      # The ones the Windows leg checks: the rest are Linux-only, or slow to
+      # build there without adding coverage the Linux leg lacks.
+      WINDOWS_COURSES: c cpp micropython python javascript html css webjs
     steps:
       - uses: actions/checkout@v7
 
@@ -51,41 +48,37 @@ jobs:
         run: choco install mingw make -y
         shell: bash
 
-      # Java ships no compiled artifact -- java/run(.bat) compiles-and-runs
-      # in one step at launch time (see java/README notes: `java Main.java`).
-      # A JDK is installed here only to prove that actually works before
-      # shipping it, not to bundle one.
-      - name: Install a JDK (for the smoke test only)
-        uses: actions/setup-java@v6
+      # Node runs every course. The rest are the toolchains the courses run
+      # their examples with; the checks below need all of them.
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: "21"
 
-      # Unlike Java, C# CAN be published as a genuinely standalone binary
-      # with no SDK required at runtime (`--self-contained
-      # -p:PublishSingleFile=true`) -- this is installed to build one, not
-      # just to smoke-test one.
-      - name: Install .NET SDK
-        uses: actions/setup-dotnet@v6
+      # dotnet run file.cs, which the C# course uses, needs .NET 10.
+      - uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: "8.0.x"
+          dotnet-version: "10.0.x"
 
-      - name: Build C, C++, and the launcher
+      - name: Install course toolchains (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          # nasm for Assembly, gtk4 for GTK (this runner's GTK is older than
+          # the course needs, so its check reports it skipped), and the AVR
+          # tools for arduino/avr's checks. raylib has no Ubuntu package; its
+          # course is skipped the same way.
+          sudo apt-get install -y -qq nasm libgtk-4-dev gcc-avr avr-libc simavr
+
+      - name: Build the launcher and the Libraries reference
         shell: bash
         run: |
           set -euo pipefail
-          # CC=gcc / CXX=g++ overrides the Makefiles' default `cc`, which is
-          # a POSIX symlink convention MinGW-w64 does not provide -- gcc/g++
-          # are what choco's mingw package actually puts on PATH. Linux's cc
-          # is untouched; this only takes effect on the Windows leg.
-          make -C c CC=gcc
-          make -C cpp CXX=g++
-          make -C gtk CC=gcc
-          make -C raylib CC=gcc
-          # -Werror because these three have never been built anywhere else.
-          for course in html css webjs; do
-            make -C "$course" CC=gcc CFLAGS="-std=c11 -Wall -Wextra -g -Werror"
-          done
           # The launcher shows this version and compares it with the latest
           # release in "Check for updates". A tag v1.5.1 builds as 1.5.1 (and
           # v1.5.1-ci1 as 1.5.1-ci1); anything else is a development build.
@@ -95,171 +88,52 @@ jobs:
           esac
           make -C launcher CC=gcc VERSION="$version"
           make -C launcher CC=gcc VERSION="$version" check
+          if [ "${{ runner.os }}" = "Linux" ]; then
+            make -C libraries
+          fi
 
-      # Linux only, no CC override: assembly/'s Makefile calls `nasm`/`ld`
-      # directly, and the course is raw Linux syscalls with no Windows
-      # equivalent to build toward -- see ROADMAP.md's note on why. nasm is
-      # installed here, before the build; the NASM examples step further down
-      # installs it too, which is a no-op by then.
-      - name: Build Assembly (Linux)
+      # Every example runs (or fails where it is meant to), every quiz answer
+      # exists, every exercise's solution passes the checker; then every
+      # lesson is played from start to finish.
+      - name: Check every course (Linux)
         if: runner.os == 'Linux'
         run: |
           set -euo pipefail
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq nasm
-          make -C assembly
-          # Walks every module and runs every example solution. The parts that
-          # boot an image need qemu, which is not installed here: they print
-          # that they were skipped.
-          make -C assembly check
-
-      # Rust and Arduino: Linux only for now. Both need just a toolchain the
-      # runner already has (rustc, g++). The Arduino stand-in for the core
-      # reads Serial with poll(), which Windows does not have.
-      - name: Build Rust and Arduino (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          set -euo pipefail
-          make -C rust
-          make -C arduino
-          make -C libraries
-
-      # The NASM examples for the C, C++ and Rust assembly modules. nasm is
-      # installed for this build only: the courses do not need it, and a
-      # module shows its demo output only when asm/use_asm exists beside it.
-      - name: Build the NASM examples (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          set -euo pipefail
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq nasm
-          make -C c asm-demo
-          make -C cpp asm-demo
-          make -C rust asm-demo
-          for course in c cpp rust; do
-            "$course/asm/use_asm" | grep -q 'add_numbers(40, 2) *= 42' \
-              || { echo "::error::the $course NASM example did not print 42"; exit 1; }
+          for course in $COURSES; do
+            node learn/check.js "$course"
+            python3 learn/check-course.py "$course"
           done
-
-      # Every challenge solution the Rust and Arduino courses show must build
-      # clean and print what its challenge promises, and no exercise may reach
-      # ahead of what its module has taught. (The Arduino module walk is left
-      # out: it feeds input on a timer, which a loaded runner can upset.)
-      - name: Verify the Rust and Arduino courses (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          set -euo pipefail
-          python3 rust/check-course.py
-          python3 rust/check-solutions.py
-          rustup target add thumbv6m-none-eabi
-          python3 rust/check-embedded.py
-          python3 arduino/check-solutions.py
-          # The AVR and Cortex-M0+ code the courses quote: compiled, and also
-          # executed on a simulated ATmega328P (simavr) and an emulated
-          # Cortex-M0+ (Unicorn). Tools are installed for this check only.
-          sudo apt-get install -y -qq gcc-avr avr-libc simavr
-          python3 -m pip install --quiet unicorn pyelftools
-          python3 arduino/avr/check-avr.py
-          python3 arduino/avr/run-avr.py
-          python3 rust/run-embedded.py
           # The Libraries reference: every page builds and runs, and the
           # browser opens them all.
           python3 libraries/check-pages.py
           python3 libraries/check-browser.py
-          python3 tools/check-teaching-order.py
-          # Every JavaScript example, quiz and exercise solution, then every
-          # lesson played from start to finish.
-          node javascript/check.js
-          python3 javascript/check-course.py
+          # The AVR code in arduino/avr: compiled, and run on a simulated
+          # ATmega328P.
+          python3 arduino/avr/check-avr.py
+          python3 arduino/avr/run-avr.py
 
-      # Every module of the two GUI courses reaches its SUMMARY, the same way.
-      - name: Walk the GUI courses (Linux)
-        if: runner.os == 'Linux'
+      - name: Check the courses that run on Windows
+        if: runner.os == 'Windows'
         shell: bash
         run: |
           set -euo pipefail
-          for entry in "gtk 4" "raylib 6"; do
-            course=${entry% *}
-            count=${entry#* }
-            for module in $(seq 1 "$count"); do
-              out=$({ printf '%s\n' "$module"; printf '\n%.0s' $(seq 200); } | timeout 20 "$course/$course-course")
-              grep -q "SUMMARY" <<<"$out" || { echo "::error::$course module $module did not reach its SUMMARY"; exit 1; }
-            done
+          for course in $WINDOWS_COURSES; do
+            node learn/check.js "$course"
           done
 
-      # Every module of the web courses reaches its SUMMARY. Blank lines answer
-      # the prompts, and running out of input ends the menu.
-      - name: Walk the web courses (Linux)
-        if: runner.os == 'Linux'
-        shell: bash
-        run: |
-          set -euo pipefail
-          for course in html css webjs; do
-            for module in 1 2 3 4 5; do
-              out=$({ printf '%s\n' "$module"; printf '\n%.0s' $(seq 200); } | timeout 20 "$course/$course-course")
-              grep -q "SUMMARY" <<<"$out" || { echo "::error::$course module $module did not reach its SUMMARY"; exit 1; }
-            done
-          done
-
-      - name: Compile-check Java (no artifact -- verifies -Xlint:all -Werror passes)
-        shell: bash
-        run: |
-          make -C java
-          make -C java clean
-
-      # Self-contained + single-file: the published binary needs no .NET SDK
-      # or runtime installed to run, unlike Java above. RID picks the target
-      # per OS; InvariantGlobalization (set in csharp.csproj) is what keeps a
-      # self-contained publish from also bundling ICU.
-      - name: Publish C# (self-contained, single-file)
-        shell: bash
-        run: |
-          set -euo pipefail
-          if [ "${{ runner.os }}" = "Windows" ]; then rid=win-x64; else rid=linux-x64; fi
-          dotnet publish csharp/src/csharp.csproj -c Release -r "$rid" \
-            --self-contained -p:PublishSingleFile=true \
-            -p:IncludeAllContentForSelfExtract=true \
-            -o csharp-publish
-
-      # CODELEARNER_LANG=pt-pt: the menu and a module's summary come out in
-      # Portuguese, for everything this runner can run. Arduino's walk is left
-      # out for the reason given above, so only its menu is checked.
+      # CODELEARNER_LANG=pt-pt: menus, prompts and summaries in Portuguese.
+      # k answers every prompt (k skips an exercise), so lesson 1 reaches
+      # its summary.
       - name: Check the Portuguese mode (Linux)
         if: runner.os == 'Linux'
         shell: bash
         run: |
           set -euo pipefail
-          javac -d "$RUNNER_TEMP/java" java/src/*.java
-          check() {
-            local name=$1 out
-            shift
-            out=$({ printf '1\n'; printf '\n%.0s' $(seq 200); } | CODELEARNER_LANG=pt-pt timeout 30 "$@")
-            grep -q "Sair" <<<"$out" || { echo "::error::$name has no Portuguese menu"; exit 1; }
-            grep -q "RESUMO" <<<"$out" || { echo "::error::$name has no Portuguese summary"; exit 1; }
-          }
-          check C c/c-course
-          check C++ cpp/cpp-course
-          check GTK gtk/gtk-course
-          check RAYLIB raylib/raylib-course
-          check HTML html/html-course
-          check CSS css/css-course
-          check "Web JavaScript" webjs/webjs-course
-          check Assembly assembly/asm-course
-          check Rust rust/rust-course
-          check Python python3 python/src/main.py
-          check Security python3 security/src/main.py
-          check Git bash git/src/main.sh
-          check "C#" csharp-publish/csharp
-          check Java java -cp "$RUNNER_TEMP/java" Main
-
-          # JavaScript: a blank line at an exercise means "check my file", so
-          # this walk answers k (skip) to reach the lesson summary.
-          out=$({ printf '1\n'; printf 'k\n%.0s' $(seq 100); } | CODELEARNER_LANG=pt-pt CODELEARNER_JS_DIR="$RUNNER_TEMP/js" timeout 30 node javascript/src/main.js)
-          grep -q "Sair" <<<"$out" || { echo "::error::JavaScript has no Portuguese menu"; exit 1; }
-          grep -q "RESUMO" <<<"$out" || { echo "::error::JavaScript has no Portuguese summary"; exit 1; }
-
-          out=$(printf '0\n' | CODELEARNER_LANG=pt-pt timeout 20 arduino/arduino-course)
-          grep -q "Sair" <<<"$out" || { echo "::error::Arduino has no Portuguese menu"; exit 1; }
+          for course in $COURSES; do
+            out=$({ printf '1\n'; printf 'k\n%.0s' $(seq 150); } | CODELEARNER_LANG=pt-pt CODELEARNER_PRACTICE_DIR="$RUNNER_TEMP/pt-$course" timeout 300 node "$course/learn.js")
+            grep -q "Sair" <<<"$out" || { echo "::error::$course has no Portuguese menu"; exit 1; }
+            grep -q "RESUMO" <<<"$out" || { echo "::error::$course has no Portuguese summary"; exit 1; }
+          done
           out=$(printf '0\n' | CODELEARNER_LANG=pt-pt timeout 20 libraries/libraries)
           grep -q "BIBLIOTECAS" <<<"$out" || { echo "::error::Libraries has no Portuguese menu"; exit 1; }
           out=$(cd launcher && printf 'l\n0\n' | timeout 20 ./launcher)
@@ -271,48 +145,25 @@ jobs:
         run: |
           set -euo pipefail
           cd launcher
-          # Picks C, quits C's menu, quits the launcher -- proves the launcher
-          # can actually invoke and return from a real course, not just that
-          # it starts. `0` alone is the interactive-course-question guard;
-          # module 1's own exercise reads two throwaway 0/0 answers before its
-          # own quit path, so the same input feeds all of it.
-          output=$(printf '1\n0\n0\n0\n0\n0\n' | timeout 10 ./launcher)
-          echo "$output" | grep -q "C COURSE" || { echo "::error::launcher did not reach the C course"; exit 1; }
-          echo "$output" | grep -q "See you next time" || { echo "::error::launcher did not exit cleanly"; exit 1; }
+          # Every entry: pick it, quit the course, quit the launcher. Proves
+          # the launcher can start each course and get back, not just start.
+          number=0
+          for title in "C FROM ZERO" "C++ FROM ZERO" "ASSEMBLY FROM ZERO" "RUST FROM ZERO" "ARDUINO FROM ZERO" "MICROPYTHON FROM ZERO" "PYTHON FROM ZERO" "JAVASCRIPT FROM ZERO" "JAVA FROM ZERO" "C# FROM ZERO" "HTML FROM ZERO" "CSS FROM ZERO" "WEB JAVASCRIPT FROM ZERO" "SECURITY FROM ZERO" "GTK FROM ZERO" "RAYLIB FROM ZERO" "GIT FROM ZERO"; do
+            number=$((number + 1))
+            out=$(printf '%s\nq\n0\n' "$number" | CODELEARNER_PRACTICE_DIR="$RUNNER_TEMP/smoke" timeout 30 ./launcher)
+            grep -q "$title" <<<"$out" || { echo "::error::launcher entry $number did not reach $title"; exit 1; }
+            grep -q "See you next time" <<<"$out" || { echo "::error::launcher did not exit cleanly after $title"; exit 1; }
+          done
+          out=$(printf '18\n0\n0\n' | timeout 20 ./launcher)
+          grep -q "LIBRARIES - A REFERENCE" <<<"$out" || { echo "::error::launcher did not reach the Libraries reference"; exit 1; }
 
           # [u] Check for updates is reachable and returns to the menu. What it
           # prints depends on the network and on GitHub's rate limit for shared
           # runners, so any of its known outcomes passes; a crash or a hang
           # does not. (The version comparison itself is covered by make check.)
-          output=$(printf 'u\n\n0\n' | timeout 30 ./launcher)
-          echo "$output" | grep -q "Check for updates" || { echo "::error::launcher menu has no Check for updates"; exit 1; }
-          echo "$output" | grep -qE "A newer release is available|You are up to date|newer than the latest release|development build|Could not check for updates" || { echo "::error::Check for updates printed no known outcome"; echo "$output"; exit 1; }
-          echo "$output" | grep -q "See you next time" || { echo "::error::launcher did not exit cleanly after Check for updates"; exit 1; }
-
-          # C# separately: picks module 1, walks every WaitEnter/Question/
-          # Challenge prompt in it (blank/"n" answers, same as the direct-
-          # invocation verification in csharp/src's own history), confirms
-          # the launcher's csharp/run wrapper -> dotnet run path resolves
-          # and the course reaches its own SUMMARY, not just that it starts.
-          cs_output=$(printf '10\n1\n\n\n\n\n\n\n\n\nn\nn\n\n\n0\n0\n' | timeout 20 ./launcher)
-          echo "$cs_output" | grep -q "C# COURSE" || { echo "::error::launcher did not reach the C# course"; exit 1; }
-          echo "$cs_output" | grep -q "See you next time" || { echo "::error::launcher did not exit cleanly after C#"; exit 1; }
-
-          # Arduino (5), Rust (4) and Security (14): pick the course, quit
-          # it, quit the launcher. MicroPython (6) is source like Python and
-          # JavaScript and needs `micropython` on PATH, which this runner does
-          # not have. Libraries is 18.
-          out=$(printf '14\n0\n0\n' | timeout 20 ./launcher)
-          echo "$out" | grep -q "SECURITY WITH PYTHON" || { echo "::error::launcher did not reach the Security course"; exit 1; }
-          out=$(printf '18\n0\n0\n' | timeout 20 ./launcher)
-          echo "$out" | grep -q "LIBRARIES - A REFERENCE" || { echo "::error::launcher did not reach the Libraries reference"; exit 1; }
-          for entry in "5 ARDUINO" "4 RUST" "11 HTML" "12 CSS" "13 WEB JAVASCRIPT" "15 GTK" "16 RAYLIB"; do
-            number=${entry%% *}
-            name=${entry#* }
-            out=$(printf '%s\n0\n0\n' "$number" | timeout 20 ./launcher)
-            echo "$out" | grep -q "$name COURSE" || { echo "::error::launcher did not reach the $name course"; exit 1; }
-            echo "$out" | grep -q "See you next time" || { echo "::error::launcher did not exit cleanly after $name"; exit 1; }
-          done
+          out=$(printf 'u\n\n0\n' | timeout 30 ./launcher)
+          grep -q "Check for updates" <<<"$out" || { echo "::error::launcher menu has no Check for updates"; exit 1; }
+          grep -qE "A newer release is available|You are up to date|newer than the latest release|development build|Could not check for updates" <<<"$out" || { echo "::error::Check for updates printed no known outcome"; echo "$out"; exit 1; }
 
       - name: Smoke-test the launcher (Windows)
         if: runner.os == 'Windows'
@@ -320,116 +171,54 @@ jobs:
         run: |
           cd launcher
           # PowerShell splits a native command's stdout into one array element
-          # per line. -match/-notmatch against an array does an element-wise
-          # test and returns the matching/non-matching MEMBERS, not a bool
-          # (verified: Microsoft's own about_comparison_operators docs) -- a
-          # non-empty array is truthy in if(), so -notmatch against $out would
-          # throw here on every run, even a correct one, since most lines
-          # (all but one) legitimately don't contain the sentinel. Joining to
-          # one string first is what makes this an actual boolean check.
-          $out = ("0`n" | & .\launcher.exe) -join "`n"
+          # per line, and -match against an array returns members, not a bool;
+          # joining to one string first makes these real boolean checks.
+          $out = ("7`nq`n0`n" | & .\launcher.exe) -join "`n"
           if ($LASTEXITCODE -ne 0) { throw "launcher exited $LASTEXITCODE" }
+          if ($out -notmatch "PYTHON FROM ZERO") { throw "launcher did not reach the Python course: $out" }
           if ($out -notmatch "See you next time") { throw "launcher did not exit cleanly: $out" }
-          # [u] Check for updates: reachable, prints one of its known outcomes
-          # (the answer depends on the network), and returns to the menu.
           $out = ("u`n`n0`n" | & .\launcher.exe) -join "`n"
           if ($LASTEXITCODE -ne 0) { throw "launcher exited $LASTEXITCODE after Check for updates" }
           if ($out -notmatch "A newer release is available|You are up to date|newer than the latest release|development build|Could not check for updates") { throw "Check for updates printed no known outcome: $out" }
-          if ($out -notmatch "See you next time") { throw "launcher did not exit cleanly after Check for updates: $out" }
 
       - name: Assemble the bundle
         shell: bash
         run: |
           set -euo pipefail
           out=codelearner-${{ matrix.name }}
-          mkdir -p "$out"/{launcher,c,cpp,gtk,raylib,html,css,webjs,csharp,python/src,javascript/src,java/src,security/src}
+          mkdir -p "$out/launcher" "$out/learn"
+          cp learn/*.js learn/*.py "$out/learn/"
+          for course in $COURSES; do
+            mkdir -p "$out/$course"
+            cp "$course/learn.js" "$course/course.js" "$out/$course/"
+            cp -r "$course/lessons" "$out/$course/"
+          done
+          # Files a course needs beyond its lessons: the Arduino core stand-in
+          # and the MicroPython board stand-in.
+          cp -r arduino/shim "$out/arduino/"
+          cp micropython/sim.py "$out/micropython/"
 
           if [ "${{ runner.os }}" = "Windows" ]; then
             cp launcher/launcher.exe "$out/launcher/"
-            cp c/c-course.exe "$out/c/"
-            cp cpp/cpp-course.exe "$out/cpp/"
-            cp gtk/gtk-course.exe "$out/gtk/"
-            cp raylib/raylib-course.exe "$out/raylib/"
-            cp html/html-course.exe "$out/html/"
-            cp css/css-course.exe "$out/css/"
-            cp webjs/webjs-course.exe "$out/webjs/"
-            cp java/run.bat "$out/java/"
-            # The published binary is standalone (no .NET SDK/runtime
-            # needed) -- unlike java/run.bat above, this wrapper does not
-            # invoke a toolchain, it just execs the bundled exe directly.
-            # csharp/run.bat in the source tree (dotnet run, needs the SDK)
-            # is a different file for local development; this one is
-            # generated fresh for the release bundle specifically.
-            cp csharp-publish/csharp.exe "$out/csharp/"
-            printf '@echo off\r\ncd /d "%%~dp0"\r\ncsharp.exe\r\n' > "$out/csharp/run.bat"
-            # A double-clickable entry point at the bundle root, same
-            # convenience java/run(.bat) already gives its own course --
-            # nobody should have to know to `cd launcher` first.
             printf '@echo off\r\ncd /d "%%~dp0launcher"\r\nlauncher.exe\r\n' > "$out/codelearner.bat"
           else
             cp launcher/launcher "$out/launcher/"
-            cp c/c-course "$out/c/"
-            cp cpp/cpp-course "$out/cpp/"
-            cp gtk/gtk-course "$out/gtk/"
-            cp raylib/raylib-course "$out/raylib/"
-            cp html/html-course "$out/html/"
-            cp css/css-course "$out/css/"
-            cp webjs/webjs-course "$out/webjs/"
-            cp java/run "$out/java/"
-            chmod +x "$out/java/run"
-            # Same standalone-binary story as the Windows leg above.
-            cp csharp-publish/csharp "$out/csharp/"
-            printf '#!/bin/sh\ncd "$(dirname "$0")" && exec ./csharp\n' > "$out/csharp/run"
-            chmod +x "$out/csharp/csharp" "$out/csharp/run"
-            # Assembly is Linux-only -- see ROADMAP.md -- so it is only ever
-            # built and bundled here, never on the Windows leg above.
-            mkdir -p "$out/assembly"
-            cp assembly/asm-course "$out/assembly/"
-            chmod +x "$out/assembly/asm-course"
-            # Rust and Arduino are compiled, MicroPython is source. The
-            # Arduino folder keeps its Makefile, shim and sketch so that
-            # `make try` (the challenges tell students to use it) still works.
-            mkdir -p "$out/rust" "$out/arduino" "$out/micropython/src"
-            cp rust/rust-course "$out/rust/"
-            cp arduino/arduino-course arduino/Makefile "$out/arduino/"
-            cp -r arduino/shim arduino/course "$out/arduino/"
-            cp micropython/src/*.py "$out/micropython/src/"
-            chmod +x "$out/rust/rust-course" "$out/arduino/arduino-course" "$out/micropython/src/main.py"
-            # Git is a Bash course: nothing to build, the scripts are the course.
-            mkdir -p "$out/git/src"
-            cp git/src/*.sh "$out/git/src/"
-            chmod +x "$out/git/src/main.sh"
             # Libraries: the browser, and the pages it compiles and runs on
-            # demand (it finds them next to itself).
+            # demand (it finds them next to itself). Linux only.
             mkdir -p "$out/libraries/c" "$out/libraries/python"
             cp libraries/libraries "$out/libraries/"
             cp libraries/c/* "$out/libraries/c/"
             cp libraries/python/* "$out/libraries/python/"
-            chmod +x "$out/libraries/libraries"
             # The application menu entry and its icon, for install.sh to place
             # (the .deb, the Arch package and the AppImage install them
-            # themselves). One tracked file, assets/com.otzpt.codelearner.desktop.
+            # themselves).
             mkdir -p "$out/desktop"
             cp assets/com.otzpt.codelearner.desktop "$out/desktop/"
             cp assets/icon.png "$out/desktop/com.otzpt.codelearner.png"
-            # The assembly modules in C, C++ and Rust read these from next to
-            # their own binary: the NASM source, and the demo built above.
-            for course in c cpp rust; do
-              mkdir -p "$out/$course/asm"
-              cp "$course/asm/add.asm" "$course/asm/use_asm" "$out/$course/asm/"
-              cp "$course"/asm/use_asm.* "$out/$course/asm/"
-              chmod +x "$out/$course/asm/use_asm"
-            done
             printf '#!/bin/sh\ncd "$(dirname "$0")/launcher" && exec ./launcher\n' > "$out/codelearner.sh"
-            chmod +x "$out/codelearner.sh" "$out/launcher/launcher"
+            chmod +x "$out/codelearner.sh" "$out/launcher/launcher" "$out/libraries/libraries"
+            chmod +x "$out"/*/learn.js
           fi
-
-          cp python/src/*.py "$out/python/src/"
-          cp security/src/*.py "$out/security/src/"
-          cp javascript/src/*.js "$out/javascript/src/"
-          mkdir -p "$out/javascript/src/lessons"
-          cp javascript/src/lessons/*.js "$out/javascript/src/lessons/"
-          cp java/src/*.java "$out/java/src/"
           cp README.md LICENSE "$out/"
 
           if [ "${{ runner.os }}" = "Windows" ]; then
@@ -438,46 +227,21 @@ jobs:
             tar -czf "$out.tar.gz" "$out"
             # install.sh checks the tarball against this.
             sha256sum "$out.tar.gz" > "$out.tar.gz.sha256"
-            # A .zip alongside the .tar.gz, same payload -- some Linux users
-            # reach for zip out of habit, and `zip` is preinstalled on the
-            # ubuntu-22.04 runner image (unlike 7z, which is Windows-only
-            # above because that's what the choco/Windows runner actually
-            # has ready).
             zip -qr "$out.zip" "$out"
           fi
 
-          # The C# course's standalone binary, again, as its own top-level
-          # download -- not just embedded in the bundle above. This is the
-          # one course where "download a single file, run it, no toolchain"
-          # is actually true; C/C++ need the rest of the bundle alongside
-          # them (relative sibling paths, see launcher/src/main.c), so this
-          # is not offered as a whole-launcher single-exe -- that would need
-          # every course's files embedded as resources inside one binary,
-          # a fundamentally different build than what launcher.c does today.
-          if [ "${{ runner.os }}" = "Windows" ]; then
-            cp csharp-publish/csharp.exe codelearner-csharp-standalone-win-x64.exe
-          else
-            cp csharp-publish/csharp codelearner-csharp-standalone-linux-x86_64
-            chmod +x codelearner-csharp-standalone-linux-x86_64
-          fi
-
-      # Runs the exact artifact that ships, not the dev-mode `dotnet run`
-      # path the earlier smoke test exercises -- proves the self-contained
-      # publish genuinely needs nothing else installed to work.
-      - name: Smoke-test the standalone C# binary (Linux)
+      # The bundle on its own, outside the source tree: a course must run
+      # from what was packed, with nothing else beside it.
+      - name: Smoke-test the bundle (Linux)
         if: runner.os == 'Linux'
         run: |
           set -euo pipefail
-          output=$(printf '0\n' | timeout 10 ./codelearner-csharp-standalone-linux-x86_64)
-          echo "$output" | grep -q "See you next time" || { echo "::error::standalone C# binary did not exit cleanly"; exit 1; }
-
-      - name: Smoke-test the standalone C# binary (Windows)
-        if: runner.os == 'Windows'
-        shell: pwsh
-        run: |
-          $out = ("0`n" | & .\codelearner-csharp-standalone-win-x64.exe) -join "`n"
-          if ($LASTEXITCODE -ne 0) { throw "standalone C# binary exited $LASTEXITCODE" }
-          if ($out -notmatch "See you next time") { throw "standalone C# binary did not exit cleanly: $out" }
+          mkdir -p "$RUNNER_TEMP/bundle"
+          tar -xzf codelearner-linux-x86_64.tar.gz -C "$RUNNER_TEMP/bundle"
+          cd "$RUNNER_TEMP/bundle/codelearner-linux-x86_64/launcher"
+          out=$(printf '5\n1\n\n\n\nm\nq\n0\n' | CODELEARNER_PRACTICE_DIR="$RUNNER_TEMP/bundle-practice" timeout 60 ./launcher)
+          grep -q "ARDUINO FROM ZERO" <<<"$out" || { echo "::error::the bundled Arduino course did not start"; exit 1; }
+          grep -q "Output:" <<<"$out" || { echo "::error::the bundled Arduino course ran no example"; echo "$out" | tail -20; exit 1; }
 
       - name: Check the desktop entry (Linux)
         if: runner.os == 'Linux'
@@ -498,15 +262,11 @@ jobs:
           esac
           pkg=deb/codelearner
           # /opt, not /usr/bin, because the launcher finds every course by a
-          # path relative to its own directory (../c, ../python, ...) -- see
-          # launcher/src/main.c. That layout has to stay intact somewhere;
-          # /usr/bin has no room for six sibling directories. The wrapper
-          # is the only thing that goes on PATH.
+          # path relative to its own directory (../c, ../python, ...). The
+          # wrapper is the only thing that goes on PATH.
           mkdir -p "$pkg/DEBIAN" "$pkg/usr/bin" "$pkg/opt/codelearner"
           cp -r codelearner-linux-x86_64/* "$pkg/opt/codelearner/"
           rm -f "$pkg/opt/codelearner/codelearner.sh"
-          # The menu entry and icon go where desktops look; the copy in the
-          # bundle is only for install.sh.
           rm -rf "$pkg/opt/codelearner/desktop"
           install -Dm644 assets/com.otzpt.codelearner.desktop "$pkg/usr/share/applications/com.otzpt.codelearner.desktop"
           install -Dm644 assets/icon.png "$pkg/usr/share/icons/hicolor/512x512/apps/com.otzpt.codelearner.png"
@@ -514,19 +274,19 @@ jobs:
           #!/bin/sh
           cd /opt/codelearner/launcher && exec ./launcher
           EOF
-          chmod +x "$pkg/usr/bin/codelearner" "$pkg/opt/codelearner/launcher/launcher" "$pkg/opt/codelearner/gtk/gtk-course" "$pkg/opt/codelearner/raylib/raylib-course" "$pkg/opt/codelearner/assembly/asm-course" "$pkg/opt/codelearner/java/run" "$pkg/opt/codelearner/csharp/csharp" "$pkg/opt/codelearner/csharp/run" "$pkg/opt/codelearner/rust/rust-course" "$pkg/opt/codelearner/arduino/arduino-course" "$pkg/opt/codelearner/micropython/src/main.py" "$pkg/opt/codelearner/git/src/main.sh" "$pkg/opt/codelearner/html/html-course" "$pkg/opt/codelearner/css/css-course" "$pkg/opt/codelearner/webjs/webjs-course" "$pkg/opt/codelearner/libraries/libraries"
+          chmod +x "$pkg/usr/bin/codelearner" "$pkg/opt/codelearner/launcher/launcher" "$pkg/opt/codelearner/libraries/libraries"
           cat > "$pkg/DEBIAN/control" <<EOF
           Package: codelearner
           Version: $pkgver
           Architecture: amd64
           Maintainer: CodeLearner <noreply@invalid>
-          Suggests: python3, nodejs, default-jdk, gtk4, micropython, nasm, g++
-          Description: Command-line programming courses, one per language
-           C, C++, GTK, raylib, C#, Rust, Arduino and Assembly run standalone. The
-           Python, JavaScript, Java and MicroPython courses need that
-           language's own toolchain installed to run -- see Suggests. GTK4 is only needed to compile
-           and run the GTK course's own taught examples, not to browse the
-           course itself. Assembly is Linux/x86-64 only.
+          Depends: nodejs
+          Suggests: gcc, g++, python3, default-jdk, rustc, nasm, git, libgtk-4-dev
+          Description: Programming courses for the terminal, from zero
+           Every course runs on Node. Each one runs its examples and checks
+           your exercises with that language's own toolchain, so install the
+           ones for the courses you take (see Suggests); C#, which needs the
+           .NET 10 SDK, and raylib are not packaged by Debian.
           EOF
           dpkg-deb --build --root-owner-group "$pkg" "codelearner-amd64.deb"
           # The package must actually carry the menu entry and its icon.
@@ -538,8 +298,6 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           set -euo pipefail
-          # A tag v1.5.1 packages as 1.5.1; a manual run on a branch has no
-          # version, and dpkg and makepkg need one that starts with a digit.
           case "$GITHUB_REF" in
             refs/tags/v*) pkgver="${GITHUB_REF_NAME#v}" ;;
             *)            pkgver="0.0.0.dev" ;;
@@ -554,64 +312,26 @@ jobs:
           pkgname=codelearner
           pkgver=$pkgver
           pkgrel=1
-          pkgdesc="Command-line programming courses, one per language"
+          pkgdesc="Programming courses for the terminal, from zero"
           arch=('x86_64')
           url="https://github.com/otzpt/CodeLearner"
           license=('MIT')
-          # C, C++, GTK, raylib and C# are bundled compiled; Python, JavaScript and
-          # Java need the listed runtime installed to run their course, same
-          # trade-off the .deb documents with Suggests. GTK4 is only needed
-          # to compile and run the GTK course's own taught examples, not to
-          # browse the course.
-          optdepends=('python: run the Python course'
-                      'nodejs: run the JavaScript course'
-                      'jdk-openjdk: run the Java course'
-                      'micropython: run the MicroPython course'
-                      'nasm: rebuild the NASM examples of the C, C++ and Rust courses'
-                      'gtk4: compile and run the GTK course examples')
+          depends=('nodejs')
+          optdepends=('gcc: the C, C++, GTK and raylib courses'
+                      'python: the Python, MicroPython and Security courses'
+                      'jdk-openjdk: the Java course'
+                      'dotnet-sdk: the C# course (.NET 10 or later)'
+                      'rust: the Rust course'
+                      'nasm: the Assembly course'
+                      'gtk4: the GTK course'
+                      'raylib: the raylib course'
+                      'git: the Git course')
           options=('!strip' '!debug')
           package() {
-            install -Dm755 "\$startdir/payload/launcher/launcher" "\$pkgdir/opt/codelearner/launcher/launcher"
-            install -Dm755 "\$startdir/payload/c/c-course" "\$pkgdir/opt/codelearner/c/c-course"
-            install -Dm755 "\$startdir/payload/cpp/cpp-course" "\$pkgdir/opt/codelearner/cpp/cpp-course"
-            install -Dm755 "\$startdir/payload/gtk/gtk-course" "\$pkgdir/opt/codelearner/gtk/gtk-course"
-            install -Dm755 "\$startdir/payload/raylib/raylib-course" "\$pkgdir/opt/codelearner/raylib/raylib-course"
-            install -Dm755 "\$startdir/payload/html/html-course" "\$pkgdir/opt/codelearner/html/html-course"
-            install -Dm755 "\$startdir/payload/css/css-course" "\$pkgdir/opt/codelearner/css/css-course"
-            install -Dm755 "\$startdir/payload/webjs/webjs-course" "\$pkgdir/opt/codelearner/webjs/webjs-course"
-            install -Dm755 "\$startdir/payload/assembly/asm-course" "\$pkgdir/opt/codelearner/assembly/asm-course"
-            install -Dm755 "\$startdir/payload/java/run" "\$pkgdir/opt/codelearner/java/run"
-            install -Dm755 "\$startdir/payload/csharp/csharp" "\$pkgdir/opt/codelearner/csharp/csharp"
-            install -Dm755 "\$startdir/payload/csharp/run" "\$pkgdir/opt/codelearner/csharp/run"
-            install -Dm755 "\$startdir/payload/rust/rust-course" "\$pkgdir/opt/codelearner/rust/rust-course"
-            install -Dm755 "\$startdir/payload/arduino/arduino-course" "\$pkgdir/opt/codelearner/arduino/arduino-course"
-            install -Dm644 "\$startdir/payload/arduino/Makefile" "\$pkgdir/opt/codelearner/arduino/Makefile"
-            install -Dm755 "\$startdir/payload/libraries/libraries" "\$pkgdir/opt/codelearner/libraries/libraries"
-            for dir in arduino/shim arduino/course micropython/src c/asm cpp/asm rust/asm libraries/c libraries/python git/src; do
-              mkdir -p "\$pkgdir/opt/codelearner/\$dir"
-              cp -r "\$startdir/payload/\$dir/." "\$pkgdir/opt/codelearner/\$dir/"
-            done
-            chmod 755 "\$pkgdir/opt/codelearner/micropython/src/main.py" "\$pkgdir/opt/codelearner/git/src/main.sh" "\$pkgdir/opt/codelearner/c/asm/use_asm" "\$pkgdir/opt/codelearner/cpp/asm/use_asm" "\$pkgdir/opt/codelearner/rust/asm/use_asm"
-            for f in "\$startdir/payload/python/src"/*.py; do
-              install -Dm644 "\$f" "\$pkgdir/opt/codelearner/python/src/\$(basename "\$f")"
-            done
-            for f in "\$startdir/payload/javascript/src"/*.js; do
-              install -Dm644 "\$f" "\$pkgdir/opt/codelearner/javascript/src/\$(basename "\$f")"
-            done
-            for f in "\$startdir/payload/javascript/src/lessons"/*.js; do
-              install -Dm644 "\$f" "\$pkgdir/opt/codelearner/javascript/src/lessons/\$(basename "\$f")"
-            done
-            for f in "\$startdir/payload/security/src"/*.py; do
-              install -Dm644 "\$f" "\$pkgdir/opt/codelearner/security/src/\$(basename "\$f")"
-            done
-            # The launcher runs these entry points as bare paths (shebang), so
-            # they need the execute bit the 644 installs above leave off.
-            chmod 755 "\$pkgdir/opt/codelearner/python/src/main.py" "\$pkgdir/opt/codelearner/javascript/src/main.js" "\$pkgdir/opt/codelearner/security/src/main.py"
-            for f in "\$startdir/payload/java/src"/*.java; do
-              install -Dm644 "\$f" "\$pkgdir/opt/codelearner/java/src/\$(basename "\$f")"
-            done
-            install -Dm644 "\$startdir/payload/README.md" "\$pkgdir/opt/codelearner/README.md"
-            install -Dm644 "\$startdir/payload/LICENSE" "\$pkgdir/opt/codelearner/LICENSE"
+            mkdir -p "\$pkgdir/opt/codelearner"
+            cp -r "\$startdir/payload/." "\$pkgdir/opt/codelearner/"
+            rm -rf "\$pkgdir/opt/codelearner/desktop"
+            chmod 755 "\$pkgdir/opt/codelearner/launcher/launcher" "\$pkgdir/opt/codelearner/libraries/libraries"
             install -Dm644 "\$startdir/payload/desktop/com.otzpt.codelearner.desktop" "\$pkgdir/usr/share/applications/com.otzpt.codelearner.desktop"
             install -Dm644 "\$startdir/payload/desktop/com.otzpt.codelearner.png" "\$pkgdir/usr/share/icons/hicolor/512x512/apps/com.otzpt.codelearner.png"
             mkdir -p "\$pkgdir/usr/bin"
@@ -629,6 +349,7 @@ jobs:
           listing="$(zstd -dc "$GITHUB_WORKSPACE/codelearner-x86_64.pkg.tar.zst" | tar -t)"
           echo "$listing" | grep -q 'usr/share/applications/com.otzpt.codelearner.desktop$' || { echo "::error::the Arch package has no desktop entry"; exit 1; }
           echo "$listing" | grep -q 'usr/share/icons/hicolor/512x512/apps/com.otzpt.codelearner.png$' || { echo "::error::the Arch package has no icon"; exit 1; }
+          echo "$listing" | grep -q 'opt/codelearner/learn/app.js$' || { echo "::error::the Arch package has no lesson engine"; exit 1; }
 
       - name: Package Linux (AppImage)
         if: runner.os == 'Linux'
@@ -650,7 +371,7 @@ jobs:
           HERE="$(dirname "$(readlink -f "$0")")"
           cd "$HERE/opt/launcher" && exec ./launcher
           EOF
-          chmod +x "$APPDIR/AppRun" "$APPDIR/opt/launcher/launcher" "$APPDIR/opt/csharp/csharp" "$APPDIR/opt/csharp/run" "$APPDIR/opt/java/run" "$APPDIR/opt/assembly/asm-course" "$APPDIR/opt/rust/rust-course" "$APPDIR/opt/arduino/arduino-course" "$APPDIR/opt/micropython/src/main.py" "$APPDIR/opt/git/src/main.sh" "$APPDIR/opt/html/html-course" "$APPDIR/opt/css/css-course" "$APPDIR/opt/webjs/webjs-course" "$APPDIR/opt/libraries/libraries"
+          chmod +x "$APPDIR/AppRun" "$APPDIR/opt/launcher/launcher" "$APPDIR/opt/libraries/libraries"
           wget -q https://github.com/AppImage/appimagetool/releases/download/continuous/appimagetool-x86_64.AppImage -O /tmp/appimagetool
           chmod +x /tmp/appimagetool
           ARCH=x86_64 /tmp/appimagetool --appimage-extract-and-run "$APPDIR" "codelearner-x86_64.AppImage"
@@ -667,8 +388,6 @@ jobs:
             codelearner-amd64.deb
             codelearner-x86_64.pkg.tar.zst
             codelearner-x86_64.AppImage
-            codelearner-csharp-standalone-win-x64.exe
-            codelearner-csharp-standalone-linux-x86_64
           if-no-files-found: ignore
 
   release:
@@ -691,58 +410,25 @@ jobs:
           generate_release_notes: true
           fail_on_unmatched_files: false
           body: |
-            CodeLearner universal launcher, Windows and Linux.
+            CodeLearner: programming courses for the terminal, written for
+            someone who has never programmed. Every lesson runs its examples
+            live, explains errors in plain words, and ends with a small
+            program you write in a real file and the course checks.
 
-            Bundles the launcher with the compiled C, C++, GTK, raylib and C#
-            courses -- all four run standalone, no toolchain needed.
-            Python, JavaScript and Java are included as source and run
-            through their own language's toolchain (see the
-            Suggests/optdepends on the .deb/Arch packages) -- nothing is
-            bundled for those three that would need a PyInstaller/Node-SEA/
-            jpackage-style standalone build. The GTK course itself needs
-            nothing beyond a C compiler to browse; GTK4 is only needed if
-            you compile and run the examples it teaches. The raylib course
-            is the same: raylib and raygui are only needed to compile its
-            examples. Assembly is
-            bundled compiled on Linux only -- it makes raw Linux syscalls
-            directly and has no Windows equivalent to build toward. It is
-            now 16 modules in NASM's Intel syntax, from registers to a
-            kernel written in C that handles interrupts; modules 10 to
-            16 boot disk images, which needs `qemu-system-x86_64` to try
-            (not bundled) and were run in QEMU, not on real hardware.
+            **Needs Node.js** to run the courses, plus each language's own
+            toolchain for the courses you take (gcc/g++, python3, a JDK,
+            the .NET 10 SDK, rustc, nasm, git, GTK 4.10+, raylib). Assembly,
+            Arduino and Git are Linux-only; Arduino and MicroPython run on a
+            PC with a stand-in for the board, no hardware needed. The HTML,
+            CSS and Web JavaScript courses use a small built-in stand-in for a
+            browser, since a terminal cannot draw a page; GTK and raylib
+            build your programs and you run the windows yourself.
 
-            The Rust and Arduino courses are bundled compiled, also Linux
-            only (the Arduino one simulates the board on the PC through
-            `poll()`). MicroPython is included as source, needs
-            `micropython` on PATH, and is Linux only. Security (Python)
-            is included as source on both platforms; Git (Bash) is
-            included as source on Linux only. The C, C++ and Rust
-            assembly modules show a NASM example built with `nasm` in CI;
-            rebuilding it yourself needs `nasm` (`make asm-demo`).
-
-            The HTML, CSS and Web JavaScript courses are bundled compiled on
-            both platforms. They are plain C programs and never open a
-            browser.
-
-            The Libraries entry is a reference manual, not a course: man-page
-            style pages for the C and Python libraries (including 21 C
-            header pages), each example compiled or run live to show its
-            real output. It is bundled on Linux only, since the pages read
-            /proc and /sys, and needs `cc` and `python3` to run the pages.
+            The Libraries entry is a reference manual, not a course, bundled
+            on Linux only (its pages read /proc and /sys).
 
             **Windows:** portable `.zip` -- extract, run `codelearner.bat`.
             **Linux:** `.deb`, Arch `.pkg.tar.zst`, `.AppImage`, or the
             portable `.tar.gz`/`.zip` (run `./codelearner.sh`).
-
-            **Just the C# course, standalone, no launcher and none of the
-            other sixteen** -- a single self-contained executable, nothing else to
-            download: `codelearner-csharp-standalone-win-x64.exe` /
-            `-linux-x86_64`. This is the one course where that's actually a
-            single file; C, C++, GTK, raylib and Assembly need the rest of the
-            bundle alongside them (they look up sibling directories by a
-            relative path), so they aren't offered this way.
-
-            Want just one other language, standalone? See
-            [`docs/building-a-single-course.md`](https://github.com/otzpt/CodeLearner/blob/main/docs/building-a-single-course.md).
 
             Unsigned: the OS may warn about an unknown publisher on first run.
