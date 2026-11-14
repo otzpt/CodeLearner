@@ -20,6 +20,10 @@ module.exports = {
   ],
   howToRun: (name) => `Open ${name} in any browser to see it drawn.`,
   warnings: (text) => text.split("\n").filter((l) => l.startsWith("warning: ")).map((l) => l.slice(9)),
-  parseError: javascript.parseError,
+  // The line is the page's, not the line inside learn/web.js.
+  parseError(stderr) {
+    const where = stderr.match(/\.html:(\d+)/);
+    return { ...javascript.parseError(stderr), line: where ? Number(where[1]) : null };
+  },
   errors: javascript.errors,
 };
