@@ -10,11 +10,7 @@ const ui = require("./ui.js");
 async function lesson06Arrays() {
   ui.title("MODULE 6 - ARRAYS");
 
-  ui.typeThis(["const nums = [3, 1, 2];", "nums.push(4);", "console.log(nums.length, nums[0]);", "console.log(nums);"]);
-
-  await ui.waitEnter();
-  ui.clearScreen();
-  ui.heading("PART 1: const does not stop this -- the same bug Python has");
+  ui.heading("PART 1: two names, one array");
 
   console.log("    const a = [1, 2, 3];");
   console.log("    const b = a;");
@@ -28,8 +24,8 @@ async function lesson06Arrays() {
   console.log();
   console.log("  const stops b FROM BEING REASSIGNED to a different array.");
   console.log("  It says nothing about the array's own contents. b = a gives");
-  console.log("  the same array a second name -- identical to Python's b = a");
-  console.log("  aliasing bug, spelled with const instead of nothing at all.");
+  console.log("  the same array a second name. Change it through b and a sees");
+  console.log("  it too, because there is only one array.");
   console.log();
   console.log("  A real copy needs the spread operator:");
   console.log();
@@ -44,7 +40,7 @@ async function lesson06Arrays() {
   ui.clearScreen();
   ui.heading("PART 2: sort mutates, and sorts as text by default");
 
-  await ui.predict(["console.log([10, 9, 2].sort());"], "sort() with no argument compares the elements as text.");
+  ui.demo(["console.log([10, 9, 2].sort());"], "sort() with no argument compares the elements as text.");
 
   console.log();
   console.log("  Not [2, 9, 10]. sort() converts each element to a string");
@@ -114,18 +110,6 @@ async function lesson06Arrays() {
 async function lesson07Functions() {
   ui.title("MODULE 7 - FUNCTIONS AND THIS");
 
-  ui.typeThis([
-    'function greet(name, greeting = "Hello") {',
-    "  return `${greeting}, ${name}`;",
-    "}",
-    "const twice = (x) => x * 2;",
-    "",
-    'console.log(greet("Ana"));',
-    "console.log(twice(21));",
-  ]);
-
-  await ui.waitEnter();
-  ui.clearScreen();
   ui.heading("PART 1: default parameters and arrow functions");
 
   console.log("    function greet(name) { return `hello, ${name}`; }");
@@ -179,7 +163,7 @@ async function lesson07Functions() {
   ui.clearScreen();
   ui.heading("PART 3: closures, and the var/let loop trap");
 
-  await ui.predict(
+  ui.demo(
     ["const fns = [];", "for (var i = 0; i < 3; i++) {", "  fns.push(() => i);", "}", "console.log(fns.map((f) => f()));"],
     "Each function returns i when it is called, after the loop has finished."
   );
@@ -241,15 +225,6 @@ async function lesson07Functions() {
 async function lesson08Objects() {
   ui.title("MODULE 8 - OBJECTS");
 
-  ui.typeThis([
-    'const student = { name: "Ana", grade: 15 };',
-    "student.grade = 17;",
-    "console.log(student.name, student.grade);",
-    "console.log(JSON.stringify(student));",
-  ]);
-
-  await ui.waitEnter();
-  ui.clearScreen();
   ui.heading("PART 1: property access, and JSON");
 
   const student = { name: "Ana", grade: 15 };
@@ -269,21 +244,13 @@ async function lesson08Objects() {
   ui.clearScreen();
   ui.heading("PART 2: == and === are both wrong for comparing objects");
 
-  await ui.predict(
-    ["const a = [1, 2];", "const b = [1, 2];", "console.log(a === b, a == b);"],
-    "a and b hold the same numbers but are two different arrays."
-  );
-
-  await ui.waitEnter();
-  ui.clearScreen();
-  ui.heading("PART 2: == and === are both wrong for comparing objects");
   console.log(`    [1, 2] == [1, 2]   -> ${[1, 2] == [1, 2]}`);
   console.log(`    [1, 2] === [1, 2]  -> ${[1, 2] === [1, 2]}`);
   console.log();
   console.log("  Both false. Neither == nor === looks inside an array or");
-  console.log("  object -- both compare REFERENCES, same rule as C's == on a");
-  console.log("  char*, and neither operator has a content-comparing mode");
-  console.log("  the way Python's == or C++'s std::string == do.");
+  console.log("  object. They only ask: is this the SAME array? Two arrays");
+  console.log("  made separately are never the same one, even with the same");
+  console.log("  numbers inside.");
   console.log();
   const x = [1, 2];
   console.log(`    const x = [1, 2]; x === x  -> ${x === x}`);
@@ -345,21 +312,6 @@ async function lesson08Objects() {
 async function lesson09Classes() {
   ui.title("MODULE 9 - CLASSES");
 
-  ui.typeThis([
-    "class Dog {",
-    "  constructor(name) {",
-    "    this.name = name;",
-    "  }",
-    "  speak() {",
-    "    return `${this.name} says woof`;",
-    "  }",
-    "}",
-    "",
-    'console.log(new Dog("Rex").speak());',
-  ]);
-
-  await ui.waitEnter();
-  ui.clearScreen();
   ui.heading("PART 1: class, constructor, and real private fields");
 
   console.log("    class Student {");
@@ -386,7 +338,7 @@ async function lesson09Classes() {
   const st = new Student("Ana", 15);
   console.log(`  Running: ${st.describe()}`);
 
-  await ui.predict(
+  ui.demo(
     ["class Student {", '  name = "Ana";', "  #grade = 15;", "}", "console.log(JSON.stringify(new Student()));"],
     "A # field is not a property at all. Nothing outside the class sees it, JSON included."
   );
@@ -394,16 +346,14 @@ async function lesson09Classes() {
   await ui.waitEnter();
   ui.clearScreen();
   ui.heading("PART 1: class, constructor, and real private fields");
-  console.log("  #grade is a REAL private field -- unlike Python's leading");
-  console.log("  underscore, which is only a convention. Trying to read");
+  console.log("  #grade is a REAL private field. Trying to read");
   console.log("  s.#grade from outside the class is not just wrong, it is a");
   console.log("  SyntaxError caught before the program even runs:");
   console.log();
   console.log("    SyntaxError: Private field '#grade' must be declared in");
   console.log("                 an enclosing class");
   console.log();
-  console.log("  Verified on Node 26. This is real enforcement, closer to");
-  console.log("  C++'s private than to Python's convention-only underscore.");
+  console.log("  Verified on Node 26.");
 
   await ui.waitEnter();
   ui.clearScreen();
@@ -424,17 +374,16 @@ async function lesson09Classes() {
   console.log(`  Running: ${bo.describe()}`);
   console.log(`           b instanceof Student -> ${bo instanceof Student}`);
   console.log();
-  console.log("  extends and super work the same way C++ inheritance does --");
-  console.log("  super.describe() reaches the parent's version explicitly.");
+  console.log("  extends makes Bolseiro a Student with everything Student has.");
+  console.log("  super.describe() calls the parent's version of the method.");
 
   await ui.waitEnter();
   ui.clearScreen();
-  ui.heading("PART 3: garbage collection, same as Python -- no RAII here either");
+  ui.heading("PART 3: objects are cleaned up for you, but not on time");
 
-  console.log("  Same story as Python: there is no destructor tied to a");
-  console.log("  predictable moment the way C++'s is. An object is collected");
-  console.log("  sometime after nothing references it any more -- not at a");
-  console.log("  scope's closing brace, not on any schedule you control.");
+  console.log("  You never delete an object yourself. It is");
+  console.log("  removed sometime after nothing uses it any more -- not at");
+  console.log("  a closing brace, and not at a moment you can predict.");
   console.log();
   console.log("  For something that must close at a known point -- a file");
   console.log("  handle, a database connection -- Node's answer is `using`");
@@ -457,7 +406,7 @@ async function lesson09Classes() {
     "It is a SyntaxError, caught before the program runs -- real enforcement."
   );
   await ui.question(
-    "Is a JS object destroyed at a specific, predictable moment, the\n  way a C++ destructor is?  (answer: yes or no)",
+    "Can you predict the exact moment a JS object is cleaned up?\n  (answer: yes or no)",
     "no",
     "Garbage collection timing is not guaranteed. Use try/finally for anything " +
       "that must close on time."
@@ -493,8 +442,8 @@ async function lesson09Classes() {
 
   if (!ui.printSummaryPt(9)) {
     console.log("   - #field is real private -- a SyntaxError from outside, not a convention");
-    console.log("   - extends/super work like C++ inheritance");
-    console.log("   - no guaranteed destructor timing -- use try/finally for deterministic cleanup");
+    console.log("   - extends reuses a parent class; super calls the parent's version");
+    console.log("   - cleanup time is not predictable -- use try/finally for things that must close");
   }
   await ui.waitEnter();
 }
@@ -502,20 +451,9 @@ async function lesson09Classes() {
 async function lesson10Errors() {
   ui.title("MODULE 10 - ERRORS");
 
-  ui.typeThis([
-    "try {",
-    '  throw new Error("something broke");',
-    "} catch (e) {",
-    '  console.log("caught:", e.message);',
-    "}",
-    'console.log("still running");',
-  ]);
-
-  await ui.waitEnter();
-  ui.clearScreen();
   ui.heading("PART 1: try / catch / finally, and throw");
 
-  await ui.predict(
+  ui.demo(
     [
       "function divide(a, b) {",
       '  if (b === 0) throw new Error("division by zero");',
@@ -561,7 +499,7 @@ async function lesson10Errors() {
     console.log(`           ${e.constructor.name}: ${e.message}`);
   }
 
-  await ui.predict(
+  ui.demo(
     ["const total = 5;", "try {", "  total();", "} catch (e) {", "  console.log(`${e.name}: ${e.message}`);", "}"],
     "total holds a number, and () tried to call it. That is what \"not a function\" means."
   );
@@ -650,8 +588,8 @@ async function lesson10Errors() {
     console.log("   - TypeError, RangeError, SyntaxError -- know what each one means");
     console.log("   - extends Error + super(msg) is how you make your own catchable type");
     console.log();
-    console.log("  That covers the core course. Like Python, no manual memory --");
-    console.log("  garbage collected, with try/finally standing in for RAII.");
+    console.log("  That covers the core course. You never delete objects yourself:");
+    console.log("  objects are cleaned up for you, and try/finally closes things on time.");
     console.log();
     console.log("  Module 11 names the object await has been unwrapping since");
     console.log("  module 3: a Promise.");

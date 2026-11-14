@@ -308,9 +308,10 @@ same module skeleton as C.
 - Keep the Wiki → lesson → exercise connection strong — a concept
   introduced in a lesson should be findable and an exercise should exercise
   it, not the other way around.
-- Move every course to the lesson shape in rule 8 of
-  `docs/writing-a-course.md` (type it, predict it, write it). JavaScript has
-  it since 2.0.0; the other 16 courses do not yet.
+- Apply rules 8 and 9 of `docs/writing-a-course.md` to every course: no
+  explaining through a language the student may not know, traps run live,
+  wrong summaries shown failing, skipped modules named. JavaScript has them;
+  the other 16 courses do not yet.
 
 ## Packaging and distribution
 

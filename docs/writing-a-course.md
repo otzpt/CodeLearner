@@ -97,36 +97,34 @@ If a module has no trap in it, it probably does not need to be a module.
 Build with `-Wall -Wextra`. When the compiler catches something the module is
 about, quote it. `if (x = 5)` is a better lesson with the warning next to it.
 
-### 8. Type it, predict it, then write it
+### 8. Do not explain through a language the student may not know
 
-Each module follows the same three steps, taken from how a learner actually
-worked through the JavaScript course ([`learner-notes.md`](learner-notes.md)):
+Explain each point in the language the course teaches. A comparison to another
+language is an aside after the explanation, never the explanation itself, and
+only to basics a beginner has likely met, such as Python's `print()` and
+`input()` or an `if` in C. No C++, no C pointers, no compiler flags: "the same
+rule as C's `==` on a `char*`" taught a learner nothing about JavaScript and
+confused them about C.
 
-1. **Type this.** Right after the title, a short program (3 to 11 lines) the
-   student types by hand into `try.js` and runs, before any explanation. The
-   point is the feel of the syntax, which reading output does not give. Its
-   output on screen comes from running it when the lesson runs, not from text.
-2. **Predict, then run.** At the module's trap (rule 6), show the code and ask
-   what it prints *before* the output is on screen. Where the trap can run on
-   its own, `predict()` runs it. Where it cannot (it needs the network or a
-   command line), ask a `question()` that starts with `PREDICT FIRST.` and
-   put it before the part that answers it.
-3. **Write it yourself.** The exercise and `challenge`, as before.
+### 9. Run the trap, catch the wrong summary, name what a skipped module hid
 
-A module whose trap cannot be shown as a snippet (module 3 and module 13 of
-the JavaScript course) skips step 2 rather than inventing one.
+- Show a trap by running it. In JavaScript, `demo(code, why)` runs the code
+  shown in a fresh process and prints its real output, so the two cannot
+  drift.
+- Where a trap has an easy wrong summary, show the case where that summary
+  gives the wrong answer. The JavaScript learner's notes said `for...in` gives
+  `"1"`, `"2"`, `"3"` and that `if (x = 5)` checks whether x is 5; modules 5
+  and 4 now show both failing.
+- Students skip modules. A module that shows code from a module after the
+  BASIC band lists it (`uses` in the JavaScript `MODULES` table), so the
+  course says so before it starts. Module 10's error class is a module 9
+  class, which is how this was found.
 
-Where a trap has an easy wrong summary, ask about that summary directly. A
-learner who skipped nothing still wrote down that `for...in` over an array
-gives `"1"`, `"2"`, `"3"`; module 5 now asks for the first index it prints.
-
-Students skip modules. A module that shows code from a module after the BASIC
-band lists it, so the course can say so before it starts (`uses` in the
-JavaScript `MODULES` table). Module 10's own error class is a module 9 class,
-which is how this was found.
-
-The JavaScript course is the first one built this way. The others still have
-the older shape and move to this one course at a time.
+Tried and removed: a snippet to type into `try.js` at the start of each
+module, and asking the student to predict output before showing it. Both
+came from misreading the learner's files (they type the lesson's own examples
+into one file per module, and the outputs in their comments were copied from
+the course to save switching windows).
 
 ## Adding a module to an existing course
 
@@ -194,8 +192,7 @@ From `ui.h`. They exist so a lesson contains teaching and nothing else.
 | `challenge(task, n, expected, e, solution, m)` | task, the output it must produce, and example code on request |
 | `read_line(buf, sizeof buf)` | read input safely |
 | `ask_yes("...")` | yes/no |
-| `typeThis(code, input)` | JavaScript only so far: a program to type by hand, run here to show its output |
-| `predict(code, why)` | JavaScript only so far: ask what `code` prints, then run it and show the real output |
+| `demo(code, why)` | JavaScript only so far: show `code`, run it, show its real output and why |
 
 `question` compares answers ignoring case and surrounding spaces. Keep the
 expected answer short and unambiguous — `"3"`, `"-o"`, `"yes"`. If a question

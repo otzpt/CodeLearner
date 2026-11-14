@@ -44,8 +44,10 @@ between the first and the last save.
    `sort()` ordering numbers as strings, `var` in a loop capturing one
    variable, `this` inside an arrow function, two names for one array, and
    `if (x = 5)` running without a warning.
-5. **A predicted result next to each demo**, as a comment such as
-   `// outputs [10, 2, 9]`.
+5. **The result next to each demo**, as a comment such as
+   `// outputs [10, 2, 9]`. These are not predictions: the learner copied
+   them from the course's own output so the file could be read without
+   switching windows (**stated**, 2026-11-14).
 6. **An exercise at the end of most files**, written by the learner.
    `second.js` also ends with a short summary.
 7. **Two small programs after the modules**: a number-guessing game and a
@@ -59,7 +61,7 @@ between the first and the last save.
    it is 5"; it tests whether 5 is truthy and compares nothing. `tenth.js`
    reads TypeError as "called something that is not in the function"; the
    course says "called something not a function". Modules 5, 4 and 10 now
-   have a prediction or question aimed at each one.
+   show a case where each wrong rule gives the wrong answer.
 10. **A module reaches into a skipped one.** `tenth.js` extends `Error` with a
     class and notes that this is "the same mechanism as module 9, which I
     skipped".
@@ -72,22 +74,23 @@ between the first and the last save.
   things look before the details were learned.
 - Copying code without understanding it is not learning.
 - The learner decides which modules to skip.
+- Comparisons to a language the learner does not know make it more
+  confusing, not less: the course's "same rule as C's `==` on a `char*`" and
+  C++'s `std::string` taught nothing about JavaScript (2026-11-14).
 
 ## What this suggests for the courses
 
-**Suggestions.** Items 1 to 4 were built into the JavaScript course on
-2026-11-13, as rule 8 of `writing-a-course.md`. Whether they help a learner
-has not been tested.
-
+**Suggestions.** Items 3 and 4 are in the JavaScript course (rule 9 of
+`writing-a-course.md`). Items 1 and 2 were built and then removed at the
+learner's request: the extra snippet repeated what they already did with the
+lesson's own examples, and item 2 rested on misreading item 5 above.
 
 1. **Keep a short example before the explanation, one the student can type.**
    The learner's stated benefit was muscle memory, which reading output does
-   not give. The `PART 1` screens already show live output. Whether to add a
-   step where the student types the example was not decided.
-2. **Ask for a prediction before running.** The learner wrote predictions in
-   comments on their own. A `question()` placed before a demo runs, asking
-   what it will print, would make that a step of the course. It would suit
-   the traps in rule 6 of `writing-a-course.md`.
+   not give. Removed: the learner already types the lesson's own examples,
+   one file per module, so a separate snippet only repeated that.
+2. **Ask for a prediction before running.** Removed: it assumed the
+   comments in item 5 were predictions, which they were not.
 3. **Say when a module depends on one a student may skip.** Item 10 above: a
    student who skips module 9 still meets its mechanism in module 10.
    `tools/check-teaching-order.py` checks the numbered sequence only and

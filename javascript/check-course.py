@@ -2,9 +2,9 @@
 """Walk every module of the JavaScript course and check it runs to its SUMMARY.
 
 Each module is started on its own and fed blank answers, which the course
-accepts (a blank prediction is skipped, a wrong answer shows the right one).
-Every TYPE THIS and PREDICT snippet in a module runs as its own node process
-on the way, so a snippet that fails to run fails its module here.
+accepts (a wrong answer just shows the right one). Every code demo in a
+module runs as its own node process on the way, so a demo that fails to run
+fails its module here.
 
     python3 check-course.py [module numbers...]
 """

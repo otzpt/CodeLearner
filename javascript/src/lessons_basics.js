@@ -8,21 +8,16 @@ const ui = require("./ui.js");
 async function lesson01Running() {
   ui.title("MODULE 1 - RUNNING NODE AND CONSOLE.LOG()");
 
-  ui.typeThis(['const name = "Ana";', 'console.log("Hello", name);', "console.log(`Hello, ${name}!`);"]);
-
-  await ui.waitEnter();
-  ui.clearScreen();
   ui.heading("PART 1: no compile step");
 
-  console.log("  Like Python, JavaScript run through Node has no separate");
-  console.log("  build step. Node reads your file and runs it directly:");
+  console.log("  JavaScript run through Node has no separate build step.");
+  console.log("  Node reads your file and runs it directly:");
   console.log();
   console.log("    node program.js");
   console.log();
   console.log("  That is the whole command. A mistake later in the file is");
-  console.log("  only caught once execution actually reaches it -- there is");
-  console.log("  no compiler checking the whole file up front the way gcc");
-  console.log("  or g++ does.");
+  console.log("  only caught once execution actually reaches it. Nothing");
+  console.log("  checks the whole file before it starts running.");
 
   await ui.waitEnter();
   ui.clearScreen();
@@ -34,8 +29,8 @@ async function lesson01Running() {
   process.stdout.write("  Running:  ");
   console.log("a", "b", "c");
   console.log();
-  console.log("  Several arguments are joined with a space, same as Python's");
-  console.log("  print(). For building a string with values inside, use a");
+  console.log("  Several arguments are joined with a space. For building a");
+  console.log("  string with values inside, use a");
   console.log("  template literal -- backticks, not quotes:");
   console.log();
   console.log('    const name = "Ana";');
@@ -46,7 +41,7 @@ async function lesson01Running() {
   console.log();
   console.log("  ${expr} inside backticks is evaluated and inserted.");
 
-  await ui.predict(
+  ui.demo(
     ['const name = "Ana";', 'console.log("Hello, ${name}");'],
     "Regular quotes do not interpolate. Only backticks do, so ${name} is printed as written."
   );
@@ -60,9 +55,8 @@ async function lesson01Running() {
   console.log("  scoping rules that surprise people -- module 7 shows the");
   console.log("  specific way it does. Avoid var in code you write.");
   console.log();
-  console.log("  // starts a line comment, same as most languages here.");
-  console.log("  There is no main() -- top-level code runs as the file is");
-  console.log("  read, same as Python.");
+  console.log("  // starts a comment: Node ignores the rest of that line.");
+  console.log("  The file runs from the top line down, in order.");
 
   await ui.waitEnter();
   ui.clearScreen();
@@ -71,7 +65,7 @@ async function lesson01Running() {
   await ui.question(
     'console.log("a", "b");  -- what appears between them by default?',
     "a space",
-    "console.log() joins its arguments with a single space, same as Python's print()."
+    "console.log() joins its arguments with a single space."
   );
   await ui.question(
     'const name = "Ana"; console.log("Hi, ${name}");  -- does ${name} get replaced?\n' +
@@ -96,7 +90,7 @@ async function lesson01Running() {
     console.log("   - console.log() joins arguments with a space");
     console.log("   - `${expr}` inside backticks interpolates; regular quotes do not");
     console.log();
-    console.log("  Module 2: variables, and a coercion rule Python does not have.");
+    console.log("  Module 2: variables, and how == quietly changes types.");
   }
   await ui.waitEnter();
 }
@@ -104,10 +98,6 @@ async function lesson01Running() {
 async function lesson02Variables() {
   ui.title("MODULE 2 - VARIABLES AND TYPES");
 
-  ui.typeThis(["let age = 25;", "console.log(typeof age);", 'age = "twenty-five";', "console.log(typeof age);"]);
-
-  await ui.waitEnter();
-  ui.clearScreen();
   ui.heading("PART 1: typeof, and == vs ===");
 
   console.log("    let age = 25;");
@@ -119,14 +109,6 @@ async function lesson02Variables() {
   console.log(`    typeof height -> ${typeof height}`);
   console.log(`    typeof "x"    -> ${typeof "x"}`);
 
-  await ui.predict(
-    ['console.log(0 == "", 0 === "");'],
-    "== converts \"\" to the number 0 before comparing. === compares type first."
-  );
-
-  await ui.waitEnter();
-  ui.clearScreen();
-  ui.heading("PART 1: typeof, and == vs ===");
   console.log("  Two equals operators, and they are not interchangeable:");
   console.log();
   console.log(`    1 == "1"   -> ${1 == "1"}    // converts, then compares`);
@@ -163,13 +145,12 @@ async function lesson02Variables() {
 
   await ui.waitEnter();
   ui.clearScreen();
-  ui.heading("PART 3: floating point, unchanged from every other language here");
+  ui.heading("PART 3: decimal numbers are not exact");
 
   console.log(`    0.1 + 0.2  -> ${0.1 + 0.2}`);
   console.log();
-  console.log("  Same binary floating point as C, Python and everything");
-  console.log("  else here. Not a JavaScript bug -- for money, work in whole");
-  console.log("  cents, same rule as always.");
+  console.log("  Computers store most decimal fractions only approximately,");
+  console.log("  so this is not a bug. For money, count whole cents instead.");
 
   await ui.waitEnter();
   ui.clearScreen();
@@ -210,31 +191,10 @@ async function lesson02Variables() {
 async function lesson03Input() {
   ui.title("MODULE 3 - READING INPUT");
 
-  ui.typeThis(
-    [
-      'const readline = require("node:readline");',
-      "const rl = readline.createInterface({ input: process.stdin });",
-      "const it = rl[Symbol.asyncIterator]();",
-      "",
-      "async function main() {",
-      "  const { value } = await it.next();",
-      "  console.log(`You typed: ${value}`);",
-      "  rl.close();",
-      "}",
-      "",
-      "main();",
-    ],
-    ["hello"]
-  );
-  console.log("\n  It waits with no prompt until you type a line. PART 1 explains");
-  console.log("  every line of it.");
-
-  await ui.waitEnter();
-  ui.clearScreen();
   ui.heading("PART 1: reading a line is asynchronous");
 
-  console.log("  C's scanf, Python's input(), even C++'s cin -- all block");
-  console.log("  until a line arrives. Node has nothing built in that does");
+  console.log("  You might expect a program to stop and wait while you type.");
+  console.log("  Node has nothing built in that does");
   console.log("  that. Reading input is an operation that takes time, and");
   console.log("  Node is built around never blocking while waiting -- so");
   console.log("  reading a line is asynchronous, and you await it:");
@@ -288,8 +248,8 @@ async function lesson03Input() {
   ui.exercise(3);
 
   await ui.question(
-    "Does Node have a built-in function that blocks and returns a\n" +
-      "  typed line the way Python's input() does?  (answer: yes or no)",
+    "Does Node have a built-in function that stops the program and\n" +
+      "  returns the line you typed?  (answer: yes or no)",
     "no",
     "Reading a line is asynchronous in Node; there is no blocking equivalent built in."
   );
@@ -336,17 +296,6 @@ async function lesson03Input() {
 async function lesson04Conditions() {
   ui.title("MODULE 4 - CONDITIONS");
 
-  ui.typeThis([
-    "const score = 72;",
-    "if (score >= 50) {",
-    '  console.log("pass");',
-    "} else {",
-    '  console.log("fail");',
-    "}",
-  ]);
-
-  await ui.waitEnter();
-  ui.clearScreen();
   ui.heading("PART 1: if / else if / else");
 
   console.log("    const score = 85;");
@@ -368,17 +317,17 @@ async function lesson04Conditions() {
     console.log("F");
   }
   console.log();
-  console.log("  Braces mark the block, same as C. Only the first true");
-  console.log("  branch runs, so order matters, same rule as everywhere else.");
+  console.log("  Braces { } mark the block. Only the first true branch runs,");
+  console.log("  so the order of the conditions matters.");
 
   await ui.waitEnter();
   ui.clearScreen();
-  ui.heading("PART 2: truthy and falsy -- and this is where JS and Python disagree");
+  ui.heading("PART 2: truthy and falsy");
 
   console.log("  Falsy in JavaScript: false, 0, \"\", null, undefined, NaN.");
-  console.log("  So far, similar to Python. Here is where they diverge:");
+  console.log("  Every other value counts as true -- including some that look empty:");
 
-  await ui.predict(
+  ui.demo(
     ["const items = [];", "if (items) {", '  console.log("has items");', "} else {", '  console.log("empty");', "}"],
     "[] is not in the falsy list, so the if branch runs."
   );
@@ -387,10 +336,9 @@ async function lesson04Conditions() {
   console.log(`    Boolean([])   -> ${Boolean([])}`);
   console.log(`    Boolean({})   -> ${Boolean({})}`);
   console.log();
-  console.log("  An empty array and an empty object are both truthy in");
-  console.log("  JavaScript -- the opposite of Python, where [] and {} are");
-  console.log("  falsy. If you know Python: `if (arr)` is never a length");
-  console.log("  check here. Use `if (arr.length)` or `if (arr.length === 0)`.");
+  console.log("  An empty array and an empty object are both truthy, so");
+  console.log("  `if (arr)` does not check whether an array is empty.");
+  console.log("  To check that, Use `if (arr.length)` or `if (arr.length === 0)`.");
 
   await ui.waitEnter();
   ui.clearScreen();
@@ -400,10 +348,9 @@ async function lesson04Conditions() {
   console.log("    if (x = 5) { ... }");
   console.log();
   console.log("  Assigns 5, evaluates to 5, 5 is truthy, the block runs.");
-  console.log("  Verified: this executes with no error at all -- unlike gcc");
-  console.log("  and g++, Node does not even warn about it by default.");
+  console.log("  Verified: this runs with no error and no warning at all.");
 
-  await ui.predict(
+  ui.demo(
     ["let x = 3;", "if (x = 0) {", '  console.log("inside");', "}", "console.log(x);"],
     "x = 0 stores 0, then the if tests that 0. 0 is falsy, so the block is skipped. Nothing is compared."
   );
@@ -412,7 +359,7 @@ async function lesson04Conditions() {
   ui.clearScreen();
   ui.exercise(4);
 
-  await ui.question("Boolean([])  -- truthy or falsy?", "truthy", "Empty arrays and objects are truthy in JS, unlike Python.");
+  await ui.question("Boolean([])  -- truthy or falsy?", "truthy", "Empty arrays and objects are truthy in JS.");
   await ui.question(
     "To check if an array is empty, do you write `if (arr)` or\n  `if (arr.length === 0)`?",
     "if (arr.length === 0)",
@@ -449,7 +396,7 @@ async function lesson04Conditions() {
 
   if (!ui.printSummaryPt(4)) {
     console.log("   - only the first true branch runs; order matters");
-    console.log("   - [] and {} are TRUTHY in JS -- opposite of Python");
+    console.log("   - [] and {} are TRUTHY -- `if (arr)` is not an emptiness check");
     console.log("   - = still is not ==, and Node does not even warn about it");
   }
   await ui.waitEnter();
@@ -458,11 +405,7 @@ async function lesson04Conditions() {
 async function lesson05Loops() {
   ui.title("MODULE 5 - LOOPS");
 
-  ui.typeThis(["for (let i = 1; i <= 3; i++) {", '  console.log("lap", i);', "}"]);
-
-  await ui.waitEnter();
-  ui.clearScreen();
-  ui.heading("PART 1: for, while, unchanged from C");
+  ui.heading("PART 1: for and while");
 
   console.log("    for (let i = 1; i <= 5; i++) {");
   console.log('        process.stdout.write(i + " ");');
@@ -482,14 +425,6 @@ async function lesson05Loops() {
   ui.clearScreen();
   ui.heading("PART 2: for...of and for...in are not the same loop");
 
-  await ui.predict(
-    ['const fruits = ["apple", "banana", "cherry"];', "for (const i in fruits) {", "  console.log(i);", "}"],
-    "for...in walks the keys. An array's keys are its indices, as strings, starting at 0."
-  );
-
-  await ui.waitEnter();
-  ui.clearScreen();
-  ui.heading("PART 2: for...of and for...in are not the same loop");
   const fruits = ["apple", "banana", "cherry"];
   console.log('    const fruits = ["apple", "banana", "cherry"];');
   console.log("    for (const f of fruits) console.log(f);      // VALUES");
@@ -564,7 +499,7 @@ async function lesson05Loops() {
     console.log("   - for/while carry over unchanged, off-by-one included");
     console.log("   - of -> values, in -> keys as strings; do not mix them up on arrays");
     console.log();
-    console.log("  Module 6: arrays, and the same aliasing bug Python has too.");
+    console.log("  Module 6: arrays, and two names for one array.");
   }
   await ui.waitEnter();
 }
