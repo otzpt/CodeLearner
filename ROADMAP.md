@@ -121,6 +121,6 @@ change in an unverified script. It needs someone with a Windows machine.
 
 Filed as tracked issues rather than left in a file, since they're scoped
 enough to work individually: [issues #1-#14](https://github.com/otzpt/CodeLearner/issues).
-They were written against the old C course; `c/ROADMAP.md` is that course's
-plan. All 14 are still open. The Libraries reference covers the headers
-named in #4 as reference pages.
+`c/ROADMAP.md` places them in the C course's next steps. All 14 are still
+open. The Libraries reference covers the headers named in #4 as reference
+pages.

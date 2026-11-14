@@ -29,7 +29,6 @@ This file is a status log, not a plan. Last updated 2026-11-14.
 - **Windows**: the Windows CI leg checks only C, C++, MicroPython, Python, JavaScript, HTML, CSS and Web JavaScript. Assembly, Arduino and Git are Linux-only. `install.ps1` has never been run, and no Start Menu shortcut exists.
 - **GTK and raylib**: build-only. The examples and solutions are compiled, but the windows they open are not run by any check. CI's ubuntu-22.04 runner has GTK 4.6 and no raylib, so both are skipped there and only checked on a machine that has them.
 - **Assembly OS track**: `assembly/check-os.py` passes 31 of 33 checks on GCC 16.2 and QEMU 11.1 (2026-11-14); module 15's volatile listing and module 16's interrupt kernel fail, on `main` too, so the toolchain changed since 2026-10-17. Not investigated.
-- **`c/ROADMAP.md`** is the old C course's plan.
 - **Desktop entry on Linux**: `install.sh` was tested against a fake release only. A real run needs the next release tag.
 - **Libraries reference**: C track has 21 header pages. Python pages were reorganised on 2026-11-12. Other languages are one folder and a `TRACKS` row each.
 - **Learner notes**: `docs/learner-notes.md` records about four hours of practice, stated by the learner, tracker data not checked.
