@@ -166,13 +166,30 @@ function runFile(course, file, input = [], opts = {}) {
       warnings = warnings.concat(course.warnings ? course.warnings(r.stderr) : []);
       continue;
     }
-    const output = splitOutput(r.stdout);
-    if (r.signal) {
-      return { ok: false, output, errorLine: signalText(r.signal) };
+    // dotnet run prints build warnings on stdout, before the program's own
+    // output; a course can name them so they are shown apart.
+    let stdout = r.stdout;
+    if (course.stdoutWarning) {
+      const kept = [];
+      for (const line of stdout.split("\n")) {
+        const w = line.match(course.stdoutWarning);
+        if (w) {
+          warnings.push(`warning (line ${w[1]}): ${w[2]}`);
+        } else {
+          kept.push(line);
+        }
+      }
+      stdout = kept.join("\n");
     }
-    if (r.status !== 0) {
-      const parsed = course.parseError(r.stderr, file);
-      return { ok: false, output, ...parsed, errorLine: parsed.errorLine || `${tr("exited with code")} ${r.status}` };
+    const output = splitOutput(stdout);
+    if (r.signal || r.status !== 0) {
+      // Some toolchains (dotnet) print build errors on stdout, and some
+      // (dotnet again) end an uncaught exception with a signal; the
+      // course's own parser gets the first say either way.
+      const text = course.errorsOnStdout ? r.stderr + "\n" + r.stdout : r.stderr;
+      const parsed = course.parseError(text, file);
+      const fallback = r.signal ? signalText(r.signal) : `${tr("exited with code")} ${r.status}`;
+      return { ok: false, output: parsed.compile ? [] : output, ...parsed, errorLine: parsed.errorLine || fallback };
     }
     return { ok: true, output, warnings };
   }
