@@ -273,7 +273,7 @@ async function codeBlock(course, block) {
     console.log();
   } else if (block.error) {
     console.log("  " + dim(tr("Output:")));
-    for (const line of result.output.filter((l) => l !== "")) {
+    for (const line of t ? t.shown : result.output.filter((l) => l !== "")) {
       console.log("    " + line);
     }
     showError(course, result, "    ");
