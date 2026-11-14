@@ -129,19 +129,19 @@ function sameOutput(expected, got) {
 // Write `code` to a fresh folder as the course's file and run the course's
 // steps there. Every step but the last builds; the last runs and gets the
 // input. Returns what happened in a shape the screens can show.
-function runCode(course, code, input = []) {
+function runCode(course, code, input = [], opts = {}) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "codelearner-"));
   try {
     const file = path.join(dir, course.file);
     fs.writeFileSync(file, code + "\n");
-    return runFile(course, file, input);
+    return runFile(course, file, input, opts);
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }
 }
 
-function runFile(course, file, input = []) {
-  const steps = course.steps(file, path.dirname(file));
+function runFile(course, file, input = [], opts = {}) {
+  const steps = course.steps(file, path.dirname(file), opts);
   let warnings = [];
   for (let i = 0; i < steps.length; i++) {
     const [cmd, ...args] = steps[i];
@@ -241,7 +241,8 @@ function saveProgress(course, progress) {
 // is only for examples that read input: it says what to type and how the
 // result looks on screen, and is checked against the real run.
 // `setup` runs before the example without being shown; `run: false` only
-// shows the code; `error: true` marks an example that is meant to fail.
+// shows the code; `error: true` marks an example that is meant to fail;
+// `flags` are extra build options for this example only.
 async function codeBlock(course, block) {
   if (block.setup) {
     console.log("    " + dim(tr(block.setupLabel || "(the helper above goes here)")));
@@ -253,7 +254,7 @@ async function codeBlock(course, block) {
   }
   const full = block.setup ? block.setup + "\n\n" + block.code : block.code;
   const t = block.output ? transcript(block.output) : null;
-  const result = runCode(course, full, t ? t.input : []);
+  const result = runCode(course, full, t ? t.input : [], { flags: block.flags });
 
   if (result.missing) {
     showError(course, result);

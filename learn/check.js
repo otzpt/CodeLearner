@@ -37,7 +37,7 @@ function checkCourse(dir) {
         if (b.code && b.run !== false) {
           const full = b.setup ? b.setup + "\n\n" + b.code : b.code;
           const t = b.output ? app.transcript(b.output) : null;
-          const r = app.runCode(course, full, t ? t.input : []);
+          const r = app.runCode(course, full, t ? t.input : [], { flags: b.flags });
           if (b.error && r.ok) fail(where, "example marked as an error ran fine");
           if (!b.error && !r.ok) fail(where, `example failed: ${r.errorLine || "timeout"}`);
           if (r.ok && t && !app.sameOutput(t.raw, r.output)) fail(where, `example printed ${JSON.stringify(r.output)}, transcript says ${JSON.stringify(t.raw)}`);
