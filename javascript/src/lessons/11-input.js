@@ -1,5 +1,5 @@
 // The ask() helper every program in this lesson starts with. One copy, so the
-// lesson text, the examples and the starter file cannot disagree.
+// lesson, the examples, the starter file and lesson 13 cannot disagree.
 const HELPER = `const readline = require("node:readline");
 const rl = readline.createInterface({ input: process.stdin });
 const lines = rl[Symbol.asyncIterator]();
@@ -17,38 +17,35 @@ module.exports = {
   title: "Asking the user",
   screens: [
     [
-      "So far every program printed the same thing every time. To react to the person using it, a program has to read what they type.",
-      "Node has no single instruction for \"ask a question and wait\". These lines build one, called ask. Copy them to the top of any program that asks questions; you do not need to understand every line yet:",
+      "Node has no single \"ask and wait\" instruction. These lines make one, called ask. Copy them to the top of any program that asks questions:",
       { code: HELPER, run: false },
-      "The last line inside ask only matters when another program types the answers, like this course's checker. When you type them yourself, it does nothing.",
+      "You do not need to understand them yet. The exercise file already has them.",
     ],
     [
-      "ask has to wait for you to type, and waiting needs two special words. The function that uses ask is marked async, and each call is marked await. At the end, rl.close() lets the program finish:",
-      { setup: HELPER, code: 'async function main() {\n  const name = await ask("What is your name? ");\n  console.log(`Hello, ${name}!`);\n  rl.close();\n}\n\nmain();', input: ["Ana"] },
-      "Forget the await and name does not hold the answer yet, so the greeting comes out wrong. If a program prints [object Promise] or Promise { <pending> }, look for a missing await.",
+      "Code that waits for an answer goes in an async function, with await before ask. rl.close() at the end lets the program finish:",
+      { setup: HELPER, code: 'async function main() {\n  const name = await ask("Name? ");\n  console.log(`Hi, ${name}!`);\n  rl.close();\n}\nmain();', input: ["Ana"] },
+      "Forget await and you get [object Promise] instead of the answer.",
     ],
     [
-      "What ask gives back is always a string, even when the person types a number. Remember from lesson 2 what + does with a string:",
-      { setup: HELPER, code: 'async function main() {\n  const text = await ask("A number: ");\n  console.log(text + 1);\n  console.log(Number(text) + 1);\n  rl.close();\n}\n\nmain();', input: ["5"] },
-      "Number(...) turns the typed text into a number. If the text is not a number, you get NaN, short for \"not a number\":",
-      { code: 'console.log(Number("hello"));\nconsole.log(Number.isNaN(Number("hello")));' },
-      { quiz: "A user types 10. What does console.log(answer + 5) print?", choices: ["15", "105"], answer: 2, why: "answer is the string \"10\", so + joins. Use Number(answer) + 5." },
+      "ask always gives a string, even for numbers:",
+      { setup: HELPER, code: 'async function main() {\n  const text = await ask("Number? ");\n  console.log(text + 1);\n  console.log(Number(text) + 1);\n  rl.close();\n}\nmain();', input: ["5"] },
+      { quiz: "The user types 10. What does answer + 5 give?", choices: ["15", "105"], answer: 2, why: "answer is the string \"10\". Use Number(answer) + 5." },
     ],
     [
       {
         exercise: "ask",
-        task: "Ask \"Your name? \" and then \"Your age? \". Print: Hi NAME, next year you will be AGE+1.",
+        task: 'Ask "Your name? " and "Your age? ". Print: Hi NAME, next year you will be AGE+1.',
         input: ["Rita", "20"],
         expected: ["Your name? Rita", "Your age? 20", "Hi Rita, next year you will be 21."],
         starter: `${HELPER}\n\nasync function main() {\n  // your code here\n\n  rl.close();\n}\n\nmain();`,
-        hints: ["const name = await ask(\"Your name? \"); and the same for age.", "Number(age) + 1 inside the template string."],
+        hints: ['const name = await ask("Your name? ");', "Number(age) + 1 inside the template string."],
         solution: `${HELPER}\n\nasync function main() {\n  const name = await ask("Your name? ");\n  const age = await ask("Your age? ");\n  console.log(\`Hi \${name}, next year you will be \${Number(age) + 1}.\`);\n  rl.close();\n}\n\nmain();`,
       },
     ],
   ],
   recap: [
-    "Reading what the user types needs the ask helper at the top of the file.",
-    "Code that uses ask goes in an async function, with await before each ask, and rl.close() at the end.",
-    "ask always gives a string. Number(text) turns it into a number; NaN means it was not one.",
+    "Put the ask helper at the top; use it inside an async function with await.",
+    "End with rl.close().",
+    "ask gives a string; Number(text) makes it a number.",
   ],
 };

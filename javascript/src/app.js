@@ -121,15 +121,12 @@ function runCode(code, input = []) {
 function explainError(errorLine) {
   const name = (errorLine.match(/^(\w*Error)/) || [])[1];
   const help = {
-    ReferenceError:
-      "You used a name JavaScript does not know. Check the spelling, upper and lower case included, and that the variable was created before this line.",
-    SyntaxError:
-      "Something is typed in a way JavaScript cannot read: often a missing quote, bracket ( ) or brace { }, or a missing comma.",
-    TypeError:
-      "You used a value in a way it does not allow, such as calling something that is not a function, reading from undefined, or changing a const.",
-    RangeError: "A number was outside what is allowed, or a function kept calling itself forever.",
+    ReferenceError: "a name that does not exist. Check the spelling and capitals.",
+    SyntaxError: "code JavaScript cannot read: often a missing quote, bracket or brace.",
+    TypeError: "a value used in a way it does not allow.",
+    RangeError: "a number outside what is allowed.",
   };
-  return help[name] || "Read the message: it names what went wrong and the line number.";
+  return help[name] || "read the message: it names the problem and the line.";
 }
 
 function showError(result, indent = "  ") {
