@@ -15,6 +15,7 @@ module.exports = {
   HELPER,
   id: "input",
   title: "Asking the user",
+  titlePt: "Perguntar ao utilizador",
   screens: [
     [
       "So far every program printed the same thing every time. To react to the person using it, a program has to read what they type.",
@@ -44,6 +45,11 @@ module.exports = {
         solution: `${HELPER}\n\nasync function main() {\n  const name = await ask("Your name? ");\n  const age = await ask("Your age? ");\n  console.log(\`Hi \${name}, next year you will be \${Number(age) + 1}.\`);\n  rl.close();\n}\n\nmain();`,
       },
     ],
+  ],
+  recapPt: [
+    "Ler o que o utilizador escreve precisa da função ask no topo do ficheiro.",
+    "O código que usa ask vai numa função async, com await antes de cada ask, e rl.close() no fim.",
+    "ask devolve sempre uma string. Number(texto) transforma-a em número; NaN quer dizer que não era um.",
   ],
   recap: [
     "Reading what the user types needs the ask helper at the top of the file.",

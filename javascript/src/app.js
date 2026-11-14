@@ -7,6 +7,7 @@ const os = require("node:os");
 const path = require("node:path");
 const readline = require("node:readline");
 const { spawnSync } = require("node:child_process");
+const { PT, tr } = require("./pt.js");
 
 const WIDTH = 66;
 const PRACTICE_DIR = process.env.CODELEARNER_JS_DIR || path.join(os.homedir(), "codelearner-js");
@@ -126,16 +127,16 @@ function explainError(errorLine) {
     TypeError: "a value used in a way it does not allow.",
     RangeError: "a number outside what is allowed.",
   };
-  return help[name] || "read the message: it names the problem and the line.";
+  return tr(help[name] || "read the message: it names the problem and the line.");
 }
 
 function showError(result, indent = "  ") {
   console.log(indent + red(result.errorLine));
   if (result.line) {
-    console.log(indent + dim(`(line ${result.line})`));
+    console.log(indent + dim(`(${tr("line")} ${result.line})`));
   }
   console.log();
-  say(yellow("What this means: ") + explainError(result.errorLine));
+  say(yellow(tr("What this means: ")) + explainError(result.errorLine));
 }
 
 // Same lines, ignoring spaces at the end of a line.
@@ -164,7 +165,7 @@ function saveProgress(progress) {
 // the ask() helper of lesson 10.
 async function codeBlock(block) {
   if (block.setup) {
-    console.log("    " + dim(block.setupLabel || "(the ask helper goes here)"));
+    console.log("    " + dim(tr("(the ask helper goes here)")));
   }
   showCode(block.code);
   if (block.run === false) {
@@ -175,15 +176,15 @@ async function codeBlock(block) {
   const result = runCode(full, block.input || []);
   console.log();
   if (block.input) {
-    console.log("  " + dim(`Run, typing: ${block.input.join(", ")}`));
+    console.log("  " + dim(`${tr("Run, typing:")} ${block.input.join(", ")}`));
   }
   if (result.ok) {
-    console.log("  " + dim("Output:"));
+    console.log("  " + dim(tr("Output:")));
     for (const line of result.output) {
       console.log("    " + line);
     }
   } else if (block.error) {
-    console.log("  " + dim("Output:"));
+    console.log("  " + dim(tr("Output:")));
     for (const line of result.output.filter((l) => l !== "")) {
       console.log("    " + line);
     }
@@ -196,21 +197,21 @@ async function codeBlock(block) {
 }
 
 async function quizBlock(block) {
-  console.log("  " + bold("Quick question: ") + block.quiz);
+  console.log("  " + bold(tr("Quick question: ")) + block.quiz);
   console.log();
   block.choices.forEach((choice, i) => console.log(`    ${i + 1}) ${choice}`));
   console.log();
   for (let attempt = 1; ; attempt++) {
-    const answer = await ask("  Your answer (number): ");
+    const answer = await ask(tr("  Your answer (number): "));
     if (Number(answer) === block.answer) {
-      console.log("  " + green("Right. ") + block.why);
+      console.log("  " + green(tr("Right. ")) + block.why);
       break;
     }
     if (attempt === 2) {
-      console.log("  " + red("Not quite. ") + `It is ${block.answer}) ${block.choices[block.answer - 1]}. ` + block.why);
+      console.log("  " + red(tr("Not quite. ")) + `${tr("It is")} ${block.answer}) ${block.choices[block.answer - 1]}. ` + block.why);
       break;
     }
-    console.log("  " + red("Not quite.") + " Have another go.");
+    console.log("  " + red(tr("Not quite.")) + tr(" Have another go."));
   }
   console.log();
 }
@@ -223,34 +224,34 @@ async function exerciseBlock(block, lessonNumber) {
   }
   const shownPath = file.replace(os.homedir(), "~");
 
-  console.log("  " + bold("YOUR TURN"));
+  console.log("  " + bold(tr("YOUR TURN")));
   rule();
   say(block.task);
   if (block.input) {
-    console.log("  When the checker runs it, it types: " + block.input.join(", "));
+    console.log(tr("  When the checker runs it, it types: ") + block.input.join(", "));
   }
-  console.log("  It must print:");
+  console.log(tr("  It must print:"));
   for (const line of block.expected) {
     console.log("    " + line);
   }
   console.log();
-  console.log("  Write it in " + bold(shownPath) + " (open it in any text editor).");
+  console.log(tr("  Write it in ") + bold(shownPath) + tr(" (open it in any text editor)."));
   console.log();
 
   let hint = 0;
   for (;;) {
-    const key = (await ask("  [ENTER] check my file   [h] hint   [s] show a solution   [k] skip: ")).toLowerCase();
+    const key = (await ask(tr("  [ENTER] check my file   [h] hint   [s] show a solution   [k] skip: "))).toLowerCase();
     console.log();
     if (key === "k") {
       return;
     }
     if (key === "h") {
-      say(yellow("Hint: ") + block.hints[hint % block.hints.length]);
+      say(yellow(tr("Hint: ")) + block.hints[hint % block.hints.length]);
       hint++;
       continue;
     }
     if (key === "s") {
-      console.log("  One way to write it (yours can look different and still be right):");
+      console.log(tr("  One way to write it (yours can look different and still be right):"));
       console.log();
       showCode(block.solution);
       console.log();
@@ -258,26 +259,26 @@ async function exerciseBlock(block, lessonNumber) {
     }
     const result = runFile(file, block.input || []);
     if (result.timeout) {
-      say(red("Your program did not finish within 5 seconds.") + " Is there a loop that never stops?");
+      say(red(tr("Your program did not finish within 5 seconds.")) + tr(" Is there a loop that never stops?"));
     } else if (!result.ok) {
-      console.log("  " + red("Your program stopped with an error:"));
+      console.log("  " + red(tr("Your program stopped with an error:")));
       showError(result);
     } else if (sameOutput(block.expected, result.output)) {
-      console.log("  " + green("Correct! ") + "Your program printed exactly what was asked.");
+      console.log("  " + green(tr("Correct! ")) + tr("Your program printed exactly what was asked."));
       console.log();
       return;
     } else {
-      console.log("  " + red("Not yet.") + " Your program printed:");
-      for (const line of result.output.length ? result.output : ["(nothing)"]) {
+      console.log("  " + red(tr("Not yet.")) + tr(" Your program printed:"));
+      for (const line of result.output.length ? result.output : [tr("(nothing)")]) {
         console.log("    " + line);
       }
       const at = block.expected.findIndex((line, i) => line.trimEnd() !== result.output[i]);
       if (at >= 0) {
         console.log();
-        console.log(`  Line ${at + 1} should be:  ${block.expected[at]}`);
+        console.log(`  ${PT ? "Linha" : "Line"} ${at + 1} ${tr("should be:")}  ${block.expected[at]}`);
       } else {
         console.log();
-        console.log("  The asked lines are all there, but there are extra lines after them.");
+        console.log(tr("  The asked lines are all there, but there are extra lines after them."));
       }
       console.log();
     }
@@ -294,7 +295,7 @@ async function block(b, lessonNumber) {
   } else if (b.exercise) {
     await exerciseBlock(b, lessonNumber);
   } else if (b.tip) {
-    say(yellow("Remember: ") + b.tip);
+    say(yellow(tr("Remember: ")) + b.tip);
   } else {
     throw new Error("unknown block: " + JSON.stringify(b));
   }
@@ -302,20 +303,24 @@ async function block(b, lessonNumber) {
 
 // ---------------------------------------------------------------- lessons
 
+function lessonTitle(lesson) {
+  return PT && lesson.titlePt ? lesson.titlePt : lesson.title;
+}
+
 // Play one lesson. Returns when the student finishes it or asks for the menu.
 async function playLesson(lesson, number) {
   let screen = 0;
   for (;;) {
     clear();
     console.log();
-    console.log("  " + bold(`LESSON ${number}: ${lesson.title.toUpperCase()}`) + dim(`   (${screen + 1}/${lesson.screens.length + 1})`));
+    console.log("  " + bold(`${tr("LESSON")} ${number}: ${lessonTitle(lesson).toUpperCase()}`) + dim(`   (${screen + 1}/${lesson.screens.length + 1})`));
     rule();
     console.log();
 
     if (screen === lesson.screens.length) {
-      console.log("  " + bold("WHAT YOU LEARNED"));
+      console.log("  " + bold(tr("WHAT YOU LEARNED")));
       console.log();
-      for (const line of lesson.recap) {
+      for (const line of PT && lesson.recapPt ? lesson.recapPt : lesson.recap) {
         console.log(wrap("- " + line, "    ").replace(/^ {4}/, "  "));
       }
       console.log();
@@ -324,14 +329,14 @@ async function playLesson(lesson, number) {
         progress.done.push(lesson.id);
         saveProgress(progress);
       }
-      await ask("  [ENTER] back to the lessons: ");
+      await ask(tr("  [ENTER] back to the lessons: "));
       return;
     }
 
     for (const b of lesson.screens[screen]) {
       await block(b, number);
     }
-    const key = (await ask("  [ENTER] next   [b] back   [m] menu: ")).toLowerCase();
+    const key = (await ask(tr("  [ENTER] next   [b] back   [m] menu: "))).toLowerCase();
     if (key === "m") {
       return;
     }
@@ -353,6 +358,8 @@ module.exports = {
   sameOutput,
   loadProgress,
   playLesson,
+  lessonTitle,
+  tr,
   InputClosed,
   PRACTICE_DIR,
 };

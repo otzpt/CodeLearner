@@ -1,6 +1,7 @@
 module.exports = {
   id: "decisions",
   title: "Making decisions with if",
+  titlePt: "Tomar decisões com if",
   screens: [
     [
       "Comparing two values gives true or false. These two values are called booleans.",
@@ -37,6 +38,13 @@ module.exports = {
         solution: 'const points = 64;\nif (points >= 80) {\n  console.log("great");\n} else if (points >= 50) {\n  console.log("good");\n} else {\n  console.log("try again");\n}\nconsole.log(points % 2 === 0);',
       },
     ],
+  ],
+  recapPt: [
+    "As comparações dão true ou false: > < >= <= === !==",
+    "if (condição) { ... } else if (...) { ... } else { ... } corre só o primeiro bloco verdadeiro.",
+    "Usa === e !==, nunca == e !=.",
+    "&& é \"e\", || é \"ou\".",
+    "= dentro de um if guarda em vez de comparar, e o JavaScript não avisa.",
   ],
   recap: [
     "Comparisons give true or false: > < >= <= === !==",

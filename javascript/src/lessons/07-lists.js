@@ -1,6 +1,7 @@
 module.exports = {
   id: "lists",
   title: "Lists of things (arrays)",
+  titlePt: "Listas de coisas (arrays)",
   screens: [
     [
       "An array holds many values in order, in one variable. Write the values between [ ], separated by commas. .length is how many there are, and each value has a position, starting at 0, the same as the characters of a string:",
@@ -32,6 +33,13 @@ module.exports = {
         solution: 'const list = ["rice", "beans", "oil"];\nlist.push("salt");\nconsole.log(list.length);\nfor (const item of list) {\n  console.log("- " + item);\n}',
       },
     ],
+  ],
+  recapPt: [
+    "Um array é uma lista: [1, 2, 3]. .length é quantos elementos tem.",
+    "As posições começam em 0. Uma posição sem nada dá undefined.",
+    ".push(valor) junta ao fim; list[0] = ... substitui.",
+    "for...of dá os valores; for...in dá as posições como strings.",
+    "sort() ordena como texto; números precisam de sort((a, b) => a - b).",
   ],
   recap: [
     "An array is a list: [1, 2, 3]. .length is how many items.",

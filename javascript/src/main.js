@@ -20,17 +20,17 @@ function showMenu() {
 
   app.clear();
   console.log();
-  console.log("  " + app.bold("JAVASCRIPT FROM ZERO"));
-  console.log(app.wrap("No experience needed. Each lesson explains one idea, runs real examples, and ends with a small program you write yourself and the course checks."));
+  console.log("  " + app.bold(app.tr("JAVASCRIPT FROM ZERO")));
+  console.log(app.wrap(app.tr("No experience needed. Each lesson explains one idea, runs real examples, and ends with a small program you write yourself and the course checks.")));
   app.rule();
   console.log();
   LESSONS.forEach((lesson, i) => {
     const mark = done.includes(lesson.id) ? app.green("[x]") : "[ ]";
-    const here = i === next ? app.bold("  <- next") : "";
-    console.log(`   ${mark} ${String(i + 1).padStart(2)}  ${lesson.title}${here}`);
+    const here = i === next ? app.bold(app.tr("  <- next")) : "";
+    console.log(`   ${mark} ${String(i + 1).padStart(2)}  ${app.lessonTitle(lesson)}${here}`);
   });
   console.log();
-  console.log(app.dim(`  Your practice files go in ${app.PRACTICE_DIR}`));
+  console.log(app.dim(`  ${app.tr("Your practice files go in")} ${app.PRACTICE_DIR}`));
   console.log();
   return next;
 }
@@ -38,7 +38,7 @@ function showMenu() {
 async function main() {
   for (;;) {
     const next = showMenu();
-    const prompt = next >= 0 ? "  Lesson number, [ENTER] for the next one, [q] quit: " : "  Lesson number, [q] quit: ";
+    const prompt = app.tr(next >= 0 ? "  Lesson number, [ENTER] for the next one, [q] quit: " : "  Lesson number, [q] quit: ");
     const choice = await app.ask(prompt);
     if (choice.toLowerCase() === "q" || choice === "0") {
       break;
@@ -51,13 +51,13 @@ async function main() {
 }
 
 main()
-  .then(() => console.log("\n  See you next time.\n"))
+  .then(() => console.log(`\n  ${app.tr("See you next time.")}\n`))
   .catch((err) => {
     if (err instanceof app.InputClosed) {
-      console.log("\n  See you next time.\n");
+      console.log(`\n  ${app.tr("See you next time.")}\n`);
       return;
     }
-    console.error(`\n  Something went wrong: ${err.message}`);
+    console.error(`\n  ${app.tr("Something went wrong:")} ${err.message}`);
     process.exitCode = 1;
   })
   .finally(app.close);

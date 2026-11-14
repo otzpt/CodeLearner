@@ -1,6 +1,7 @@
 module.exports = {
   id: "first-program",
   title: "Your first program",
+  titlePt: "O teu primeiro programa",
   screens: [
     [
       "A program is a list of instructions for the computer, written in a text file. The computer does them one at a time, from the top line down.",
@@ -34,6 +35,13 @@ module.exports = {
         solution: 'console.log("Ana");\nconsole.log(2026);',
       },
     ],
+  ],
+  recapPt: [
+    "Um programa são instruções num ficheiro, feitas de cima para baixo. O Node corre-o: node ficheiro.js",
+    "console.log(...) mostra uma linha.",
+    "O texto vai entre aspas. Os números não. 2 + 3 é calculado; \"2 + 3\" é só texto.",
+    "// começa um comentário que o Node ignora.",
+    "Um erro para o programa e diz o que correu mal e em que linha.",
   ],
   recap: [
     "A program is instructions in a file, done top to bottom. Node runs it: node file.js",

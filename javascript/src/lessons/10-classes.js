@@ -1,6 +1,7 @@
 module.exports = {
   id: "classes",
   title: "Classes: a template for objects",
+  titlePt: "Classes: um molde para objetos",
   screens: [
     [
       "In lesson 9 you wrote each object by hand: { name: \"Ana\", grade: 15 }. With many students, that means typing the same shape again and again, and a typo in one of them goes unnoticed.",
@@ -54,6 +55,14 @@ module.exports = {
         solution: 'class Account {\n  #balance = 0;\n  constructor(owner) {\n    this.owner = owner;\n  }\n  deposit(amount) {\n    this.#balance = this.#balance + amount;\n  }\n  withdraw(amount) {\n    if (amount > this.#balance) {\n      console.log("Not enough money");\n    } else {\n      this.#balance = this.#balance - amount;\n    }\n  }\n  report() {\n    console.log(`${this.owner} has ${this.#balance}`);\n  }\n}\n\nconst a = new Account("Ana");\na.deposit(50);\na.withdraw(20);\na.withdraw(100);\na.report();',
       },
     ],
+  ],
+  recapPt: [
+    "Uma classe é um molde; new NomeDaClasse(...) cria um objeto a partir dela.",
+    "O constructor corre uma vez por cada objeto novo; this é o objeto a ser criado.",
+    "Métodos são funções dentro da classe; num método, this é o objeto antes do ponto.",
+    "Cada objeto tem os seus próprios valores. Dentro da classe, chega-se a eles com this.",
+    "#nome é privado: só o código da própria classe o pode usar.",
+    "extends constrói sobre outra classe; super(...) corre o constructor da classe-mãe.",
   ],
   recap: [
     "A class is a template; new ClassName(...) makes an object from it.",

@@ -1,6 +1,7 @@
 module.exports = {
   id: "errors",
   title: "When things go wrong",
+  titlePt: "Quando as coisas correm mal",
   screens: [
     [
       "Every programmer sees errors all day. What matters is reading them. An error message has a type, a description, and a line number:",
@@ -38,6 +39,12 @@ module.exports = {
         solution: 'function divide(a, b) {\n  if (b === 0) {\n    throw new Error("cannot divide by 0");\n  }\n  return a / b;\n}\n\ntry {\n  console.log(divide(10, 2));\n  console.log(divide(1, 0));\n} catch (error) {\n  console.log("Error: " + error.message);\n}\nconsole.log("done");',
       },
     ],
+  ],
+  recapPt: [
+    "Uma mensagem de erro dá um tipo, uma descrição e um número de linha. Lê os três.",
+    "ReferenceError: nome desconhecido. TypeError: valor mal usado. SyntaxError: código que não se consegue ler.",
+    "try { ... } catch (error) { ... } trata um erro e deixa o programa continuar.",
+    "throw new Error(\"mensagem\") lança o teu próprio erro.",
   ],
   recap: [
     "An error message gives a type, a description and a line number. Read all three.",

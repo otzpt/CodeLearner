@@ -1,6 +1,7 @@
 module.exports = {
   id: "loops",
   title: "Repeating with loops",
+  titlePt: "Repetir com ciclos",
   screens: [
     [
       "A loop repeats a block of code. The for loop is used when you know how many times:",
@@ -34,6 +35,12 @@ module.exports = {
         solution: "for (let i = 1; i <= 5; i++) {\n  console.log(i);\n}\nlet total = 0;\nfor (let i = 1; i <= 100; i++) {\n  total = total + i;\n}\nconsole.log(total);",
       },
     ],
+  ],
+  recapPt: [
+    "for (let i = 1; i <= 3; i++) { ... } repete um número fixo de vezes.",
+    "< ou <= decide se o último número entra.",
+    "Constrói um resultado com uma variável criada antes do ciclo.",
+    "while (condição) { ... } repete até a condição ser falsa. Ctrl+C para um programa preso.",
   ],
   recap: [
     "for (let i = 1; i <= 3; i++) { ... } repeats a set number of times.",

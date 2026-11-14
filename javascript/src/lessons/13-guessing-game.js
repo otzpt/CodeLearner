@@ -3,6 +3,7 @@ const HELPER = require("./11-input.js").HELPER;
 module.exports = {
   id: "guessing-game",
   title: "Project: a guessing game",
+  titlePt: "Projeto: um jogo de adivinhar",
   screens: [
     [
       "Time to put everything together in one real program: a number guessing game.",
@@ -36,6 +37,12 @@ module.exports = {
       "Math.random() gives a decimal from 0 up to (not including) 1. Times 100 makes it 0 to 99.99..., Math.floor cuts off the decimals, and + 1 makes it 1 to 100.",
       "Run it with node and play it yourself. The checker cannot test this version, because it would not know the secret.",
     ],
+  ],
+  recapPt: [
+    "Planeia primeiro em palavras simples, depois passa cada passo a código.",
+    "while (true) com break repete até o código decidir parar.",
+    "Math.floor(Math.random() * 100) + 1 é um número inteiro aleatório de 1 a 100.",
+    "Escreveste um programa interativo completo. Tudo o que vem a seguir usa as mesmas peças.",
   ],
   recap: [
     "Plan in plain words first, then turn each step into code.",

@@ -1,6 +1,7 @@
 module.exports = {
   id: "strings",
   title: "Working with text",
+  titlePt: "Trabalhar com texto",
   screens: [
     [
       "Joining text with + works, but gets messy with many pieces. A template string is easier: write it between backticks ` (usually the key left of 1), and put any value inside ${ }:",
@@ -32,6 +33,12 @@ module.exports = {
         solution: 'const name = "Bruno";\nconsole.log(`Hello, ${name}! Your name has ${name.length} letters.`);\nconsole.log(name.toUpperCase());',
       },
     ],
+  ],
+  recapPt: [
+    "Template strings usam acentos graves e preenchem ${ }: `Hi, ${name}`.",
+    "Com aspas normais, ${name} sai como texto.",
+    ".length, .toUpperCase(), .toLowerCase(), .includes(...) existem em todas as strings.",
+    "As posições começam em 0; o último carácter está em length - 1.",
   ],
   recap: [
     "Template strings use backticks and fill in ${ }: `Hi, ${name}`.",

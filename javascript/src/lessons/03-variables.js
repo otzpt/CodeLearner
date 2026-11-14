@@ -1,6 +1,7 @@
 module.exports = {
   id: "variables",
   title: "Variables: giving values a name",
+  titlePt: "Variáveis: dar nome a valores",
   screens: [
     [
       "A variable is a name that holds a value, so you can use it later. Think of a labelled box.",
@@ -35,6 +36,12 @@ module.exports = {
         solution: "let price = 20;\nconst quantity = 3;\nconsole.log(price * quantity);\nprice = 25;\nconsole.log(price * quantity);",
       },
     ],
+  ],
+  recapPt: [
+    "Uma variável é uma caixa com nome para um valor: let age = 25;",
+    "= quer dizer \"guarda isto\", não \"é igual a\".",
+    "let pode receber um valor novo; const não. Usa const, a não ser que o valor tenha de mudar.",
+    "Maiúsculas e minúsculas contam. Um nome que nunca foi criado dá ReferenceError.",
   ],
   recap: [
     "A variable is a named box for a value: let age = 25;",

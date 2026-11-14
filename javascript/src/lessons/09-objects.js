@@ -1,6 +1,7 @@
 module.exports = {
   id: "objects",
   title: "Objects: values with labels",
+  titlePt: "Objetos: valores com nome",
   screens: [
     [
       "An array keeps values in order by position. An object keeps values by name. Each name and value pair is called a property:",
@@ -30,6 +31,13 @@ module.exports = {
         solution: 'const items = [\n  { name: "pen", price: 2 },\n  { name: "book", price: 15 },\n  { name: "bag", price: 30 },\n];\nlet total = 0;\nfor (const item of items) {\n  console.log(`${item.name}: ${item.price}`);\n  total = total + item.price;\n}\nconsole.log(total);',
       },
     ],
+  ],
+  recapPt: [
+    "Um objeto guarda valores com nome: { name: \"Ana\", age: 17 }.",
+    "Lê-os ou muda-os com um ponto: student.age = 18.",
+    "Uma propriedade que não existe dá undefined.",
+    "Uma lista de objetos é a forma habitual de guardar registos.",
+    "=== em objetos pergunta se são o mesmo objeto. = não copia.",
   ],
   recap: [
     "An object holds named values: { name: \"Ana\", age: 17 }.",

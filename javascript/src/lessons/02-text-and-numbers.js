@@ -1,6 +1,7 @@
 module.exports = {
   id: "text-and-numbers",
   title: "Text and numbers",
+  titlePt: "Texto e números",
   screens: [
     [
       "Programs work with values. The two you will use most are numbers and text. Text is called a string (a string of characters).",
@@ -34,6 +35,13 @@ module.exports = {
         solution: 'console.log(12 * 5);\nconsole.log(17 % 5);\nconsole.log("12" + 5);',
       },
     ],
+  ],
+  recapPt: [
+    "Os números usam + - * / e % (resto). Os parênteses definem a ordem.",
+    "Decimais como 0.1 + 0.2 não são exatos; para dinheiro usa cêntimos inteiros.",
+    "Strings são texto entre aspas. + junta strings.",
+    "Uma string + um número junta-os: \"5\" + 1 dá \"51\". Number(\"5\") transforma texto em número.",
+    "typeof mostra se um valor é um número ou uma string.",
   ],
   recap: [
     "Numbers use + - * / and % (remainder). Brackets set the order.",

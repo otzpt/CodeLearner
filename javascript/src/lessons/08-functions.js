@@ -1,6 +1,7 @@
 module.exports = {
   id: "functions",
   title: "Functions: your own instructions",
+  titlePt: "Funções: as tuas próprias instruções",
   screens: [
     [
       "A function is a block of code with a name. You write it once and run it whenever you want by writing its name and ( ):",
@@ -33,6 +34,12 @@ module.exports = {
         solution: "function area(width, height) {\n  return width * height;\n}\nfunction isEven(n) {\n  return n % 2 === 0;\n}\nconsole.log(area(3, 4));\nconsole.log(area(10, 2));\nconsole.log(isEven(7));",
       },
     ],
+  ],
+  recapPt: [
+    "function nome(parâmetros) { ... } define; nome(valores) corre-a.",
+    "Os parâmetros são os valores que a função recebe de cada vez que é chamada.",
+    "return devolve um valor; sem ele, a função devolve undefined.",
+    "(n) => n * 3 é uma função seta curta.",
   ],
   recap: [
     "function name(params) { ... } defines; name(values) runs it.",
