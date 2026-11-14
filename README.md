@@ -1,15 +1,14 @@
 # CodeLearner
 
-Command-line programming courses, one per language: C, C++, Python,
-JavaScript, Java, C#, Rust, MicroPython, Arduino (on a PC, no board needed),
-Assembly, Git and a GTK window. No browser and no account. Everything runs
-offline except the Python, JavaScript and Security modules that call a real
-web API and the update check, which only runs when you pick it.
+Programming courses for the terminal, written for someone who has never
+programmed: C, C++, Assembly, Rust, Arduino and MicroPython (on a PC, no board
+needed), Python, JavaScript, Java, C#, HTML, CSS, Web JavaScript, Security,
+GTK, raylib and Git. No browser, no account, nothing online except the update
+check, which only runs when you pick it.
 
-Each course is written **in the language it teaches**, so the source is itself
-worked example code the student can open and read. Every exercise states the
-input to type and the output it must produce; a solution that produces them is
-correct however you wrote it.
+Every lesson runs its examples while you read them, explains each error in
+plain words, and ends with a small program you write in a real file. The
+course runs it and tells you whether it printed what was asked.
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/otzpt/CodeLearner/main/install.sh | sh
@@ -23,7 +22,7 @@ install options are under [Installing](#installing)):
   +======================================================+
   |                  CODELEARNER                         |
   +======================================================+
-  version 1.5.1
+  version 2.0.0
 
    -- LOW-LEVEL AND SYSTEMS --
    [1]  C
@@ -49,7 +48,7 @@ install options are under [Installing](#installing)):
 
    -- GUI --
    [15]  GTK
-   [16]  raylib + raygui
+   [16]  raylib
 
    -- TOOLING --
    [17]  Git
@@ -58,79 +57,94 @@ install options are under [Installing](#installing)):
    [18]  Libraries
 
    [u]  Check for updates
+   [l]  Portugues (PT-PT)
    [0]  Exit
   ------------------------------------------------------
 ```
 
-Entries are numbered in menu order, so adding or moving a course renumbers
-what comes after it. Go by the name, not a number you remember.
-
 The Libraries entry is a reference manual, not a course: man-page style pages
 for C and Python libraries, each with an example that runs on your machine.
 
-## Status
+## What a lesson looks like
 
-| Group | Language | Modules | Where |
-| --- | --- | --- | --- |
-| Low-level and systems | C | 20: first program through file I/O, debugging, function pointers/macros, and inline assembly with NASM | [`c/`](c/) |
-| Low-level and systems | C++ | 13: cout through templates and modern idioms, then inline assembly and `extern "C"` | [`cpp/`](cpp/) |
-| Low-level and systems | Assembly | 16: registers and syscalls through memory, the stack, bits and strings, then C together with assembly, and a boot sector to an operating system kernel with interrupts, in NASM (Intel syntax) | [`assembly/`](assembly/README.md) |
-| Low-level and systems | Rust | 12: `println!` through ownership, borrowing, structs, enums, `Result`, volatile registers for the Pico, and inline assembly with NASM | [`rust/`](rust/) |
-| Low-level and systems | Arduino | 13: `setup()`/`loop()` through registers, interrupts, AVR inline assembly, a robot (runs on a PC) | [`arduino/`](arduino/) |
-| Low-level and systems | MicroPython | 11: for the Raspberry Pi Pico: pins, PWM/ADC, interrupts, native/viper, `asm_thumb`, a robot | [`micropython/`](micropython/) |
-| Languages | Python | 13: print() through files/context managers and working with a real API | [`python/`](python/) |
-| Languages | JavaScript | 14: console.log() through modules and Node's own fs/process stdlib | [`javascript/`](javascript/) |
-| Languages | Java | 13: System.out through the Collections Framework, generics, and concurrency | [`java/`](java/) |
-| Languages | C# | 14: top-level statements through LINQ, async/await, and delegates/events | [`csharp/`](csharp/) |
-| Web | HTML | 5: structure, forms, accessibility, metadata, practical pages | [`html/`](html/) |
-| Web | CSS | 5: the box and normal flow, Flexbox, Grid, responsive design, modern CSS and the cascade | [`css/`](css/) |
-| Web | Web JavaScript | 5: the DOM, events, forms, `fetch`, state and storage | [`webjs/`](webjs/) |
-| Security | Security | 2 so far: a topic course in Python. HTTP requests, what a server's headers reveal, the urllib 4xx/5xx-raises trap, and why plain HTTP is readable on the wire | [`security/`](security/) |
-| GUI | GTK | 4: a first window, layout and widgets, signals and state, and a todo list that adds and removes widgets | [`gtk/`](gtk/) |
-| GUI | raylib + raygui | 6: the loop and immediate mode, shapes and text, keyboard and mouse input, time and movement, raygui buttons and state, and a todo list as an array | [`raylib/`](raylib/) |
-| Tooling | Git | 10: what is git through GitHub Actions | [`git/`](git/) |
-| Reference | Libraries | a reference manual, not a course: man-page style pages for the C and Python libraries (standard C, POSIX, Linux, /proc and /sys, raylib), each example run live | [`libraries/`](libraries/) |
-| | Launcher | done: pick a language, open its course | [`launcher/`](launcher/) |
+A lesson is a few screens, each with one idea and at most one example. The
+example runs as you read it, and what it prints is real. This is a screen from
+Python's lesson 2:
 
-Every course's menu groups its modules under three bands, BASIC,
-INTERMEDIATE, and ADVANCED — a display grouping only, printed as section
-headers above the module numbers. The modules still run in one numbered
-sequence; a tier is one field on a module's row in its course's module
-table (`MODULES` in `main.c`/`main.py`/`main.js`, or the equivalent),
-nothing else changes. GTK has four modules, two under BASIC and two under
-INTERMEDIATE, and raylib has six, three under BASIC and three under
-INTERMEDIATE. ADVANCED is shown empty in both until there is content to fill it.
+```text
+  LESSON 2: TEXT AND NUMBERS   (4/6)
+  ----------------------------------------------------------------
 
-Seventeen courses are covered. GTK, raylib, Assembly, Git and Security are not languages
-in the same sense the others are, but all of them get the same treatment as one:
-their own directory, their own binary or script, their own entry in the
-launcher, rather than being folded into `c/`'s module list. Assembly goes
-further than GTK does, though -- its own delivery program (`assembly/src/ui.asm`,
-`main.asm`) is genuinely written in x86-64 assembly, the same "written in the
-language it teaches" rule every other course follows literally, just with
-no standard library underneath it (raw `read`/`write`/`exit` syscalls, no
-libc at all). The GTK and raylib courses' own delivery stays C, since there
-is no separate "GTK language" or "raylib language" to write a menu in. Git has no compiler or interpreter of its own
-either, so its course is written in Bash -- the shell git is actually run
-from -- and every command it shows is a real invocation against a
-throwaway local repository, not a transcript typed from memory. The
-launcher and `tools/check-teaching-order.py` both work over any number of
-courses without modification, so a new entry is a matter of writing it, not
-extending anything else.
-[`ROADMAP.md`](ROADMAP.md) has the target arc for the languages already
-here and the ones not started yet.
+  Text and numbers do not mix with +. Python refuses rather than
+  guess what you meant:
 
-C# runs alongside Java's course on purpose: both are compiled, garbage-
-collected, and OOP, so most of what makes C# worth its own course is what's
-genuinely different from Java, not a restatement of the same ground -- C#
-has default parameter values where Java needs overloading for the same job
-(module 7), `string ==` compares content where Java's compares references
-(module 6), there are no checked exceptions at all (module 10), and
-`struct` vs `class` is a value/reference split C#'s primitives-vs-objects
-split doesn't map onto Java's the same way (module 8).
+    print("5" + 1)
 
-The courses are independent programs. The launcher only launches them: it
-does not know anything about what happens inside one.
+  Output:
+    TypeError: can only concatenate str (not "int") to str
+    (line 1)
+
+  What this means: a value used in a way its type does not allow,
+  like adding text to a number.
+```
+
+Short multiple-choice questions check the idea as you go; a wrong answer gets
+a second try and then the reason. At the end, YOUR TURN gives a task, the exact
+output it must print, and a file to write it in. Press ENTER and the course
+runs your file:
+
+```text
+  Not yet. Your program printed:
+    60
+    3.4
+    2
+
+  Line 2 should be:  3
+```
+
+`h` gives a hint, `s` shows one solution (yours can look different and still
+be right), `k` skips. Each lesson ends with WHAT YOU LEARNED, a few lines worth
+remembering. Finished lessons are ticked in the course's menu, and your files
+and progress stay in `~/codelearner/<course>/`.
+
+## The courses
+
+| Group | Course | Lessons |
+| --- | --- | --- |
+| Low-level and systems | C | 14: first program and the compiler through pointers, `malloc`/`free`, structs, files and AddressSanitizer |
+| Low-level and systems | C++ | 12: `std::cout` through `std::vector`, references, classes, inheritance and exceptions |
+| Low-level and systems | Assembly | 9: NASM for 64-bit Linux, from syscalls and registers through the stack, functions and text, then a look at boot sectors |
+| Low-level and systems | Rust | 12: `println!` through ownership and borrowing, structs, `match`, `Option` and `Result` |
+| Low-level and systems | Arduino | 8: `setup`/`loop`, pins, buttons, analog, timing with `millis`, Serial, a traffic light, on a PC stand-in for the board |
+| Low-level and systems | MicroPython | 7: pins, the clock, buttons, ADC and PWM, interrupts, a traffic light, on a PC stand-in for a Pico |
+| Languages | Python | 14: `print` through lists, dictionaries, classes, files and a guessing game |
+| Languages | JavaScript | 13: `console.log` through arrays, functions, objects, classes, input and errors |
+| Languages | Java | 12: `System.out` through `ArrayList`, classes, interfaces, exceptions and files |
+| Languages | C# | 11: top-level statements through `List`, classes, interfaces, exceptions and files |
+| Web | HTML | 7: tags, a whole page, nesting, links, lists, forms and structure |
+| Web | CSS | 6: rules, class and id, the cascade, inheritance, `!important`, combinators |
+| Web | Web JavaScript | 5: the DOM, changing the page, click events, inputs, adding elements |
+| Security | Security | 7: password hashing and salt, unguessable tokens, SQL and command injection, path traversal, escaping HTML |
+| GUI | GTK | 4: a window, widgets in boxes, signals, a text entry |
+| GUI | raylib | 4: the game loop, shapes, keys and movement, a catching game |
+| Tooling | Git | 8: commits, history, undoing, branches, conflicts, remotes, `.gitignore` and tags |
+
+No lesson explains anything by comparing it to another language: every course
+starts from zero on its own. Some subjects cannot be shown in a terminal, and
+those courses say so:
+
+- **HTML, CSS and Web JavaScript** use a small stand-in for a browser. It shows
+  the page's element tree, each element's final CSS and the rule that won it,
+  and runs the page's scripts. `sim.click` and `sim.type` play the user; they
+  exist only on the PC.
+- **Arduino and MicroPython** run on a PC stand-in for the board: pins are
+  variables and time is simulated. Anything named `sim` is PC-only.
+- **GTK and raylib** open windows, which the course cannot show: it builds your
+  program and you run it.
+- **Assembly** ends with a boot sector you can try in QEMU; the files in
+  `assembly/os` go on from there to a small kernel.
+
+[`ROADMAP.md`](ROADMAP.md) lists where each course stops and what comes next.
 
 ## Installing
 
@@ -145,12 +159,10 @@ curl -fsSL https://raw.githubusercontent.com/otzpt/CodeLearner/main/install.sh |
 ```
 
 `wget -qO- <same URL> | sh` works identically if curl isn't installed. It
-asks no package manager anything, which is what makes it distribution-
-agnostic: it unpacks the release tarball into `~/.local/share/codelearner`
-and writes a wrapper to `~/.local/bin/codelearner`. It also adds a
-CodeLearner entry (with the icon) to your application menu, which opens a
-terminal; the `.deb`, the Arch package and the AppImage do the same. Pass
-`--prefix DIR` to put everything elsewhere, or `--uninstall` to remove it.
+unpacks the release into `~/.local/share/codelearner`, writes a wrapper to
+`~/.local/bin/codelearner`, and adds a CodeLearner entry (with the icon) to
+your application menu, which opens a terminal. Pass `--prefix DIR` to put
+everything elsewhere, or `--uninstall` to remove it.
 
 Windows:
 
@@ -160,27 +172,37 @@ irm https://raw.githubusercontent.com/otzpt/CodeLearner/main/install.ps1 | iex
 
 Installs to `%LOCALAPPDATA%\Programs\CodeLearner` and adds that directory
 to your user PATH, so `codelearner` works in a new terminal. Download the
-script and run it directly for `-Uninstall` or `-Prefix`. It is a script
-rather than an `.msi` deliberately: an MSI buys a per-machine install and
-an Add/Remove Programs entry, and costs a WiX toolchain in CI plus a
-signing story, for a PATH entry a script writes in one line.
+script and run it directly for `-Uninstall` or `-Prefix`.
 
-> **`install.ps1` is untested.** It has never been run, and never been
-> parsed, because it was written on a Linux machine with no PowerShell on
-> it, and CI builds the Windows bundle without ever touching the installer.
-> Treat it as unproven code until someone runs it. Two places to look first
-> if it misbehaves: a parse error on the first line it reaches, and the
-> PATH write, which reads the user PATH already expanded and stores it back
-> as a plain string, so unexpanded entries like `%USERPROFILE%\bin` would
-> be flattened to literal paths. Installing with `-Prefix` into a throwaway
-> directory exercises everything except that PATH write.
->
-> `install.sh` does not carry this warning: it was run end to end against a
-> real release, including reinstall-over-existing and `--uninstall`.
+> **`install.ps1` is untested.** It has never been run, because it was written
+> on a Linux machine with no PowerShell on it, and CI builds the Windows bundle
+> without touching the installer. Installing with `-Prefix` into a throwaway
+> directory exercises everything except its PATH write.
 
 Piping a script from the internet into a shell is worth reading first
 either way. Both are a single file at the root of this repository:
 [`install.sh`](install.sh), [`install.ps1`](install.ps1).
+
+### What you need installed
+
+The courses run on **Node.js**, so install it first. Each course also runs its
+examples, and your programs, with that language's own tools:
+
+| Course | Needs |
+| --- | --- |
+| C, GTK, raylib | a C compiler (`gcc`); GTK 4.10 or later, or raylib, for those two |
+| C++, Arduino | `g++` |
+| Python, Security, MicroPython | Python 3 |
+| JavaScript, HTML, CSS, Web JavaScript | nothing beyond Node |
+| Java | a JDK, 11 or later |
+| C# | the .NET 10 SDK |
+| Rust | `rustc` |
+| Assembly | `nasm` and `ld`, on 64-bit x86 Linux |
+| Git | `bash` and `git` |
+
+A course whose tools are missing still opens; its examples say which program
+is not installed. On Arch, for example: `sudo pacman -S nodejs gcc python
+jdk-openjdk dotnet-sdk rust nasm git gtk4 raylib`.
 
 ### Or without an installer
 
@@ -188,24 +210,15 @@ Every artifact is on the [Releases page](https://github.com/otzpt/CodeLearner/re
 
 | Download | What it is |
 | --- | --- |
-| `codelearner-x86_64.AppImage` | one self-contained file, `chmod +x` and run, nothing installed |
+| `codelearner-x86_64.AppImage` | one file, `chmod +x` and run, nothing installed |
 | `codelearner-amd64.deb` | Debian/Ubuntu package, `sudo dpkg -i` |
 | `codelearner-x86_64.pkg.tar.zst` | Arch package, `sudo pacman -U` |
 | `codelearner-linux-x86_64.tar.gz` | the plain bundle, extract and run `codelearner.sh` |
 | `codelearner-windows-x86_64.zip` | the plain bundle, extract and run `codelearner.bat` |
-| `codelearner-csharp-standalone-*` | the C# course alone, one file, no .NET needed |
 
-The `.deb` and Arch packages install to `/opt/codelearner` and put the same
-`codelearner` command on PATH system-wide. The AppImage does not touch PATH
-at all, which is the point of it.
-
-The C, C++, GTK, raylib, HTML, CSS, Web JavaScript, C# and Assembly courses are compiled into these, and so
-are Rust and Arduino on Linux. Python, JavaScript, Java, Security, MicroPython
-and Git ship as source and run through their own language's toolchain (see
-below). Assembly, Rust, Arduino, MicroPython, Git and Libraries are Linux
-only. Want just one course, standalone, with no
-launcher and none of the others? See
-[`docs/building-a-single-course.md`](docs/building-a-single-course.md).
+The `.deb` and Arch packages install to `/opt/codelearner`, depend on Node, and
+put the same `codelearner` command on PATH system-wide. The AppImage does not
+touch PATH at all. Assembly, Arduino, Git and Libraries are Linux only.
 
 ### Updating
 
@@ -217,13 +230,9 @@ GitHub your IP address, and the request carries a `User-Agent` of
 `CodeLearner/<version>`; nothing else is sent.
 
 To update, reinstall the way you installed it: run `install.sh` again, or
-install the new package or AppImage. A launcher built from source with a
-plain `make` is a `dev` build: it can name the latest release but has nothing
-to compare it with.
+install the new package or AppImage.
 
-## Running
-
-To build it yourself instead:
+## Running from the source
 
 ```bash
 cd launcher
@@ -231,643 +240,24 @@ make
 ./launcher
 ```
 
-Pick a language and its course runs in place. Quitting a course (its own
-`[0] Quit`) returns to this menu — that is a subprocess exiting, not
-anything the launcher had to build. A language with no course yet shows as
-"coming soon" instead of being selectable.
-
-To run a course directly, without the launcher:
+Pick a course and it runs in place; quitting it (`q`) returns to this menu.
+To run one course directly, without the launcher:
 
 ```bash
-cd c
-make
-./c-course
+node python/learn.js
 ```
-
-```bash
-cd python/src
-python3 main.py
-```
-
-```bash
-cd javascript/src
-node main.js
-```
-
-```bash
-cd java
-./run
-```
-
-```bash
-cd csharp
-./run
-```
-
-```bash
-cd git/src
-./main.sh
-```
-
-Python, JavaScript, and Git need no build step — nothing to compile, nothing
-to link; Git's course only needs bash and git itself, both close to
-universal on Linux and macOS already. Java's `./run` compiles and runs in
-one command too (`java Main.java`,
-no separate `javac` step, no `.class` files left behind) — see the Java
-course's own module 1 for why that is not the two-step model most people
-expect from a compiled language. C#'s `./run` does the same job for
-`dotnet run`, which builds and launches in one command the same way.
-
-You need a C compiler and `make` for the C and C++ courses. On Arch:
-
-```bash
-sudo pacman -S base-devel
-```
-
-On Debian or Ubuntu:
-
-```bash
-sudo apt install build-essential
-```
-
-You need JDK 22 or newer for the Java course. On Arch:
-
-```bash
-sudo pacman -S jdk-openjdk
-```
-
-On Debian or Ubuntu:
-
-```bash
-sudo apt install default-jdk
-```
-
-`default-jdk` can be older than 22, depending on the release. Check with
-`java -version`, and if it is, install a newer `openjdk-NN-jdk` package.
-
-You need the .NET SDK for the C# course. On Arch:
-
-```bash
-sudo pacman -S dotnet-sdk
-```
-
-On Debian or Ubuntu, follow [Microsoft's install instructions](https://learn.microsoft.com/dotnet/core/install/linux) — the SDK isn't in the default `apt` repositories on most releases.
-
-## What a module looks like
-
-Every module follows the same shape:
-
-```
-PART 1, 2, 3 ...   explanation, one screen at a time
-EXERCISE           short questions, answered and checked here
-                   then a task to write in a real file, stating the
-                   output it must produce
-SUMMARY            four or five lines worth remembering
-```
-
-Every task states two things: the input to type, if any, and the output it
-must produce. Together they are the whole specification. Example code is
-shown afterwards if you ask for it, but a solution that produces the same
-output from the same input, by different means, is correct.
-
-An exercise never needs anything the course has not taught yet. That is
-enforced by `tools/check-teaching-order.py`, not by memory.
-
-The short questions are checked as you answer them. Getting one wrong is not
-a failure and does not block anything — the point is to show the right answer
-and the reason, which appears either way.
-
-## The C course
-
-| # | Module | Tier | The thing it exists for |
-| --- | --- | --- | --- |
-| 1 | Compiling and printing | BASIC | C compiles before it runs |
-| 2 | Variables and types | BASIC | `5 / 2` is `2`, and casting afterwards is too late |
-| 3 | Reading input | BASIC | why `scanf` needs `&`, and why arrays do not |
-| 4 | Conditions | BASIC | `=` is not `==`, and missing braces |
-| 5 | Loops | BASIC | the off-by-one, and that C does not check bounds |
-| 6 | Arrays and strings | BASIC | `\0`, `strlen` vs `sizeof`, `==` does not compare text |
-| 7 | Functions | BASIC | arguments are copies — this is what explains `&` |
-| 8 | Pointers | INTERMEDIATE | `&` and `*`, `NULL`, the segfault |
-| 9 | **Memory: malloc and free** | INTERMEDIATE | stack vs heap, and the four ways to get it wrong |
-| 10 | Structs | INTERMEDIATE | dot vs arrow, and why `sizeof` exceeds the sum of the fields |
-| 11 | **Final test: 2 programs** | INTERMEDIATE | a game and a "normal" program, combining modules 1-10 |
-| 12 | Growing memory: grids and realloc | ADVANCED | pointer-to-pointer, and `realloc` |
-| 13 | Linked lists | ADVANCED | a struct pointing at its own type |
-| 14 | Stacks and queues | ADVANCED | array-based, not another linked list — capacity checks that actually run |
-| 15 | Enums, unions, and typedef | ADVANCED | named constants, shared storage, and why `sizeof` can exceed the sum of the fields |
-| 16 | Compilation and project structure | ADVANCED | `.h`/`.c`, header guards, a real linker error, this course's own Makefile |
-| 17 | Debugging | ADVANCED | `gdb` in batch mode, a real NULL-deref backtrace, AddressSanitizer's use-after-free report |
-| 18 | Real input/output | ADVANCED | `fopen` returning `NULL`, checking `errno`, text vs binary compared with `memcmp`, `argc`/`argv` |
-| 19 | Function pointers, callbacks, and macros | ADVANCED | `(*fn)(args)`, a variadic `sum_ints`, the classic unparenthesized-macro trap, bit flags |
-| 20 | Inline assembly and NASM | ADVANCED | `__asm__` blocks with outputs, inputs and clobbers, then a separate NASM file linked into a C program |
-
-Module 9 is the longest on purpose: leaks, use-after-free, double free, and
-returning the address of a local array — each with what you actually see when
-it happens.
-
-Module 11 has no new theory beyond `rand()`/`srand()`, needed for its game to
-be a game. Both of its tasks — Guess the Number, and a Student Grade Manager —
-are stated as output the program must produce, but unlike every other exercise
-in this course, that output depends on a random number and on what you type,
-so it is shown as one example run rather than an exact string to match.
-
-Module 12 is the extra requested after the final test: closing the gap between
-"malloc and free work" and trusting your own ownership rules across something
-bigger than a single block — a dynamically sized 2D grid, and growing an array
-with `realloc`, each freed correctly and each shown broken first so the fix
-means something.
-
-Module 13 is a second, unrelated way to grow a collection: a linked list,
-one node at a time instead of `realloc`'s doubling blocks — kept out of
-module 12 on purpose, since a self-referential struct is a different idea
-from either of module 12's, not a variation on them.
-
-Module 14 is the first data-structures module built on top of both: a stack
-and a queue, both array-based rather than another linked list, so the same
-idea — "a collection that grows" — is shown with a third tradeoff (fixed
-capacity instead of one `malloc` per item). "Stack overflow" and a naive
-queue reporting full with free slots behind `front` are both real, checked
-conditions that actually run, not just described.
-
-Module 15 goes past module 10's `struct` into `enum`, `union`, and
-`typedef`: an enum's members are plain `int`s with a name for the debugger,
-not a distinct, assignment-checked type; a union's `sizeof` equals its
-largest member, not the sum; and struct padding is revisited, explicit that
-it is a property of this compiler and this machine, not a language
-guarantee.
-
-Module 16 is the course's own highest-priority gap, closed: `.h`/`.c`,
-header guards and the real redefinition error without one, separate
-compilation into `.o` files, a real linker "undefined reference," real
-compiler warnings, and this course's own `Makefile`, quoted directly —
-every one of them by actually invoking `cc`/`ld`/`ar` from inside the
-lesson and showing the real output, not a summary of what it would say.
-
-Module 17 puts a debugger on module 16's toolchain: `gdb` in batch mode
-setting a real breakpoint, stepping, and printing a variable, then a real
-NULL-pointer dereference caught live and its backtrace read for what it
-says, then AddressSanitizer built into the binary and a real
-use-after-free's report read the same way. The module states plainly that
-ASan's Linux default reports and exits rather than raising `SIGABRT`, so
-catching it under `gdb` needs `ASAN_OPTIONS=abort_on_error=1`, verified
-against the installed sanitizer, not assumed from older documentation.
-
-Module 18 is the file I/O this course had been avoiding entirely up to
-this point: `fopen` returning `NULL` on failure and `errno` naming why,
-`fprintf`/`fgets` round-tripping real data to disk, text mode vs binary
-mode compared with a real `memcmp` rather than asserted to differ, and
-`argc`/`argv` demonstrated by compiling and running a second, separate
-program with real command-line arguments, not simulated.
-
-Module 19 closes the course's originally planned arc: function pointers,
-declared and read the same way module 8 already taught `*`, connected
-directly to this course's own `main.c` dispatch table, which has used one
-since module 1 without ever naming it; callbacks built on top of that;
-a variadic `sum_ints` using `<stdarg.h>`, stating the real constraint that
-C cannot know an argument count on its own; the classic
-`#define SQUARE(x) x*x` precedence trap, compiled broken and then fixed,
-both real numbers; and bit flags with `&`/`|`/`^`/`~`/`<<`/`>>`, set and
-cleared on a real byte, printed before and after.
-
-Module 20 is inline assembly and NASM, added for microcontroller work. It
-compiles and runs real `__asm__` blocks on an x86-64 Linux PC (`mov`, `add`,
-`lea`, `movzbl`) and says so on any other CPU instead of pretending. It then
-covers what the programmer owes the compiler: outputs and inputs, clobbers,
-`volatile`, and an early-clobber output (`=&r`). The last part assembles a
-separate NASM file and links it into a C program. It only points at `gcc -S`;
-reading your own compiled output is still open.
-
-Modules 1-20 are stages 1-4 (started) of a longer path: more data
-structures and algorithms, real projects, POSIX, debugging tools, assembly,
-reading other people's C. [`c/ROADMAP.md`](c/ROADMAP.md) maps the rest of it
-and where each stage picks up.
-
-## The C++ course
-
-| # | Module | The thing it exists for |
-| --- | --- | --- |
-| 1 | Compiling and printing | `cout`/`<<`, `g++`, `.cpp` — what changed and what did not |
-| 2 | Variables and types | `std::string`, `auto` — and `int / int` still truncates |
-| 3 | Reading input | `cin >>` needs no `&`; the `>>` then `getline` bug |
-| 4 | Conditions | `bool` is real, but `cout` still prints it as `1`/`0` |
-| 5 | Loops | range-based `for`; `auto x` copies, `auto &x` does not |
-| 6 | `std::string` | `==` finally compares content; `npos`, not `-1` |
-| 7 | Functions and references | `&` removes the need for `&` at the call site |
-| 8 | `std::vector` | grows itself; `[]` is still unchecked, `at()` still throws |
-| 9 | **Classes and RAII** | `private`/`public`; a destructor that fires on its own |
-| 10 | Maps and sets | `map`'s `[]` silently inserts a missing key; `find()` returns `end()`, not a null |
-| 11 | Templates | one function/class works for any type; a bad instantiation is a compile error, shown for real |
-| 12 | Modern C++ idioms | `unique_ptr`/`shared_ptr` replace module 9's `new`/`delete`; `std::move` measured with a copy/move counter, not asserted |
-| 13 | Inline assembly and NASM | `asm` blocks with outputs, inputs and clobbers, then a NASM file linked in through `extern "C"` |
-
-This course assumes nothing about the C course, but is written to be read
-right after it: every module is framed as *what changed, and what did not*.
-Integer division survives unchanged into module 2. `if (x = 5)` still
-compiles and still only warns, in module 4. `new`/`delete` are `malloc`/`free`
-under a different name in module 9, verified by leaking 20 bytes on purpose
-and quoting the real LeakSanitizer report — not run live, since it would leak
-inside the same process this README's own verification claims is clean.
-
-Module 8 makes a point of the gap between *documented* and *observed*:
-`v[100]` on a small vector is undefined behaviour by the C++ standard — no
-guarantee at all — and on this specific compiler it happens to abort with an
-assertion. Both facts are stated, and kept separate.
-
-## The Python course
-
-| # | Module | The thing it exists for |
-| --- | --- | --- |
-| 1 | Running Python and `print()` | no compile step; `sep=`/`end=` |
-| 2 | Variables and types | rebinding, not redeclaring; `/` vs `//`, floor rounds toward `-inf` |
-| 3 | Reading input | `input()` always returns `str`; the forgot-to-convert `TypeError` |
-| 4 | Conditions | indentation *is* the block; truthiness |
-| 5 | Loops | `range()`'s end is exclusive; `enumerate()` |
-| 6 | Lists | **`b = a` does not copy** |
-| 7 | Functions and default arguments | **the mutable default argument trap** |
-| 8 | Dictionaries | `[]` raises, `.get()` doesn't; insertion order since 3.7 |
-| 9 | Classes | `self` is explicit; no enforced privacy; no destructor timing guarantee |
-| 10 | Exceptions | `try`/`except`/`finally`; catch a type, not everything |
-| 11 | Modules and packages | `__name__ == "__main__"`, proven against this course's own `main.py` |
-| 12 | Files and context managers | `with open(...) as f` guarantees `.close()` even across an exception — proven, not asserted |
-| 13 | Working with APIs | `urllib.request` against a real endpoint; `HTTPError` and `URLError` are different failures, caught differently |
-
-No memory-management thread here — Python collects its own garbage, so what
-module 9 in the C course spent five sections on does not exist as a topic.
-What replaces it, module for module, is a different class of bug: `b = a`
-aliasing a list instead of copying it (module 6), and a default argument list
-built once, at definition time, then silently shared by every call that
-relies on it (module 7) — confirmed by running `add_bad("a")` then
-`add_bad("b")` and watching the second call's result still contain `"a"`.
-
-Module 9 states plainly what Python does not promise: unlike a C++ destructor
-firing at a predictable, specific point, CPython's garbage collection timing
-is an implementation detail, not a language guarantee. For anything that must
-close at a known moment, the module points at `with`/context managers instead
-of pretending Python has RAII.
-
-## The JavaScript course
-
-| # | Module | The thing it exists for |
-| --- | --- | --- |
-| 1 | Running Node and `console.log()` | no compile step; template literals |
-| 2 | Variables and types | always `===`, never `==`; `NaN !== NaN` |
-| 3 | Reading input | **reading a line is asynchronous**; `async`/`await` all the way up |
-| 4 | Conditions | `[]` and `{}` are **truthy** — the opposite of Python |
-| 5 | Loops | `for...of` gives values, `for...in` gives keys as strings |
-| 6 | Arrays | `const` doesn't stop `b = a` aliasing; default `.sort()` sorts as text |
-| 7 | Functions and `this` | a regular function's `this` depends on the call site; an arrow's does not |
-| 8 | Objects | `==` and `===` are *both* wrong for comparing objects — both compare by reference |
-| 9 | Classes | `#field` is **real** private, enforced by a `SyntaxError` |
-| 10 | Errors | `try`/`catch`/`finally`; `extends Error` for your own catchable type |
-| 11 | Promises | the object `await` has been unwrapping since module 3; `Promise.all` runs independent awaits concurrently |
-| 12 | Working with APIs | `fetch` does not reject on a 404 — checking `response.ok` is the caller's job |
-| 13 | Modules | `require`/`module.exports` (CommonJS) vs `import`/`export` (ESM) — two systems, and why loading the second needs a fresh process |
-| 14 | Node-specific stdlib | `fs.readFileSync` blocks, `fs.promises.readFile` doesn't; `process.argv` is Node's `argc`/`argv`; none of this exists in a browser |
-
-No memory-management thread here either — same as Python, garbage collected.
-Module 3 exists because of a genuine difference from every other course in
-this repo: Node has no built-in blocking read the way `scanf`, `input()` and
-even `cin` are. Reading a line is asynchronous, so `async`/`await` is not
-optional syntax to learn eventually — it is required from the first `input()`
-equivalent onward, and it propagates upward through every function that
-calls one.
-
-That module also states a real, verified gotcha about *testing* a script
-non-interactively rather than about the language itself: piping input with
-`printf "a\nb\n" | node script.js` closes stdin the instant it finishes
-writing, and a second pending `readline`-promises `question()` call after
-that point silently never resolves — no error, just a hang. A real terminal
-never closes stdin mid-session, so this never affects the course; it does
-affect testing a script by piping to it, which is why this course's own
-`ui.js` drives `readline`'s async iterator by hand instead of using
-`question()`, verified against both a closed pipe and realistic typed timing.
-
-Module 4 is the one place this course actively disagrees with the Python
-course sitting next to it: `Boolean([])` and `Boolean({})` are both `true`.
-`if (arr)` is never a length check in JavaScript, unlike Python where an
-empty list is falsy.
-
-Module 9's `#field` syntax is worth reading against the other courses'
-answers to the same question. C++'s `private` and Java's `private` are both
-enforced by the compiler. Python's leading underscore is a convention
-enforced by nobody — confirmed in that course by reading `a._grade` from
-outside the class and watching it just work. JavaScript's `#field` sits with
-C++ and Java: trying to reference `s.#grade` from outside the class is a
-`SyntaxError`, caught before the program runs at all, verified on Node 26.
-
-## The Java course
-
-| # | Module | The thing it exists for |
-| --- | --- | --- |
-| 1 | Compiling and printing | `javac`/`java`, two steps not one; a public class's name must match its file |
-| 2 | Variables and types | primitives vs objects; **boxed `Integer` caches -128..127, then `==` lies** |
-| 3 | Reading input | `Scanner`; `nextInt()` then `nextLine()` — same bug shape as C++'s `cin >>`/`getline` |
-| 4 | Conditions | a condition must be `boolean` — `if (x = 5)` is a **compile error**, not a C-style warning |
-| 5 | Loops | `for`/`while`; the enhanced `for` gives values, no index |
-| 6 | Arrays and Strings | `arr.length` is a field, `str.length()` is a method; `==` vs `.equals()` |
-| 7 | Methods and overloading | no default arguments — overloading fills the gap, resolved at compile time |
-| 8 | `ArrayList` and boxing | grows, unlike an array; `ArrayList<int>` does not compile — needs `Integer` |
-| 9 | Classes, interfaces, encapsulation | `private` is **enforced**, not a convention; an unimplemented interface method won't compile |
-| 10 | Exceptions: checked vs unchecked | an unhandled **checked** exception is a compile error |
-| 11 | The Collections Framework: Map and Set | `HashMap.get()` on a missing key returns `null`, not an exception and not an inserted default |
-| 12 | Generics | a mismatch is a compile error instead of a runtime `ClassCastException`; type erasure verified at runtime |
-| 13 | Concurrency | a real, observed data race on a shared counter; `synchronized` fixes it, measured, not asserted |
-
-No memory-management thread here either — garbage collected, same as Python
-and JavaScript. What replaces it is Java's two-tier type system: eight
-primitive types that hold a raw value directly, and everything else — String,
-Integer, any class — held by reference. Module 2's boxed-`Integer` trap only
-exists because of that split: `Integer a = 127, b = 127; a == b` is `true`
-(both happen to be the same cached object), but the identical code with `200`
-instead of `127` is `false` — two separate objects with equal values, `==`
-comparing identity, not value, the same rule as C's `==` on a `char*`. Both
-sides of that claim were run against the installed JDK before being written
-down, not assumed from "Java caches small integers."
-
-Module 4 is the sharpest cross-course callback in this collection: `if (x = 5)`
-— typing `=` where `==` was meant — is the exact bug C and C++'s own module 4
-warn about, and in both of those courses it compiles, with at most a warning.
-In Java it is a hard compile error (`incompatible types: int cannot be
-converted to boolean`), because a condition must be `boolean` and an
-assignment evaluates to `int`. Same typo, opposite failure mode — caught
-before the program can run at all rather than caught only if you are reading
-compiler warnings carefully.
-
-Module 10 is the other half of that same idea, working in reverse. A checked
-exception (`throws IOException`) left uncaught anywhere on its call path is
-also a compile error — `unreported exception IOException; must be caught or
-declared to be thrown` — enforced no matter how deeply it is buried, unlike
-every exception in C++, Python, or JavaScript, all of which let any exception
-fly straight past every caller with zero compile-time warning. `RuntimeException`
-and its subclasses are unchecked, behaving exactly like exceptions in the
-other three courses — checked exceptions are the one place this course's
-compiler is stricter than the others, not the whole story.
-
-Module 9 lines up directly against Python's module 9 and C++'s module 9 on
-the same question: is `private` real? Python's leading underscore is a
-naming convention nobody enforces — reading or writing `a._grade` from
-outside the class just works, shown running in that course. Java's `private`
-is a compiler-enforced access modifier: `s.grade = 20` on a private field
-does not compile (`grade has private access in Student`), and neither does a
-class that implements an interface without providing every method it
-declares. For deterministic cleanup, Java's answer is try-with-resources —
-the same opt-in idea as Python's `with`, not the automatic-for-every-object
-guarantee C++'s RAII gives.
-
-The launcher runs this course via `java/run` (`java/run.bat` on Windows),
-not a path straight to a `.java` file — verified against the installed JDK
-that a `#!` shebang line on a `.java` file does not compile here, despite
-some descriptions of JEP 330 suggesting it should.
-
-## The C# course
-
-| # | Module | The thing it exists for |
-| --- | --- | --- |
-| 1 | Compiling and printing | top-level statements vs `class Program { static void Main }`; `dotnet run` is build+run, not one step |
-| 2 | Variables and types | `var` infers a real fixed type; value types vs reference types, the split module 8 pays off |
-| 3 | Reading input | `Console.ReadLine()` returns `string?` — a two-warning cascade if you ignore it |
-| 4 | Conditions and pattern matching | `bool` is real; switch expressions and `is` are the fresh idiom here |
-| 5 | Loops | `foreach`'s iteration variable is **read-only** — `1..4` slices, it isn't itself `foreach`-able |
-| 6 | Arrays and `List<T>` | `.Length` is always a property, on arrays and `string` alike; `==` on arrays is reference, on `string` is content |
-| 7 | Methods and default parameters | **C# has default arguments** — the opposite of Java's module 7 |
-| 8 | Classes, structs, and records | `struct` copies the value, `class` copies the reference; `record` gets value equality for free |
-| 9 | Nullable reference types | `string?` vs `string`; `?.`/`??`; `!` silences the warning without checking anything |
-| 10 | Exceptions and IDisposable | **no checked exceptions at all**; `using` guarantees deterministic cleanup, no GC timing involved |
-| 11 | LINQ | a query is lazy — it runs at enumeration time, not creation time |
-| 12 | Async/await | `Task` is C#'s Promise; `Task.WhenAll` runs independent awaits concurrently, measured |
-| 13 | Generics and interfaces in depth | a default interface method dispatches on runtime type, not the compile-time reference type |
-| 14 | Delegates and events | `Action`/`Func` pass behavior as a value; `event` restricts a subscriber to `+=`/`-=`, a real `CS0070` if it tries anything else |
-
-Built specifically to sit next to Java's course, not restate it: both are
-compiled, garbage-collected, and OOP, so the interesting content is where
-they genuinely diverge. Module 7 is the clearest case — Java's own module 7
-says outright that Java has no default parameter values and uses overloading
-to fill the gap; C# has both, and this module shows a call site skipping an
-optional parameter with a named argument, something Java's overloading alone
-cannot do. Module 6 runs the same `==` operator in the opposite direction:
-Java's `==` on `String` compares references (module 6 there), while C#'s
-`==` on `string` is overloaded to compare content — verified side by side
-here, `a == b` on two separately-built equal strings prints `true` in C#,
-where the identical setup is the *wrong* answer in Java's own course.
-
-Module 8 is where module 2's value-type/reference-type split, introduced but
-not yet consequential, becomes real: assigning one struct variable to
-another copies the value, assigning one class variable to another copies
-the reference, run side by side so the difference is something the reader's
-own terminal produced, not an assertion. `record` sits next to plain
-`class` in the same module for the same reason C++'s module 9 shows a leak
-happening — value equality being generated by the compiler only means
-something once you've seen a plain class NOT get it for free.
-
-Module 10 is a direct rebuttal of Java's module 10: C# has exactly one
-exception category, and every exception in it behaves like Java's own
-unchecked `RuntimeException` — nothing is checked at compile time, ever,
-verified by compiling a method that lets a real exception escape with zero
-warnings. `using`/`IDisposable` is this course's answer to Java's
-try-with-resources, Python's `with`, and C++'s RAII destructors: Dispose()
-runs deterministically when a `using` block exits, printed with an "open"/
-"close" pair around the block's own output to show the ordering directly
-rather than describe it.
-
-The launcher runs this course via `csharp/run` (`csharp/run.bat` on
-Windows), the same wrapper shape as Java's `java/run` and for the same
-reason: `dotnet run`, like `java Main.java`, has to run from inside the
-project's own directory, so the launcher cannot point straight at a `.cs`
-file the way it points at Python's and JavaScript's entry scripts.
-
-## The GTK course
-
-| # | Module | The thing it exists for |
-| --- | --- | --- |
-| 1 | GTK: your first window | `pkg-config` in the compile line; `GtkApplication`/`activate`, not `gtk_init`; `G_CALLBACK` hides a signature mismatch from the compiler |
-| 2 | GTK: layout and the common widgets | a window has one child, so `GtkBox`; GTK3 calls (`gtk_box_pack_start`, `gtk_container_add`) are "implicit declaration" errors in GTK4; `hexpand` alone does not make children equal, `homogeneous` does |
-| 3 | GTK: signals and keeping state | a struct passed as `user_data` must outlive `activate()` (a local compiles silently and is a bug); `gtk_editable_get_text` is GTK's string, `g_strdup_printf` is yours to `g_free` |
-| 4 | GTK: widgets that come and go (a todo list) | per-row data with `g_object_set_data`; count by walking the widgets instead of keeping a number; read `gtk_widget_get_next_sibling` before `gtk_box_remove` |
-
-Not a language: GTK is a C library, but it gets the same treatment as one:
-its own directory, its own zero-dependency binary teaching it, its own entry
-in the launcher (in the GUI group), rather than being folded into `c/`'s
-module list. That separation is real, not cosmetic: `gtk-course` itself (the
-menu, the lesson text) is plain C with no dependency beyond a compiler, same
-as every other course, but the GTK code it teaches needs GTK4's development
-files installed to compile and run, a dependency none of the original
-language courses have. `gtk/src/lessons_gtk.c`'s own header comment lists
-exactly what was compiled and run.
-
-Every module follows one shape, like a chapter of a C book: the idea first,
-the program in commented parts (every line explained), a reference entry for
-every function and macro (what it does, what it takes, what it returns) with a
-good use and a bad use, then a good-practice screen and the exercises. Every
-bad use was compiled or run, and the error or message quoted next to it is
-its real output. Undefined behaviour is explained, not run.
-
-Module 1 starts from installing GTK4 and checking it, then builds a window,
-adds a button and makes it react, before any of the traps. Modules 1 to 4 are
-what a simple GTK4 window needs: the first window, layout, widgets, behaviour
-and a list that changes at run time. Every example was compiled with
-`-std=c11 -Wall -Wextra` and driven by a test program against the real window
-(set text, tick check buttons, emit `clicked` and `activate`, assert on labels
-and row counts). The few pixel measurements the lessons quote were read back
-from the real widgets on the author's machine and are labelled as such. Styling
-with CSS, `GtkBuilder` files and model-based lists are not covered.
-
-The course prints in colour when it runs in a terminal. `NO_COLOR=1` turns it
-off, as does piping the output; `CODELEARNER_COLOR=1` forces it on.
-
-## The raylib course
-
-| # | Module | The thing it exists for |
-| --- | --- | --- |
-| 1 | raylib: your first window and the loop | immediate mode (redraw everything every frame); `SetTargetFPS`: 12134 frames a second without it, 60 with; a missing file is a logged WARNING, not a crash |
-| 2 | raylib: shapes, colours and text | origin top-left, later shapes on top; a rectangle covers `x` to `x + width - 1`; `(Color){255,0,0,0.5f}` draws nothing (use `Fade`); a clockwise triangle is not drawn; centre text with `MeasureText` |
-| 3 | raylib: keyboard, mouse and clicks | `Down` is every frame held, `Pressed` is one frame; a click is Pressed plus a hit test; a box excludes `x + width` and `y + height`; `GetCharPressed` for typed text |
-| 4 | raylib: time, movement and collision | move by `speed * GetFrameTime()` (93 px against 183 px at 30 and 60 FPS with a fixed step); normalise diagonals (1.4142); touching edges do not collide; a small pong |
-| 5 | raygui: buttons, text and state | a widget is a function call that draws and answers; your variables hold the state; `GuiCheckBox` takes a pointer, `GuiTextBox` takes the real buffer size; `TextFormat` reuses its buffers |
-| 6 | raygui: a todo list | the list is an array, not widgets; never delete inside the loop that draws (it skips a row); `strncpy` may not terminate |
-
-raylib and raygui are one course because raygui is a single header that sits
-on top of raylib. They work the opposite way to GTK: immediate mode, with no
-widget objects, where a loop redraws everything every frame and a button is
-a function call that draws and answers. The last module builds the same todo
-list as the GTK course, so the two toolkits can be compared.
-
-The course has the same shape as the GTK one (idea, commented code, reference
-with good and bad uses, good practice, exercises, colour). The reference
-screens are generated from `raylib.h` and `raymath.h`, so each signature and
-one-line description is raylib's own, and every function in the area a module
-covers (all of the basic shapes, colour, text-drawing, keyboard, mouse,
-gamepad, touch and 2D collision functions) is listed, not only the ones the
-examples use. Textures and images, fonts, audio, cameras, 3D and the rest of
-raygui's controls are not covered yet.
-
-raylib is not in every distribution's repository, so module 1 builds it from
-source and pins the two commits it was tested with: raylib 6.5-dev
-(`0dedaf3066`) and raygui 5.1-dev (`2a3c4790c6`). The examples compile with
-`-std=c11 -Wall -Wextra` and no warnings of their own (raygui.h prints 11 under
-`-Wextra`, which `-isystem` hides) and each one was started and ran. Drawing
-results were read back from an off-screen texture; collision, vector maths,
-frame-time movement and the pong rules were run by small programs without a
-window; the todo list's data functions were tested the same way. How real key
-presses, mouse clicks and raygui widgets behave under a person's hands was
-**not** driven by a test: the lessons describe raylib's documented behaviour
-and say so. The measurements quoted were read back on the author's machine and
-are labelled as such.
-
-Long screens page automatically: when output is a terminal the course counts
-the lines shown and pauses with "more: press ENTER" before a screen would
-scroll off. It does nothing when output is piped. `CODELEARNER_NO_PAGER=1` turns
-it off.
-
-## The Assembly course
-
-Sixteen modules, in NASM's Intel syntax: the instructions first, then C and
-assembly together, then a boot sector, protected mode, long mode, a kernel
-written in C and interrupts. The last seven are the path to an operating
-system and have their own source in [`assembly/os/`](assembly/os/).
-
-| # | Module | The thing it exists for |
-| --- | --- | --- |
-| 1 | Registers, syscalls, your first program | Intel syntax puts the destination first and AT&T, which `gcc -S` prints, the reverse; a syscall is a number in `rax` plus arguments in the same registers a call would use |
-| 2 | Comparing and branching: if/else | `cmp` keeps flags and throws its result away; `jl`/`jg` are signed and `jb`/`ja` are not, and picking wrong is a bug nothing warns about |
-| 3 | Loops | a loop is a label and a jump backwards; the `loop` instruction is slower than `dec`/`jnz` and hardcodes `rcx`, which any `call` may clobber |
-| 4 | Reading input, and a guessing game | `read` writes no terminator and keeps your newline; digits are bytes, and `div` divides `rdx:rax`, so a stale `rdx` kills the process with SIGFPE |
-| 5 | Memory and addressing | `mov rax, label` is an address and `[label]` is what is there; writing `eax` zeroes the top half of `rax` but `ax` does not; a bare `mov [x], 5` is a one-byte store |
-| 6 | The stack, and calling a function | the stack grows down and `pop` erases nothing; a stray `push` makes `ret` go somewhere else; `rbx` and `r12`-`r15` are the callee's to put back, and `syscall` destroys `rcx` |
-| 7 | Bits, flags and arithmetic | `shr` against `sar` on a negative number; `CF` and `OF` are two kinds of overflow from one `add`; `idiv` needs `cqo` where `div` needs `xor rdx, rdx` |
-| 8 | Strings and block instructions | `rep movsb` advances `rdi`, so a `memcpy` that returns its destination has to save it; a forward copy over an overlapping range repeats bytes |
-| 9 | Assembly and C together | the System V convention is the whole interface; a freestanding compiler still calls `memcpy`; a packed struct and `-mno-red-zone` exist because of real hardware |
-| 10 | Real mode and the boot sector | `org 0x7C00`, the `0x55 0xAA` signature, and three ways a boot sector fails without a word |
-| 11 | Talking to the hardware | `in`/`out`, the serial port, video memory; an attribute of 0 is black on black |
-| 12 | Loading more code | two stages, `dl` is the boot drive, the A20 line, and a port bit that resets the machine |
-| 13 | Protected mode | the GDT, selectors and the far jump; nearly every mistake is a triple fault |
-| 14 | Long mode and paging | page tables, and the order the CPU forces: PAE, `EFER.LME`, `cr0.PG` |
-| 15 | A kernel in C | an assembly entry, a linker script, zeroed `.bss`, `volatile`, `-mgeneral-regs-only` |
-| 16 | Interrupts | the IDT, one stub per vector, remapping the PIC, end-of-interrupt |
-
-Linux/x86-64 only — see [`ROADMAP.md`](ROADMAP.md)'s note on why there is
-no Windows path to translate this one to. This is the one course where
-"written in the language it teaches" is taken completely literally: unlike
-the GTK course, there genuinely is a language here to write a menu in, so
-`assembly/src/ui.asm` and `main.asm` are real x86-64 assembly, not C that
-talks about assembly. No libc, no C runtime — `title`/`heading`/`question`/
-`ask_yes`/`read_line` are all built from nothing but the `read`, `write`
-and `exit` syscalls, called directly. It needs `nasm` and `ld` to build.
-Intel syntax rather than AT&T because it is what NASM, the Intel and AMD
-manuals and the operating-system tutorials use, and because the C, C++ and
-Rust courses already show NASM.
-
-Every function that needs an argument to survive more than one call saves
-it into a real stack frame (`push rbp; mov rbp, rsp; sub rsp, N`) rather
-than juggling `push`/`pop` pairs around each call — the same shape
-`gcc -O0`'s own output uses, which module 1 shows beside `ui.asm`'s
-hand-written version of the same thing. The exercise's expected answers
-are one word each (`first`, `rsi`, `number`) on purpose: grading is an
-exact string comparison (`ui.asm`'s `trim_and_lower` plus `streq` --
-case-insensitive and whitespace-trimmed, nothing fuzzier), the same "keep
-it short and unambiguous" rule `docs/writing-a-course.md` already states
-for every other course's `question()`.
-
-How it was verified is in [`assembly/README.md`](assembly/README.md):
-two checkers, one that walks every module and builds and runs every
-example solution, one that boots every operating-system image in QEMU and
-reads the screen, the serial port and the CPU's registers back. Modules 10
-to 16 were run in QEMU with SeaBIOS; **nothing here was run on real
-hardware**, and one of the lessons (module 14) says where QEMU is more
-forgiving than a real CPU.
-
-## The Rust, MicroPython and Arduino courses
-
-Three courses for people heading toward microcontrollers and systems work.
-Each has its own README with how to run it and how it was verified:
-[`rust/`](rust/README.md), [`micropython/`](micropython/README.md),
-[`arduino/`](arduino/README.md).
-
-The MicroPython and Arduino courses cannot touch hardware, because a course
-runs in a terminal. Each ships a small stand-in for the board (`sim.py`,
-`shim/Arduino.h`) so the code in a lesson is the code a board would run, and
-each lesson says where the PC differs from the chip: an `int` is 4 bytes here
-and 2 on an Uno, a float is 64-bit on the PC and usually 32-bit on a Pico,
-and time is simulated. AVR and Cortex-M0+ assembly is compiled
-(`avr-gcc`, `mpy-cross`, `rustc --target thumbv6m-none-eabi`). The AVR code is
-also executed on a simulated ATmega328P (`simavr`) and the Rust register code
-on an emulated Cortex-M0+ (Unicorn). MicroPython's `asm_thumb` listings are
-only assembled, never executed.
-
-Inline assembly and NASM also have a module in the C (module 20), C++
-(module 13) and Rust (module 12) courses. Those run for real on an x86-64
-Linux PC: the `asm` blocks are compiled into the course, and the NASM file in
-each course's `asm/` folder is built with `make asm-demo` and its output shown
-in the lesson.
-
-## The web courses
-
-HTML, CSS and browser JavaScript are three terminal programs written in plain
-C, the same arrangement as the GTK course: [`html/`](html/), [`css/`](css/) and
-[`webjs/`](webjs/). None of them opens a browser or depends on one. The
-challenges are files you write yourself and open in whatever browser you use.
-
-A terminal cannot render a page, so where a result depends on a browser the
-lesson quotes what one did, measured in Chromium 152 while the modules were
-written. What C can compute for itself, it computes when the lesson runs: URL
-encoding a form, reading UTF-8 bytes as another charset, box and flex
-arithmetic, `clamp()`, specificity.
-
-The Web JavaScript course assumes the first modules of the terminal JavaScript
-course, and leaves Node behind for the DOM, events, forms, `fetch` and storage.
 
 ## Portuguese
 
-The menus, prompts and module summaries are also available in European
-Portuguese. Press `l` in the launcher to switch, and every course started from
-it follows. To run a course directly, set the variable yourself:
+The menus, prompts, lesson titles and lesson summaries are also available in
+European Portuguese. Press `l` in the launcher to switch, and every course
+started from it follows. To run a course directly, set the variable yourself:
 
 ```bash
-CODELEARNER_LANG=pt-pt ./c-course
+CODELEARNER_LANG=pt-pt node python/learn.js
 ```
 
-The lessons themselves are still in English, and so are the answers to their
-questions. Each course keeps its Portuguese text in its own `strings_pt` file.
+The lessons themselves are still in English, and code is never translated.
 
 ## The Libraries reference
 
@@ -884,256 +274,53 @@ control sequences.
 See [`libraries/README.md`](libraries/README.md) for how a page is written and
 how it was verified.
 
-## Design rules
+## How it is built and checked
 
-**Nothing is claimed without being shown.** Where an example can run, it runs.
-Module 2 prints `sizeof` as computed by *your* compiler; module 6 prints the
-real addresses of an array going up 4 bytes at a time; module 8 changes a
-variable through a pointer; module 9 calls `malloc` for real and shows the
-address it got back. Module 3 reads your actual keyboard.
+Every course is a folder of lessons written as plain data, run by one shared
+engine in [`learn/`](learn/). A course's `course.js` says how its language
+builds and runs a file and what its errors mean; `lessons/` holds the lessons.
+[`docs/writing-a-course.md`](docs/writing-a-course.md) has the format and the
+rules every lesson follows.
 
-**Memory bugs are explained, never demonstrated.** A double free or a
-use-after-free is undefined behaviour: running one would either take the
-course down or — worse — appear to work and teach the wrong lesson.
-
-**Warnings are teaching material.** C and C++ build with `-Wall -Wextra`,
-Java with `-Xlint:all -Werror`, and the courses themselves have none.
-
-More detail in [`docs/writing-a-course.md`](docs/writing-a-course.md).
-
-## Linux and Windows
-
-The C course and the launcher build and run on both. The only
-platform-specific code is the three lines that clear the screen (in
-`c/src/ui.c` and duplicated in `launcher/src/main.c` — kept separate rather
-than shared, since the launcher and the courses are meant to stay
-independent programs) and, in the launcher, which relative path and file
-extension a course binary uses. Java follows the same split: `java/run` on
-Linux, `java/run.bat` on Windows, both doing the same `cd src && java
-Main.java`.
-
-Tested on Linux. The Windows path compiles and is exercised by CI's release
-build (see `.github/workflows/release.yml`), including a smoke test that
-launches `launcher.exe` and confirms it exits cleanly -- but that only
-proves it starts and stops, not that every menu path behaves correctly
-end to end, which still needs a human on real Windows. One real bug was
-already caught by scrutinizing this path rather than trusting the comment
-that called it untested: Windows' default handler for `.js` is Windows
-Script Host, not Node -- unlike Python's installer, Node's does not set
-itself as the default for a bare path, only as an "Open With" option (see
-`launcher/src/main.c`'s comment on `run_command` for the verified detail).
-The JavaScript and Python entries now invoke `python`/`node` explicitly
-rather than relying on file association for either. `java/run.bat` still
-has had no equivalent scrutiny beyond compiling.
-
-## Verification
-
-One known gap, stated up front: **`install.ps1` has not been verified at
-all**: not run, not parsed, no CI coverage. See the note under
-[Installing](#installing). `install.sh` was run end to end against a real
-release; everything below concerns the courses themselves.
-
-The C and C++ courses compile with `-Wall -Wextra` without a single warning,
-and run clean under AddressSanitizer and UndefinedBehaviorSanitizer — no
-leaks, no undefined behaviour. A course that teaches `free` (or `delete`)
-cannot leak.
+Two checks run on every course, locally and in CI:
 
 ```bash
-cd c
-cc -std=c11 -Wall -Wextra -g -fsanitize=address,undefined -o /tmp/course src/*.c
-/tmp/course
+node learn/check.js <course>           # every example, question, solution and starter
+python3 learn/check-course.py <course> # every lesson played to the end
 ```
 
-```bash
-cd cpp
-g++ -std=c++20 -Wall -Wextra -g -fsanitize=address,undefined -o /tmp/course src/*.cpp
-/tmp/course
-```
-
-Java compiles clean with `-Xlint:all -Werror` too, and every module was run
-through a real pty end to end (all 13 modules visited, no crash, no hang).
-
-```bash
-cd java
-javac -Xlint:all -Werror src/*.java
-```
-
-C# compiles with zero warnings under the project's own `<Nullable>enable</Nullable>`
-setting (the same setting new .NET projects ship with by default), and every
-module was run directly — `Console.In`/`Console.Out` redirected to a buffer,
-each `Lesson*` method called with no menu in between — asserting no exception
-and that `SUMMARY` appears in the captured output for all 14 modules, the
-same technique the Python and JavaScript verification below uses.
-
-```bash
-cd csharp/src
-dotnet build
-```
-
-Every compiler diagnostic this course's own text quotes — CS8600 and CS8602
-(module 3, 9), CS1579 and CS1656 (module 5), CS0128 (a mistake caught while
-writing module 7: local functions cannot be overloaded by signature the way
-class members can), CS0029 (module 4), CS0122 (module 8) — was produced by
-actually compiling the triggering code with `dotnet build`, not recalled from
-documentation.
-
-Every solution shown in a challenge, in any course, has been run and checked
-against the output its task promises. Python's and JavaScript's own solutions
-are included, verified by intercepting `input()` (Python) or the `ui.js`
-prompt functions (JavaScript) and driving every module through directly
-rather than by compiling anything.
-
-Every compile-error claim across every course — C/C++'s warnings, and every
-one of Java's genuine compile errors (`if (x = 5)`, a private field touched
-from outside its class, an unhandled checked exception, `ArrayList<int>`,
-and the rest) — was produced by actually running `javac` against it, not
-recalled from documentation.
-
-`python3 tools/check-teaching-order.py` covers all the language courses with a
-real teaching-order table (C, C++, Python, JavaScript, Java, C#, Rust,
-MicroPython, Arduino) in one run. GTK and raylib have their own tables, with
-the constructs each module first teaches. Assembly is registered too, with an
-empty table. Assembly's stays
-empty for a structural reason instead: an `.s` file keeps its question text,
-challenge, and example solution in `.rodata` at the top of the file, so the
-region between the exercise and summary markers holds the call sequence that
-runs the exercise rather than the exercise itself, and a pattern there could
-only match dispatch boilerplate.
-
-The launcher's version parsing and release-tag reading have unit tests
-(`make -C launcher check`, 27 checks, run in CI on both platforms). The
-Libraries pages are checked by two scripts in `libraries/`:
-`check-pages.py` builds and runs every page (C with `-Wall -Wextra`) and
-requires a page for each of the 21 C headers, and `check-browser.py` drives
-the browser and searches for each header by name.
+The first runs every example (and confirms the ones meant to fail do fail),
+checks every question has its answer among the choices, and runs every
+exercise's solution through the same checker you meet. The second plays each
+lesson from the menu to WHAT YOU LEARNED. CI runs both for every course on
+Linux and for eight of them on Windows; GTK and raylib are checked only on a
+machine that has them, since the CI runner has an older GTK and no raylib.
 
 ## Layout
 
 ```
-README.md                   this file
-LICENSE                     MIT
-install.sh                  one-command install, any Linux distribution
-install.ps1                 the same for Windows, no admin rights
-CONTRIBUTING.md             how to add a module, a course, or a fix
-CODE_OF_CONDUCT.md          Contributor Covenant 2.1
-SECURITY.md                 what counts as a vulnerability here
-.github/
-└── workflows/
-    └── release.yml         builds + packages the launcher on a version tag
-launcher/
-├── Makefile                make, make VERSION=x.y.z, make check
-├── test_update.c           27 checks for the update helpers
-└── src/
-    ├── main.c              pick a language, system() its binary, loop,
-    │                        and [u] Check for updates
-    └── update.c  update.h  version parsing and the release tag, no I/O
-c/
-├── Makefile
-└── src/
-    ├── main.c              menu: a table of modules and a loop
-    ├── ui.h  ui.c          screen, input, questions, challenges
-    ├── lessons.h           one prototype per module
-    ├── lessons_basics.c    modules 1-5
-    ├── lessons_memory.c    modules 6-10
-    ├── lessons_advanced.c  modules 11-15
-    ├── lessons_tooling.c   modules 16-17
-    ├── lessons_io.c        module 18
-    ├── lessons_lang_features.c  module 19
-    └── lessons_assembly.c  module 20
-gtk/
-├── Makefile
-└── src/
-    ├── main.c              menu: a table of modules and a loop
-    ├── ui.h  ui.c          screen, colour, input, questions, code display
-    ├── strings_pt.c  .h    Portuguese menus and summaries
-    ├── lessons.h           one prototype per module
-    ├── lessons_gtk.c       module 1
-    └── lessons_widgets.c   modules 2-4
-raylib/
-├── Makefile
-└── src/                    same layout as gtk/
-    └── lessons_raylib.c    modules 1-3
-cpp/
-├── Makefile
-└── src/
-    ├── main.cpp             menu: a vector of modules and a loop
-    ├── ui.h  ui.cpp         screen, input, questions, challenges
-    ├── lessons.h            one prototype per module
-    ├── lessons_basics.cpp   modules 1-5
-    ├── lessons_modern.cpp   modules 6-12
-    └── lessons_assembly.cpp module 13
-python/
-└── src/
-    ├── main.py              menu: a list of modules and a loop
-    ├── ui.py                screen, input, questions, challenges
-    ├── lessons_basics.py    modules 1-5
-    ├── lessons_more.py      modules 6-10
-    ├── lessons_advanced.py  module 11
-    └── lessons_io.py        modules 12-13
-javascript/
-└── src/
-    ├── main.js              menu: an array of modules and an async loop
-    ├── ui.js                screen, input, questions, challenges
-    ├── lessons_basics.js    modules 1-5
-    ├── lessons_more.js      modules 6-10
-    └── lessons_advanced.js  modules 11-14
-java/
-├── Makefile
-├── run  run.bat             launcher entry point: java Main.java
-└── src/
-    ├── Main.java             menu: an array of a title+Runnable record, a loop
-    ├── Ui.java               screen, input, questions, challenges
-    ├── LessonsBasics.java    modules 1-5
-    ├── LessonsMore.java      modules 6-10
-    └── LessonsAdvanced.java  modules 11-13
-csharp/
-├── run  run.bat             launcher entry point: dotnet run
-└── src/
-    ├── csharp.csproj
-    ├── Program.cs            menu: top-level statements, an array of modules, a loop
-    ├── Ui.cs                 screen, input, questions, challenges
-    ├── LessonsBasics.cs      modules 1-5
-    ├── LessonsMore.cs        modules 6-10
-    └── LessonsAdvanced.cs    modules 11-14
-assembly/                   x86-64 assembly course (NASM, Intel syntax): src/ has main.asm,
-                             ui.asm, lessons_*.asm; solutions/ and examples/ are the code
-                             the lessons print; os/ is the boot sector to kernel
-                             source; check-course.py and check-os.py verify it (README.md)
-git/                        Bash course: src/ has main.sh, ui.sh, lessons_*.sh
-security/                   Python topic course: src/ has main.py, ui.py,
-                             lessons_basics.py (module 1), lessons_wire.py (module 2)
-html/ css/ webjs/           the web courses, plain C programs like gtk/: src/ has
-                             main.c, ui.c and the lessons
-assets/                     the desktop entry and icon the Linux packages install
-rust/                       12 modules; check-course.py, check-embedded.py and
-                             run-embedded.py (the Pico's Thumb code, in an emulator)
-micropython/                11 modules; src/sim.py stands in for machine and time
-arduino/                    13 modules; shim/ stands in for the Arduino core,
-                             avr/ runs the AVR code in simavr
-libraries/                  the reference: src/main.c is the browser, c/ and
-                             python/ hold the pages (one file each)
-tools/
-└── check-teaching-order.py  fails if an exercise needs something not yet
-                              taught, in any course
-docs/
-├── writing-a-course.md     how to add a module or a new language
-└── building-a-single-course.md   just one course, standalone, no launcher
+learn/        the shared lesson engine, the two checks, and web.js
+<course>/     learn.js, course.js and lessons/ for each course
+launcher/     the menu that starts every course (C)
+libraries/    the reference manual
+arduino/shim  the PC stand-in for the Arduino core
+micropython/  sim.py, the PC stand-in for a Pico
+assembly/os   the boot sector to kernel files, checked in QEMU by check-os.py
+docs/         how a course is written, and notes on how a learner used one
 ```
 
 ## Contributing
 
 Fixes to a lesson are the easiest contribution: point at the claim, show what
-you ran and what it actually printed, fix the text. Larger changes — a new
-module, a new language — start with an issue.
+you ran and what it actually printed, fix the text. Larger changes, such as a
+new course, start with an issue.
 
 One rule matters more than the rest: **every claim in a lesson must be
-something you actually ran.** This project has already caught three claims
-that "everyone knows" and that were wrong when tested. See
-[`CONTRIBUTING.md`](CONTRIBUTING.md) for the process and the per-language
-verification commands, and [`docs/writing-a-course.md`](docs/writing-a-course.md)
-for the design rules.
+something you actually ran.** See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the
+process, and [`docs/writing-a-course.md`](docs/writing-a-course.md) for how
+lessons are written.
 
 ## License
 
-[MIT](LICENSE). The courses depend on nothing beyond each language's own
-toolchain, no packages to install, in any of them.
+[MIT](LICENSE). The courses use nothing beyond Node and each language's own
+tools: no packages to install from npm or pip.
