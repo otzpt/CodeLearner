@@ -8,16 +8,14 @@ module.exports = {
       "Writing the function does not run it. Only greet() runs it, and it runs once for every time you write it.",
     ],
     [
-      "A function can take values to work with, called parameters. They go in the ( ):",
-      { code: 'function greet(name) {\n  console.log(`Hello, ${name}!`);\n}\n\ngreet("Ana");\ngreet("Rui");' },
-      "Inside the function, name holds whatever was passed in that time. Several parameters are separated by commas:",
-      { code: "function showSum(a, b) {\n  console.log(a + b);\n}\n\nshowSum(2, 3);\nshowSum(10, 20);" },
+      "A function can take values to work with, called parameters. They go in the ( ), separated by commas:",
+      { code: 'function greet(name, mood) {\n  console.log(`Hello, ${name}! You look ${mood}.`);\n}\n\ngreet("Ana", "happy");\ngreet("Rui", "tired");' },
+      "Inside the function, name and mood hold whatever was passed in that time, in the same order.",
     ],
     [
       "return sends a value back to where the function was called, so you can store it or use it in more code:",
       { code: "function double(n) {\n  return n * 2;\n}\n\nconst result = double(4);\nconsole.log(result);\nconsole.log(double(10) + 1);" },
-      "console.log only shows a value on the screen. return hands it back to the program. A function without return gives back undefined:",
-      { code: "function showDouble(n) {\n  console.log(n * 2);\n}\n\nconst x = showDouble(4);\nconsole.log(x);" },
+      "console.log only shows a value on the screen. return hands it back to the program. A function without return gives back undefined, so storing its result gets you nothing useful.",
       { quiz: "You want to use a function's result in a sum later. What should the function do?", choices: ["console.log the result", "return the result"], answer: 2, why: "Only return gives the value back to your code." },
     ],
     [

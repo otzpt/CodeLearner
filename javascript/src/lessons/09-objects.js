@@ -8,10 +8,8 @@ module.exports = {
       "Read a property with a dot: student.name. It is clearer than a position number, because the name says what the value is.",
     ],
     [
-      "You can change a property or add a new one the same way:",
-      { code: 'const student = { name: "Ana", age: 17 };\nstudent.age = 18;\nstudent.course = "Computing";\nconsole.log(student);' },
-      "Asking for a property that does not exist gives undefined, the same as a missing array position:",
-      { code: 'const student = { name: "Ana" };\nconsole.log(student.phone);' },
+      "You can change a property or add a new one the same way. Asking for a property that does not exist gives undefined, the same as a missing array position:",
+      { code: 'const student = { name: "Ana", age: 17 };\nstudent.age = 18;\nstudent.course = "Computing";\nconsole.log(student);\nconsole.log(student.phone);' },
     ],
     [
       "Arrays and objects are often used together, as a list of objects:",
@@ -19,10 +17,8 @@ module.exports = {
       { quiz: "In the example above, what is students[1].name?", choices: ["Ana", "Rui", "Bea"], answer: 2, why: "Position 1 is the second item, because positions start at 0." },
     ],
     [
-      "Two objects with the same contents are still two separate objects, so === says they are different. === asks \"is this the same object?\", not \"do they look the same?\":",
-      { code: "const a = { x: 1 };\nconst b = { x: 1 };\nconst c = a;\nconsole.log(a === b);\nconsole.log(a === c);" },
-      "c = a does not copy. It gives the same object a second name, so a change through c shows up in a too:",
-      { code: "const a = { x: 1 };\nconst c = a;\nc.x = 99;\nconsole.log(a.x);" },
+      "Two objects with the same contents are still two separate objects. === asks \"is this the same object?\", not \"do they look the same?\". And c = a does not copy: it gives the same object a second name, so a change through c shows up in a too:",
+      { code: "const a = { x: 1 };\nconst b = { x: 1 };\nconst c = a;\nconsole.log(a === b, a === c);\nc.x = 99;\nconsole.log(a.x);" },
       { tip: "Objects store values by name. = gives an object a second name; it does not copy it." },
     ],
     [

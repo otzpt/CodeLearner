@@ -30,8 +30,7 @@ module.exports = {
     [
       "What ask gives back is always a string, even when the person types a number. Remember from lesson 2 what + does with a string:",
       { setup: HELPER, code: 'async function main() {\n  const text = await ask("A number: ");\n  console.log(text + 1);\n  console.log(Number(text) + 1);\n  rl.close();\n}\n\nmain();', input: ["5"] },
-      "Number(...) turns the typed text into a number. If the text is not a number, you get NaN, short for \"not a number\":",
-      { code: 'console.log(Number("hello"));\nconsole.log(Number.isNaN(Number("hello")));' },
+      "Number(...) turns the typed text into a number. If the text is not a number, Number(\"hello\") for example, you get NaN, short for \"not a number\". Number.isNaN(value) checks for it.",
       { quiz: "A user types 10. What does console.log(answer + 5) print?", choices: ["15", "105"], answer: 2, why: "answer is the string \"10\", so + joins. Use Number(answer) + 5." },
     ],
     [

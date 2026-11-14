@@ -8,9 +8,7 @@ module.exports = {
       "=== means \"is equal to\" and !== means \"is not equal to\". Three characters, not one: a single = stores a value, as you saw with variables.",
     ],
     [
-      "if runs a block of code only when a condition is true. The condition goes in ( ), the block in { }:",
-      { code: 'const temperature = 30;\nif (temperature > 25) {\n  console.log("Hot today");\n}\nconsole.log("Done");' },
-      "else gives the block to run when the condition is false. else if checks another condition in between:",
+      "if runs a block of code only when a condition is true. The condition goes in ( ), the block in { }. else gives the block to run when it is false, and else if checks another condition in between:",
       { code: 'const score = 72;\nif (score >= 90) {\n  console.log("A");\n} else if (score >= 50) {\n  console.log("pass");\n} else {\n  console.log("fail");\n}' },
       "JavaScript checks from the top and runs only the first block whose condition is true. Then it skips the rest.",
     ],
@@ -22,7 +20,9 @@ module.exports = {
     ],
     [
       "&& means \"and\": both sides must be true. || means \"or\": at least one side must be true.",
-      { code: "const age = 20;\nconst hasTicket = true;\nif (age >= 18 && hasTicket) {\n  console.log(\"You can go in\");\n}\nconsole.log(age < 13 || age > 65);" },
+      { code: "const age = 20;\nconsole.log(age >= 18 && age < 65);\nconsole.log(age < 13 || age > 65);" },
+    ],
+    [
       "A common slip: writing = instead of === inside if. JavaScript does not complain, it stores the value instead of comparing:",
       { code: 'let x = 3;\nif (x = 0) {\n  console.log("x is 0");\n}\nconsole.log(x);' },
       'Nothing about "x is 0" was printed, yet x is now 0. x = 0 put 0 into x, and an if treats 0 as false, so the block was skipped. No comparison happened at all.',

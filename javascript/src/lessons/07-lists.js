@@ -3,10 +3,8 @@ module.exports = {
   title: "Lists of things (arrays)",
   screens: [
     [
-      "An array holds many values in order, in one variable. Write the values between [ ], separated by commas:",
-      { code: 'const fruits = ["apple", "banana", "cherry"];\nconsole.log(fruits);\nconsole.log(fruits.length);' },
-      "Each value has a position, starting at 0, the same as the characters of a string:",
-      { code: 'const fruits = ["apple", "banana", "cherry"];\nconsole.log(fruits[0]);\nconsole.log(fruits[2]);\nconsole.log(fruits[3]);' },
+      "An array holds many values in order, in one variable. Write the values between [ ], separated by commas. .length is how many there are, and each value has a position, starting at 0, the same as the characters of a string:",
+      { code: 'const fruits = ["apple", "banana", "cherry"];\nconsole.log(fruits.length);\nconsole.log(fruits[0]);\nconsole.log(fruits[2]);\nconsole.log(fruits[3]);' },
       "There is nothing at position 3, so you get undefined, which means \"no value here\". It is not an error, which makes it easy to miss.",
     ],
     [
@@ -15,17 +13,14 @@ module.exports = {
       "This works even though list is a const. const only stops the name list from pointing at a different array; the array's contents can still change.",
     ],
     [
-      "for...of goes through an array one value at a time:",
-      { code: 'const fruits = ["apple", "banana", "cherry"];\nfor (const fruit of fruits) {\n  console.log(`I like ${fruit}`);\n}' },
-      "There is also for...in, which looks almost the same but gives the positions instead, as strings, starting at \"0\":",
-      { code: 'const fruits = ["apple", "banana", "cherry"];\nfor (const i in fruits) {\n  console.log(i);\n}' },
+      "for...of goes through an array one value at a time. There is also for...in, which looks almost the same but gives the positions instead, as strings, starting at \"0\":",
+      { code: 'const fruits = ["apple", "banana"];\nfor (const fruit of fruits) console.log(fruit);\nfor (const i in fruits) console.log(i);' },
       { quiz: 'for (const x in ["a", "b"]) console.log(x);  What is printed first?', choices: ["a", "0", "1"], answer: 2, why: "in gives the positions, and positions start at 0. of would give \"a\"." },
     ],
     [
-      "sort() puts an array in order, but it compares everything as text, even numbers:",
-      { code: "const numbers = [10, 9, 2];\nnumbers.sort();\nconsole.log(numbers);" },
-      'As text, "10" comes before "9" because "1" comes before "9". To sort numbers, give sort a small rule; lesson 8 explains how this works:',
-      { code: "const numbers = [10, 9, 2];\nnumbers.sort((a, b) => a - b);\nconsole.log(numbers);" },
+      "sort() puts an array in order, but it compares everything as text, even numbers. To sort numbers, give sort a small rule; lesson 8 explains how this works:",
+      { code: "console.log([10, 9, 2].sort());\nconsole.log([10, 9, 2].sort((a, b) => a - b));" },
+      'As text, "10" comes before "9" because "1" comes before "9". The rule (a, b) => a - b makes it compare them as numbers.',
       { tip: "Positions start at 0. for...of gives values, for...in gives positions. sort() sorts as text." },
     ],
     [

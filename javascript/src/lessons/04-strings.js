@@ -4,9 +4,8 @@ module.exports = {
   screens: [
     [
       "Joining text with + works, but gets messy with many pieces. A template string is easier: write it between backticks ` (usually the key left of 1), and put any value inside ${ }:",
-      { code: 'const name = "Ana";\nconst age = 25;\nconsole.log(`${name} is ${age} years old`);' },
-      "Whatever is inside ${ } is worked out first, even a sum:",
-      { code: "const price = 4;\nconsole.log(`Two cost ${price * 2} euros`);" },
+      { code: 'const name = "Ana";\nconst age = 25;\nconsole.log(`${name} is ${age} years old`);\nconsole.log(`Next year: ${age + 1}`);' },
+      "Whatever is inside ${ } is worked out first, even a sum like age + 1.",
     ],
     [
       "This only works with backticks. Inside normal quotes, ${name} is just text:",

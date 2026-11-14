@@ -12,6 +12,9 @@ module.exports = {
       "ReferenceError: a name that does not exist (often a typo).\nTypeError: a value used in a way it does not allow.\nSyntaxError: code typed in a way JavaScript cannot read, like a missing bracket. Node finds these before running anything.",
       { code: "const price = 5;\nprice();", error: true },
       "price holds a number, and price() tried to run it as if it were a function. \"is not a function\" means exactly that.",
+    ],
+    [
+      "The other TypeError you will meet all the time:",
       { code: 'const user = undefined;\nconsole.log(user.name);', error: true },
       "Reading a property from undefined is the most common TypeError. Usually something you expected to exist was never set.",
     ],
