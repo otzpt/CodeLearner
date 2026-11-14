@@ -30,6 +30,7 @@ def first_exercise(folder):
     script = """
 const {loadCourse} = require(%s);
 const c = loadCourse(%s);
+if (c.unavailable && c.unavailable()) { console.log(JSON.stringify({skip: c.unavailable()})); process.exit(0); }
 for (const [n, l] of c.lessons.entries())
   for (const s of l.screens) for (const b of s)
     if (b && b.exercise) {
@@ -42,9 +43,18 @@ for (const [n, l] of c.lessons.entries())
     return json.loads(out) if out.strip() else None
 
 
+def unavailable(folder):
+    found = first_exercise(folder)
+    return found["skip"] if isinstance(found, dict) else None
+
+
 def check(folder):
     folder = os.path.abspath(folder)
     entry = os.path.join(folder, "learn.js")
+    reason = unavailable(folder)
+    if reason:
+        print("{}: skipped ({})".format(os.path.basename(folder), reason))
+        return 0
     failed = 0
     with tempfile.TemporaryDirectory() as practice:
         menu, _ = run(entry, ["q"], practice)
@@ -76,7 +86,7 @@ def check(folder):
                 f.write(solution + "\n")
             # ENTER through screens and quizzes until the exercise checks the file.
             text, code = run(entry, [str(number)] + [""] * 60 + ["m", "q"], practice)
-        ok = "Correct!" in text
+        ok = "Correct!" in text or "It builds!" in text
         print("{} correct answer accepted: {}".format(os.path.basename(folder), "ok" if ok else "FAILED"))
         if not ok:
             failed += 1

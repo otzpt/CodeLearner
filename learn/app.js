@@ -140,12 +140,18 @@ function runCode(course, code, input = [], opts = {}) {
   }
 }
 
+// A build-only course (one whose programs open a window) stops after
+// building: its result is { ok: true, built: true } with no output.
 function runFile(course, file, input = [], opts = {}) {
-  const steps = course.steps(file, path.dirname(file), opts);
+  const all = course.steps(file, path.dirname(file), opts);
+  const steps = course.buildOnly ? all.slice(0, -1) : all;
+  if (course.buildOnly && course.unavailable && course.unavailable()) {
+    return { ok: false, output: [], errorLine: course.unavailable(), missing: true };
+  }
   let warnings = [];
   for (let i = 0; i < steps.length; i++) {
     const [cmd, ...args] = steps[i];
-    const last = i === steps.length - 1;
+    const last = i === steps.length - 1 && !course.buildOnly;
     const r = spawnSync(cmd, args, {
       cwd: path.dirname(file),
       input: last && input.length ? input.join("\n") + "\n" : "",
@@ -193,7 +199,7 @@ function runFile(course, file, input = [], opts = {}) {
     }
     return { ok: true, output, warnings };
   }
-  return { ok: true, output: [], warnings };
+  return { ok: true, output: [], warnings, built: Boolean(course.buildOnly) };
 }
 
 function signalText(signal) {
@@ -285,6 +291,11 @@ async function codeBlock(course, block) {
     if (t && !sameOutput(t.raw, result.output)) {
       throw new Error(`an example printed ${JSON.stringify(result.output)}, not its transcript`);
     }
+    if (result.built) {
+      console.log("  " + green(tr("Builds without errors.")) + " " + tr("Run it to open the window."));
+      console.log();
+      return;
+    }
     console.log("  " + dim(tr("Output:")));
     for (const line of t ? t.shown : result.output) {
       console.log("    " + line);
@@ -337,11 +348,13 @@ async function exerciseBlock(course, block, lessonNumber) {
   console.log("  " + bold(tr("YOUR TURN")));
   rule();
   say(block.task);
-  console.log(tr(t.input.length ? "  It must look like this (you type the bold parts):" : "  It must print:"));
-  for (const line of t.shown) {
-    console.log("    " + line);
+  if (!course.buildOnly) {
+    console.log(tr(t.input.length ? "  It must look like this (you type the bold parts):" : "  It must print:"));
+    for (const line of t.shown) {
+      console.log("    " + line);
+    }
+    console.log();
   }
-  console.log();
   console.log(tr("  Write it in ") + bold(shownPath) + tr(" (open it in any text editor)."));
   if (course.howToRun) {
     console.log("  " + dim(tr("To run it yourself:") + " " + course.howToRun(path.basename(file))));
@@ -373,6 +386,10 @@ async function exerciseBlock(course, block, lessonNumber) {
     } else if (!result.ok) {
       console.log("  " + red(tr(result.compile ? "Your program did not build:" : "Your program stopped with an error:")));
       showError(course, result);
+    } else if (result.built) {
+      console.log("  " + green(tr("It builds! ")) + tr("Now run it and check that the window does what the task asks."));
+      console.log();
+      return;
     } else if (sameOutput(t.raw, result.output)) {
       console.log("  " + green(tr("Correct! ")) + tr("Your program printed exactly what was asked."));
       console.log();

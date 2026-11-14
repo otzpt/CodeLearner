@@ -20,6 +20,11 @@ function fail(where, why) {
 
 function checkCourse(dir) {
   const course = loadCourse(path.resolve(dir));
+  const missing = course.unavailable && course.unavailable();
+  if (missing) {
+    console.log(`SKIP  ${course.id}: ${missing}`);
+    return;
+  }
   const ids = new Set();
   course.lessons.forEach((lesson, n) => {
     const name = `${course.id} lesson ${n + 1}`;
@@ -47,7 +52,7 @@ function checkCourse(dir) {
         } else if (b.exercise) {
           const t = app.transcript(b.expected);
           const r = app.runCode(course, b.solution, t.input, { env: b.env });
-          if (!r.ok || !app.sameOutput(t.raw, r.output)) {
+          if (!r.ok || (!r.built && !app.sameOutput(t.raw, r.output))) {
             fail(where, `solution printed ${JSON.stringify(r.output)} ${r.errorLine || ""}`);
           }
           const starter = b.starter || course.starter;
