@@ -1,60 +1,41 @@
 # Security course
 
-A topic course, not a language course: it teaches security fundamentals,
-implemented in Python. The language courses are written in the language they
-teach; this one is written in Python because that is its implementation
-language, and every lesson's code is readable, runnable example code.
+Security fundamentals for someone who has never programmed, with examples in
+Python. Each lesson runs a common mistake, then the fix. Everything runs
+offline, on your own machine.
 
-Two modules so far (BASIC). INTERMEDIATE and ADVANCED are printed empty in the
-menu, the way the GTK course does, so the planned arc stays visible.
+## Lessons
 
-| # | Module | Teaches |
-| --- | --- | --- |
-| 1 | Your first request | HTTP request/response, the Server header as information disclosure, missing security headers as a finding, and the urllib 4xx/5xx-raises trap |
-| 2 | Plain HTTP is readable on the wire | The same login over HTTP and HTTPS through a loopback tap: the password in the capture as text, then absent, and the server name still visible in the handshake |
+1. Never store a password as it was typed
+2. Salt and slow hashing
+3. Random values attackers cannot guess
+4. SQL injection
+5. Command injection
+6. Path traversal
+7. Putting user text into a web page
+
+## What runs
+
+The unsafe versions are real but harmless: the SQL injection runs against a
+database in memory, the command injection only ever runs `echo`, and the path
+traversal reads files the example itself made in a temporary folder. Needs
+Python 3, standard library only. Lesson 5 uses `echo` and `wc`, which Windows
+does not have.
 
 ## Running
 
-```bash
-cd security/src
-python3 main.py          # or ./main.py
-```
-
-Standard library only, the same no-runtime-dependencies rule the other
-courses follow. Module 1 makes one real HTTPS GET to `https://example.com`
-(a stable demonstration host run by IANA) with a 5 second timeout; offline,
-it prints a captured real run instead. Nothing is scanned, attacked, or sent
-anywhere -- it reads the response the same way a browser would.
-
-`requests` vs `urllib`: real security code often uses the third-party
-`requests` library. urllib is in the standard library and teaches the same
-request/response shape, so the course uses it and names the difference in the
-module rather than adding a dependency.
-
-## Verifying
+From the launcher, or directly:
 
 ```bash
-cd security/src
-python3 -c "import ast; ast.parse(open('lessons_basics.py').read())"
-python3 main.py                       # walk module 1 to its SUMMARY
-python3 ../../tools/check-teaching-order.py
+node security/learn.js
 ```
 
-The offline fallback in `lessons_basics.py` (`_CAPTURED_FALLBACK`) must be a
-real run, not invented. Refresh it from an online machine with:
+Your practice files and progress go in `~/codelearner/security/`.
+
+## Checking
 
 ```bash
-python3 - <<'PY'
-import urllib.request
-H = ["Strict-Transport-Security","X-Content-Type-Options",
-     "Content-Security-Policy","X-Frame-Options"]
-with urllib.request.urlopen("https://example.com", timeout=5) as r:
-    print("status", r.status)
-    print("Server ->", repr(r.headers.get("Server")))
-    for h in H:
-        print(f"{h}: {'present' if r.headers.get(h) else 'MISSING'}")
-PY
+node learn/check.js security            # every example, question, solution and starter
+python3 learn/check-course.py security  # every lesson played to the end
 ```
 
-Paste the real values into `_CAPTURED_FALLBACK`. Header values drift, so this
-is a periodic check, not a one-time one.

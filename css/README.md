@@ -1,25 +1,40 @@
 # CSS course
 
-5 modules: The box and normal flow, Flexbox, Grid, Responsive design, Modern CSS and the cascade.
+For someone who has never written CSS. A terminal cannot draw a page, so
+each example runs through `learn/web.js`, a small stand-in for a browser that
+prints every element's final style and the rule that won each property.
 
-A terminal program in plain C, like `gtk/`. It teaches CSS and never
-opens a browser. The challenges are files you write yourself and open in
-whatever browser you normally use.
+## Lessons
+
+1. Rules: selector and properties
+2. Picking elements: class and id
+3. When rules disagree: the cascade
+4. Inheritance
+5. style attributes and !important
+6. Elements inside elements
+
+## What the stand-in covers
+
+Type, `.class`, `#id` and `*` selectors, compounds, descendant and child
+combinators, comma lists, `!important`, the `style` attribute, and
+inheritance of text properties (links keep their own colour, as in a
+browser). It does not lay boxes out, so margins, flexbox and grid can be set
+but not seen. Open your file in any browser to see it drawn.
 
 ## Running
 
+From the launcher, or directly:
+
 ```bash
-make
-./css-course
+node css/learn.js
 ```
 
-## How it was verified
+Your practice files and progress go in `~/codelearner/css/`.
 
-A terminal cannot render a page, so where a result depends on a browser the
-lesson quotes what one did. Those values were measured in Chromium 152, by
-script, while the modules were written. Firefox and Safari were not checked.
+## Checking
 
-Computed for real when the lesson runs: the arithmetic of box sizes, shares and clamp, and specificity.
+```bash
+node learn/check.js css            # every example, question, solution and starter
+python3 learn/check-course.py css  # every lesson played to the end
+```
 
-CI builds it with `-Wall -Wextra -Werror` and walks every module to its
-SUMMARY. `tools/check-teaching-order.py` covers the exercises.

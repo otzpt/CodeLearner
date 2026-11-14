@@ -1,26 +1,41 @@
 # GTK course
 
-4 modules: your first window, layout and the common widgets, signals and
-keeping state, widgets that come and go (a todo list).
+GTK 4 from C, for someone who knows C's basics (the C course covers them).
+GTK programs open windows, which a terminal cannot show, so the course builds
+every example and exercise with the real GTK and you run them yourself.
 
-A terminal program in plain C, like `raylib/`. It teaches GTK4 and never opens
-a window itself: the programs it teaches are ones you write and compile
-yourself, with GTK4's development files installed (module 1 shows how to check).
+## Lessons
+
+1. A window
+2. Widgets and boxes
+3. Reacting to clicks: signals
+4. Reading typed text: GtkEntry
+
+## Building yourself
+
+```bash
+cc -o program main.c $(pkg-config --cflags --libs gtk4) && ./program
+```
+
+Needs a C compiler and GTK 4.10 or later (every lesson uses
+`G_APPLICATION_DEFAULT_FLAGS`, from GLib 2.74). Without it, the course says
+so and its checks report it skipped. The windows themselves are not run by
+any check.
 
 ## Running
 
+From the launcher, or directly:
+
 ```bash
-make
-./gtk-course
+node gtk/learn.js
 ```
 
-## How it was verified
+Your practice files and progress go in `~/codelearner/gtk/`.
 
-Every example compiles with `-std=c11 -Wall -Wextra` and no warnings, and was
-driven by a test program against the real window. Every bad use shown was
-compiled or run, and the error quoted is its real output. See the header of
-`src/lessons_gtk.c` and `src/lessons_widgets.c` for the full list.
+## Checking
 
-`tools/check-teaching-order.py` covers the exercises. Output is coloured in a
-terminal (`NO_COLOR=1` turns it off) and long screens pause with "more: press
-ENTER" so they never scroll off (`CODELEARNER_NO_PAGER=1` turns that off).
+```bash
+node learn/check.js gtk            # every example, question, solution and starter
+python3 learn/check-course.py gtk  # every lesson played to the end
+```
+

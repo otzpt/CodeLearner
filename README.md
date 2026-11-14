@@ -306,6 +306,7 @@ libraries/    the reference manual
 arduino/shim  the PC stand-in for the Arduino core
 micropython/  sim.py, the PC stand-in for a Pico
 assembly/os   the boot sector to kernel files, checked in QEMU by check-os.py
+              (2 of its 33 checks fail on today's toolchain; see assembly/README.md)
 docs/         how a course is written, and notes on how a learner used one
 ```
 

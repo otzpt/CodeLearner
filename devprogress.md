@@ -28,7 +28,8 @@ This file is a status log, not a plan. Last updated 2026-11-14.
 - **Course coverage after the rewrite**: the new courses are shorter than the old ones. Not yet covered again: JavaScript promises, fetch, modules, files and JSON; Python and Java beyond the basics of files; C's function pointers, bit operations, variadic functions and inline assembly; the old Assembly course's OS modules as lessons (the files and `check-os.py` are kept in `assembly/`); Rust traits, lifetimes and collections; the old Security course's HTTP modules.
 - **Windows**: the Windows CI leg checks only C, C++, MicroPython, Python, JavaScript, HTML, CSS and Web JavaScript. Assembly, Arduino and Git are Linux-only. `install.ps1` has never been run, and no Start Menu shortcut exists.
 - **GTK and raylib**: build-only. The examples and solutions are compiled, but the windows they open are not run by any check. CI's ubuntu-22.04 runner has GTK 4.6 and no raylib, so both are skipped there and only checked on a machine that has them.
-- **READMEs**: the main `README.md` and each course's `README.md` still describe the old courses. `c/ROADMAP.md` is the old C course's plan.
+- **Assembly OS track**: `assembly/check-os.py` passes 31 of 33 checks on GCC 16.2 and QEMU 11.1 (2026-11-14); module 15's volatile listing and module 16's interrupt kernel fail, on `main` too, so the toolchain changed since 2026-10-17. Not investigated.
+- **`c/ROADMAP.md`** is the old C course's plan.
 - **Desktop entry on Linux**: `install.sh` was tested against a fake release only. A real run needs the next release tag.
 - **Libraries reference**: C track has 21 header pages. Python pages were reorganised on 2026-11-12. Other languages are one folder and a `TRACKS` row each.
 - **Learner notes**: `docs/learner-notes.md` records about four hours of practice, stated by the learner, tracker data not checked.

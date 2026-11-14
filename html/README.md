@@ -1,25 +1,38 @@
 # HTML course
 
-5 modules: Structure and meaning, Forms, Accessibility, Metadata, Practical pages.
+For someone who has never written a web page. A terminal cannot draw a page,
+so each example runs through `learn/web.js`, a small stand-in for a browser
+that prints the element tree the browser builds, and warns about tags closed
+in the wrong order or never closed.
 
-A terminal program in plain C, like `gtk/`. It teaches HTML and never
-opens a browser. The challenges are files you write yourself and open in
-whatever browser you normally use.
+## Lessons
+
+1. Tags and elements
+2. A whole page
+3. Nesting and closing tags
+4. Links and images
+5. Lists and tables
+6. Forms: asking the visitor
+7. Page structure that means something
+
+## Seeing it drawn
+
+Open your practice file in any browser. The course never opens one.
 
 ## Running
 
+From the launcher, or directly:
+
 ```bash
-make
-./html-course
+node html/learn.js
 ```
 
-## How it was verified
+Your practice files and progress go in `~/codelearner/html/`.
 
-A terminal cannot render a page, so where a result depends on a browser the
-lesson quotes what one did. Those values were measured in Chromium 152, by
-script, while the modules were written. Firefox and Safari were not checked.
+## Checking
 
-Computed for real when the lesson runs: URL encoding a form, reading UTF-8 bytes as another charset.
+```bash
+node learn/check.js html            # every example, question, solution and starter
+python3 learn/check-course.py html  # every lesson played to the end
+```
 
-CI builds it with `-Wall -Wextra -Werror` and walks every module to its
-SUMMARY. `tools/check-teaching-order.py` covers the exercises.

@@ -1,57 +1,62 @@
 # Assembly course
 
-Sixteen modules of x86-64 assembly in NASM's Intel syntax, from registers and
-syscalls to a kernel written in C that handles interrupts. Linux only: the
-first nine modules are built on Linux system calls, and the rest boot a PC.
-The module list is in the [root README](../README.md#the-assembly-course).
+x86-64 assembly in NASM's Intel syntax, for someone who has never
+programmed. Linux only: the programs talk to Linux through system calls.
 
-## Run it
+## Lessons
 
-```sh
-make            # nasm + ld; no cc, no libc
-./asm-course
+1. Your first program
+2. Registers and arithmetic
+3. Decisions: compare and jump
+4. Loops
+5. Memory: variables and arrays
+6. The stack: push and pop
+7. Functions: call and ret
+8. Text, one byte at a time
+9. Next: below the operating system
+
+## Running the examples yourself
+
+```bash
+nasm -f elf64 -o program.o main.asm && ld -o program program.o && ./program
 ```
 
-Needs `nasm` and `ld`. Modules 9, 15 and 16 also use `gcc` for the C they show;
-modules 10 to 16 are meant to be tried with `qemu-system-x86_64`.
+Needs `nasm` and `ld`. From lesson 2 on, a ready-made `print_int` routine
+(printing a number is a small program in itself) sits above each example; it
+is in every practice file the course gives you.
 
-## What is where
+## Below the operating system
+
+Lesson 9 shows a boot sector and points here. The files from the earlier,
+longer course go on from there, and are kept and checked:
 
 | Path | What |
 | --- | --- |
-| `src/` | the course itself. `ui.asm` and `main.asm` are the menu; `lessons_*.asm` are the modules; `course.inc` holds the few macros every lesson uses |
-| `solutions/` | the example solution to each module's challenge, one file per module. The lesson prints the file (`incbin`), so what is shown is what was run |
-| `examples/09/` | module 9's C and assembly examples |
-| `os/` | modules 10 to 16: the boot sectors, the loader, the C kernel (`kernel/`) and the interrupt kernel (`interrupts/`), and `traps/`, the deliberately broken variants the lessons quote |
+| `os/` | boot sectors, a two-stage loader, protected and long mode, a kernel in C (`kernel/`), interrupts (`interrupts/`), and `traps/`, deliberately broken variants |
+| `solutions/`, `examples/09/` | example programs those files build on |
 | `vm.py` | boots a disk image in QEMU and reads back the screen, serial port, memory and registers |
-| `check-course.py`, `check-os.py` | the two checkers below |
+| `check-os.py` | builds every image, boots it in QEMU, and compares what the machine does with what the text says |
 
-## How it was verified
+`python3 check-os.py` needs `qemu-system-x86_64`. On 2026-11-14 (GCC 16.2,
+QEMU 11.1) 31 of its checks pass and 2 fail: module 15's volatile store
+listing and module 16's interrupt kernel. The same files fail the same way
+on `main`, so the toolchain changed since they last passed (2026-10-17); not
+investigated yet. **Nothing here was run on real hardware.**
 
-```sh
-make check              # python3 check-course.py
-python3 check-os.py     # needs qemu-system-x86_64
+## Running
+
+From the launcher, or directly:
+
+```bash
+node assembly/learn.js
 ```
 
-`check-course.py` starts the real binary on a pseudo-terminal and walks every
-module to its SUMMARY, answering each prompt the way a person would (the
-course reads with raw `read(2)`, so input has to arrive one line at a time).
-It then assembles and runs every example solution and compares its output with
-what the challenge promises, builds the examples under `examples/09` and
-compares their output with the lines the lesson quotes, and checks every
-number a lesson computes live against a value worked out in Python. The boot
-challenges (modules 10 to 16) are booted in QEMU and the screen, serial port
-or registers are read back.
+Your practice files and progress go in `~/codelearner/assembly/`.
 
-`check-os.py` builds every image the operating-system lessons show, boots it,
-and compares what the machine does with what the lesson says: the register
-dumps, memory map, exception logs and serial lines quoted in the text are
-asserted line for line. The broken variants in `os/traps/` are built and
-booted too, so each failure the text describes was seen, not assumed. Without
-QEMU it says so and checks nothing.
+## Checking
 
-Run in QEMU 10.2 with SeaBIOS. **Nothing here was run on real hardware.**
-Where QEMU is kinder than a real CPU, the lesson says so (module 14).
+```bash
+node learn/check.js assembly            # every example, question, solution and starter
+python3 learn/check-course.py assembly  # every lesson played to the end
+```
 
-The release workflow runs `make -C assembly check`, which skips the parts
-that need QEMU when it is not installed.

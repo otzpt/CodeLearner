@@ -1,30 +1,41 @@
 # raylib course
 
-6 modules: your first window and the loop, shapes and text, keyboard and mouse input, time and movement, raygui buttons and state, a todo list.
+raylib from C, for someone who knows C's basics (the C course covers them).
+raylib programs open windows, which a terminal cannot show, so the course
+builds every example and exercise with the real raylib and you run them
+yourself.
 
-A terminal program in plain C, like `gtk/`. It teaches raylib and its
-companion header raygui. It never opens a window itself: the programs it
-teaches are ones you write and compile yourself. raylib is built from source
-(module 1 gives the steps and pins the commits this was tested with).
+## Lessons
+
+1. A window and the game loop
+2. Shapes and colours
+3. Keys, mouse and movement
+4. Project: a catching game
+
+## Building yourself
+
+```bash
+cc -o program main.c $(pkg-config --cflags --libs raylib) && ./program
+```
+
+Needs a C compiler and raylib. Without it, the course says so and its checks
+report it skipped (the CI runner has no raylib package). The windows
+themselves are not run by any check.
 
 ## Running
 
+From the launcher, or directly:
+
 ```bash
-make
-./raylib-course
+node raylib/learn.js
 ```
 
-## How it was verified
+Your practice files and progress go in `~/codelearner/raylib/`.
 
-Every example compiles with `-std=c11 -Wall -Wextra` and no warnings of its
-own, and was started and ran. Drawing results were read back from an
-off-screen texture. Collision, vector maths, frame-time movement, the pong
-rules and the todo list's data functions were run by small programs that
-include the example file and never open a window. How real key presses,
-mouse clicks and raygui widgets behave under a person's hands was not driven
-by a test; the lessons say so. The reference screens are generated from
-`raylib.h` and `raymath.h`, not retyped.
+## Checking
 
-`tools/check-teaching-order.py` covers the exercises. Output is coloured in a
-terminal (`NO_COLOR=1` turns it off) and long screens pause with "more: press
-ENTER" so they never scroll off (`CODELEARNER_NO_PAGER=1` turns that off).
+```bash
+node learn/check.js raylib            # every example, question, solution and starter
+python3 learn/check-course.py raylib  # every lesson played to the end
+```
+
