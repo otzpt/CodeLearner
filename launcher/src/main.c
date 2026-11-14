@@ -47,24 +47,14 @@
 #define PCLOSE pclose
 #endif
 
-/* One entry per language. `run_command` is NULL for a language with no
- * course yet -- shown as "coming soon" instead of being launchable. `path`
- * is what file_exists() checks before offering the option; `run_command` is
- * what system() actually runs, which is not always the same string.
+/* One entry per course. `run_command` is NULL for a course that cannot run
+ * on this system -- shown as "coming soon" instead of being launchable.
+ * `path` is what file_exists() checks before offering the option;
+ * `run_command` is what system() runs.
  *
- * They diverge on Windows for the interpreted languages. Verified (not
- * assumed): the standard python.org installer sets .py as the default
- * handler for a bare path, so Python could stay a plain path -- but
- * Node.js's installer does not do the equivalent for .js. Windows' own
- * default handler for .js is Windows Script Host, an entirely different,
- * incompatible engine (WSH's JScript, not V8), and Node only registers
- * itself as an "Open With" candidate under
- * HKEY_CLASSES_ROOT\Applications\node.exe, never as the default. A bare
- * path to main.js would silently run under the wrong engine and fail. Both
- * are made explicit (`python ...`, `node ...`) rather than leaving one
- * correct by installer behavior and the other wrong by it -- relying on
- * PATH is one guarantee to reason about instead of two different
- * file-association stories.
+ * Every course is a folder with a learn.js, run by Node on the shared lesson
+ * engine in learn/. `node` is written out rather than relying on a shebang:
+ * on Windows a bare .js path opens Windows Script Host, a different engine.
  *
  * All paths are relative to this program's own working directory, which is
  * why the course itself has to be run the same way: `cd launcher &&
@@ -81,119 +71,52 @@ struct Language {
 };
 
 #ifdef _WIN32
-#define C_BIN      "..\\c\\c-course.exe"
-#define CPP_BIN    "..\\cpp\\cpp-course.exe"
-#define PY_PATH    "..\\python\\src\\main.py"
-#define JS_PATH    "..\\javascript\\src\\main.js"
-#define JAVA_BIN   "..\\java\\run.bat"
-#define GTK_BIN    "..\\gtk\\gtk-course.exe"
-#define RAYLIB_BIN "..\\raylib\\raylib-course.exe"
-#define CSHARP_BIN "..\\csharp\\run.bat"
-#define RUST_BIN   "..\\rust\\rust-course.exe"
-#define SEC_PATH   "..\\security\\src\\main.py"
-#define HTML_BIN   "..\\html\\html-course.exe"
-#define CSS_BIN    "..\\css\\css-course.exe"
-#define WEBJS_BIN  "..\\webjs\\webjs-course.exe"
+#define SEP "\\"
 #else
-#define C_BIN      "../c/c-course"
-#define CPP_BIN    "../cpp/cpp-course"
-#define PY_PATH    "../python/src/main.py"
-#define JS_PATH    "../javascript/src/main.js"
-#define JAVA_BIN   "../java/run"
-#define GTK_BIN    "../gtk/gtk-course"
-#define RAYLIB_BIN "../raylib/raylib-course"
-#define ASM_BIN    "../assembly/asm-course"
-#define CSHARP_BIN "../csharp/run"
-#define GIT_PATH   "../git/src/main.sh"
-#define ARDUINO_BIN "../arduino/arduino-course"
-#define MICROPY_PATH "../micropython/src/main.py"
-#define RUST_BIN   "../rust/rust-course"
-#define SEC_PATH   "../security/src/main.py"
-#define HTML_BIN   "../html/html-course"
-#define CSS_BIN    "../css/css-course"
-#define WEBJS_BIN  "../webjs/webjs-course"
-#define LIBRARIES_BIN "../libraries/libraries"
+#define SEP "/"
 #endif
+
+#define LEARN(dir) ".." SEP dir SEP "learn.js"
+#define COURSE(name, dir, group) { name, LEARN(dir), "node " LEARN(dir), group }
+#define LINUX_ONLY(name, group) { name, NULL, NULL, group }
+
+#define LIBRARIES_BIN "../libraries/libraries"
 
 #define GROUP_SYSTEMS "LOW-LEVEL AND SYSTEMS"
 
 static const struct Language LANGUAGES[] = {
-    { "C",          C_BIN,    C_BIN, GROUP_SYSTEMS },
-    { "C++",        CPP_BIN,  CPP_BIN, GROUP_SYSTEMS },
+    COURSE("C", "c", GROUP_SYSTEMS),
+    COURSE("C++", "cpp", GROUP_SYSTEMS),
 #ifdef _WIN32
-    /* Genuinely not "coming soon later" the way an unbuilt language is --
-     * this course makes raw Linux syscalls directly (syscall + Linux
-     * syscall numbers), which have no Windows equivalent to translate to.
-     * A Windows build would need its own real implementation against a
-     * completely different ABI, not a path change. */
-    { "Assembly",   NULL, NULL, GROUP_SYSTEMS },
+    /* Linux system calls (write, exit) have no Windows equivalent. */
+    LINUX_ONLY("Assembly", GROUP_SYSTEMS),
 #else
-    { "Assembly",   ASM_BIN, ASM_BIN, GROUP_SYSTEMS },
+    COURSE("Assembly", "assembly", GROUP_SYSTEMS),
 #endif
-    { "Rust",       RUST_BIN, RUST_BIN, GROUP_SYSTEMS },
+    COURSE("Rust", "rust", GROUP_SYSTEMS),
 #ifdef _WIN32
-    /* arduino/shim/Arduino.h reads Serial input with poll() and read() from
-     * <poll.h>/<unistd.h>, which Windows does not have. Not a path change:
-     * the stand-in for the Arduino core would need a Windows port. */
-    { "Arduino",    NULL, NULL, GROUP_SYSTEMS },
+    /* arduino/shim/Arduino.h reads Serial input with poll() and read(),
+     * which Windows does not have. */
+    LINUX_ONLY("Arduino", GROUP_SYSTEMS),
 #else
-    { "Arduino",    ARDUINO_BIN, ARDUINO_BIN, GROUP_SYSTEMS },
+    COURSE("Arduino", "arduino", GROUP_SYSTEMS),
 #endif
+    COURSE("MicroPython", "micropython", GROUP_SYSTEMS),
+    COURSE("Python", "python", NULL),
+    COURSE("JavaScript", "javascript", NULL),
+    COURSE("Java", "java", NULL),
+    COURSE("C#", "csharp", NULL),
+    COURSE("HTML", "html", "WEB"),
+    COURSE("CSS", "css", "WEB"),
+    COURSE("Web JavaScript", "webjs", "WEB"),
+    COURSE("Security", "security", "SECURITY"),
+    COURSE("GTK", "gtk", "GUI"),
+    COURSE("raylib", "raylib", "GUI"),
 #ifdef _WIN32
-    /* The course runs on the unix port of MicroPython, which is not shipped
-     * for Windows (and has no shebang story there either). */
-    { "MicroPython", NULL, NULL, GROUP_SYSTEMS },
+    /* The examples are bash scripts; a stock Windows machine has no bash. */
+    LINUX_ONLY("Git", "TOOLING"),
 #else
-    /* A script with a `#!/usr/bin/env micropython` shebang, like Python's
-     * and JavaScript's entries: no build step, needs `micropython` on PATH. */
-    { "MicroPython", MICROPY_PATH, MICROPY_PATH, GROUP_SYSTEMS },
-#endif
-#ifdef _WIN32
-    /* On Linux these two are unchanged: a shebang line plus the execute bit
-     * (chmod +x) already picks the right interpreter, the same guarantee
-     * PATH gives here, so there is nothing to make explicit. */
-    { "Python",     PY_PATH,  "python " PY_PATH, NULL },
-    { "JavaScript", JS_PATH,  "node " JS_PATH, NULL },
-#else
-    { "Python",     PY_PATH,  PY_PATH, NULL },
-    { "JavaScript", JS_PATH,  JS_PATH, NULL },
-#endif
-    { "Java",       JAVA_BIN, JAVA_BIN, NULL },
-    /* Same wrapper story as Java: `dotnet run` has to run from inside the
-     * project directory, so this cannot point straight at a .cs file the
-     * way Python's/JavaScript's entries do. Cross-platform via `dotnet`
-     * itself, so unlike Python/JavaScript there's no Windows-vs-Linux
-     * split to make explicit here -- the run/run.bat wrapper covers it. */
-    { "C#",         CSHARP_BIN, CSHARP_BIN, NULL },
-    /* Plain C programs that teach these languages, the same arrangement as
-     * GTK below. None of them opens a browser. */
-    { "HTML",       HTML_BIN, HTML_BIN, "WEB" },
-    { "CSS",        CSS_BIN,  CSS_BIN, "WEB" },
-    { "Web JavaScript", WEBJS_BIN, WEBJS_BIN, "WEB" },
-    /* Topic course, not a language, implemented in Python -- registered the
-     * same way Python's own entry is: a bare .py path on Linux (shebang +
-     * execute bit), with the "python " prefix added on Windows where the
-     * extension association is what makes the path runnable. */
-#ifdef _WIN32
-    { "Security",   SEC_PATH, "python " SEC_PATH, "SECURITY" },
-#else
-    { "Security",   SEC_PATH, SEC_PATH, "SECURITY" },
-#endif
-    /* Not a language -- GTK, a C library -- but treated as a peer entry
-     * here on purpose, the same way it gets its own top-level course
-     * directory instead of living inside c/'s module list. */
-    { "GTK",        GTK_BIN,  GTK_BIN, "GUI" },
-    { "raylib + raygui", RAYLIB_BIN, RAYLIB_BIN, "GUI" },
-#ifdef _WIN32
-    /* Same reasoning as Python/JavaScript's own installer story, the
-     * other way around: python.org's and Node's installers are what
-     * make a bare .py/.js path reliable on Windows, verified in the
-     * comment above this struct. Bash has no equivalent guaranteed
-     * install on a stock Windows machine -- Git for Windows and WSL both
-     * ship one, but neither is assumed here the way a JDK is for Java. */
-    { "Git",        NULL, NULL, "TOOLING" },
-#else
-    { "Git",        GIT_PATH, GIT_PATH, "TOOLING" },
+    COURSE("Git", "git", "TOOLING"),
 #endif
 #ifdef _WIN32
     /* Not a course: a man-page style reference manual for the C and Python
