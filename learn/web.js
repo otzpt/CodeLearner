@@ -337,14 +337,11 @@ function styleReport(root) {
     for (const child of el.children) {
       if (RAW.has(child.tag)) continue;
       const s = styles.get(child) || {};
-      const props = Object.keys(s).sort();
-      if (props.length) {
-        out.push("  ".repeat(depth) + label(child));
-        for (const p of props) {
-          const v = s[p];
-          const why = v.inheritedFrom ? `inherited from ${v.inheritedFrom}` : `from ${v.from}`;
-          out.push("  ".repeat(depth + 1) + `${p}: ${v.value}   (${why})`);
-        }
+      out.push("  ".repeat(depth) + label(child));
+      for (const p of Object.keys(s).sort()) {
+        const v = s[p];
+        const why = v.inheritedFrom ? `inherited from ${v.inheritedFrom}` : `from ${v.from}`;
+        out.push("  ".repeat(depth + 1) + `${p}: ${v.value}   (${why})`);
       }
       walk(child, depth + 1);
     }
