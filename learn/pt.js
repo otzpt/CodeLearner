@@ -1,4 +1,5 @@
-// Portuguese (PT-PT) for the menus, prompts, lesson titles and summaries.
+// Portuguese (PT-PT) for the engine's menus, prompts and feedback. Lesson
+// titles and summaries are translated in each lesson (titlePt, recapPt).
 // CODELEARNER_LANG=pt-pt turns it on. The lesson text stays in English, and
 // every piece of code stays exactly as it is.
 
@@ -6,7 +7,6 @@ const PT = process.env.CODELEARNER_LANG === "pt-pt";
 
 const TEXT = {
   // main.js
-  "JAVASCRIPT FROM ZERO": "JAVASCRIPT DO ZERO",
   "No experience needed. Each lesson explains one idea, runs real examples, and ends with a small program you write yourself and the course checks.":
     "Não precisas de experiência. Cada lição explica uma ideia, corre exemplos reais e acaba com um pequeno programa que escreves tu e o curso verifica.",
   "  <- next": "  <- seguinte",
@@ -25,13 +25,7 @@ const TEXT = {
 
   // app.js: examples and errors
   "Output:": "Resultado:",
-  "Run, typing:": "Corrido a escrever:",
-  "(the ask helper goes here)": "(aqui vai a função ask)",
   "What this means: ": "O que isto quer dizer: ",
-  "a name that does not exist. Check the spelling and capitals.": "um nome que não existe. Verifica a ortografia e as maiúsculas.",
-  "code JavaScript cannot read: often a missing quote, bracket or brace.": "código que o JavaScript não consegue ler: muitas vezes falta uma aspa, um parêntese ou uma chaveta.",
-  "a value used in a way it does not allow.": "um valor usado de uma forma que não permite.",
-  "a number outside what is allowed.": "um número fora do que é permitido.",
   "read the message: it names the problem and the line.": "lê a mensagem: diz qual é o problema e a linha.",
   line: "linha",
 
@@ -53,8 +47,15 @@ const TEXT = {
   "  [ENTER] check my file   [h] hint   [s] show a solution   [k] skip: ": "  [ENTER] verificar o ficheiro   [h] dica   [s] ver uma solução   [k] saltar: ",
   "Hint: ": "Dica: ",
   "  One way to write it (yours can look different and still be right):": "  Uma forma de o escrever (o teu pode ser diferente e estar certo):",
-  "Your program did not finish within 5 seconds.": "O teu programa não terminou em 5 segundos.",
-  " Is there a loop that never stops?": " Há algum ciclo que nunca para?",
+  "Your program did not finish within 10 seconds.": "O teu programa não terminou em 10 segundos.",
+  " Is there a loop that never stops, or is it waiting for more input?": " Há algum ciclo que nunca para, ou está à espera de mais entrada?",
+  "Your program did not build:": "O teu programa não compilou:",
+  " (what was typed is not shown)": " (o que foi escrito não aparece)",
+  "  It must look like this (you type the bold parts):": "  Tem de ficar assim (tu escreves as partes a negrito):",
+  "To run it yourself:": "Para o correres tu:",
+  "not installed": "não está instalado",
+  "exited with code": "terminou com o código",
+  "(the helper above goes here)": "(aqui vai o código de apoio do ecrã anterior)",
   "Your program stopped with an error:": "O teu programa parou com um erro:",
   "Correct! ": "Certo! ",
   "Your program printed exactly what was asked.": "O teu programa mostrou exatamente o que era pedido.",

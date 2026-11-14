@@ -20,8 +20,7 @@ module.exports = {
       {
         exercise: "game",
         task: "Write the game with the secret number 42, so the checker knows the answer. Ask with \"Guess: \". Print Too low, Too high, or at the end Correct! It took N guesses.",
-        input: ["50", "25", "42"],
-        expected: ["Guess: 50", "Too high", "Guess: 25", "Too low", "Guess: 42", "Correct! It took 3 guesses."],
+        expected: ["Guess: {50}", "Too high", "Guess: {25}", "Too low", "Guess: {42}", "Correct! It took 3 guesses."],
         starter: `${HELPER}\n\nasync function main() {\n  const secret = 42;\n  // your code here\n\n  rl.close();\n}\n\nmain();`,
         hints: [
           "let guesses = 0; then while (true) { ... }",
