@@ -65,6 +65,13 @@ install options are under [Installing](#installing)):
 The Libraries entry is a reference manual, not a course: man-page style pages
 for C and Python libraries, each with an example that runs on your machine.
 
+## About this project
+
+This is vibecoded and made for my own personal use. It is on GitHub so that
+anyone looking for something like this can use it, and because GitHub gives
+me version control and a backup of the code. Treat it as a personal project
+shared as is, not a polished product.
+
 ## What a lesson looks like
 
 A lesson is a few screens, each with one idea and at most one example. The
