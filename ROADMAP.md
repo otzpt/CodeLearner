@@ -21,8 +21,11 @@ Next topics, roughly in order:
 - **C** (14 lessons, to structs, files and AddressSanitizer): function
   pointers, bit operations, variadic functions, the preprocessor, inline
   assembly. Issues #1-#14.
-- **C++** (12, to inheritance, exceptions and files): templates, RAII and
-  smart pointers, std::map and algorithms, move semantics.
+- **C++** (12, to inheritance, exceptions and files): structs and enums,
+  pointers and `nullptr`, `new` and `delete`, `std::unique_ptr`, `std::array`,
+  `std::map`, templates, headers and several files, RAII, algorithms, move
+  semantics. Pointers and structs come first: they are the biggest gap next
+  to the C course.
 - **Python** (14, to classes, files and a project): modules and packages,
   comprehensions, the standard library (json, pathlib, argparse), testing.
 - **JavaScript** (13, to classes, input and errors): promises and
@@ -116,6 +119,44 @@ entry and no Start Menu shortcut. A `.lnk` in
 open: `install.ps1` has never been run (see the README note) and nothing here
 can run PowerShell, so a shortcut written blind would be a second unverified
 change in an unverified script. It needs someone with a Windows machine.
+
+## Launch modes, command-line flags and a GUI
+
+Not started. One program, and how it is opened decides the interface.
+
+**Launch modes**
+
+- `codelearner` typed in a terminal opens the terminal (CLI) version, as now.
+- Opened from the application icon, it opens the GUI. With no terminal
+  attached, that is the usual way to tell the two apart. The current desktop
+  entry has `Terminal=true` because the program is a TUI, so a GUI launcher
+  needs its own entry.
+- `--gui` opens the GUI from a terminal. `--gui-debug` opens it with debugging
+  output on; it is for development only and should be marked so in `--help`.
+
+**Flags**
+
+- `--language <name>` opens that language's course directly.
+- `--lib` opens the libraries reference; `--lib-lang` (earlier written
+  `--liblang`) opens the library pages for one language.
+- `--help` and `--version`, which new users try first.
+- Naming rule: long, lowercase, hyphenated names with two dashes (`--lib-lang`,
+  never `--libLang`), because a word is easier for a beginner to remember than a
+  letter. No one-letter aliases for now.
+- Still open: take the language as a value (`--lib c`) or make one flag per
+  language (`--lib-c`). A value scales to any language without new flags;
+  separate flags are simpler to type. Pick one pattern and use it for every
+  language.
+
+**The GUI**
+
+- The lessons are plain data (screens, code, quizzes, exercises), so the GUI is
+  a new front end on the same lesson files. No lesson is rewritten.
+- A memory diagram for the C course: boxes for variables and arrows for
+  pointers, `malloc` and `free`, the same thing pen and paper does well.
+- Open: a web page in a local window (Electron or Tauri style) or a native
+  toolkit (GTK, which `gtk/` already uses). Windows and macOS packaging is the
+  main cost either way, and the terminal version stays.
 
 ## C-specific backlog
 

@@ -49,3 +49,24 @@ screen, every example run, an exercise checked by running the student's file.
   would name what each lesson taught.
 - A Linux-kernel preparation track (#14): GNU extensions, kernel style,
   intrusive lists, bit manipulation.
+
+## Found in a read-through (2026-11-24)
+
+Gaps and small fixes, not yet filed as issues.
+
+- **Arrays and functions.** Lesson 6 says the `sizeof` trick fails inside a
+  function the array was passed to, but no lesson teaches passing an array to a
+  function, or how arrays and pointers relate.
+- **Strings.** No copying (`strcpy`, `snprintf`) and no reading a whole line from
+  the keyboard (`fgets` on `stdin`). A learner who tries to assign a name to a
+  struct member in lesson 11 hits an error the course never explains.
+- **Missing basics.** `switch`, `enum`, `char` and the other number types, header
+  files with several source files, `argc` and `argv`. That any non-zero value
+  counts as true is never said in lesson 4.
+- **Lesson 10 exercise.** `n` is read with `scanf` and never checked, so a bad
+  input leaves it uninitialised before `malloc`. This goes against what lesson 3
+  teaches.
+- **Lesson 13.** `-fsanitize=address` probably does not work with the MinGW gcc
+  that `course.js` uses on Windows. Needs checking on a Windows machine.
+- **Style.** A few one-line `if (...) return 1;` forms in lessons 10 and 12 break
+  the always-braces style used elsewhere.
